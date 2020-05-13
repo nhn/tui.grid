@@ -330,22 +330,83 @@ describe('rowHeader: checkbox', () => {
   });
 });
 
-describe('sort', () => {
-  ['UI', 'API'].forEach(type => {
-    it(`sort by ${type}`, () => {
-      const callback = cy.stub();
+// @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
+['UI', 'API'].forEach(type => {
+  it(`beforeSort by ${type}`, () => {
+    const callback = cy.stub();
 
-      cy.gridInstance().invoke('on', 'sort', callback);
+    cy.gridInstance().invoke('on', 'beforeSort', callback);
 
-      if (type === 'UI') {
-        cy.getByCls('btn-sorting').click();
-      } else {
-        cy.gridInstance().invoke('sort', 'name', true);
-      }
+    if (type === 'UI') {
+      cy.getByCls('btn-sorting').click();
+    } else {
+      cy.gridInstance().invoke('sort', 'name', true);
+    }
 
-      cy.wrap(callback).should('be.calledWithMatch', {
-        sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true }
-      });
+    cy.wrap(callback).should('be.calledWithMatch', {
+      sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: true },
+      columnName: 'name',
+      ascending: true,
+      multiple: false
+    });
+  });
+
+  it(`afterSort by ${type}`, () => {
+    const sortCallback = cy.stub();
+    const afterSortCallback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'sort', sortCallback);
+    cy.gridInstance().invoke('on', 'afterSort', afterSortCallback);
+
+    if (type === 'UI') {
+      cy.getByCls('btn-sorting').click();
+    } else {
+      cy.gridInstance().invoke('sort', 'name', true);
+    }
+
+    cy.wrap(sortCallback).should('be.calledWithMatch', {
+      sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true },
+      columnName: 'name'
+    });
+    cy.wrap(afterSortCallback).should('be.calledWithMatch', {
+      sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true },
+      columnName: 'name'
+    });
+  });
+
+  it(`beforeCancelSort by ${type}`, () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'beforeCancelSort', callback);
+    cy.gridInstance().invoke('sort', 'name', false);
+
+    if (type === 'UI') {
+      cy.getByCls('btn-sorting').click();
+    } else {
+      cy.gridInstance().invoke('unsort', 'name');
+    }
+
+    cy.wrap(callback).should('be.calledWithMatch', {
+      sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true },
+      columnName: 'name'
+    });
+  });
+
+  it(`afterCancelSort by ${type}`, () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'afterCancelSort', callback);
+    cy.gridInstance().invoke('sort', 'name', false);
+
+    if (type === 'UI') {
+      cy.getByCls('btn-sorting').click();
+    } else {
+      cy.gridInstance().invoke('unsort', 'name');
+    }
+
+    cy.wrap(callback).should('be.calledWithMatch', {
+      sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: true },
+      columnName: 'name'
     });
   });
 });
