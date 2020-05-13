@@ -60,8 +60,8 @@ export type GridEventName =
   | 'collapse'
   | 'beforeSort'
   | 'afterSort'
-  | 'beforeCancelSort'
-  | 'afterCancelSort';
+  | 'beforeUnsort'
+  | 'afterUnsort';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {

@@ -374,10 +374,10 @@ describe('rowHeader: checkbox', () => {
     });
   });
 
-  it(`beforeCancelSort by ${type}`, () => {
+  it(`beforeUnsort by ${type}`, () => {
     const callback = cy.stub();
 
-    cy.gridInstance().invoke('on', 'beforeCancelSort', callback);
+    cy.gridInstance().invoke('on', 'beforeUnsort', callback);
     cy.gridInstance().invoke('sort', 'name', false);
 
     if (type === 'UI') {
@@ -392,10 +392,10 @@ describe('rowHeader: checkbox', () => {
     });
   });
 
-  it(`afterCancelSort by ${type}`, () => {
+  it(`afterUnsort by ${type}`, () => {
     const callback = cy.stub();
 
-    cy.gridInstance().invoke('on', 'afterCancelSort', callback);
+    cy.gridInstance().invoke('on', 'afterUnsort', callback);
     cy.gridInstance().invoke('sort', 'name', false);
 
     if (type === 'UI') {

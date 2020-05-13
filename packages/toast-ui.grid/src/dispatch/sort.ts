@@ -11,7 +11,7 @@ import { isSortable, isInitialSortState, isScrollPagination } from '../query/dat
 import { isComplexHeader } from '../query/column';
 import { GridEventProps } from '@t/event';
 
-type EventType = 'beforeSort' | 'beforeCancelSort' | 'afterSort' | 'afterCancelSort' | 'sort';
+type EventType = 'beforeSort' | 'beforeUnsort' | 'afterSort' | 'afterUnsort' | 'sort';
 interface EventParams {
   columnName: string;
   ascending?: boolean;
@@ -207,7 +207,7 @@ export function initSortState(data: Data) {
 export function emitBeforeSort(store: Store, cancelSort: boolean, eventParams: Omit<EventParams, 'sortState'>) {
   const { id, data } = store;
   const eventBus = getEventBus(id);
-  const eventType = cancelSort ? 'beforeCancelSort' : 'beforeSort';
+  const eventType = cancelSort ? 'beforeUnsort' : 'beforeSort';
   const gridEvent = createGridEvent(eventType, { ...eventParams, sortState: data.sortState });
 
   eventBus.trigger(eventType, gridEvent);
@@ -220,7 +220,7 @@ export function emitAfterSort(store: Store, cancelSort: boolean, columnName: str
   const { id, data } = store;
   const eventBus = getEventBus(id);
   // @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
-  const eventTypes = (cancelSort ? ['afterCancelSort'] : ['afterSort', 'sort']) as EventType[];
+  const eventTypes = (cancelSort ? ['afterUnsort'] : ['afterSort', 'sort']) as EventType[];
 
   eventTypes.forEach(eventType => {
     const gridEvent = createGridEvent(eventType, { columnName, sortState: data.sortState });
@@ -266,20 +266,19 @@ export function createGridEvent(eventType: EventType, eventParams: EventParams) 
       };
       break;
     /**
-     * Occurs before canceling to sort.
-     * @event Grid#beforeCancelSort
+     * Occurs before unsorting.
+     * @event Grid#beforeUnsort
      * @property {Object} sortState - Current sort state of the grid
      * @property {string} columnName - Target column name
      * @property {boolean} multiple - Whether to use multiple sort
      * @property {Grid} instance - Current grid instance
      */
-    case 'beforeCancelSort':
+    case 'beforeUnsort':
     /**
      * Occurs after sorting.
      * @event Grid#sort
      * @property {Object} sortState - sort state
      * @property {string} columnName - Target column name
-     * @property {boolean} multiple - Whether to use multiple sort
      * @property {Grid} instance - Current grid instance
      */
     case 'sort':
@@ -288,19 +287,17 @@ export function createGridEvent(eventType: EventType, eventParams: EventParams) 
      * @event Grid#afterSort
      * @property {Object} sortState - sort state
      * @property {string} columnName - Target column name
-     * @property {boolean} multiple - Whether to use multiple sort
      * @property {Grid} instance - Current grid instance
      */
     case 'afterSort':
     /**
-     * Occurs after calceling to sort.
-     * @event Grid#afterCancelSort
+     * Occurs after unsorting.
+     * @event Grid#afterUnsort
      * @property {Object} sortState - sort state
      * @property {string} columnName - Target column name
-     * @property {boolean} multiple - Whether to use multiple sort
      * @property {Grid} instance - Current grid instance
      */
-    case 'afterCancelSort':
+    case 'afterUnsort':
       props = {
         sortState,
         columnName

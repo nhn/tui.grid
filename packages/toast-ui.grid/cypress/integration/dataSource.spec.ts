@@ -311,12 +311,12 @@ describe('sort()', () => {
       });
     });
 
-    it(`'beforeCancelSort' event should be triggered by ${type}`, () => {
+    it(`'beforeUnsort' event should be triggered by ${type}`, () => {
       const callback = cy.stub();
 
       createSortButonAlias();
 
-      cy.gridInstance().invoke('on', 'beforeCancelSort', callback);
+      cy.gridInstance().invoke('on', 'beforeUnsort', callback);
       cy.gridInstance().invoke('sort', 'id', false);
 
       cy.wait('@readDescData');
@@ -335,12 +335,12 @@ describe('sort()', () => {
       });
     });
 
-    it(`'afterCancelSort' event should be triggered by ${type}`, () => {
+    it(`'afterUnsort' event should be triggered by ${type}`, () => {
       const callback = cy.stub();
 
       createSortButonAlias();
 
-      cy.gridInstance().invoke('on', 'afterCancelSort', callback);
+      cy.gridInstance().invoke('on', 'afterUnsort', callback);
       cy.gridInstance().invoke('sort', 'id', false);
 
       cy.wait('@readDescData');

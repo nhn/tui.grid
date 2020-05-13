@@ -106,8 +106,8 @@ grid.on('mousedown', function(ev) {
 - `editingFinish`: When the editing of cell is finished
 - `beforeSort` : Before the data is sorted
 - `afterSort` : After the data is sorted
-- `beforeCancelSort` : Before the data is unsorted
-- `afterCancelSort` : After the data is unsorted
+- `beforeUnsort` : Before the data is unsorted
+- `afterUnsort` : After the data is unsorted
 - `sort` : After the data is sorted (**this event will be deprecated**, use `afterSort` event)
 - `filter` : when the data is filtered
 - `scrollEnd` : when scrolling at the bottommost
