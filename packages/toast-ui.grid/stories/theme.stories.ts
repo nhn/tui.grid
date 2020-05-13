@@ -2,13 +2,16 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 import { OptColumn } from '../types/options';
 import { cls } from '../src/helper/dom';
+import { Side } from '../types/store/focus';
 
 export default {
   title: 'Theme'
 };
 
-function getRsideBody(el) {
-  return el.querySelector(`.${cls('rside-area')} .${cls('body-area')}`);
+function getBody(el, side: Side) {
+  return el.querySelector(
+    `.${cls(side === 'L' ? 'lside-area' : 'rside-area')} .${cls('body-area')}`
+  );
 }
 
 function createGridWithTheme(options) {
@@ -63,7 +66,8 @@ function createGridWithTheme(options) {
     el,
     data,
     columns,
-    rowHeight: 35
+    rowHeight: 35,
+    rowHeaders: ['rowNum']
   });
 
   Grid.applyTheme(preset, extOptions);
@@ -104,14 +108,26 @@ export const rowHoverWithCustomTheme = () => {
     preset: 'clean',
     extOptions: {
       row: { hover: { background: '#0ed4ff' }, even: { background: '#feffab' } },
-      cell: { oddRow: { background: '#fefff3' } }
+      cell: {
+        oddRow: { background: '#fefff3' },
+        normal: {
+          border: '#ccc',
+          showVerticalBorder: true
+        },
+        rowHeader: {
+          showVerticalBorder: true,
+          border: '#ccc'
+        }
+      }
     }
   });
   grid.setSelectionRange({ start: [1, 1], end: [3, 2] });
 
   setTimeout(() => {
-    const row: HTMLElement = getRsideBody(el).querySelector(`.${cls('row-even')}`);
-    row.className = `${cls('row-even')} ${cls('row-hover')}`;
+    (['L', 'R'] as const).forEach(side => {
+      const row = getBody(el, side).querySelector(`.${cls('row-even')}`);
+      row.className = `${cls('row-even')} ${cls('row-hover')}`;
+    });
   });
 
   return el;

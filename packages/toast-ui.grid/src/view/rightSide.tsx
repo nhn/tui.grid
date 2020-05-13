@@ -54,7 +54,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     const style = {
       height: scrollXHeight,
       width: frozenBorderWidth,
-      marginLeft: -(frozenBorderWidth + cellBorderWidth)
+      marginLeft: frozenBorderWidth ? -(frozenBorderWidth + cellBorderWidth) : 0
     };
 
     return <div class={cls('scrollbar-frozen-border')} style={style} />;
@@ -71,7 +71,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 
   public render() {
-    const { marginLeft, width, summaryPosition, scrollY } = this.props;
+    const { marginLeft, width, summaryPosition, scrollY, scrollX, frozenBorderWidth } = this.props;
     const style = {
       display: 'block',
       marginLeft,
@@ -87,9 +87,9 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
         {scrollY && this.renderScrollbarYInnerBorder()}
         {scrollY && this.renderScrollbarYOuterBorder()}
         {scrollY && this.renderScrollbarRightTop()}
-        {this.renderScrollbarRightBottom()}
-        {this.renderScrollbarFrozenBorder()}
-        {this.renderFrozenBorder()}
+        {scrollX && this.renderScrollbarFrozenBorder()}
+        {(scrollX || scrollY) && this.renderScrollbarRightBottom()}
+        {!!frozenBorderWidth && this.renderFrozenBorder()}
       </div>
     );
   }

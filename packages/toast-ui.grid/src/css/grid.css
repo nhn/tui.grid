@@ -202,6 +202,7 @@
   table-layout: fixed;
   border-collapse: collapse;
   border: 1px hidden transparent;
+  border-bottom: none;
 }
 .tui-grid-lside-area .tui-grid-table {
   width: 100%;
@@ -392,6 +393,7 @@
   top: 0;
   left: 0;
   overflow: hidden;
+  z-index: 5;
 }
 .tui-grid-lside-area .tui-grid-body-area {
   margin-right: -17px;

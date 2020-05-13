@@ -60,12 +60,6 @@ Grid.applyTheme('striped', {
 
 ```js
 Grid.applyTheme('default', {
-  grid: {
-    border: '#e0e0e0'
-  },
-  toolbar: {
-    border: '#e0e0e0'
-  },
   cell: {
     normal: {
       background: '#fff',

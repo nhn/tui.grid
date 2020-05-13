@@ -67,12 +67,6 @@ With the code below, you can compare for yourself how the **default** and **clea
 
 ```js
 Grid.applyTheme('default', {
-  grid: {
-    border: '#e0e0e0'
-  },
-  toolbar: {
-    border: '#e0e0e0'
-  },
   cell: {
     normal: {
       background: '#fff',
