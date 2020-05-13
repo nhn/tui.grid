@@ -330,3 +330,16 @@ it('should update row number after sorting', () => {
     cy.wrap($el).should('have.text', `${idx + 1}`);
   });
 });
+
+it('should maintain the sortState after calling resetData with sortState option', () => {
+  const sortState = { columnName: 'alphabetA', ascending: true, multiple: false };
+
+  cy.createGrid({ data, columns });
+  createSortButtonAlias();
+
+  cy.gridInstance().invoke('sort', 'alphabetA', true);
+
+  cy.gridInstance().invoke('resetData', data, { sortState });
+
+  assertHaveSortingBtnClass('@first', 'btn-sorting-up');
+});
