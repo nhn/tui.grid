@@ -15,7 +15,8 @@ import {
   GridEventListener,
   Dictionary,
   OptFilter,
-  LifeCycleEventName
+  LifeCycleEventName,
+  ResetOptions
 } from '@t/options';
 import { Store } from '@t/store';
 import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
@@ -933,8 +934,7 @@ export default class Grid implements TuiGrid {
       this.dispatch('sort', columnName, ascending, multiple, false);
     } else {
       // @TODO: apply multi sort to dataSource
-      const data = { sortColumn: columnName, sortAscending: ascending };
-      this.dataProvider.readData(1, data, true);
+      this.dataProvider.sort(columnName, ascending, false);
     }
   }
 
@@ -946,7 +946,7 @@ export default class Grid implements TuiGrid {
     if (this.store.data.sortState.useClient) {
       this.dispatch('unsort', columnName);
     } else {
-      this.dataProvider.readData(1, {}, true);
+      this.dataProvider.unsort(columnName!);
     }
   }
 
@@ -1179,9 +1179,12 @@ export default class Grid implements TuiGrid {
   /**
    * Replace all rows with the specified list. This will not change the original data.
    * @param {Array} data - A list of new rows
+   * @param {Object} [options] - Options
+   * @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
+   * It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
    */
-  public resetData(data: OptRow[]) {
-    this.dispatch('resetData', data);
+  public resetData(data: OptRow[], options: ResetOptions = {}) {
+    this.dispatch('resetData', data, options);
   }
 
   /**
@@ -1301,7 +1304,11 @@ export default class Grid implements TuiGrid {
    * @param {Boolean} resetData - If set to true, last requested data will be ignored.
    */
   public readData(page: number, data?: Params, resetData?: boolean) {
-    this.dataProvider.readData(page, data, resetData);
+    if (data && data.sortColumn) {
+      this.dataProvider.sort(data.sortColumn, data.sortAscending!, false);
+    } else {
+      this.dataProvider.readData(page, data, resetData);
+    }
   }
 
   /**
