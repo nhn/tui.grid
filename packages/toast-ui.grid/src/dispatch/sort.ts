@@ -1,7 +1,7 @@
 import { Store } from '@t/store';
-import { SortedColumn, Data } from '@t/store/data';
+import { SortedColumn, Data, SortState } from '@t/store/data';
 import { SortingType } from '@t/store/column';
-import { findPropIndex } from '../helper/common';
+import { findPropIndex, deepCopy } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
@@ -9,12 +9,21 @@ import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination } from '../query/data';
 import { isComplexHeader } from '../query/column';
+import { GridEventProps } from '@t/event';
+
+type EventType = 'beforeSort' | 'beforeCancelSort' | 'afterSort' | 'afterCancelSort' | 'sort';
+interface EventParams {
+  columnName: string;
+  ascending?: boolean;
+  multiple?: boolean;
+  sortState: SortState;
+}
 
 function sortData(store: Store) {
   // @TODO: find more practical way to make observable
   // makes all data observable to sort the data properly;
   createObservableData(store, true);
-  const { data, id } = store;
+  const { data } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
@@ -37,17 +46,6 @@ function sortData(store: Store) {
     rawData.sort(sortRawData(options));
     viewData.sort(sortViewData(options));
   }
-
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ sortState: data.sortState });
-
-  /**
-   * Occurs when sorting.
-   * @event Grid#sort
-   * @property {number} sortState - sort state
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('sort', gridEvent);
 }
 
 function setInitialSortState(data: Data) {
@@ -62,13 +60,11 @@ function setSortStateForEmptyState(data: Data) {
 
 function toggleSortAscending(
   data: Data,
-  columnName: string,
+  index: number,
   ascending: boolean,
   sortingType: SortingType,
   cancelable: boolean
 ) {
-  const { sortState } = data;
-  const index = findPropIndex('columnName', columnName, sortState.columns);
   const defaultAscending = sortingType === 'asc';
 
   if (defaultAscending === ascending && cancelable) {
@@ -90,7 +86,8 @@ function changeSingleSortState(
   const sortedColumn = { columnName, ascending };
 
   if (columns.length === 1 && columns[0].columnName === columnName) {
-    toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
+    const index = findPropIndex('columnName', columnName, sortState.columns);
+    toggleSortAscending(data, index, ascending, sortingType, cancelable);
   } else {
     data.sortState.columns = [sortedColumn];
   }
@@ -114,15 +111,16 @@ function changeMultiSortState(
       ? [sortedColumn]
       : [...columns, sortedColumn];
   } else {
-    toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
+    toggleSortAscending(data, index, ascending, sortingType, cancelable);
   }
+  setSortStateForEmptyState(data);
 }
 
 export function changeSortState(
   { data, column }: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl: boolean,
+  multiple: boolean,
   cancelable = true
 ) {
   if (columnName === 'sortKey') {
@@ -130,7 +128,7 @@ export function changeSortState(
   } else {
     const { sortingType } = column.allColumnMap[columnName];
 
-    if (withCtrl) {
+    if (multiple) {
       changeMultiSortState(data, columnName, ascending, sortingType!, cancelable);
     } else {
       changeSingleSortState(data, columnName, ascending, sortingType!, cancelable);
@@ -153,7 +151,7 @@ export function sort(
   store: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl = false,
+  multiple = false,
   cancelable = true
 ) {
   const { data, column } = store;
@@ -162,8 +160,18 @@ export function sort(
   if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
-  changeSortState(store, columnName, ascending, withCtrl, cancelable);
+
+  const cancelSort = isCancelSort(store, columnName, ascending, cancelable);
+  const gridEvent = emitBeforeSort(store, cancelSort, { columnName, ascending, multiple });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  changeSortState(store, columnName, ascending, multiple, cancelable);
   applySortedData(store);
+
+  emitAfterSort(store, cancelSort, columnName);
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
@@ -173,6 +181,8 @@ export function unsort(store: Store, columnName = 'sortKey') {
   if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
+
+  emitBeforeSort(store, true, { columnName, multiple: true });
 
   if (columnName === 'sortKey') {
     setInitialSortState(data);
@@ -185,9 +195,120 @@ export function unsort(store: Store, columnName = 'sortKey') {
     }
   }
   applySortedData(store);
+  emitAfterSort(store, true, columnName);
 }
 
 export function initSortState(data: Data) {
   setInitialSortState(data);
   notify(data, 'sortState');
+}
+
+// eslint-disable-next-line prettier/prettier
+export function emitBeforeSort(store: Store, cancelSort: boolean, eventParams: Omit<EventParams, 'sortState'>) {
+  const { id, data } = store;
+  const eventBus = getEventBus(id);
+  const eventType = cancelSort ? 'beforeCancelSort' : 'beforeSort';
+  const gridEvent = createGridEvent(eventType, { ...eventParams, sortState: data.sortState });
+
+  eventBus.trigger(eventType, gridEvent);
+
+  return gridEvent;
+}
+
+// eslint-disable-next-line prettier/prettier
+export function emitAfterSort(store: Store, cancelSort: boolean, columnName: string) {
+  const { id, data } = store;
+  const eventBus = getEventBus(id);
+  // @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
+  const eventTypes = (cancelSort ? ['afterCancelSort'] : ['afterSort', 'sort']) as EventType[];
+
+  eventTypes.forEach(eventType => {
+    const gridEvent = createGridEvent(eventType, { columnName, sortState: data.sortState });
+    eventBus.trigger(eventType, gridEvent);
+  });
+}
+
+export function isCancelSort(
+  { data, column }: Store,
+  columnName: string,
+  ascending: boolean,
+  cancelable: boolean
+) {
+  const index = findPropIndex('columnName', columnName, data.sortState.columns);
+  const defaultAscending = column.allColumnMap[columnName].sortingType === 'asc';
+
+  return cancelable && ascending === defaultAscending && index !== -1;
+}
+
+export function createGridEvent(eventType: EventType, eventParams: EventParams) {
+  const { columnName, ascending, multiple } = eventParams;
+  const sortState = deepCopy(eventParams.sortState);
+  let props: GridEventProps = {};
+
+  /* eslint-disable no-fallthrough */
+  switch (eventType) {
+    /**
+     * Occurs before sorting.
+     * @event Grid#beforeSort
+     * @property {Object} sortState - Current sort state
+     * @property {string} columnName - Target column name
+     * @property {boolean} ascending - The next ascending state of a column.
+     * If the event is not stopped this ascending state will be applied to grid
+     * @property {boolean} multiple - Whether to use multiple sort
+     * @property {Grid} instance - Current grid instance
+     */
+    case 'beforeSort':
+      props = {
+        sortState,
+        columnName,
+        ascending,
+        multiple
+      };
+      break;
+    /**
+     * Occurs before canceling to sort.
+     * @event Grid#beforeCancelSort
+     * @property {Object} sortState - Current sort state of the grid
+     * @property {string} columnName - Target column name
+     * @property {boolean} multiple - Whether to use multiple sort
+     * @property {Grid} instance - Current grid instance
+     */
+    case 'beforeCancelSort':
+    /**
+     * Occurs after sorting.
+     * @event Grid#sort
+     * @property {Object} sortState - sort state
+     * @property {string} columnName - Target column name
+     * @property {boolean} multiple - Whether to use multiple sort
+     * @property {Grid} instance - Current grid instance
+     */
+    case 'sort':
+    /**
+     * Occurs after sorting.
+     * @event Grid#afterSort
+     * @property {Object} sortState - sort state
+     * @property {string} columnName - Target column name
+     * @property {boolean} multiple - Whether to use multiple sort
+     * @property {Grid} instance - Current grid instance
+     */
+    case 'afterSort':
+    /**
+     * Occurs after calceling to sort.
+     * @event Grid#afterCancelSort
+     * @property {Object} sortState - sort state
+     * @property {string} columnName - Target column name
+     * @property {boolean} multiple - Whether to use multiple sort
+     * @property {Grid} instance - Current grid instance
+     */
+    case 'afterCancelSort':
+      props = {
+        sortState,
+        columnName
+      };
+      break;
+    default: // do nothing
+  }
+  /* eslint-disable no-fallthrough */
+
+  return new GridEvent(props);
 }
