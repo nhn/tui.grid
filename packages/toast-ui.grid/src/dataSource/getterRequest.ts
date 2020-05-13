@@ -7,6 +7,7 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
+import { emitBeforeSort, isCancelSort, emitAfterSort } from '../dispatch/sort';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {
@@ -23,8 +24,12 @@ function handleSuccessReadData(config: Config, response: Response) {
 
   const { contents, pagination } = responseData;
 
-  dispatch('changeSortState', sortColumn, sortAscending, true);
-  dispatch(isScrollPagination(store.data) ? 'appendRows' : 'resetData', contents);
+  if (isScrollPagination(store.data)) {
+    dispatch('appendRows', contents);
+  } else {
+    const sortState = { columnName: sortColumn, ascending: sortAscending, multiple: true };
+    dispatch('resetData', contents, { sortState });
+  }
 
   if (pagination) {
     dispatch('updatePageOptions', { ...pagination, perPage });
@@ -50,28 +55,11 @@ function handleSuccessReadTreeData(config: Config, response: Response) {
 }
 
 export function readData(config: Config, page: number, data: Params = {}, resetData = false) {
-  const {
-    store,
-    dispatch,
-    api,
-    getLastRequiredData,
-    setLastRequiredData,
-    hideLoadingBar,
-    getRequestParams
-  } = config;
+  const { store, getLastRequiredData } = config;
   const lastRequiredData = getLastRequiredData();
-  const commonRequestParams = getRequestParams();
-
-  if (!api) {
-    return;
-  }
-
-  const ajaxConfig = createAjaxConfig(api.readData);
   const { treeColumnName } = store.column;
   const { perPage } = store.data.pageOptions;
-  const { method, url } = api.readData;
   const params = resetData ? { perPage, ...data, page } : { ...lastRequiredData, ...data, page };
-  const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
 
   let successCallback = handleSuccessReadData;
 
@@ -80,6 +68,77 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
     delete params.page;
     delete params.perPage;
   }
+
+  sendRequest(config, params, successCallback);
+}
+
+export function reloadData(config: Config) {
+  readData(config, config.getLastRequiredData().page || 1);
+}
+
+export function sort(
+  config: Config,
+  sortColumn: string,
+  sortAscending: boolean,
+  cancelable: boolean
+) {
+  const { store } = config;
+  const cancelSort = isCancelSort(store, sortColumn, sortAscending, cancelable);
+  const gridEvent = emitBeforeSort(store, cancelSort, {
+    columnName: sortColumn,
+    ascending: sortAscending,
+    multiple: false
+  });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  const params: Params = { perPage: store.data.pageOptions.perPage, page: 1 };
+  if (!cancelSort) {
+    params.sortColumn = sortColumn;
+    params.sortAscending = sortAscending;
+  }
+  const successCallback = (successConfig: Config, response: Response) => {
+    handleSuccessReadData(successConfig, response);
+    emitAfterSort(store, cancelSort, sortColumn);
+  };
+
+  sendRequest(config, params, successCallback);
+}
+
+export function unsort(config: Config, sortColumn: string) {
+  const { store } = config;
+
+  const gridEvent = emitBeforeSort(store, true, {
+    columnName: sortColumn,
+    multiple: false
+  });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  const params = { perPage: store.data.pageOptions.perPage, page: 1 };
+  const successCallback = (successConfig: Config, response: Response) => {
+    handleSuccessReadData(successConfig, response);
+    emitAfterSort(store, true, sortColumn);
+  };
+
+  sendRequest(config, params, successCallback);
+}
+
+function sendRequest(
+  config: Config,
+  params: Params,
+  successCallback: (config: Config, response: Response) => void
+) {
+  const { store, dispatch, api, setLastRequiredData, hideLoadingBar, getRequestParams } = config;
+  const commonRequestParams = getRequestParams();
+
+  const ajaxConfig = createAjaxConfig(api.readData);
+  const { method, url } = api.readData;
+  const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
 
   setLastRequiredData(params);
 
@@ -97,8 +156,4 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
     eventBus: getEventBus(store.id),
     ...ajaxConfig
   });
-}
-
-export function reloadData(config: Config) {
-  readData(config, config.getLastRequiredData().page || 1);
 }

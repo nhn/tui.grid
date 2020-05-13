@@ -26,6 +26,8 @@ export type DataProvider = {
   readData: (page: number, data?: Params, resetData?: boolean) => void | never;
   reloadData: () => void | never;
   setRequestParams: (params: Dictionary<any>) => void | never;
+  sort: (columnName: string, ascending: boolean, cancelable: boolean) => void | never;
+  unsort: (columnName: string) => void | never;
 };
 
 export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';

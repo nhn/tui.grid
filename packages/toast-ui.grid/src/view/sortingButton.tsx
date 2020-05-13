@@ -25,7 +25,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
 class SortingButtonComp extends Component<Props> {
   private handleClick = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
-    const withCtrl = ev.ctrlKey || ev.metaKey;
+    const multiple = ev.ctrlKey || ev.metaKey;
 
     if (!hasClass(target, 'btn-sorting')) {
       return;
@@ -39,17 +39,10 @@ class SortingButtonComp extends Component<Props> {
     const ascending = index !== -1 ? !columns[index].ascending : defaultAscending;
 
     if (sortState.useClient) {
-      dispatch('sort', columnName, ascending, withCtrl);
+      dispatch('sort', columnName, ascending, multiple);
     } else {
       // @TODO: apply multi sort to dataSource
-      const data =
-        ascending === defaultAscending && index !== -1
-          ? {}
-          : {
-              sortColumn: columnName,
-              sortAscending: ascending
-            };
-      dataProvider.readData(1, data, true);
+      dataProvider.sort(columnName, ascending, true);
     }
   };
 
