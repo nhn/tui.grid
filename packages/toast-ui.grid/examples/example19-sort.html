@@ -59,16 +59,5 @@
         }
       ]
     });
-    grid.on('beforeSort', (ev) => {
-      if (ev.columnName === 'name') {
-        const {sortState, nextColumnSortState} = ev;
-        console.log(nextColumnSortState)
-        ev.instance.resetData(gridData, { sortState: nextColumnSortState });
-        ev.stop();
-      }
-    })
-    grid.on('sort', (ev) => [
-      console.log(ev.sortState)
-    ])
   </script>
 </html>
