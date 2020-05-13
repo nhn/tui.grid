@@ -40,7 +40,7 @@ export function runMockServer() {
 
   cy.route({
     method: 'GET',
-    url: 'api/read?perPage=10&sortColumn=id&sortAscending=true&page=1',
+    url: 'api/read?perPage=10&page=1&sortColumn=id&sortAscending=true',
     response: {
       result: true,
       data: {
@@ -55,7 +55,7 @@ export function runMockServer() {
 
   cy.route({
     method: 'GET',
-    url: 'api/read?perPage=10&sortColumn=id&sortAscending=false&page=1',
+    url: 'api/read?perPage=10&page=1&sortColumn=id&sortAscending=false',
     response: {
       result: true,
       data: {

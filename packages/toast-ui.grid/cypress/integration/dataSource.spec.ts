@@ -266,6 +266,98 @@ describe('sort()', () => {
       assertHaveNotSortingBtnClass('btn-sorting-up');
       assertHaveNotSortingBtnClass('btn-sorting-down');
     });
+
+    it(`'beforeSort' event should be triggered by ${type}`, () => {
+      const callback = cy.stub();
+
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('on', 'beforeSort', callback);
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('sort', 'id', true);
+      }
+
+      cy.wait('@readAscData');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: false },
+        columnName: 'id',
+        ascending: true,
+        multiple: false
+      });
+    });
+
+    it(`'afterSort' event should be triggered by ${type}`, () => {
+      const callback = cy.stub();
+
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('on', 'afterSort', callback);
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('sort', 'id', true);
+      }
+
+      cy.wait('@readAscData');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'id', ascending: true }], useClient: false },
+        columnName: 'id'
+      });
+    });
+
+    it(`'beforeCancelSort' event should be triggered by ${type}`, () => {
+      const callback = cy.stub();
+
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('on', 'beforeCancelSort', callback);
+      cy.gridInstance().invoke('sort', 'id', false);
+
+      cy.wait('@readDescData');
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('unsort', 'id');
+      }
+
+      cy.wait('@readPage1');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'id', ascending: false }], useClient: false },
+        columnName: 'id'
+      });
+    });
+
+    it(`'afterCancelSort' event should be triggered by ${type}`, () => {
+      const callback = cy.stub();
+
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('on', 'afterCancelSort', callback);
+      cy.gridInstance().invoke('sort', 'id', false);
+
+      cy.wait('@readDescData');
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('unsort', 'id');
+      }
+
+      cy.wait('@readPage1');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: false },
+        columnName: 'id'
+      });
+    });
   });
 
   it('server side data is sorted properly when calls readData method', () => {
