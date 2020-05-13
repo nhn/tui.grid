@@ -375,7 +375,7 @@ describe('beforeSort', () => {
           columnName: 'name',
           ascending: true,
           multiple: false,
-          unsorted: false
+          cancelSort: false
         },
         columnName: 'name'
       });

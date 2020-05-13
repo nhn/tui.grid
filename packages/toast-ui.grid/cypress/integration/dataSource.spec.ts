@@ -290,7 +290,7 @@ describe('sort()', () => {
           columnName: 'id',
           ascending: true,
           multiple: false,
-          unsorted: false
+          cancelSort: false
         },
         columnName: 'id'
       });
