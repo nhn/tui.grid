@@ -109,8 +109,12 @@ grid.on('mousedown', function(ev) {
 - `beforeUnsort` : Before the data is unsorted
 - `afterUnsort` : After the data is unsorted
 - `sort` : After the data is sorted (**this event will be deprecated**, use `afterSort` event)
-- `filter` : when the data is filtered
-- `scrollEnd` : when scrolling at the bottommost
+- `beforeFilter` : Before the data is filtered
+- `afterFilter` : After the data is filtered
+- `beforeUnfilter` : Before the data is unfiltered
+- `afterUnfilter` : After the data is unfiltered
+- `filter` : After the data is filtered (**this event will be deprecated**, use `afterFilter` event)
+- `scrollEnd` : When scrolling at the bottommost
 
 There are other events that can be used when using `DataSource`.
 
