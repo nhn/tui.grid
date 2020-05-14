@@ -31,7 +31,8 @@
       "tmpdoc/view/container.js",
       "tmpdoc/view/root.js",
       "tmpdoc/dispatch/focus.js",
-      "tmpdoc/view/bodyArea.js"
+      "tmpdoc/view/bodyArea.js",
+      "tmpdoc/query/sort.js"
     ],
     "fileLink": false
   },
