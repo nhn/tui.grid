@@ -7,7 +7,8 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
-import { emitBeforeSort, isCancelSort, emitAfterSort } from '../dispatch/sort';
+import { emitBeforeSort, emitAfterSort } from '../dispatch/sort';
+import { isCancelSort } from '../query/sort';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {
