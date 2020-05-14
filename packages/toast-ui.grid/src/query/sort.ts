@@ -60,6 +60,7 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
     case 'beforeUnsort':
     /**
      * Occurs after sorting.
+     * @deprecated
      * @event Grid#sort
      * @property {Object} sortState - sort state
      * @property {string} columnName - Target column name
