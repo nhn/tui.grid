@@ -13,7 +13,7 @@ import {
   ComplexColumnInfo
 } from './store/column';
 import { SelectionUnit } from './store/selection';
-import { FilterOptionType } from './store/filterLayerState';
+import { FilterOptionType, OperatorType, FilterState } from './store/filterLayerState';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass } from './renderer';
@@ -61,7 +61,11 @@ export type GridEventName =
   | 'beforeSort'
   | 'afterSort'
   | 'beforeUnsort'
-  | 'afterUnsort';
+  | 'afterUnsort'
+  | 'beforeFilter'
+  | 'afterFilter'
+  | 'beforeUnfilter'
+  | 'afterUnfilter';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -430,4 +434,11 @@ export interface OptI18nData {
 
 export interface ResetOptions {
   sortState?: { columnName: string; ascending: boolean; multiple: boolean };
+  filterState?: {
+    columnName: string;
+    type: FilterOptionType;
+    operator: OperatorType;
+    conditionFn?: Function;
+    columnFilterState: FilterState[];
+  };
 }
