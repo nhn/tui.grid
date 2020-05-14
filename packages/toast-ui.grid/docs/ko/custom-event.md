@@ -108,7 +108,7 @@ grid.on('mousedown', (ev) => {
 - `afterSort` : 데이터를 정렬한 후
 - `beforeUnsort` : 데이터의 정렬이 해제되기 전
 - `afterUnsort` : 데이터의 정렬이 해제된 후
-- `sort` : 데이터를 정렬하기 후 (**deprecated 예정이니** `afterSort`를 사용)
+- `sort` : 데이터를 정렬하기 후 (**deprecated 되었으니** `afterSort`를 사용)
 - `filter` : 데이터를 필터링한 경우 
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 

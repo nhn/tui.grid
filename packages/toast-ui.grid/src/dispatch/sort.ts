@@ -77,8 +77,8 @@ function changeSingleSortState(
   const sortedColumn = { columnName, ascending };
 
   if (columns.length === 1 && columns[0].columnName === columnName) {
-    const index = findPropIndex('columnName', columnName, sortState.columns);
-    toggleSortAscending(data, index, ascending, sortingType, cancelable);
+    const columnIndex = findPropIndex('columnName', columnName, sortState.columns);
+    toggleSortAscending(data, columnIndex, ascending, sortingType, cancelable);
   } else {
     data.sortState.columns = [sortedColumn];
   }
@@ -94,14 +94,14 @@ function changeMultiSortState(
   const sortedColumn = { columnName, ascending };
   const { sortState } = data;
   const { columns } = sortState;
-  const index = findPropIndex('columnName', columnName, columns);
+  const columnIndex = findPropIndex('columnName', columnName, columns);
 
-  if (index === -1) {
+  if (columnIndex === -1) {
     data.sortState.columns = isInitialSortState(sortState)
       ? [sortedColumn]
       : [...columns, sortedColumn];
   } else {
-    toggleSortAscending(data, index, ascending, sortingType, cancelable);
+    toggleSortAscending(data, columnIndex, ascending, sortingType, cancelable);
   }
 }
 
@@ -193,8 +193,11 @@ export function initSortState(data: Data) {
   notify(data, 'sortState');
 }
 
-// eslint-disable-next-line prettier/prettier
-export function emitBeforeSort(store: Store, cancelSort: boolean, eventParams: Omit<EventParams, 'sortState'>) {
+export function emitBeforeSort(
+  store: Store,
+  cancelSort: boolean,
+  eventParams: Omit<EventParams, 'sortState'>
+) {
   const { id, data } = store;
   const eventBus = getEventBus(id);
   const eventType = cancelSort ? 'beforeUnsort' : 'beforeSort';

@@ -946,7 +946,7 @@ export default class Grid implements TuiGrid {
     if (this.store.data.sortState.useClient) {
       this.dispatch('unsort', columnName);
     } else {
-      this.dataProvider.unsort(columnName!);
+      this.dataProvider.unsort(columnName);
     }
   }
 

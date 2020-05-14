@@ -37,7 +37,7 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
      * @property {Object} sortState - Current sort state
      * @property {string} columnName - Target column name
      * @property {boolean} ascending - The next ascending state of a column.
-     * If the event is not stopped this ascending state will be applied to grid
+     * If the event is not stopped this ascending state will be applied to grid.
      * @property {boolean} multiple - Whether to use multiple sort
      * @property {Grid} instance - Current grid instance
      */

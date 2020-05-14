@@ -108,7 +108,7 @@ export function sort(
   sendRequest(config, params, successCallback);
 }
 
-export function unsort(config: Config, sortColumn: string) {
+export function unsort(config: Config, sortColumn = 'sortKey') {
   const { store } = config;
 
   const gridEvent = emitBeforeSort(store, true, {
