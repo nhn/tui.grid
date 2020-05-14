@@ -27,7 +27,7 @@ export type DataProvider = {
   reloadData: () => void | never;
   setRequestParams: (params: Dictionary<any>) => void | never;
   sort: (columnName: string, ascending: boolean, cancelable: boolean) => void | never;
-  unsort: (columnName: string) => void | never;
+  unsort: (columnName?: string) => void | never;
 };
 
 export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
