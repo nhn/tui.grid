@@ -525,25 +525,50 @@ describe('filter API', () => {
     cy.createGrid({ data, columns });
   });
 
-  it('unfilter()', () => {
-    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 30 }]);
+  describe('unfilter API', () => {
+    it('unfilter the specific column properly', () => {
+      cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 30 }]);
 
-    cy.getRsideBody().should('have.cellData', [
-      ['player3', '30'],
-      ['player7', '30']
-    ]);
+      cy.getRsideBody().should('have.cellData', [
+        ['player3', '30'],
+        ['player7', '30']
+      ]);
 
-    cy.gridInstance().invoke('unfilter', 'age');
+      cy.gridInstance().invoke('unfilter', 'age');
 
-    cy.getRsideBody().should('have.cellData', [
-      ['player1', '10'],
-      ['player2', '20'],
-      ['player3', '30'],
-      ['player4', '35'],
-      ['player5', '40'],
-      ['player6', '20'],
-      ['player7', '30']
-    ]);
+      cy.getRsideBody().should('have.cellData', [
+        ['player1', '10'],
+        ['player2', '20'],
+        ['player3', '30'],
+        ['player4', '35'],
+        ['player5', '40'],
+        ['player6', '20'],
+        ['player7', '30']
+      ]);
+    });
+
+    it.only('unfilter the all columns properly', () => {
+      const columnsWithMultiFilter = [
+        { name: 'id', filter: 'text' },
+        { name: 'age', filter: 'number' }
+      ];
+      cy.createGrid({ data, columns: columnsWithMultiFilter });
+
+      cy.gridInstance().invoke('filter', 'id', [{ code: 'eq', value: 'player4' }]);
+      cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '40' }]);
+
+      cy.gridInstance().invoke('unfilter');
+
+      cy.getRsideBody().should('have.cellData', [
+        ['player1', '10'],
+        ['player2', '20'],
+        ['player3', '30'],
+        ['player4', '35'],
+        ['player5', '40'],
+        ['player6', '20'],
+        ['player7', '30']
+      ]);
+    });
   });
 
   it('getFilterState()', () => {
