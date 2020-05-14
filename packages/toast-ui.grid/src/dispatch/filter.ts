@@ -8,7 +8,7 @@ import {
 import { OptFilter } from '@t/options';
 import { Store } from '@t/store';
 import { notify } from '../helper/observable';
-import { findProp, findPropIndex } from '../helper/common';
+import { findProp, findPropIndex, isUndefined } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { getUniqColumnData } from '../query/data';
 import { createColumnFilterOption } from '../store/column';
@@ -209,9 +209,26 @@ export function updateFilters({ data }: Store, columnName: string, nextColumnFil
   }
 }
 
-export function unfilter(store: Store, columnName: string) {
+function clearAll(store: Store) {
+  const gridEvent = emitBeforeFilter(store, 'beforeUnfilter', { columnName: null });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+  initFilter(store);
+  initLayerAndScrollAfterFiltering(store);
+  updateAllSummaryValues(store);
+  emitAfterFilter(store, 'afterUnfilter', null);
+}
+
+export function unfilter(store: Store, columnName?: string) {
   const { data, column } = store;
   const { filters } = data;
+
+  if (isUndefined(columnName)) {
+    clearAll(store);
+    return;
+  }
 
   if (isComplexHeader(column, columnName) || isHiddenColumn(column, columnName)) {
     return;
@@ -272,7 +289,7 @@ function emitBeforeFilter(store: Store, eventType: EventType, eventParams: Event
   return gridEvent;
 }
 
-export function emitAfterFilter(store: Store, eventType: EventType, columnName: string) {
+export function emitAfterFilter(store: Store, eventType: EventType, columnName: string | null) {
   const { id } = store;
   const eventBus = getEventBus(id);
   // @TODO: `filter` event will be deprecated. This event is replaced with `afterFilter` event

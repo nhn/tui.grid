@@ -247,7 +247,7 @@ declare namespace tui {
 
     public filter(columnName: string, state: FilterState[]): void;
 
-    public unfilter(columnName: string): void;
+    public unfilter(columnName?: string): void;
 
     public addColumnClassName(columnName: string, className: string): void;
 

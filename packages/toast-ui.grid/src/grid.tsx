@@ -1182,6 +1182,8 @@ export default class Grid implements TuiGrid {
    * @param {Object} [options] - Options
    * @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
    * It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
+   * @param {Object} [options.filterState] - If set the filterState, the filter state will be applied when the new rows are set.
+   * It is recommended that you do not use it unless you are getting the filtered data by communicating with the server without DataSource.
    */
   public resetData(data: OptRow[], options: ResetOptions = {}) {
     this.dispatch('resetData', data, options);
@@ -1564,7 +1566,7 @@ export default class Grid implements TuiGrid {
    * Remove filter state of specific column.
    * @param {string} columnName - column name to unfilter
    */
-  public unfilter(columnName: string) {
+  public unfilter(columnName?: string) {
     this.dispatch('unfilter', columnName);
   }
 

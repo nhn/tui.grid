@@ -11,7 +11,7 @@ export type EventType =
   | 'afterUnfilter'
   | 'filter';
 export interface EventParams {
-  columnName: string;
+  columnName: string | null;
   type?: FilterOptionType;
   operator?: OperatorType;
   conditionFn?: Function;
