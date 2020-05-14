@@ -40,9 +40,9 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
      * @property {Grid} instance - Current grid instance
      * @property {Object} filterState - Current filter state
      * @property {string} columnName - Target column name
-     * @property {string} filterType - Column Filter type
+     * @property {string} type - Column Filter type
      * @property {string} operator - The operator type('AND' | 'OR')
-     * @property {function} origin - Original function to filter the data in grid.
+     * @property {function} conditionFn - Original function to filter the data in grid.
      * If the event is not stopped this function will be executed for filtering the data.
      * @property {Array} columnFilterState - The code and value of column filter.
      * If the event is not stopped this state will be applied to grid.

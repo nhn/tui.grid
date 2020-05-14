@@ -60,7 +60,7 @@ function applyFilterBySelectUI(index: number) {
   toggleSelectFilter(index);
 }
 
-function assertFilterBtnClass(columnName: string, active = false) {
+function assertFilterBtnClass(active = false) {
   if (active) {
     cy.getByCls('btn-filter').should('have.class', cls('btn-filter-active'));
   } else {
@@ -118,12 +118,12 @@ describe('UI: Button', () => {
   });
 
   it('Inactive filter button does not have active className', () => {
-    assertFilterBtnClass('id');
+    assertFilterBtnClass();
   });
 
   it('active filter button has active className', () => {
     cy.gridInstance().invoke('filter', 'id', [{ code: 'eq', value: 'player1' }]);
-    assertFilterBtnClass('id', true);
+    assertFilterBtnClass(true);
   });
 
   it('If filter has showClearBtn option, clear button exists', () => {
@@ -913,4 +913,31 @@ describe('apply filter with formatted value', () => {
       });
     });
   });
+});
+
+it('should maintain the filterState after calling resetData with filterState option', () => {
+  const columns = [{ name: 'id' }, { name: 'age', filter: { type: 'text', operator: 'OR' } }];
+  const data = [
+    { id: 'player1', age: 10 },
+    { id: 'player2', age: 20 },
+    { id: 'player3', age: 30 },
+    { id: 'player4', age: 35 },
+    { id: 'player5', age: 40 },
+    { id: 'player6', age: 20 },
+    { id: 'player7', age: 30 }
+  ];
+  const filterState = {
+    operator: 'OR',
+    type: 'text',
+    columnName: 'age',
+    columnFilterState: [{ code: 'eq', value: 10 }]
+  };
+
+  cy.createGrid({ data, columns });
+
+  invokeFilter('age', [{ code: 'eq', value: 10 }]);
+
+  cy.gridInstance().invoke('resetData', data, { filterState });
+
+  assertFilterBtnClass(true);
 });
