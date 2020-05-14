@@ -18,7 +18,8 @@ import {
   OptRemoveRow,
   OptHeader,
   OptRow,
-  OptColumn
+  OptColumn,
+  ResetOptions
 } from './options';
 import {
   ModifiedRowsOptions,
@@ -179,7 +180,7 @@ declare namespace tui {
 
     public clear(): void;
 
-    public resetData(data: OptRow[]): void;
+    public resetData(data: OptRow[], options: ResetOptions): void;
 
     public addCellClassName(rowKey: RowKey, columnName: string, className: string): void;
 

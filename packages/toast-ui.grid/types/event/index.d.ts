@@ -20,6 +20,8 @@ export interface GridEventProps {
   sortState?: SortState;
   filterState?: Filter[] | null;
   resizedColumns?: ResizedColumn[];
+  ascending?: boolean;
+  multiple?: boolean;
 }
 
 export class TuiGridEvent {

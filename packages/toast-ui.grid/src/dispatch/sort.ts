@@ -5,16 +5,16 @@ import { findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
-import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination } from '../query/data';
 import { isComplexHeader } from '../query/column';
+import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
 
 function sortData(store: Store) {
   // @TODO: find more practical way to make observable
   // makes all data observable to sort the data properly;
   createObservableData(store, true);
-  const { data, id } = store;
+  const { data } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
@@ -37,17 +37,6 @@ function sortData(store: Store) {
     rawData.sort(sortRawData(options));
     viewData.sort(sortViewData(options));
   }
-
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ sortState: data.sortState });
-
-  /**
-   * Occurs when sorting.
-   * @event Grid#sort
-   * @property {number} sortState - sort state
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('sort', gridEvent);
 }
 
 function setInitialSortState(data: Data) {
@@ -62,13 +51,11 @@ function setSortStateForEmptyState(data: Data) {
 
 function toggleSortAscending(
   data: Data,
-  columnName: string,
+  index: number,
   ascending: boolean,
   sortingType: SortingType,
   cancelable: boolean
 ) {
-  const { sortState } = data;
-  const index = findPropIndex('columnName', columnName, sortState.columns);
   const defaultAscending = sortingType === 'asc';
 
   if (defaultAscending === ascending && cancelable) {
@@ -90,11 +77,11 @@ function changeSingleSortState(
   const sortedColumn = { columnName, ascending };
 
   if (columns.length === 1 && columns[0].columnName === columnName) {
-    toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
+    const columnIndex = findPropIndex('columnName', columnName, sortState.columns);
+    toggleSortAscending(data, columnIndex, ascending, sortingType, cancelable);
   } else {
     data.sortState.columns = [sortedColumn];
   }
-  setSortStateForEmptyState(data);
 }
 
 function changeMultiSortState(
@@ -107,14 +94,14 @@ function changeMultiSortState(
   const sortedColumn = { columnName, ascending };
   const { sortState } = data;
   const { columns } = sortState;
-  const index = findPropIndex('columnName', columnName, columns);
+  const columnIndex = findPropIndex('columnName', columnName, columns);
 
-  if (index === -1) {
+  if (columnIndex === -1) {
     data.sortState.columns = isInitialSortState(sortState)
       ? [sortedColumn]
       : [...columns, sortedColumn];
   } else {
-    toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
+    toggleSortAscending(data, columnIndex, ascending, sortingType, cancelable);
   }
 }
 
@@ -122,7 +109,7 @@ export function changeSortState(
   { data, column }: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl: boolean,
+  multiple: boolean,
   cancelable = true
 ) {
   if (columnName === 'sortKey') {
@@ -130,11 +117,12 @@ export function changeSortState(
   } else {
     const { sortingType } = column.allColumnMap[columnName];
 
-    if (withCtrl) {
+    if (multiple) {
       changeMultiSortState(data, columnName, ascending, sortingType!, cancelable);
     } else {
       changeSingleSortState(data, columnName, ascending, sortingType!, cancelable);
     }
+    setSortStateForEmptyState(data);
   }
 
   if (!data.sortState.useClient) {
@@ -153,7 +141,7 @@ export function sort(
   store: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl = false,
+  multiple = false,
   cancelable = true
 ) {
   const { data, column } = store;
@@ -162,8 +150,18 @@ export function sort(
   if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
-  changeSortState(store, columnName, ascending, withCtrl, cancelable);
+
+  const cancelSort = isCancelSort(store, columnName, ascending, cancelable);
+  const gridEvent = emitBeforeSort(store, cancelSort, { columnName, ascending, multiple });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  changeSortState(store, columnName, ascending, multiple, cancelable);
   applySortedData(store);
+
+  emitAfterSort(store, cancelSort, columnName);
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
@@ -173,6 +171,8 @@ export function unsort(store: Store, columnName = 'sortKey') {
   if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
+
+  emitBeforeSort(store, true, { columnName, multiple: true });
 
   if (columnName === 'sortKey') {
     setInitialSortState(data);
@@ -185,9 +185,37 @@ export function unsort(store: Store, columnName = 'sortKey') {
     }
   }
   applySortedData(store);
+  emitAfterSort(store, true, columnName);
 }
 
 export function initSortState(data: Data) {
   setInitialSortState(data);
   notify(data, 'sortState');
+}
+
+export function emitBeforeSort(
+  store: Store,
+  cancelSort: boolean,
+  eventParams: Omit<EventParams, 'sortState'>
+) {
+  const { id, data } = store;
+  const eventBus = getEventBus(id);
+  const eventType = cancelSort ? 'beforeUnsort' : 'beforeSort';
+  const gridEvent = createSortEvent(eventType, { ...eventParams, sortState: data.sortState });
+
+  eventBus.trigger(eventType, gridEvent);
+
+  return gridEvent;
+}
+
+export function emitAfterSort(store: Store, cancelSort: boolean, columnName: string) {
+  const { id, data } = store;
+  const eventBus = getEventBus(id);
+  // @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
+  const eventTypes = (cancelSort ? ['afterUnsort'] : ['afterSort', 'sort']) as EventType[];
+
+  eventTypes.forEach(eventType => {
+    const gridEvent = createSortEvent(eventType, { columnName, sortState: data.sortState });
+    eventBus.trigger(eventType, gridEvent);
+  });
 }

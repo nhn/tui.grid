@@ -5,7 +5,7 @@ import { OptRow } from '@t/options';
 import { Dispatch } from '../dispatch/create';
 import { isObject, deepMergedCopy } from '../helper/common';
 import { request } from './mutationRequest';
-import { readData, reloadData } from './getterRequest';
+import { readData, reloadData, sort, unsort } from './getterRequest';
 import { createAjaxConfig } from './helper/ajaxConfig';
 
 function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource): Config {
@@ -48,7 +48,9 @@ function createFallbackProvider(): DataProvider {
     request: errorFn,
     readData: errorFn,
     reloadData: errorFn,
-    setRequestParams: errorFn
+    setRequestParams: errorFn,
+    sort: errorFn,
+    unsort: errorFn
   };
 }
 
@@ -68,6 +70,8 @@ export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[]
     provider.request = request.bind(null, config);
     provider.readData = readData.bind(null, config);
     provider.reloadData = reloadData.bind(null, config);
+    provider.sort = sort.bind(null, config);
+    provider.unsort = unsort.bind(null, config);
     provider.setRequestParams = config.setRequestParams;
 
     if (initialRequest) {

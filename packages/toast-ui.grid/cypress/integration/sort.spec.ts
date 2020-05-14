@@ -185,7 +185,7 @@ describe('basic sort', () => {
       compareColumnData('alphabetB', ['F', 'A', 'C', 'B', 'B', 'E', 'B', 'A', 'A']);
     });
 
-    it('multiple sorting is canceld', () => {
+    it('multiple sorting is canceled', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('unsort', 'numberA');
       } else {
@@ -329,4 +329,17 @@ it('should update row number after sorting', () => {
   cy.getRowHeaderCells('_number').each(($el, idx) => {
     cy.wrap($el).should('have.text', `${idx + 1}`);
   });
+});
+
+it('should maintain the sortState after calling resetData with sortState option', () => {
+  const sortState = { columnName: 'alphabetA', ascending: true, multiple: false };
+
+  cy.createGrid({ data, columns });
+  createSortButtonAlias();
+
+  cy.gridInstance().invoke('sort', 'alphabetA', true);
+
+  cy.gridInstance().invoke('resetData', data, { sortState });
+
+  assertHaveSortingBtnClass('@first', 'btn-sorting-up');
 });
