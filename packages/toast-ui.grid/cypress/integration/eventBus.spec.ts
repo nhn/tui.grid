@@ -330,7 +330,6 @@ describe('rowHeader: checkbox', () => {
   });
 });
 
-// @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
 ['UI', 'API'].forEach(type => {
   it(`beforeSort by ${type}`, () => {
     const callback = cy.stub();
@@ -355,6 +354,7 @@ describe('rowHeader: checkbox', () => {
     const sortCallback = cy.stub();
     const afterSortCallback = cy.stub();
 
+    // @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
     cy.gridInstance().invoke('on', 'sort', sortCallback);
     cy.gridInstance().invoke('on', 'afterSort', afterSortCallback);
 
@@ -468,23 +468,91 @@ describe('filter', () => {
   }
 
   ['API', 'UI'].forEach(type => {
-    it(`filter by ${type}`, () => {
+    it(`beforeFilter by ${type}`, () => {
       const callback = cy.stub();
+      const columnFilterState = [{ code: 'eq', value: '20' }];
 
-      cy.gridInstance().invoke('on', 'filter', callback);
+      cy.gridInstance().invoke('on', 'beforeFilter', callback);
 
       if (type === 'UI') {
         applyFilterByUI('20');
       } else {
-        cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
+        cy.gridInstance().invoke('filter', 'age', columnFilterState);
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        columnName: 'age',
+        filterState: null,
+        type: 'number',
+        columnFilterState
+      });
+    });
+
+    it(`afterFilter by ${type}`, () => {
+      const filterCallback = cy.stub();
+      const afterFilterCallback = cy.stub();
+
+      // @TODO: `filter` event will be deprecated. This event is replaced with `afterFilter` event
+      cy.gridInstance().invoke('on', 'filter', filterCallback);
+      cy.gridInstance().invoke('on', 'afterFilter', afterFilterCallback);
+
+      if (type === 'UI') {
+        applyFilterByUI('20');
+      } else {
+        cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '20' }]);
+      }
+
+      cy.wrap(filterCallback).should(() => {
+        expect(filterCallback.args[0][0]).to.contain.subset({
+          columnName: 'age',
+          filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
+        });
+      });
+      cy.wrap(afterFilterCallback).should(() => {
+        expect(afterFilterCallback.args[0][0]).to.contain.subset({
+          columnName: 'age',
+          filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
+        });
+      });
+    });
+
+    it(`afterUnfilter by ${type}`, () => {
+      const callback = cy.stub();
+
+      cy.gridInstance().invoke('on', 'beforeUnfilter', callback);
+      cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '20' }]);
+
+      if (type === 'UI') {
+        applyFilterByUI('{backspace}{backspace}');
+      } else {
+        cy.gridInstance().invoke('unfilter', 'age');
       }
 
       cy.wrap(callback).should(() => {
-        setTimeout(() => {
-          expect(callback.args[0][0]).to.contain.subset({
-            filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
-          });
+        expect(callback.args[0][0]).to.contain.subset({
+          columnName: 'age',
+          filterState: null
         });
+      });
+    });
+  });
+
+  it(`beforeUnfilter by API`, () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'beforeUnfilter', callback);
+    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '20' }]);
+
+    // @TODO: UI state is not applied to grid properly due to cypress type().
+    // if (type === 'UI') {
+    //   applyFilterByUI('{backspace}{backspace}');
+    // }
+    cy.gridInstance().invoke('unfilter', 'age');
+
+    cy.wrap(callback).should(() => {
+      expect(callback.args[0][0]).to.contain.subset({
+        columnName: 'age',
+        filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
       });
     });
   });
