@@ -42,7 +42,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -51,7 +51,6 @@ import {
   getCheckedRows,
   findIndexByRowKey,
   findRowByRowKey,
-  getFilterStateWithOperator,
   getRowHeight,
   getFormattedValue
 } from './query/data';
@@ -70,6 +69,7 @@ import {
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
+import { getFilterState } from './query/filter';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -955,7 +955,7 @@ export default class Grid implements TuiGrid {
    * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
-    return this.store.data.sortState;
+    return deepCopy(this.store.data.sortState);
   }
 
   /**
@@ -1228,7 +1228,7 @@ export default class Grid implements TuiGrid {
   /**
    * Add custom event to grid.
    * @param {string} eventName - custom event name
-   * @param {Function} fn - event handler
+   * @param {function} fn - event handler
    */
   public on(eventName: GridEventName, fn: GridEventListener) {
     this.eventBus.on(eventName, fn);
@@ -1237,7 +1237,7 @@ export default class Grid implements TuiGrid {
   /**
    * Remove custom event to grid.
    * @param {string} eventName - custom event name
-   * @param {Function} fn - event handler
+   * @param {function} fn - event handler
    */
   public off(eventName: GridEventName, fn?: GridEventListener) {
     this.eventBus.off(eventName, fn);
@@ -1540,8 +1540,8 @@ export default class Grid implements TuiGrid {
    * @returns {Array.<FilterState>} - filter state
    */
   public getFilterState() {
-    const { data, column } = this.store;
-    return getFilterStateWithOperator(data, column);
+    // @TODO: unify the structure to ResetOptions.filterState type definition
+    return getFilterState(this.store);
   }
 
   /**
