@@ -8,7 +8,7 @@ import {
 import { OptFilter } from '@t/options';
 import { Store } from '@t/store';
 import { notify } from '../helper/observable';
-import { findProp, findPropIndex, isUndefined } from '../helper/common';
+import { findProp, findPropIndex } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { getUniqColumnData } from '../query/data';
 import { createColumnFilterOption } from '../store/column';
@@ -225,7 +225,7 @@ export function unfilter(store: Store, columnName?: string) {
   const { data, column } = store;
   const { filters } = data;
 
-  if (isUndefined(columnName)) {
+  if (!columnName) {
     clearAll(store);
     return;
   }

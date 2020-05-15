@@ -13,7 +13,7 @@ import {
   ComplexColumnInfo
 } from './store/column';
 import { SelectionUnit } from './store/selection';
-import { FilterOptionType, OperatorType, FilterState } from './store/filterLayerState';
+import { FilterOptionType, FilterState } from './store/filterLayerState';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass } from './renderer';
@@ -33,6 +33,7 @@ export type TypeObjectOptions<T> =
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
 export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
+// @TODO: 'sort', 'filter' event will be deprecated
 export type GridEventName =
   | 'click'
   | 'dblclick'

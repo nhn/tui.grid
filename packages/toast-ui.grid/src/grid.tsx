@@ -1180,15 +1180,17 @@ export default class Grid implements TuiGrid {
    * Replace all rows with the specified list. This will not change the original data.
    * @param {Array} data - A list of new rows
    * @param {Object} [options] - Options
-   * @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
-   * It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
-   * @param {Object} [options.sortState.columnName] - Target column name.
-   * @param {boolean} [options.sortState.ascending] - The ascending state of specific column which will apply to the grid.
-   * @param {Object} [options.sortState.multiple] - Whether to use multiple sorting.
-   * @param {Object} [options.filterState] - If set the filterState, the filter state will be applied when the new rows are set.
-   * It is recommended that you do not use it unless you are getting the filtered data by communicating with the server without DataSource.
-   * @param {Object} [options.filterState.columnName] - Target column name.
-   * @param {Object} [options.filterState.columnFilterState] - The column filter state of column which will apply to the grid.
+   *     @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
+   *       It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
+   *         @param {string} [options.sortState.columnName] - Target column name.
+   *         @param {boolean} [options.sortState.ascending] - The ascending state of specific column which will apply to the grid.
+   *         @param {boolean} [options.sortState.multiple] - Whether to use multiple sorting.
+   *     @param {Object} [options.filterState] - If set the filterState, the filter state will be applied when the new rows are set.
+   *       It is recommended that you do not use it unless you are getting the filtered data by communicating with the server without DataSource.
+   *         @param {string} [options.filterState.columnName] - Target column name.
+   *         @param {Object} [options.filterState.columnFilterState] - The column filter state of column which will apply to the grid.
+   *             @param {string} [options.filterState.columnFilterState.code] - Code for column filter(ex. 'eq', 'gt').
+   *             @param {string} [options.filterState.columnFilterState.value] - Input value for column filter.
    */
   public resetData(data: OptRow[], options: ResetOptions = {}) {
     this.dispatch('resetData', data, options);

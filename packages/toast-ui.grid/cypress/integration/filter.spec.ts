@@ -966,9 +966,7 @@ describe('resetData API with filterState', () => {
   });
 
   it('should not apply the filterState to the column has no filter option after calling resetData with filterState option', () => {
-    const filterState = { columnName: 'id', columnFilterState: [{ code: 'eq', value: 10 }] };
-
-    invokeFilter('id', [{ code: 'eq', value: 'player1' }]);
+    const filterState = { columnName: 'id', columnFilterState: [{ code: 'eq', value: 'player1' }] };
 
     cy.gridInstance().invoke('resetData', data, { filterState });
 

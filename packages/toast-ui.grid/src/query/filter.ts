@@ -4,6 +4,7 @@ import { GridEventProps } from '@t/event';
 import { deepCopyArray } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 
+// @TODO: 'filter' event will be deprecated
 export type EventType =
   | 'beforeFilter'
   | 'beforeUnfilter'

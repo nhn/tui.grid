@@ -4,6 +4,7 @@ import { SortState } from '@t/store/data';
 import GridEvent from '../event/gridEvent';
 import { findPropIndex, deepCopy } from '../helper/common';
 
+// @TODO: 'sort', 'filter' event will be deprecated
 export type EventType = 'beforeSort' | 'beforeUnsort' | 'afterSort' | 'afterUnsort' | 'sort';
 export interface EventParams {
   columnName: string;
