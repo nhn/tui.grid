@@ -684,22 +684,30 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
 
   if (sortState) {
     const { columnName, ascending, multiple } = sortState;
-    changeSortState(store, columnName, ascending, multiple, false);
-    notify(data, 'sortState');
+    const columnSortOption = column.allColumnMap[columnName].sortable;
+
+    if (columnSortOption) {
+      changeSortState(store, columnName, ascending, multiple, false);
+      notify(data, 'sortState');
+    }
   } else {
     initSortState(data);
   }
 
   if (filterState) {
-    const { type, operator, columnFilterState, columnName } = filterState;
-    const nextState = {
-      conditionFn: () => true,
-      type,
-      state: columnFilterState,
-      columnName,
-      operator
-    };
-    updateFilters(store, columnName, nextState);
+    const { columnFilterState, columnName } = filterState;
+    const columnFilterOption = column.allColumnMap[columnName].filter;
+
+    if (columnFilterOption) {
+      const nextState = {
+        conditionFn: () => true,
+        type: columnFilterOption.type,
+        state: columnFilterState,
+        columnName,
+        operator: columnFilterOption.operator
+      };
+      updateFilters(store, columnName, nextState);
+    }
   } else {
     initFilter(store);
   }

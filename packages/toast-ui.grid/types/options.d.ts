@@ -434,11 +434,5 @@ export interface OptI18nData {
 
 export interface ResetOptions {
   sortState?: { columnName: string; ascending: boolean; multiple: boolean };
-  filterState?: {
-    columnName: string;
-    type: FilterOptionType;
-    operator: OperatorType;
-    conditionFn?: Function;
-    columnFilterState: FilterState[];
-  };
+  filterState?: { columnName: string; columnFilterState: FilterState[] };
 }
