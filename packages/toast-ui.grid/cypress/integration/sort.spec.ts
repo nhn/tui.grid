@@ -8,7 +8,8 @@ const columns: OptColumn[] = [
   { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'desc' },
   { name: 'numberA', minWidth: 150, sortable: true, sortingType: 'desc' },
   { name: 'stringNumberA', minWidth: 150, sortable: true, sortingType: 'asc' },
-  { name: 'mixedValue', minWidth: 150, sortable: true }
+  { name: 'mixedValue', minWidth: 150, sortable: true },
+  { name: 'nonSortable', minWidth: 150 }
 ];
 
 function createSortButtonAlias() {
@@ -331,15 +332,27 @@ it('should update row number after sorting', () => {
   });
 });
 
-it('should maintain the sortState after calling resetData with sortState option', () => {
-  const sortState = { columnName: 'alphabetA', ascending: true, multiple: false };
+describe('resetData API with sortState', () => {
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+    createSortButtonAlias();
+  });
 
-  cy.createGrid({ data, columns });
-  createSortButtonAlias();
+  it('should apply the sortState after calling resetData with sortState option', () => {
+    const sortState = { columnName: 'alphabetA', ascending: true, multiple: false };
 
-  cy.gridInstance().invoke('sort', 'alphabetA', true);
+    cy.gridInstance().invoke('resetData', data, { sortState });
 
-  cy.gridInstance().invoke('resetData', data, { sortState });
+    assertHaveSortingBtnClass('@first', 'btn-sorting-up');
+  });
 
-  assertHaveSortingBtnClass('@first', 'btn-sorting-up');
+  it('should not apply the sortState to the column has no filter option after calling resetData with sortState option', () => {
+    const sortState = { columnName: 'nonSortable', ascending: true, multiple: false };
+
+    cy.gridInstance().invoke('resetData', data, { sortState });
+
+    cy.gridInstance()
+      .invoke('getSortState')
+      .should('eql', { useClient: true, columns: [{ columnName: 'sortKey', ascending: true }] });
+  });
 });

@@ -108,8 +108,12 @@ grid.on('mousedown', (ev) => {
 - `afterSort` : 데이터를 정렬한 후
 - `beforeUnsort` : 데이터의 정렬이 해제되기 전
 - `afterUnsort` : 데이터의 정렬이 해제된 후
-- `sort` : 데이터를 정렬하기 후 (**deprecated 되었으니** `afterSort`를 사용)
-- `filter` : 데이터를 필터링한 경우 
+- `sort` : 데이터를 정렬한 후 (**deprecated 되었으니** `afterSort`를 사용)
+- `beforeFilter` : 데이터를 필터링하기 전
+- `afterFilter` : 데이터를 필터링한 후
+- `beforeUnfilter` : 데이터의 필터링이 해제되기 전
+- `afterUnfilter` : 데이터의 필터링이 해제된 후
+- `filter` : 데이터를 필터링한 경우 (**deprecated 되었으니** `afterFilter`를 사용)
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.

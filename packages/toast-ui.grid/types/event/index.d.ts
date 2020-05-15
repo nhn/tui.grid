@@ -1,7 +1,7 @@
 import TuiGrid from '../index';
 import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
-import { Filter } from '../store/filterLayerState';
+import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
@@ -22,6 +22,10 @@ export interface GridEventProps {
   resizedColumns?: ResizedColumn[];
   ascending?: boolean;
   multiple?: boolean;
+  columnFilterState?: FilterState[];
+  conditionFn?: Function;
+  type?: FilterOptionType;
+  operator?: OperatorType;
 }
 
 export class TuiGridEvent {

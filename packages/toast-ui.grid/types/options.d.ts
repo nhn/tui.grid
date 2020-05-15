@@ -13,7 +13,7 @@ import {
   ComplexColumnInfo
 } from './store/column';
 import { SelectionUnit } from './store/selection';
-import { FilterOptionType } from './store/filterLayerState';
+import { FilterOptionType, FilterState } from './store/filterLayerState';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass } from './renderer';
@@ -33,6 +33,7 @@ export type TypeObjectOptions<T> =
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
 export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
+// @TODO: 'sort', 'filter' event will be deprecated
 export type GridEventName =
   | 'click'
   | 'dblclick'
@@ -61,7 +62,11 @@ export type GridEventName =
   | 'beforeSort'
   | 'afterSort'
   | 'beforeUnsort'
-  | 'afterUnsort';
+  | 'afterUnsort'
+  | 'beforeFilter'
+  | 'afterFilter'
+  | 'beforeUnfilter'
+  | 'afterUnfilter';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -430,4 +435,5 @@ export interface OptI18nData {
 
 export interface ResetOptions {
   sortState?: { columnName: string; ascending: boolean; multiple: boolean };
+  filterState?: { columnName: string; columnFilterState: FilterState[] };
 }

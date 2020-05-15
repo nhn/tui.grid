@@ -63,7 +63,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter } from './filter';
+import { initFilter, updateFilters } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
@@ -673,6 +673,7 @@ export function clearData(store: Store) {
 
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
   const { data, column, id } = store;
+  const { sortState, filterState } = options;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
@@ -681,15 +682,34 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   initFocus(store);
   initSelection(store);
 
-  if (options.sortState) {
-    const { columnName, ascending, multiple } = options.sortState;
-    changeSortState(store, columnName, ascending, multiple, false);
-    notify(data, 'sortState');
+  if (sortState) {
+    const { columnName, ascending, multiple } = sortState;
+
+    if (column.allColumnMap[columnName].sortable) {
+      changeSortState(store, columnName, ascending, multiple, false);
+      notify(data, 'sortState');
+    }
   } else {
     initSortState(data);
   }
 
-  initFilter(store);
+  if (filterState) {
+    const { columnFilterState, columnName } = filterState;
+    const columnFilterOption = column.allColumnMap[columnName].filter;
+
+    if (columnFilterOption) {
+      const nextState = {
+        conditionFn: () => true,
+        type: columnFilterOption.type,
+        state: columnFilterState,
+        columnName,
+        operator: columnFilterOption.operator
+      };
+      updateFilters(store, columnName, nextState);
+    }
+  } else {
+    initFilter(store);
+  }
   updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;

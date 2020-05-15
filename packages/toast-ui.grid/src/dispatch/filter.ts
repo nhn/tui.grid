@@ -2,7 +2,8 @@ import {
   OperatorType,
   FilterOptionType,
   FilterState,
-  ActiveColumnAddress
+  ActiveColumnAddress,
+  Filter
 } from '@t/store/filterLayerState';
 import { OptFilter } from '@t/options';
 import { Store } from '@t/store';
@@ -15,10 +16,10 @@ import { initScrollPosition } from './viewport';
 import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
-import GridEvent from '../event/gridEvent';
 import { isHiddenColumn, isComplexHeader } from '../query/column';
 import { setCheckedAllRows, updateHeights, updatePageOptions } from './data';
 import { updateAllSummaryValues } from './summary';
+import { createFilterEvent, EventType, EventParams } from '../query/filter';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;
@@ -171,7 +172,7 @@ export function filter(
   conditionFn: Function,
   state: FilterState[]
 ) {
-  const { data, column, id } = store;
+  const { column } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
 
   if (
@@ -182,42 +183,63 @@ export function filter(
     return;
   }
 
-  const filters = data.filters || [];
-  const { type } = columnFilterInfo;
-  const filterIndex = findPropIndex('columnName', columnName, filters);
+  const { type, operator } = columnFilterInfo;
+  const nextColumnFilterState = { columnName, type, conditionFn, state, operator };
+  const gridEvent = emitBeforeFilter(store, 'beforeFilter', nextColumnFilterState);
 
-  updatePageOptions(store, { page: 1 });
-
-  if (filterIndex >= 0) {
-    const columnFilter = filters[filterIndex];
-    filters.splice(filterIndex, 1, { ...columnFilter, conditionFn, state });
-  } else {
-    data.filters = filters.concat({ columnName, type, conditionFn, state });
+  if (gridEvent.isStopped()) {
+    return;
   }
 
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ filterState: data.filters });
-
-  /**
-   * Occurs when filtering
-   * @event Grid#filter
-   * @property {Grid} instance - Current grid instance
-   * @property {Object} filterState - filterState
-   */
-  eventBus.trigger('filter', gridEvent);
+  updatePageOptions(store, { page: 1 });
+  updateFilters(store, columnName, nextColumnFilterState);
   initLayerAndScrollAfterFiltering(store);
   updateAllSummaryValues(store);
+  emitAfterFilter(store, 'afterFilter', columnName);
 }
 
-export function unfilter(store: Store, columnName: string) {
+export function updateFilters({ data }: Store, columnName: string, nextColumnFilterState: Filter) {
+  const filters = data.filters || [];
+  const filterIndex = findPropIndex('columnName', columnName, filters);
+
+  if (filterIndex >= 0) {
+    filters.splice(filterIndex, 1, nextColumnFilterState);
+  } else {
+    data.filters = filters.concat(nextColumnFilterState);
+  }
+}
+
+function clearAll(store: Store) {
+  const gridEvent = emitBeforeFilter(store, 'beforeUnfilter', { columnName: null });
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+  initFilter(store);
+  initLayerAndScrollAfterFiltering(store);
+  updateAllSummaryValues(store);
+  emitAfterFilter(store, 'afterUnfilter', null);
+}
+
+export function unfilter(store: Store, columnName?: string) {
   const { data, column } = store;
   const { filters } = data;
+
+  if (!columnName) {
+    clearAll(store);
+    return;
+  }
 
   if (isComplexHeader(column, columnName) || isHiddenColumn(column, columnName)) {
     return;
   }
 
   if (filters) {
+    const gridEvent = emitBeforeFilter(store, 'beforeUnfilter', { columnName });
+
+    if (gridEvent.isStopped()) {
+      return;
+    }
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
       if (filters.length === 1) {
@@ -226,8 +248,10 @@ export function unfilter(store: Store, columnName: string) {
         filters.splice(filterIndex, 1);
       }
     }
+
     initLayerAndScrollAfterFiltering(store);
     updateAllSummaryValues(store);
+    emitAfterFilter(store, 'afterUnfilter', columnName);
   }
 }
 
@@ -255,4 +279,26 @@ export function initFilter(store: Store) {
   filterLayerState.activeFilterState = null;
   filterLayerState.activeColumnAddress = null;
   data.filters = null;
+}
+
+function emitBeforeFilter(store: Store, eventType: EventType, eventParams: EventParams) {
+  const eventBus = getEventBus(store.id);
+  const gridEvent = createFilterEvent(store, eventType, eventParams);
+  eventBus.trigger(eventType, gridEvent);
+
+  return gridEvent;
+}
+
+export function emitAfterFilter(store: Store, eventType: EventType, columnName: string | null) {
+  const { id } = store;
+  const eventBus = getEventBus(id);
+  // @TODO: `filter` event will be deprecated. This event is replaced with `afterFilter` event
+  const eventTypes = (eventType === 'afterFilter'
+    ? ['afterFilter', 'filter']
+    : ['afterUnfilter']) as EventType[];
+
+  eventTypes.forEach(type => {
+    const gridEvent = createFilterEvent(store, type, { columnName });
+    eventBus.trigger(type, gridEvent);
+  });
 }
