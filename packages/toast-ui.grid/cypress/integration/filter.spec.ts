@@ -1,5 +1,6 @@
 import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
+import { OptRow } from '@t/options';
 
 before(() => {
   cy.visit('/dist');
@@ -547,7 +548,7 @@ describe('filter API', () => {
       ]);
     });
 
-    it.only('unfilter the all columns properly', () => {
+    it('unfilter the all columns properly', () => {
       const columnsWithMultiFilter = [
         { name: 'id', filter: 'text' },
         { name: 'age', filter: 'number' }
@@ -940,29 +941,39 @@ describe('apply filter with formatted value', () => {
   });
 });
 
-it('should maintain the filterState after calling resetData with filterState option', () => {
-  const columns = [{ name: 'id' }, { name: 'age', filter: { type: 'text', operator: 'OR' } }];
-  const data = [
-    { id: 'player1', age: 10 },
-    { id: 'player2', age: 20 },
-    { id: 'player3', age: 30 },
-    { id: 'player4', age: 35 },
-    { id: 'player5', age: 40 },
-    { id: 'player6', age: 20 },
-    { id: 'player7', age: 30 }
-  ];
-  const filterState = {
-    operator: 'OR',
-    type: 'text',
-    columnName: 'age',
-    columnFilterState: [{ code: 'eq', value: 10 }]
-  };
+describe('resetData API with filterState', () => {
+  let data: OptRow[] = [];
+  beforeEach(() => {
+    data = [
+      { id: 'player1', age: 10 },
+      { id: 'player2', age: 20 },
+      { id: 'player3', age: 30 },
+      { id: 'player4', age: 35 },
+      { id: 'player5', age: 40 },
+      { id: 'player6', age: 20 },
+      { id: 'player7', age: 30 }
+    ];
+    const columns = [{ name: 'id' }, { name: 'age', filter: { type: 'text', operator: 'OR' } }];
+    cy.createGrid({ data, columns });
+  });
 
-  cy.createGrid({ data, columns });
+  it('should apply the filterState after calling resetData with filterState option', () => {
+    const filterState = { columnName: 'age', columnFilterState: [{ code: 'eq', value: 10 }] };
 
-  invokeFilter('age', [{ code: 'eq', value: 10 }]);
+    cy.gridInstance().invoke('resetData', data, { filterState });
 
-  cy.gridInstance().invoke('resetData', data, { filterState });
+    assertFilterBtnClass(true);
+  });
 
-  assertFilterBtnClass(true);
+  it('should not apply the filterState to the column has no filter option after calling resetData with filterState option', () => {
+    const filterState = { columnName: 'id', columnFilterState: [{ code: 'eq', value: 10 }] };
+
+    invokeFilter('id', [{ code: 'eq', value: 'player1' }]);
+
+    cy.gridInstance().invoke('resetData', data, { filterState });
+
+    cy.gridInstance()
+      .invoke('getFilterState')
+      .should('eq', null);
+  });
 });
