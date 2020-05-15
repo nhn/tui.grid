@@ -1,4 +1,5 @@
 import { Config } from './type';
+import { ResetOptions } from '@t/options';
 import { Params, Response, ResponseData } from '@t/dataSource';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
@@ -28,8 +29,11 @@ function handleSuccessReadData(config: Config, response: Response) {
   if (isScrollPagination(store.data)) {
     dispatch('appendRows', contents);
   } else {
-    const sortState = { columnName: sortColumn, ascending: sortAscending, multiple: true };
-    dispatch('resetData', contents, { sortState });
+    const options: ResetOptions = {};
+    if (sortColumn !== 'sortKey') {
+      options.sortState = { columnName: sortColumn, ascending: sortAscending, multiple: true };
+    }
+    dispatch('resetData', contents, options);
   }
 
   if (pagination) {
