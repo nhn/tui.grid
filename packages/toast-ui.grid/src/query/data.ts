@@ -78,9 +78,7 @@ export function findIndexByRowKey(
   const { filteredRawData, rawData, sortState } = data;
   const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
-  const modified = dataManager
-    ? dataManager.isModifiedByType('CREATE') || dataManager.isModifiedByType('UPDATE')
-    : false;
+  const modified = dataManager ? dataManager.isMixedOrder() : false;
 
   if (!isRowSpanEnabled(sortState) || column.keyColumnName || modified) {
     return findPropIndex('rowKey', rowKey, targetData);
