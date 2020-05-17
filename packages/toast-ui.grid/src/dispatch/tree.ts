@@ -368,7 +368,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   rawRows.forEach(rawRow => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
-    getDataManager(id).push('CREATE', rawRow);
+    getDataManager(id).push('CREATE', rawRow, true);
   });
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, startIdx);
