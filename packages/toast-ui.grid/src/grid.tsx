@@ -1150,7 +1150,7 @@ export default class Grid implements TuiGrid {
    */
   public getIndexOfRow(rowKey: RowKey) {
     const { data, column, id } = this.store;
-    return findIndexByRowKey(data, column, id, rowKey);
+    return findIndexByRowKey(data, column, id, rowKey, false);
   }
 
   /**
