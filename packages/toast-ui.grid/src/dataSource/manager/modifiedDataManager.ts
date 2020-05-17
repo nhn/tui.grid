@@ -110,7 +110,7 @@ export function createManager(): ModifiedDataManager {
 
     push(type: ModificationTypeCode, row: Row, mixed = false) {
       const { rowKey } = row;
-      mixedOrder = mixed;
+      mixedOrder = mixedOrder || mixed;
       if (type === 'UPDATE' || type === 'DELETE') {
         splice('UPDATE', rowKey);
         // if the row was already registered in createdRows,
