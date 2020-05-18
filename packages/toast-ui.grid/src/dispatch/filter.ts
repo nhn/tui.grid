@@ -209,6 +209,19 @@ export function updateFilters({ data }: Store, columnName: string, nextColumnFil
   }
 }
 
+export function clearFilter({ data }: Store, columnName: string) {
+  const filters = data.filters || [];
+  const filterIndex = findPropIndex('columnName', columnName, filters);
+
+  if (filterIndex >= 0) {
+    if (filters.length === 1) {
+      data.filters = null;
+    } else {
+      filters.splice(filterIndex, 1);
+    }
+  }
+}
+
 function clearAll(store: Store) {
   const gridEvent = emitBeforeFilter(store, 'beforeUnfilter', { columnName: null });
 
@@ -240,14 +253,15 @@ export function unfilter(store: Store, columnName?: string) {
     if (gridEvent.isStopped()) {
       return;
     }
-    const filterIndex = findPropIndex('columnName', columnName, filters);
-    if (filterIndex >= 0) {
-      if (filters.length === 1) {
-        data.filters = null;
-      } else {
-        filters.splice(filterIndex, 1);
-      }
-    }
+    clearFilter(store, columnName);
+    // const filterIndex = findPropIndex('columnName', columnName, filters);
+    // if (filterIndex >= 0) {
+    //   if (filters.length === 1) {
+    //     data.filters = null;
+    //   } else {
+    //     filters.splice(filterIndex, 1);
+    //   }
+    // }
 
     initLayerAndScrollAfterFiltering(store);
     updateAllSummaryValues(store);

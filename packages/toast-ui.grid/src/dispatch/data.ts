@@ -63,7 +63,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter, updateFilters } from './filter';
+import { initFilter, updateFilters, clearFilter } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
@@ -698,14 +698,18 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
     const columnFilterOption = column.allColumnMap[columnName].filter;
 
     if (columnFilterOption) {
-      const nextState = {
-        conditionFn: () => true,
-        type: columnFilterOption.type,
-        state: columnFilterState,
-        columnName,
-        operator: columnFilterOption.operator
-      };
-      updateFilters(store, columnName, nextState);
+      if (columnFilterState) {
+        const nextState = {
+          conditionFn: () => true,
+          type: columnFilterOption.type,
+          state: columnFilterState,
+          columnName,
+          operator: columnFilterOption.operator
+        };
+        updateFilters(store, columnName, nextState);
+      } else {
+        clearFilter(store, columnName);
+      }
     }
   } else {
     initFilter(store);

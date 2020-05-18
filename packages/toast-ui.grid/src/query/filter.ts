@@ -61,8 +61,8 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
      * Occurs before unfiltering
      * @event Grid#beforeUnfilter
      * @property {Grid} instance - Current grid instance
-     * @property {string} columnName- Target column name
-     * @property {Object} filterState- Current filter state
+     * @property {string} columnName - Target column name
+     * @property {Object} filterState - Current filter state
      */
     case 'beforeUnfilter':
     /**
@@ -70,16 +70,16 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
      * @deprecated
      * @event Grid#filter
      * @property {Grid} instance - Current grid instance
-     * @property {string} columnName- Target column name
-     * @property {Object} filterState- Current filter state
+     * @property {string} columnName - Target column name
+     * @property {Object} filterState - Current filter state
      */
     case 'filter':
     /**
      * Occurs after filtering
      * @event Grid#afterFilter
      * @property {Grid} instance - Current grid instance
-     * @property {string} columnName- Target column name
-     * @property {Object} filterState- Current filter state
+     * @property {string} columnName - Target column name
+     * @property {Object} filterState - Current filter state
      */
     case 'afterFilter':
 
@@ -87,8 +87,8 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
      * Occurs after unfiltering
      * @event Grid#afterUnfilter
      * @property {Grid} instance - Current grid instance
-     * @property {string} columnName- Target column name
-     * @property {Object} filterState- Current filter state
+     * @property {string} columnName - Target column name
+     * @property {Object} filterState - Current filter state
      */
     case 'afterUnfilter':
       props = {
