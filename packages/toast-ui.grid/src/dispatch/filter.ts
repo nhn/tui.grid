@@ -254,15 +254,6 @@ export function unfilter(store: Store, columnName?: string) {
       return;
     }
     clearFilter(store, columnName);
-    // const filterIndex = findPropIndex('columnName', columnName, filters);
-    // if (filterIndex >= 0) {
-    //   if (filters.length === 1) {
-    //     data.filters = null;
-    //   } else {
-    //     filters.splice(filterIndex, 1);
-    //   }
-    // }
-
     initLayerAndScrollAfterFiltering(store);
     updateAllSummaryValues(store);
     emitAfterFilter(store, 'afterUnfilter', columnName);
