@@ -433,7 +433,18 @@ export interface OptI18nData {
   };
 }
 
+export interface SortStateResetOption {
+  columnName: string;
+  ascending: boolean;
+  multiple: boolean;
+}
+
+export interface FilterStateResetOption {
+  columnName: string;
+  columnFilterState?: FilterState[];
+}
+
 export interface ResetOptions {
-  sortState?: { columnName: string; ascending: boolean; multiple: boolean };
-  filterState?: { columnName: string; columnFilterState: FilterState[] };
+  sortState?: SortStateResetOption;
+  filterState?: FilterStateResetOption;
 }

@@ -180,7 +180,7 @@ declare namespace tui {
 
     public clear(): void;
 
-    public resetData(data: OptRow[], options: ResetOptions): void;
+    public resetData(data: OptRow[], options?: ResetOptions): void;
 
     public addCellClassName(rowKey: RowKey, columnName: string, className: string): void;
 

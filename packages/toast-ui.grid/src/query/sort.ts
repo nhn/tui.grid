@@ -59,6 +59,12 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
      * @property {Grid} instance - Current grid instance
      */
     case 'beforeUnsort':
+      props = {
+        sortState,
+        columnName,
+        multiple
+      };
+      break;
     /**
      * Occurs after sorting.
      * @deprecated

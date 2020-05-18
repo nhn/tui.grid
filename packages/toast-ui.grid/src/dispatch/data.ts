@@ -24,7 +24,14 @@ import {
   isUndefined,
   silentSplice
 } from '../helper/common';
-import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
+import {
+  OptRow,
+  OptAppendRow,
+  OptRemoveRow,
+  ResetOptions,
+  FilterStateResetOption,
+  SortStateResetOption
+} from '@t/options';
 import {
   createViewRow,
   createData,
@@ -63,7 +70,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter, updateFilters } from './filter';
+import { initFilter, updateFilters, clearFilter } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
@@ -671,6 +678,44 @@ export function clearData(store: Store) {
   getDataManager(id).clearAll();
 }
 
+function resetSortState(store: Store, sortState?: SortStateResetOption) {
+  const { data, column } = store;
+  if (sortState) {
+    const { columnName, ascending, multiple } = sortState;
+
+    if (column.allColumnMap[columnName].sortable) {
+      changeSortState(store, columnName, ascending, multiple, false);
+      notify(data, 'sortState');
+    }
+  } else {
+    initSortState(data);
+  }
+}
+
+function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
+  if (filterState) {
+    const { columnFilterState, columnName } = filterState;
+    const columnFilterOption = store.column.allColumnMap[columnName].filter;
+
+    if (columnFilterOption) {
+      if (columnFilterState) {
+        const nextState = {
+          conditionFn: () => true,
+          type: columnFilterOption.type,
+          state: columnFilterState,
+          columnName,
+          operator: columnFilterOption.operator
+        };
+        updateFilters(store, columnName, nextState);
+      } else {
+        clearFilter(store, columnName);
+      }
+    }
+  } else {
+    initFilter(store);
+  }
+}
+
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
   const { data, column, id } = store;
   const { sortState, filterState } = options;
@@ -682,34 +727,9 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   initFocus(store);
   initSelection(store);
 
-  if (sortState) {
-    const { columnName, ascending, multiple } = sortState;
+  resetSortState(store, sortState);
+  resetFilterState(store, filterState);
 
-    if (column.allColumnMap[columnName].sortable) {
-      changeSortState(store, columnName, ascending, multiple, false);
-      notify(data, 'sortState');
-    }
-  } else {
-    initSortState(data);
-  }
-
-  if (filterState) {
-    const { columnFilterState, columnName } = filterState;
-    const columnFilterOption = column.allColumnMap[columnName].filter;
-
-    if (columnFilterOption) {
-      const nextState = {
-        conditionFn: () => true,
-        type: columnFilterOption.type,
-        state: columnFilterState,
-        columnName,
-        operator: columnFilterOption.operator
-      };
-      updateFilters(store, columnName, nextState);
-    }
-  } else {
-    initFilter(store);
-  }
   updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;
