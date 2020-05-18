@@ -974,4 +974,13 @@ describe('resetData API with filterState', () => {
       .invoke('getFilterState')
       .should('eq', null);
   });
+
+  it('should remove the filterState', () => {
+    invokeFilter('age', [{ code: 'eq', value: 10 }]);
+    const filterState = { columnName: 'age', columnFilterState: null };
+
+    cy.gridInstance().invoke('resetData', data, { filterState });
+
+    assertFilterBtnClass(false);
+  });
 });
