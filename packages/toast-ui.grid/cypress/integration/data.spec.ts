@@ -164,7 +164,7 @@ describe('appendRow()', () => {
     cy.gridInstance()
       .invoke('getModifiedRows')
       .its('createdRows.0')
-      .should('have.subset', { name: '', age: '' });
+      .should('have.subset', { name: null, age: null });
   });
 
   it('should update row number after calling appendRow()', () => {
@@ -214,6 +214,15 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('appendRow', { name: 'han', age: 29 });
 
     assertHeaderCheckboxStatus(false);
+  });
+
+  it('should make appended empty row overservable', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('appendRow');
+    cy.gridInstance().invoke('setValue', 2, 'name', 'observable');
+
+    cy.getCell(2, 'name').should('have.text', 'observable');
   });
 });
 
@@ -645,6 +654,15 @@ describe('setRow()', () => {
     cy.gridInstance().invoke('setRow', 1, { name: 'han', age: 29 });
 
     assertHeaderCheckboxStatus(false);
+  });
+
+  it('should make empty row overservable', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('setRow', 1, {});
+    cy.gridInstance().invoke('setValue', 1, 'name', 'observable');
+
+    cy.getCell(1, 'name').should('have.text', 'observable');
   });
 });
 

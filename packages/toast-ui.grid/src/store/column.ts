@@ -478,6 +478,10 @@ export function create({
       return this.allColumns.slice(this.rowHeaderCount);
     },
 
+    get emptyRow() {
+      return this.columnsWithoutRowHeader.reduce((acc, { name }) => ({ ...acc, [name]: null }), {});
+    },
+
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
   });
 }

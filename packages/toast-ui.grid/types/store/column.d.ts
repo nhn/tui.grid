@@ -179,6 +179,7 @@ export interface Column {
   readonly ignoredColumns: string[];
   readonly columnMapWithRelation: Dictionary<ColumnInfo>;
   readonly columnsWithoutRowHeader: ColumnInfo[];
+  readonly emptyRow: Record<string, null>;
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;

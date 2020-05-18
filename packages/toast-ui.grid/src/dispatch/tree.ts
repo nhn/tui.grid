@@ -10,7 +10,8 @@ import {
   setLoadingState,
   updateRowNumber,
   setCheckedAllRows,
-  uncheck
+  uncheck,
+  fillMissingColumnData
 } from './data';
 import {
   getParentRow,
@@ -357,6 +358,8 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
     keyColumnName: column.keyColumnName,
     offset
   });
+
+  fillMissingColumnData(column, rawRows);
 
   rawData.splice(startIdx, 0, ...rawRows);
   const viewRows = rawRows.map(rawRow =>

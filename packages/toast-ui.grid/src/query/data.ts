@@ -17,7 +17,6 @@ import {
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
-import { isRowHeader } from '../helper/column';
 import {
   createRawRow,
   generateDataCreationKey,
@@ -179,7 +178,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
 
   const { data, column } = store;
   const { rawData } = data;
-  const { columnMapWithRelation, allColumns } = column;
+  const { columnMapWithRelation } = column;
   const prevRow = rawData[rowIndex - 1];
   const options = { prevRow, lazyObservable: true };
 
@@ -187,11 +186,13 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
     row.rowKey = rowKey;
   }
 
-  const emptyData = allColumns
-    .filter(({ name }) => !isRowHeader(name))
-    .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = getMaxRowKey(data);
-  const rawRow = createRawRow({ ...emptyData, ...row }, index, columnMapWithRelation, options);
+  const rawRow = createRawRow(
+    { ...column.emptyRow, ...row },
+    index,
+    columnMapWithRelation,
+    options
+  );
   const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
 
   return { rawRow, viewRow, prevRow };

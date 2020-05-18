@@ -21,7 +21,6 @@ import {
   someProp,
   findPropIndex,
   shallowEqual,
-  isUndefined,
   silentSplice
 } from '../helper/common';
 import {
@@ -907,19 +906,15 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 }
 
-function fillMissingColumnData(allColumns: ColumnInfo[], rawData: Row[]) {
-  allColumns.forEach(({ name }) => {
-    rawData.forEach(row => {
-      if (isUndefined(row[name])) {
-        row[name] = null;
-      }
-    });
-  });
+export function fillMissingColumnData(column: Column, rawData: Row[]) {
+  for (let i = 0; i < rawData.length; i += 1) {
+    rawData[i] = { ...column.emptyRow, ...rawData[i] } as Row;
+  }
 }
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
-  fillMissingColumnData(column.allColumns, data.rawData);
+  fillMissingColumnData(column, rows);
 
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
@@ -941,7 +936,7 @@ function changeToObservableTreeData(
   const { rows } = originData;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  fillMissingColumnData(column.allColumns, rawData);
+  fillMissingColumnData(column, rows);
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
