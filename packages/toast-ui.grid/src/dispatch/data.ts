@@ -24,7 +24,14 @@ import {
   isUndefined,
   silentSplice
 } from '../helper/common';
-import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
+import {
+  OptRow,
+  OptAppendRow,
+  OptRemoveRow,
+  ResetOptions,
+  FilterStateResetOption,
+  SortStateResetOption
+} from '@t/options';
 import {
   createViewRow,
   createData,
@@ -671,17 +678,8 @@ export function clearData(store: Store) {
   getDataManager(id).clearAll();
 }
 
-export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
-  const { data, column, id } = store;
-  const { sortState, filterState } = options;
-  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent();
-
-  initScrollPosition(store);
-  initFocus(store);
-  initSelection(store);
-
+function resetSortState(store: Store, sortState?: SortStateResetOption) {
+  const { data, column } = store;
   if (sortState) {
     const { columnName, ascending, multiple } = sortState;
 
@@ -692,10 +690,12 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   } else {
     initSortState(data);
   }
+}
 
+function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
   if (filterState) {
     const { columnFilterState, columnName } = filterState;
-    const columnFilterOption = column.allColumnMap[columnName].filter;
+    const columnFilterOption = store.column.allColumnMap[columnName].filter;
 
     if (columnFilterOption) {
       if (columnFilterState) {
@@ -714,6 +714,22 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   } else {
     initFilter(store);
   }
+}
+
+export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
+  const { data, column, id } = store;
+  const { sortState, filterState } = options;
+  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent();
+
+  initScrollPosition(store);
+  initFocus(store);
+  initSelection(store);
+
+  resetSortState(store, sortState);
+  resetFilterState(store, filterState);
+
   updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;
