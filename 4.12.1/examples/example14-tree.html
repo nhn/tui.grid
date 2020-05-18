@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>14. Tree</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+      You can check for custom events in the console.<br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/tree.md"
+        target="_blank"
+        >here</a
+      >.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="contents">
+      <div class="code-html">
+        <div id="grid"></div>
+      </div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/tree-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: treeData,
+      rowHeaders: ['checkbox'],
+      bodyHeight: 500,
+      treeColumnOptions: {
+        name: 'name',
+        useCascadingCheckbox: true
+      },
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          width: 300
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ]
+    });
+
+    grid.on('expand', ev => {
+      const { rowKey } = ev;
+      const descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('descendantRows: ' + descendantRows);
+
+      if (!descendantRows.length) {
+        grid.appendRow(
+          {
+            name: 'dynamic loading data',
+            _children: [
+              {
+                name: 'leaf row'
+              },
+              {
+                name: 'internal row',
+                _children: []
+              }
+            ]
+          },
+          { parentRowKey: rowKey }
+        );
+      }
+    });
+
+    grid.on('collapse', ev => {
+      const { rowKey } = ev;
+      const descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('descendantRows: ' + descendantRows);
+    });
+  </script>
+</html>

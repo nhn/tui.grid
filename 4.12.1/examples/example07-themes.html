@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>7. Themes</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <style>
+      #grid {
+        width: 600px;
+        float: left;
+        margin-right: 20px;
+      }
+      #theme {
+        width: 200px;
+        float: left;
+      }
+      #custom-text {
+        width: 300px;
+        height: 520px;
+        font-size: 12px;
+      }
+      h4 {
+        margin: 5px 0;
+      }
+      .preset {
+        margin-bottom: 15px;
+      }
+      .custom p {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/themes.md"
+        target="_blank"
+        >here</a
+      >.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+      <div id="theme">
+        <div class="preset">
+          <h4>Preset</h4>
+          <button class="btn-theme" data-preset="default">default</button>
+          <button class="btn-theme" data-preset="striped">striped</button>
+          <button class="btn-theme" data-preset="clean">clean</button>
+        </div>
+        <div class="custom">
+          <h4>Custom options</h4>
+          <p>
+            <textarea id="custom-text">
+{
+  selection: {
+    background: '#4daaf9',
+    border: '#004082'
+  },
+  scrollbar: {
+    background: '#f5f5f5',
+    thumb: '#d9d9d9',
+    active: '#c1c1c1'
+  },
+  row: {
+    even: {
+      background: '#f3ffe3'
+    },
+    hover: {
+      background: '#ccc'
+    }
+  },
+  cell: {
+    normal: {
+      background: '#fbfbfb',
+      border: '#e0e0e0',
+      showVerticalBorder: true
+    },
+    header: {
+      background: '#eee',
+      border: '#ccc',
+      showVerticalBorder: true
+    },
+    rowHeader: {
+      border: '#ccc',
+      showVerticalBorder: true
+    },
+    editable: {
+      background: '#fbfbfb'
+    },
+    selectedHeader: {
+      background: '#d8d8d8'
+    },
+    focused: {
+      border: '#418ed4'
+    },
+    disabled: {
+      text: '#b0b0b0'
+    }
+  }
+}
+            </textarea>
+          </p>
+          <p><button class="btn-custom">Apply</button></p>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/babel" class="code-js">
+    const gridData = [
+      {
+        c1: '100013',
+        c2: 'Mustafa Cosme',
+        c3: 291232
+      },
+      {
+        c1: '201212',
+        c2: 'Gunnar Fausto',
+        c3: 32123
+      },
+      {
+        c1: '241221',
+        c2: 'Junior Morgan',
+        c3: 88823
+      },
+      {
+        c1: '991232',
+        c2: 'Tódor Ingo',
+        c3: 9981
+      },
+      {
+        c1: '299921',
+        c2: 'Zezé Obadiah',
+        c3: 140212
+      },
+      {
+        c1: '772193',
+        c2: 'Alfwin Damir',
+        c3: 30012
+      },
+      {
+        c1: '991232',
+        c2: 'Feroz Fredrik',
+        c3: 111023
+      },
+      {
+        c1: '572812',
+        c2: 'Archer Beniamino',
+        c3: 229123
+      },
+      {
+        c1: '310832',
+        c2: 'Dado Shaul',
+        c3: 123
+      },
+      {
+        c1: '321232',
+        c2: 'Svetoslav Eder',
+        c3: 81252
+      },
+      {
+        c1: '229123',
+        c2: 'Lauri Gligor',
+        c3: 230923
+      },
+      {
+        c1: '589282',
+        c2: 'Ruben Bèr',
+        c3: 11523
+      },
+      {
+        c1: '321234',
+        c2: 'Vicenç Hadrien',
+        c3: 29912
+      },
+      {
+        c1: '632123',
+        c2: 'Borna Rochus',
+        c3: 62842
+      },
+
+      {
+        c1: '122123',
+        c2: 'Kristijonas Tate',
+        c3: 199823
+      },
+      {
+        c1: '211232',
+        c2: 'Kumara Archimedes',
+        c3: 112522
+      },
+      {
+        c1: '487297',
+        c2: 'Hershel Radomil',
+        c3: 399123
+      },
+      {
+        c1: '232123',
+        c2: 'Toma Levan',
+        c3: 231253
+      },
+      {
+        c1: '828723',
+        c2: 'Njord Thoko',
+        c3: 89123
+      }
+    ];
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      rowHeight: 35,
+      rowHeaders: ['rowNum'],
+      header: {
+        height: 40
+      },
+      columns: [
+        {
+          header: 'ID',
+          name: 'c1'
+        },
+        {
+          header: 'Name',
+          defaultValue: 2,
+          name: 'c2'
+        },
+        {
+          header: 'Score',
+          name: 'c3'
+        }
+      ],
+      data: gridData
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('.btn-theme'), el => {
+      el.addEventListener('click', ev => {
+        const preset = ev.target.getAttribute('data-preset');
+        tui.Grid.applyTheme(preset);
+      });
+    });
+
+    document.querySelector('.btn-custom').addEventListener('click', () => {
+      const options = eval(`(${document.getElementById('custom-text').value})`);
+      tui.Grid.applyTheme('default', options);
+    });
+  </script>
+</html>

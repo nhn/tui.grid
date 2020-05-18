@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>26. Infinite Scroll</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+  <body>
+    <div class="description">
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid" style="width: 800px"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    function createRows() {
+      const rows = [];
+      for (let i = 0; i < 50; i += 1) {
+        const row = {};
+        for (let j = 0; j < 5; j += 1) {
+          row[`c${j}`] = (Math.random() * 100000000000).toFixed();
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+    
+    const columns = [];
+
+    for (let i = 0; i < 5; i += 1) {
+      const name = `c${i}`;
+      columns.push({ name, header: name });
+    }
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      bodyHeight: 500,
+      data: createRows(),
+      columns,
+      rowHeaders: ['rowNum']
+    });
+
+    grid.on('scrollEnd', () => {
+      grid.appendRows(createRows());
+    })
+  </script>
+</html>
