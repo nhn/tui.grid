@@ -181,14 +181,18 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
   const { columnMapWithRelation } = column;
   const prevRow = rawData[rowIndex - 1];
   const options = { prevRow, lazyObservable: true };
-  const emptyRow = column.emptyRowUsingColumn;
 
   if (!isUndefined(rowKey)) {
     row.rowKey = rowKey;
   }
 
   const index = getMaxRowKey(data);
-  const rawRow = createRawRow({ ...emptyRow, ...row }, index, columnMapWithRelation, options);
+  const rawRow = createRawRow(
+    { ...column.emptyRow, ...row },
+    index,
+    columnMapWithRelation,
+    options
+  );
   const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
 
   return { rawRow, viewRow, prevRow };

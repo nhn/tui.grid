@@ -907,9 +907,8 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 }
 
 export function fillMissingColumnData(column: Column, rawData: Row[]) {
-  const emptyRow = column.emptyRowUsingColumn;
   for (let i = 0; i < rawData.length; i += 1) {
-    rawData[i] = { ...emptyRow, ...rawData[i] } as Row;
+    rawData[i] = { ...column.emptyRow, ...rawData[i] } as Row;
   }
 }
 

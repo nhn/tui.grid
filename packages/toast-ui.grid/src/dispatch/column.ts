@@ -120,7 +120,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
-  const { columnMapWithRelation, treeColumnName, treeIcon, emptyRowUsingColumn } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon, emptyRow } = column;
 
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
@@ -129,7 +129,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   });
 
   data.rawData = data.rawData.map(row => {
-    const newRow = { ...emptyRowUsingColumn, ...row };
+    const newRow = { ...emptyRow, ...row };
     newRow.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
     return newRow;

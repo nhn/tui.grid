@@ -478,7 +478,7 @@ export function create({
       return this.allColumns.slice(this.rowHeaderCount);
     },
 
-    get emptyRowUsingColumn() {
+    get emptyRow() {
       return this.columnsWithoutRowHeader.reduce((acc, { name }) => ({ ...acc, [name]: null }), {});
     },
 
