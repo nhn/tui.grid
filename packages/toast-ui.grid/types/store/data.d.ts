@@ -127,3 +127,9 @@ export interface Data {
   filters: Filter[] | null;
   loadingState: LoadingState;
 }
+
+export type RemoveTargetRows = {
+  rowIndexes: number[];
+  rows: Row[];
+  nextRows: Row[];
+};

@@ -48,7 +48,7 @@ import { createEventBus, EventBus } from './event/eventBus';
 import {
   getConditionalRows,
   getCellAddressByIndex,
-  getCheckedRows,
+  getCheckedRowInfoList,
   findIndexByRowKey,
   findRowByRowKey,
   getRowHeight,
@@ -892,7 +892,8 @@ export default class Grid implements TuiGrid {
    * @returns {Array.<string|number>} - A list of the rowKey.
    */
   public getCheckedRowKeys(): RowKey[] {
-    return getCheckedRows(this.store).map(({ rowKey }) => rowKey);
+    const { rows } = getCheckedRowInfoList(this.store);
+    return rows.map(({ rowKey }) => rowKey);
   }
 
   /**
@@ -900,7 +901,8 @@ export default class Grid implements TuiGrid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    return getCheckedRows(this.store).map(row => getOriginObject(row as Observable<Row>));
+    const { rows } = getCheckedRowInfoList(this.store);
+    return rows.map(row => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -1499,17 +1501,15 @@ export default class Grid implements TuiGrid {
    * @returns {boolean} - True if there's at least one row removed.
    */
   public removeCheckedRows(showConfirm?: boolean) {
-    const rowKeys = this.getCheckedRowKeys();
-    const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
+    const checkedRowInfoList = getCheckedRowInfoList(this.store);
+    const deletedCount = checkedRowInfoList.rows.length;
+    const confirmMessage = getConfirmMessage('DELETE', deletedCount);
 
-    if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
-      rowKeys.forEach(rowKey => {
-        this.removeRow(rowKey);
-      });
+    if (deletedCount > 0 && (!showConfirm || confirm(confirmMessage))) {
+      this.dispatch('removeRows', checkedRowInfoList);
 
       return true;
     }
-
     return false;
   }
 

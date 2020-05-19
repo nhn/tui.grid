@@ -1,16 +1,15 @@
 import {
   Row,
-  PageOptions,
   RowKey,
   CellValue,
   RowAttributes,
-  Data,
-  LoadingState
+  LoadingState,
+  RemoveTargetRows
 } from '@t/store/data';
 import { Store } from '@t/store';
-import { SelectionRange, Range } from '@t/store/selection';
-import { ColumnInfo, Column } from '@t/store/column';
-import { OriginData } from '@t/dispatch';
+import { SelectionRange } from '@t/store/selection';
+import { ColumnInfo } from '@t/store/column';
+import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
@@ -20,25 +19,9 @@ import {
   isEmpty,
   someProp,
   findPropIndex,
-  shallowEqual,
   silentSplice
 } from '../helper/common';
-import {
-  OptRow,
-  OptAppendRow,
-  OptRemoveRow,
-  ResetOptions,
-  FilterStateResetOption,
-  SortStateResetOption
-} from '@t/options';
-import {
-  createViewRow,
-  createData,
-  generateDataCreationKey,
-  createRowSpan,
-  setRowRelationListItems,
-  createRawRow
-} from '../store/data';
+import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -48,7 +31,14 @@ import { changeTreeRowsCheckedState } from './tree';
 import { isRowSpanEnabled } from '../query/rowSpan';
 import { initFocus } from './focus';
 import { createTreeRawRow } from '../store/helper/tree';
-import { sort, initSortState, changeSortState } from './sort';
+import {
+  sort,
+  initSortState,
+  changeSortState,
+  updateSortKey,
+  sortByCurrentState,
+  resetSortKey
+} from './sort';
 import {
   findIndexByRowKey,
   findRowByRowKey,
@@ -73,92 +63,9 @@ import { initFilter, updateFilters, clearFilter } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
-
-function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
-  const { rowSpanMap: prevRowSpanMap } = prevRow;
-
-  if (isEmpty(prevRowSpanMap)) {
-    return;
-  }
-
-  Object.keys(prevRowSpanMap).forEach(columnName => {
-    const prevRowSpan = prevRowSpanMap[columnName];
-    if (prevRowSpan) {
-      const { count, mainRow: keyRow, mainRowKey } = prevRowSpan;
-      const mainRow = keyRow ? prevRow : findProp('rowKey', mainRowKey, data)!;
-      const mainRowSpan = mainRow.rowSpanMap[columnName];
-      const startOffset = keyRow || extendPrevRowSpan ? 1 : -count + 1;
-
-      // keep rowSpan state when appends row in the middle of rowSpan
-      if (mainRowSpan.spanCount > startOffset) {
-        mainRowSpan.count += 1;
-        mainRowSpan.spanCount += 1;
-
-        updateSubRowSpan(data, mainRow, columnName, 1, mainRowSpan.spanCount);
-      }
-    }
-  });
-}
-
-function updateRowSpanWhenRemove(
-  data: Row[],
-  removedRow: Row,
-  nextRow: Row,
-  keepRowSpanData: boolean
-) {
-  const { rowSpanMap: removedRowSpanMap } = removedRow;
-
-  if (isEmpty(removedRowSpanMap)) {
-    return;
-  }
-
-  Object.keys(removedRowSpanMap).forEach(columnName => {
-    const removedRowSpan = removedRowSpanMap[columnName];
-    const { count, mainRow: keyRow, mainRowKey } = removedRowSpan;
-    let mainRow: Row, spanCount: number;
-
-    if (keyRow) {
-      mainRow = nextRow;
-      spanCount = count - 1;
-
-      if (spanCount > 1) {
-        const mainRowSpan = mainRow.rowSpanMap[columnName];
-        mainRowSpan.mainRowKey = mainRow.rowKey;
-        mainRowSpan.mainRow = true;
-      }
-      if (keepRowSpanData) {
-        mainRow[columnName] = removedRow[columnName];
-      }
-    } else {
-      mainRow = findProp('rowKey', mainRowKey, data)!;
-      spanCount = mainRow.rowSpanMap[columnName].spanCount - 1;
-    }
-
-    if (spanCount > 1) {
-      const mainRowSpan = mainRow.rowSpanMap[columnName];
-      mainRowSpan.count = spanCount;
-      mainRowSpan.spanCount = spanCount;
-      updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
-    } else {
-      delete mainRow.rowSpanMap[columnName];
-    }
-  });
-}
-
-function updateSubRowSpan(
-  data: Row[],
-  mainRow: Row,
-  columnName: string,
-  startOffset: number,
-  spanCount: number
-) {
-  const mainRowIndex = findPropIndex('rowKey', mainRow.rowKey, data);
-
-  for (let offset = startOffset; offset < spanCount; offset += 1) {
-    const row = data[mainRowIndex + offset];
-    row.rowSpanMap[columnName] = createRowSpan(false, mainRow.rowKey, -offset, spanCount);
-  }
-}
+import { updatePageOptions, updatePageWhenRemovingRow } from './pagination';
+import { updateRowSpanWhenAppend, updateRowSpanWhenRemove } from './rowSpan';
+import { createObservableData } from './lazyObservable';
 
 function updateHeightsWithFilteredData(store: Store) {
   if (store.data.filters) {
@@ -175,25 +82,6 @@ export function updateHeights(store: Store) {
   rowCoords.heights = pageOptions.useClient
     ? filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
-}
-
-export function updatePageOptions(
-  { data }: Store,
-  pageOptions: PageOptions,
-  forceUpdatePage = false
-) {
-  const { pageOptions: orgPageOptions } = data;
-  if (!isEmpty(orgPageOptions)) {
-    // if infinite scrolling is applied, page number should be not reset to know the last loaded page
-    if (!forceUpdatePage && isScrollPagination(data)) {
-      delete pageOptions.page;
-    }
-    const newPageOptions = { ...orgPageOptions, ...pageOptions };
-
-    if (!shallowEqual(newPageOptions, orgPageOptions)) {
-      data.pageOptions = newPageOptions;
-    }
-  }
 }
 
 export function makeObservable(store: Store, rowIndex: number) {
@@ -543,38 +431,6 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-function updateSortKey(data: Data, sortKey: number, appended = true) {
-  const incremental = appended ? 1 : -1;
-  const { rawData, viewData } = data;
-
-  for (let idx = 0; idx < rawData.length; idx += 1) {
-    if (rawData[idx].sortKey >= sortKey) {
-      rawData[idx].sortKey += incremental;
-      viewData[idx].sortKey += incremental;
-    }
-  }
-  if (appended) {
-    rawData[sortKey].sortKey = sortKey;
-    viewData[sortKey].sortKey = sortKey;
-  }
-}
-
-function resetSortKey(data: Data, start: number) {
-  const { rawData, viewData } = data;
-  for (let idx = start; idx < rawData.length; idx += 1) {
-    rawData[idx].sortKey = idx;
-    viewData[idx].sortKey = idx;
-  }
-}
-
-function sortByCurrentState(store: Store) {
-  const { data } = store;
-  if (isSorted(data)) {
-    const { columnName, ascending } = data.sortState.columns[0];
-    sort(store, columnName, ascending, true, false);
-  }
-}
-
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
@@ -600,63 +456,42 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   getDataManager(id).push('CREATE', rawRow, inserted);
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
-  setLoadingState(store, 'DONE');
-  updateRowNumber(store, at ? at - 1 : 0);
-  setDisabledAllCheckbox(store);
-  setCheckedAllRows(store);
+  postUpdateAfterManipulation(store, at, 'DONE');
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, id, focus, column } = store;
-  const { rawData, viewData, sortState, pageOptions } = data;
-  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
+  const { rawData, viewData, sortState } = data;
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
 
-  if (rowIdx === -1) {
+  if (rowIndex === -1) {
     return;
   }
 
-  const nextRow = rawData[rowIdx + 1];
+  const nextRow = rawData[rowIndex + 1];
 
-  if (!isEmpty(pageOptions)) {
-    const { perPage, totalCount, page } = pageOptions;
-    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+  updatePageWhenRemovingRow(store, 1);
 
-    if ((totalCount - 1) % perPage) {
-      modifiedLastPage += 1;
-    }
-
-    updatePageOptions(
-      store,
-      {
-        totalCount: totalCount - 1,
-        page: modifiedLastPage < page ? modifiedLastPage : page
-      },
-      true
-    );
-  }
-
-  viewData.splice(rowIdx, 1);
-  const [removedRow] = rawData.splice(rowIdx, 1);
+  viewData.splice(rowIndex, 1);
+  const [removedRow] = rawData.splice(rowIndex, 1);
   updateHeights(store);
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
   }
+  initSelection(store);
 
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
-  if (rowIdx !== rawData.length) {
+  if (rowIndex !== rawData.length) {
     updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
   getDataManager(id).push('DELETE', removedRow);
   updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
-  setLoadingState(store, getLoadingState(rawData));
-  updateRowNumber(store, rowIdx);
-  setDisabledAllCheckbox(store);
-  setCheckedAllRows(store);
+  postUpdateAfterManipulation(store, rowIndex, getLoadingState(rawData));
 }
 
 export function clearData(store: Store) {
@@ -833,139 +668,21 @@ export function removeColumnClassName({ data }: Store, columnName: string, class
   });
 }
 
-export function movePage(store: Store, page: number) {
-  const { data } = store;
-
-  initScrollPosition(store);
-
-  data.pageOptions.page = page;
-  notify(data, 'pageOptions');
-
-  updateHeights(store);
-  initSelection(store);
-  initFocus(store);
-  setCheckedAllRows(store);
-  updateAllSummaryValues(store);
-}
-
-function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
-  if (treeColumnName && row._attributes.tree!.hidden) {
-    return acc;
-  }
-
-  if (!isObservable(row)) {
-    acc.rows.push(row);
-    acc.targetIndexes.push(index);
-  }
-
-  return acc;
-}
-
-function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
-  const [start, end] = rowRange;
-
-  return data.rawData
-    .slice(start, end)
-    .reduce(
-      (acc: OriginData, row, index) =>
-        getDataToBeObservable(acc, row, index + start, treeColumnName),
-      {
-        rows: [],
-        targetIndexes: []
-      }
-    );
-}
-
-function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
-  const [start, end] = rowRange;
-
-  return data
-    .filteredIndex!.slice(start, end)
-    .reduce(
-      (acc: OriginData, rowIndex) =>
-        getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),
-      { rows: [], targetIndexes: [] }
-    );
-}
-
-export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
-  const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
-  const { treeColumnName } = column;
-  const originData =
-    data.filters && !allRowRange
-      ? createFilteredOriginData(data, rowRange, treeColumnName)
-      : createOriginData(data, rowRange, treeColumnName);
-
-  if (!originData.rows.length) {
-    return;
-  }
-
-  if (treeColumnName) {
-    changeToObservableTreeData(column, data, originData, id);
-  } else {
-    changeToObservableData(column, data, originData);
-  }
-}
-
-export function fillMissingColumnData(column: Column, rawData: Row[]) {
-  for (let i = 0; i < rawData.length; i += 1) {
-    rawData[i] = { ...column.emptyRow, ...rawData[i] } as Row;
-  }
-}
-
-function changeToObservableData(column: Column, data: Data, originData: OriginData) {
-  const { targetIndexes, rows } = originData;
-  fillMissingColumnData(column, rows);
-
-  // prevRows is needed to create rowSpan
-  const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
-  const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
-
-  for (let index = 0, end = rawData.length; index < end; index += 1) {
-    const targetIndex = targetIndexes[index];
-    data.viewData.splice(targetIndex, 1, viewData[index]);
-    data.rawData.splice(targetIndex, 1, rawData[index]);
-  }
-}
-
-function changeToObservableTreeData(
-  column: Column,
-  data: Data,
-  originData: OriginData,
-  id: number
-) {
-  const { rows } = originData;
-  const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  fillMissingColumnData(column, rows);
-
-  // create new creation key for updating the observe function of hoc component
-  generateDataCreationKey();
-
-  rows.forEach(row => {
-    const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
-    const rawRow = createTreeRawRow(row, parentRow || null, columnMapWithRelation);
-    const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
-    const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
-
-    viewData.splice(foundIndex, 1, viewRow);
-    rawData.splice(foundIndex, 1, rawRow);
-  });
-}
-
 export function setLoadingState({ data }: Store, state: LoadingState) {
   data.loadingState = state;
 }
 
 export function setCheckedAllRows({ data }: Store) {
   const { filteredRawData, pageRowRange } = data;
+  let result = false;
 
-  data.checkedAllRows =
-    !!filteredRawData.length &&
-    filteredRawData
+  if (filteredRawData.length) {
+    const enableCheckRows = filteredRawData
       .slice(...pageRowRange)
-      .filter(row => !row._attributes.checkDisabled)
-      .every(row => row._attributes.checked);
+      .filter(row => !row._attributes.checkDisabled);
+    result = !!enableCheckRows.length && enableCheckRows.every(row => row._attributes.checked);
+  }
+  data.checkedAllRows = result;
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {
@@ -1002,9 +719,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   updateHeightsWithFilteredData(store);
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
-  updateRowNumber(store, rowIndex);
-  setDisabledAllCheckbox(store);
-  setCheckedAllRows(store);
+  postUpdateAfterManipulation(store, rowIndex, 'DONE');
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
@@ -1070,8 +785,47 @@ export function appendRows(store: Store, inputData: OptRow[]) {
 
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
-  updateRowNumber(store, startIndex);
   updateHeights(store);
+  postUpdateAfterManipulation(store, startIndex, 'DONE');
+}
+
+export function removeRows(store: Store, targetRows: RemoveTargetRows) {
+  const { data, id, focus } = store;
+  const { sortState, viewData, rawData } = data;
+  const { rowIndexes, rows, nextRows } = targetRows;
+  const deletedCount = rowIndexes.length;
+
+  updatePageWhenRemovingRow(store, deletedCount);
+
+  rowIndexes.forEach((rowIndex, i) => {
+    const nextRow = nextRows[i];
+    const [removedRow] = silentSplice(rawData, rowIndex - i, 1);
+    silentSplice(viewData, rowIndex - i, 1);
+
+    if (nextRow) {
+      if (isRowSpanEnabled(sortState)) {
+        updateRowSpanWhenRemove(rawData, removedRow, nextRow, false);
+      }
+    }
+    getDataManager(id).push('DELETE', removedRow);
+    updateSortKey(data, removedRow.sortKey + 1, false);
+  });
+
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+  updateHeights(store);
+
+  if (someProp('rowKey', focus.rowKey, rows)) {
+    initFocus(store);
+  }
+  initSelection(store);
+
+  updateAllSummaryValues(store);
+  postUpdateAfterManipulation(store, rowIndexes[0], getLoadingState(rawData));
+}
+
+function postUpdateAfterManipulation(store: Store, rowIndex: number, state: LoadingState) {
+  setLoadingState(store, state);
+  updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
 }

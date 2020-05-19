@@ -38,12 +38,13 @@ function calculateRange(
   let start = findIndexByPosition(offsets, scrollPos);
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
   const { filteredRawData, sortState, pageRowRange } = data;
+  const dataLength = filteredRawData.length;
 
   if (rowCalculation && isClientPagination(data)) {
     [start, end] = pageRowRange;
   }
 
-  if (filteredRawData.length && rowCalculation && isRowSpanEnabled(sortState)) {
+  if (dataLength && dataLength >= start && rowCalculation && isRowSpanEnabled(sortState)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, filteredRawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
