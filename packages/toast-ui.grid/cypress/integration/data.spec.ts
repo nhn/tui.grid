@@ -380,7 +380,7 @@ describe('removeRow()', () => {
 describe('removeCheckedRows()', () => {
   beforeEach(() => {
     // @ts-ignore
-    createGrid({ rowHeaders: ['_checked'] });
+    createGrid({ rowHeaders: ['checkbox'] });
   });
 
   it('remove checked rows.', () => {
@@ -408,6 +408,23 @@ describe('removeCheckedRows()', () => {
     cy.gridInstance().invoke('removeCheckedRows', true);
 
     cy.getCell(1, 'name').should('exist');
+  });
+
+  it('header checkbox should be released after removing checked rows regardless of disabled row', () => {
+    cy.gridInstance().invoke('disableRowCheck', 0);
+    cy.gridInstance().invoke('checkAll');
+
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.getCell(0, 'name').should('exist');
+    cy.getCell(1, 'name').should('not.exist');
+
+    cy.getRowHeaderCell(0, '_checked')
+      .find('input')
+      .should('not.be.checked');
+    cy.getHeaderCell('_checked')
+      .find('input')
+      .should('not.be.checked');
   });
 });
 

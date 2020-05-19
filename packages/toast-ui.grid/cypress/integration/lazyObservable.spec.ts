@@ -257,6 +257,18 @@ describe('should API is executed properly on lazy observable data', () => {
       .invoke('getFormattedValue', 19, 'name')
       .should('eq', 'Chaos And The Calm');
   });
+
+  it('removeCheckedRows()', () => {
+    scrollToBottom();
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('uncheck', 10);
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.getCellByIdx(0, 0).should('have.text', 'Bush');
+    cy.getCellByIdx(0, 1).should('have.text', 'Snoop Dogg');
+    cy.getCellByIdx(0, 2).should('have.text', 'EP');
+  });
 });
 
 describe('should API is executed properly on lazy observable data(tree)', () => {
