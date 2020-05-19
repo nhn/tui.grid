@@ -1,6 +1,6 @@
 import { OptRow, Dictionary } from '@t/options';
 import { Store } from '@t/store';
-import { Data, Row, RowKey, SortState } from '@t/store/data';
+import { Data, Row, RowKey, SortState, RemoveTargetRows } from '@t/store/data';
 import { Column } from '@t/store/column';
 import {
   isFunction,
@@ -40,8 +40,22 @@ export function isEditableCell(data: Data, column: Column, rowIndex: number, col
   return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
 
-export function getCheckedRows({ data }: Store) {
-  return data.rawData.filter(({ _attributes }) => _attributes.checked);
+export function getCheckedRowInfoList({ data }: Store) {
+  const targetRows: RemoveTargetRows = {
+    rowIndexes: [],
+    rows: [],
+    nextRows: []
+  };
+  data.rawData.reduce((acc, row, index) => {
+    if (row._attributes.checked) {
+      acc.rowIndexes.push(index);
+      acc.rows.push(row);
+      acc.nextRows.push(data.rawData[index + 1]);
+    }
+    return acc;
+  }, targetRows);
+
+  return targetRows;
 }
 
 export function getConditionalRows(

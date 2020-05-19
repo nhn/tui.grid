@@ -17,9 +17,10 @@ import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import { isHiddenColumn, isComplexHeader } from '../query/column';
-import { setCheckedAllRows, updateHeights, updatePageOptions } from './data';
+import { setCheckedAllRows, updateHeights } from './data';
 import { updateAllSummaryValues } from './summary';
 import { createFilterEvent, EventType, EventParams } from '../query/filter';
+import { updatePageOptions } from './pagination';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;

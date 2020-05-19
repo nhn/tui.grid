@@ -11,6 +11,7 @@ import * as renderState from './renderState';
 import * as tree from './tree';
 import * as sort from './sort';
 import * as filter from './filter';
+import * as pagination from './pagination';
 import { Store } from '@t/store';
 
 const dispatchMap = {
@@ -26,7 +27,8 @@ const dispatchMap = {
   ...renderState,
   ...tree,
   ...sort,
-  ...filter
+  ...filter,
+  ...pagination
 };
 
 type DispatchMap = typeof dispatchMap;
