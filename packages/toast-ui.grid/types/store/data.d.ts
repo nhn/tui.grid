@@ -3,7 +3,7 @@ import { Filter } from './filterLayerState';
 import { ValidationType, InvalidColumn } from './column';
 import { Range } from './selection';
 
-export type CellValue = number | string | boolean | null | undefined;
+export type CellValue = number | string | boolean | null | undefined | object;
 export type RowKey = number | string;
 export type RowSpanMap = Dictionary<RowSpan>;
 
