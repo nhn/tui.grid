@@ -1,6 +1,8 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
+import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
+import { ColumnCoords } from '@t/store/columnCoords';
 import { createViewRow, getFormattedValue } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
 import { notify } from '../helper/observable';
@@ -10,8 +12,7 @@ import {
   setLoadingState,
   updateRowNumber,
   setCheckedAllRows,
-  uncheck,
-  fillMissingColumnData
+  uncheck
 } from './data';
 import {
   getParentRow,
@@ -29,9 +30,8 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
 import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/common';
-import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
 import { cls } from '../helper/dom';
-import { ColumnCoords } from '@t/store/columnCoords';
+import { fillMissingColumnData } from './lazyObservable';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -73,7 +73,6 @@ function expand(store: Store, row: Row, recursive?: boolean) {
   }
 
   const { data, rowCoords, dimension, column, id, viewport, columnCoords } = store;
-
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, true);

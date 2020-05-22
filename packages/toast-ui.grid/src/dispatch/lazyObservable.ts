@@ -1,10 +1,9 @@
 import { Store } from '@t/store';
-import { ColumnInfo, Column } from '@t/store/column';
+import { Column } from '@t/store/column';
 import { Row, Data } from '@t/store/data';
 import { Range } from '@t/store/selection';
 import { OriginData } from '@t/dispatch';
 import { isObservable } from '../helper/observable';
-import { isUndefined } from '../helper/common';
 import { createData, generateDataCreationKey, createViewRow } from '../store/data';
 import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
@@ -47,7 +46,7 @@ function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: 
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
-  fillMissingColumnData(column.allColumns, data.rawData);
+  fillMissingColumnData(column, rows);
 
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
@@ -69,7 +68,7 @@ function changeToObservableTreeData(
   const { rows } = originData;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  fillMissingColumnData(column.allColumns, rawData);
+  fillMissingColumnData(column, rows);
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
@@ -85,14 +84,10 @@ function changeToObservableTreeData(
   });
 }
 
-function fillMissingColumnData(allColumns: ColumnInfo[], rawData: Row[]) {
-  allColumns.forEach(({ name }) => {
-    rawData.forEach(row => {
-      if (isUndefined(row[name])) {
-        row[name] = null;
-      }
-    });
-  });
+export function fillMissingColumnData(column: Column, rawData: Row[]) {
+  for (let i = 0; i < rawData.length; i += 1) {
+    rawData[i] = { ...column.emptyRow, ...rawData[i] } as Row;
+  }
 }
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
