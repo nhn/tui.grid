@@ -15,7 +15,8 @@ import {
   OptRemoveRow,
   ResetOptions,
   SortStateResetOption,
-  FilterStateResetOption
+  FilterStateResetOption,
+  PageStateResetOption
 } from '@t/options';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -26,7 +27,8 @@ import {
   isEmpty,
   someProp,
   findPropIndex,
-  silentSplice
+  silentSplice,
+  isNumber
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
@@ -558,9 +560,26 @@ function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
   }
 }
 
+function resetPageState(store: Store, totalCount: number, pageState?: PageStateResetOption) {
+  let page = 1;
+  let perPage = store.data.pageOptions.perPage;
+
+  if (pageState) {
+    page = pageState.page;
+
+    if (isNumber(pageState.totalCount)) {
+      totalCount = pageState.totalCount;
+    }
+    if (isNumber(pageState.perPage)) {
+      perPage = pageState.perPage;
+    }
+  }
+  updatePageOptions(store, { totalCount, page, perPage }, true);
+}
+
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
   const { data, column, id } = store;
-  const { sortState, filterState } = options;
+  const { sortState, filterState, pageState } = options;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
@@ -571,8 +590,8 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
 
   resetSortState(store, sortState);
   resetFilterState(store, filterState);
+  resetPageState(store, rawData.length, pageState);
 
-  updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;
   updateHeights(store);
