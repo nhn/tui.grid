@@ -4,6 +4,8 @@ import { OptRow } from '@t/options';
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
 const ROW_HEIGHT = 40;
+const TOTAL_COUNT = 80;
+const LARGE_TOTAL_COUNT = 200;
 
 const columns = [
   { name: 'deliveryType' },
@@ -21,7 +23,7 @@ const appendedData = {
 
 function createGrid(newData?: OptRow[]) {
   cy.createGrid({
-    data: newData || data.slice(0, 80),
+    data: newData || data.slice(0, TOTAL_COUNT),
     pageOptions: {
       useClient: true,
       perPage: PER_PAGE_COUNT
@@ -33,7 +35,7 @@ function createGrid(newData?: OptRow[]) {
 
 function createGridWithScrollType(newData?: OptRow[]) {
   cy.createGrid({
-    data: newData || data.slice(0, 200),
+    data: newData || data.slice(0, LARGE_TOTAL_COUNT),
     bodyHeight: 300,
     pageOptions: {
       useClient: true,
@@ -61,12 +63,12 @@ function assertRowLength(length: number) {
   }
 }
 
-function assertLastPage(page: string) {
-  cy.get('.tui-last-child').should('have.text', page);
+function assertLastPage(page: number) {
+  cy.get('.tui-last-child').should('have.text', String(page));
 }
 
-function assertSelectedPage(page: string) {
-  cy.get('.tui-is-selected').should('have.text', page);
+function assertSelectedPage(page: number) {
+  cy.get('.tui-is-selected').should('have.text', String(page));
 }
 
 function assertCheckedAllRows() {
@@ -98,14 +100,14 @@ describe('type: pagination', () => {
     createGrid();
     cy.gridInstance().invoke('appendRow', appendedData);
 
-    assertLastPage('9');
+    assertLastPage(9);
   });
 
   it('should reflect actual page data after prependRow API.', () => {
     createGrid();
     cy.gridInstance().invoke('prependRow', appendedData);
 
-    assertLastPage('9');
+    assertLastPage(9);
     assertRowLength(PER_PAGE_COUNT);
     cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
   });
@@ -116,7 +118,7 @@ describe('type: pagination', () => {
 
     cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
 
-    assertLastPage('1');
+    assertLastPage(1);
     assertRowLength(1);
   });
 
@@ -127,7 +129,7 @@ describe('type: pagination', () => {
 
     cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
 
-    assertLastPage('1');
+    assertLastPage(1);
     assertRowLength(1);
   });
 
@@ -135,7 +137,7 @@ describe('type: pagination', () => {
     createGrid();
     cy.gridInstance().invoke('clear');
 
-    assertLastPage('1');
+    assertLastPage(1);
     assertRowLength(0);
   });
 
@@ -144,7 +146,7 @@ describe('type: pagination', () => {
     moveToNextPage();
     cy.gridInstance().invoke('clear');
 
-    assertLastPage('1');
+    assertLastPage(1);
     assertRowLength(0);
   });
 
@@ -160,7 +162,7 @@ describe('type: pagination', () => {
     createGrid(data.slice(0, 61));
     cy.gridInstance().invoke('removeRow', 0);
 
-    assertLastPage('6');
+    assertLastPage(6);
     assertRowLength(PER_PAGE_COUNT);
   });
 
@@ -169,8 +171,8 @@ describe('type: pagination', () => {
     cy.get(`.tui-last-child`).click();
     cy.gridInstance().invoke('removeRow', 60);
 
-    assertLastPage('6');
-    assertSelectedPage('6');
+    assertLastPage(6);
+    assertSelectedPage(6);
     assertRowLength(PER_PAGE_COUNT);
   });
 
@@ -178,7 +180,7 @@ describe('type: pagination', () => {
     createGrid();
     cy.gridInstance().invoke('setPerPage', 20);
 
-    assertLastPage('4');
+    assertLastPage(4);
     assertRowLength(20);
   });
 });
@@ -228,4 +230,58 @@ describe('type: scroll', () => {
       .find('input')
       .should('not.be.checked');
   });
+});
+
+describe('API', () => {
+  it('should recaluclate pagination size after setTotalCount API', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('setTotalCount', 20);
+
+    assertLastPage(2);
+  });
+
+  it('should get pagination size after getTotalCount API', () => {
+    createGrid();
+
+    cy.gridInstance()
+      .invoke('getTotalCount')
+      .should('eq', TOTAL_COUNT);
+  });
+});
+
+describe('event', () => {
+  it('should trigger beforePageMove event before moving page', () => {
+    const callback = cy.stub();
+
+    createGrid();
+    cy.gridInstance().invoke('on', 'beforePageMove', callback);
+
+    moveToNextPage();
+
+    cy.wrap(callback).should('be.calledWithMatch', { page: 2 });
+  });
+
+  it('should trigger afterPageMove event after moving page', () => {
+    const callback = cy.stub();
+
+    createGrid();
+    cy.gridInstance().invoke('on', 'afterPageMove', callback);
+
+    moveToNextPage();
+
+    cy.wrap(callback).should('be.calledWithMatch', { page: 2 });
+  });
+});
+
+it('should apply the pageState after calling resetData with pageState option', () => {
+  createGrid();
+
+  const pageState = { page: 2, totalCount: 20, perPage: 5 };
+
+  cy.gridInstance().invoke('resetData', data, { pageState });
+
+  assertSelectedPage(2);
+  assertLastPage(4);
+  assertRowLength(5);
 });
