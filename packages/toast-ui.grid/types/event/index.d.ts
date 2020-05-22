@@ -26,6 +26,7 @@ export interface GridEventProps {
   conditionFn?: Function;
   type?: FilterOptionType;
   operator?: OperatorType;
+  page?: number;
 }
 
 export class TuiGridEvent {
