@@ -114,6 +114,8 @@ grid.on('mousedown', function(ev) {
 - `beforeUnfilter` : Before the data is unfiltered
 - `afterUnfilter` : After the data is unfiltered
 - `filter` : After the data is filtered (**this event will be deprecated**, use `afterFilter` event)
+- `beforePageMove` : Before moving the page
+- `afterPageMove` : After moving the page
 - `scrollEnd` : When scrolling at the bottommost
 
 There are other events that can be used when using `DataSource`.
