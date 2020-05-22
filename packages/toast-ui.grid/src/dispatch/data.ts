@@ -574,7 +574,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { rawData, viewData, sortState, pageOptions } = data;
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
-  const appendedInMiddle = at !== rawData.length;
+  const inserted = at !== rawData.length;
 
   silentSplice(viewData, at, 0, viewRow);
   silentSplice(rawData, at, 0, rawRow);
@@ -582,7 +582,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
 
-  if (appendedInMiddle) {
+  if (inserted) {
     updateSortKey(data, at);
   }
 
@@ -592,10 +592,10 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
-  getDataManager(id).push('CREATE', rawRow, appendedInMiddle);
+  getDataManager(id).push('CREATE', rawRow, inserted);
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   setLoadingState(store, 'DONE');
-  updateRowNumber(store, at > 0 ? at - 1 : 0);
+  updateRowNumber(store, at ? at - 1 : 0);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
 }

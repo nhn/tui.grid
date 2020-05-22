@@ -495,10 +495,6 @@ describe('getters', () => {
       cy.gridInstance()
         .invoke('getRow', 0)
         .should('have.subset', getRowDataWithAttrs(1));
-
-      cy.gridInstance()
-        .invoke('getRow', 1)
-        .should('have.subset', getRowDataWithAttrs(2));
     });
 
     it('should return row matching given rowKey regardless of filtering the data', () => {
@@ -507,10 +503,6 @@ describe('getters', () => {
       cy.gridInstance()
         .invoke('getRow', 0)
         .should('have.subset', getRowDataWithAttrs(1));
-
-      cy.gridInstance()
-        .invoke('getRow', 1)
-        .should('have.subset', getRowDataWithAttrs(2));
     });
 
     it('should return row matching given rowKey after appedngind the row and clearing modified data', () => {
