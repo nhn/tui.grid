@@ -13,7 +13,7 @@ import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/
 
 function createSoretedViewData(rawData: Row[]) {
   return rawData.map(
-    row => ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
+    ({ rowKey, sortKey, uniqueKey }) => ({ rowKey, sortKey, uniqueKey } as ViewRow)
   );
 }
 

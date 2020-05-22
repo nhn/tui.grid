@@ -122,15 +122,15 @@ export function setValue(
   const { column, data, id } = store;
   const { rawData, viewData, sortState } = data;
   const { allColumnMap, columnsWithoutRowHeader } = column;
-  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
-  const targetRow = rawData[rowIdx];
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const targetRow = rawData[rowIndex];
 
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
   if (checkCellState) {
-    makeObservable(store, rowIdx);
-    const { disabled, editable } = viewData[rowIdx].valueMap[columnName];
+    makeObservable(store, rowIndex);
+    const { disabled, editable } = viewData[rowIndex].valueMap[columnName];
 
     if (disabled || !editable) {
       return;
@@ -168,9 +168,9 @@ export function setValue(
     const { spanCount } = rowSpanMap[columnName];
     // update sub rows value
     for (let count = 1; count < spanCount; count += 1) {
-      rawData[rowIdx + count][columnName] = value;
+      rawData[rowIndex + count][columnName] = value;
       updateSummaryValueByCell(store, columnName, { orgValue, value });
-      getDataManager(id).push('UPDATE', rawData[rowIdx + count]);
+      getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
     }
   }
 
@@ -329,14 +329,14 @@ function applyPasteDataToRawData(
 
   const columnNames = mapProp('name', visibleColumnsWithRowHeader);
 
-  for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+  for (let rowIndex = 0; rowIndex + startRowIndex <= endRowIndex; rowIndex += 1) {
     let pasted = false;
-    const rawRowIndex = rowIdx + startRowIndex;
-    for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
-      const name = columnNames[columnIdx + startColumnIndex];
+    const rawRowIndex = rowIndex + startRowIndex;
+    for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
+      const name = columnNames[columnIndex + startColumnIndex];
       if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
         pasted = true;
-        filteredRawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+        filteredRawData[rawRowIndex][name] = pasteData[rowIndex][columnIndex];
       }
     }
     if (pasted) {
