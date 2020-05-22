@@ -12,8 +12,8 @@ import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
-import { createObservableData } from '../dispatch/data';
 import { setAutoBodyHeight } from '../dispatch/dimension';
+import { createObservableData } from '../dispatch/lazyObservable';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {

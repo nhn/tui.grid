@@ -5,10 +5,11 @@ import { findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
-import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
-import { isSortable, isInitialSortState, isScrollPagination } from '../query/data';
+import { updateRowNumber, setCheckedAllRows } from './data';
+import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
+import { createObservableData } from './lazyObservable';
 
 function sortData(store: Store) {
   // @TODO: find more practical way to make observable
@@ -218,4 +219,36 @@ export function emitAfterSort(store: Store, cancelSort: boolean, columnName: str
     const gridEvent = createSortEvent(eventType, { columnName, sortState: data.sortState });
     eventBus.trigger(eventType, gridEvent);
   });
+}
+
+export function updateSortKey(data: Data, sortKey: number, appended = true) {
+  const incremental = appended ? 1 : -1;
+  const { rawData, viewData } = data;
+
+  for (let idx = 0; idx < rawData.length; idx += 1) {
+    if (rawData[idx].sortKey >= sortKey) {
+      rawData[idx].sortKey += incremental;
+      viewData[idx].sortKey += incremental;
+    }
+  }
+  if (appended) {
+    rawData[sortKey].sortKey = sortKey;
+    viewData[sortKey].sortKey = sortKey;
+  }
+}
+
+export function resetSortKey(data: Data, start: number) {
+  const { rawData, viewData } = data;
+  for (let idx = start; idx < rawData.length; idx += 1) {
+    rawData[idx].sortKey = idx;
+    viewData[idx].sortKey = idx;
+  }
+}
+
+export function sortByCurrentState(store: Store) {
+  const { data } = store;
+  if (isSorted(data)) {
+    const { columnName, ascending } = data.sortState.columns[0];
+    sort(store, columnName, ascending, true, false);
+  }
 }

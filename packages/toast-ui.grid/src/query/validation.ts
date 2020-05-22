@@ -1,6 +1,6 @@
 import { Store } from '@t/store';
 import { InvalidRow } from '@t/store/data';
-import { createObservableData } from '../dispatch/data';
+import { createObservableData } from '../dispatch/lazyObservable';
 
 export function getInvalidRows(store: Store) {
   // @TODO: find more practical way to make observable
