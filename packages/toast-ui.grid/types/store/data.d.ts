@@ -3,6 +3,8 @@ import { Filter } from './filterLayerState';
 import { ValidationType, InvalidColumn } from './column';
 import { Range } from './selection';
 
+// Add object type for in case of handling object data in custom renderer
+// related issue(https://github.com/nhn/tui.grid/issues/1014)
 export type CellValue = number | string | boolean | null | undefined | object;
 export type RowKey = number | string;
 export type RowSpanMap = Dictionary<RowSpan>;
