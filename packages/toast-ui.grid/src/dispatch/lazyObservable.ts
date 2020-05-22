@@ -23,13 +23,11 @@ function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeCol
 }
 
 function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
-  const [start, end] = rowRange;
-
   return data.rawData
-    .slice(start, end)
+    .slice(...rowRange)
     .reduce(
       (acc: OriginData, row, index) =>
-        getDataToBeObservable(acc, row, index + start, treeColumnName),
+        getDataToBeObservable(acc, row, index + rowRange[0], treeColumnName),
       {
         rows: [],
         targetIndexes: []
@@ -38,10 +36,8 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 }
 
 function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
-  const [start, end] = rowRange;
-
   return data
-    .filteredIndex!.slice(start, end)
+    .filteredIndex!.slice(...rowRange)
     .reduce(
       (acc: OriginData, rowIndex) =>
         getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),

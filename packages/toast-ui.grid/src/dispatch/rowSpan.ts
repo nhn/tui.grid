@@ -2,7 +2,7 @@ import { Row } from '@t/store/data';
 import { createRowSpan } from '../store/data';
 import { findProp, isEmpty, findPropIndex } from '../helper/common';
 
-export function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
+export function updateRowSpanWhenAppending(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
 
   if (isEmpty(prevRowSpanMap)) {
@@ -28,7 +28,7 @@ export function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRow
   });
 }
 
-export function updateRowSpanWhenRemove(
+export function updateRowSpanWhenRemoving(
   data: Row[],
   removedRow: Row,
   nextRow: Row,

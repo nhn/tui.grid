@@ -9,7 +9,14 @@ import {
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
 import { ColumnInfo } from '@t/store/column';
-import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
+import {
+  OptRow,
+  OptAppendRow,
+  OptRemoveRow,
+  ResetOptions,
+  SortStateResetOption,
+  FilterStateResetOption
+} from '@t/options';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
@@ -64,7 +71,7 @@ import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow } from './pagination';
-import { updateRowSpanWhenAppend, updateRowSpanWhenRemove } from './rowSpan';
+import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
 import { createObservableData } from './lazyObservable';
 
 function updateHeightsWithFilteredData(store: Store) {
@@ -451,7 +458,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
-    updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
+    updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
   getDataManager(id).push('CREATE', rawRow, inserted);
@@ -482,7 +489,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   initSelection(store);
 
   if (nextRow && isRowSpanEnabled(sortState)) {
-    updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
+    updateRowSpanWhenRemoving(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
   if (rowIndex !== rawData.length) {
@@ -712,7 +719,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
-    updateRowSpanWhenAppend(rawData, prevRow, false);
+    updateRowSpanWhenAppending(rawData, prevRow, false);
   }
 
   getDataManager(id).push('UPDATE', rawRow);
@@ -804,7 +811,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
 
     if (nextRow) {
       if (isRowSpanEnabled(sortState)) {
-        updateRowSpanWhenRemove(rawData, removedRow, nextRow, false);
+        updateRowSpanWhenRemoving(rawData, removedRow, nextRow, false);
       }
     }
     getDataManager(id).push('DELETE', removedRow);
