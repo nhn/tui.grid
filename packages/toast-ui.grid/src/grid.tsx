@@ -1649,9 +1649,25 @@ export default class Grid implements TuiGrid {
    * Return the formatted value of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the target row.
    * @param {string} columnName - The name of the column
-   * @returns {number|string|boolean|null} - The value of the cell
+   * @returns {string|null} - The formatted value of the cell
    */
   public getFormattedValue(rowKey: RowKey, columnName: string): string | null {
     return getFormattedValue(this.store, rowKey, columnName);
+  }
+
+  /**
+   * Set total count of items for calculating the pagination.
+   * @param {number} totalCount - total count
+   */
+  public setTotalCount(totalCount: number) {
+    this.dispatch('updatePageOptions', { totalCount });
+  }
+
+  /**
+   * Get total count of items with the current pagination
+   * @returns {number} - total count
+   */
+  public getTotalCount() {
+    return this.store.data.pageOptions.totalCount;
   }
 }
