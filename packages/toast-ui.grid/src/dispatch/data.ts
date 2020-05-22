@@ -28,7 +28,7 @@ import {
   someProp,
   findPropIndex,
   silentSplice,
-  isNumber
+  pruneObject
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
@@ -561,20 +561,8 @@ function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
 }
 
 function resetPageState(store: Store, totalCount: number, pageState?: PageStateResetOption) {
-  let page = 1;
-  let perPage = store.data.pageOptions.perPage;
-
-  if (pageState) {
-    page = pageState.page;
-
-    if (isNumber(pageState.totalCount)) {
-      totalCount = pageState.totalCount;
-    }
-    if (isNumber(pageState.perPage)) {
-      perPage = pageState.perPage;
-    }
-  }
-  updatePageOptions(store, { totalCount, page, perPage }, true);
+  const pageOptions = pageState ? pruneObject(pageState) : { page: 1, totalCount };
+  updatePageOptions(store, pageOptions, true);
 }
 
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {

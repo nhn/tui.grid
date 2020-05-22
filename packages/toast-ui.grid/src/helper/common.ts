@@ -345,7 +345,7 @@ export function debounce(fn: Function, wait: number, immediate = false) {
 }
 
 export function pruneObject<T>(obj: T) {
-  const pruned: Partial<T> = {};
+  const pruned = {} as Required<T>;
   forEachObject((value, key) => {
     if (!isUndefined(value) && !isNull(value)) {
       pruned[key] = value;
