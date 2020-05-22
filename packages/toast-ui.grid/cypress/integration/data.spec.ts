@@ -499,34 +499,97 @@ describe('getters', () => {
     };
   }
 
-  it('getRow() returns row matching given rowKey', () => {
-    cy.gridInstance()
-      .invoke('getRow', 0)
-      .should('have.subset', getRowDataWithAttrs(1));
+  context('getRow()', () => {
+    it('should return row matching given rowKey', () => {
+      cy.gridInstance()
+        .invoke('getRow', 0)
+        .should('have.subset', getRowDataWithAttrs(1));
+    });
 
-    cy.gridInstance()
-      .invoke('getRow', 1)
-      .should('have.subset', getRowDataWithAttrs(2));
+    it('should return row matching given rowKey regardless of filtering the data', () => {
+      cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+
+      cy.gridInstance()
+        .invoke('getRow', 0)
+        .should('have.subset', getRowDataWithAttrs(1));
+    });
+
+    it('should return row matching given rowKey after appedngind the row and clearing modified data', () => {
+      const row = {
+        name: 'Ryu',
+        age: 10,
+        _attributes: {
+          checkDisabled: false,
+          checked: false,
+          disabled: false,
+          className: {
+            row: [],
+            column: {}
+          },
+          rowNum: 2
+        }
+      };
+
+      cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 10 }, { at: 1 });
+      cy.gridInstance().invoke('clearModifiedData');
+
+      cy.gridInstance()
+        .invoke('getRow', 2)
+        .should('have.subset', row);
+    });
   });
 
-  it('getRowAt() returns row indexed by given index', () => {
-    cy.gridInstance()
-      .invoke('getRowAt', 0)
-      .should('have.subset', getRowDataWithAttrs(1));
+  context('getRowAt()', () => {
+    it('should return row by given index', () => {
+      cy.gridInstance()
+        .invoke('getRowAt', 0)
+        .should('have.subset', getRowDataWithAttrs(1));
 
-    cy.gridInstance()
-      .invoke('getRowAt', 1)
-      .should('have.subset', getRowDataWithAttrs(2));
+      cy.gridInstance()
+        .invoke('getRowAt', 1)
+        .should('have.subset', getRowDataWithAttrs(2));
+    });
+
+    it('should return row by given index regardless of filtering the data', () => {
+      cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+
+      cy.gridInstance()
+        .invoke('getRowAt', 0)
+        .should('have.subset', getRowDataWithAttrs(1));
+
+      cy.gridInstance()
+        .invoke('getRowAt', 1)
+        .should('have.subset', getRowDataWithAttrs(2));
+    });
   });
 
-  it('getIndexOfRow() returns the index of the row matching given rowKey', () => {
-    cy.gridInstance()
-      .invoke('getIndexOfRow', 0)
-      .should('eq', 0);
+  context('getIndexOfRow()', () => {
+    it('should return the index of the row matching given rowKey', () => {
+      cy.gridInstance()
+        .invoke('getIndexOfRow', 0)
+        .should('eq', 0);
 
-    cy.gridInstance()
-      .invoke('getIndexOfRow', 1)
-      .should('eq', 1);
+      cy.gridInstance()
+        .invoke('getIndexOfRow', 1)
+        .should('eq', 1);
+    });
+
+    it('should return the index of the row matching given rowKey regardless of filtering the data', () => {
+      cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+
+      cy.gridInstance()
+        .invoke('getIndexOfRow', 0)
+        .should('eq', 0);
+    });
+
+    it('should return the index of the row matching given rowKey after appedngind the row and clearing modified data', () => {
+      cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 10 }, { at: 1 });
+      cy.gridInstance().invoke('clearModifiedData');
+
+      cy.gridInstance()
+        .invoke('getIndexOfRow', 2)
+        .should('have.subset', 1);
+    });
   });
 
   it('getData() returns all rows', () => {

@@ -58,6 +58,7 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
 
 export function createManager(): ModifiedDataManager {
   let originData: OptRow[] = [];
+  let mixedOrder = false;
   const dataMap: ModifiedDataMap = {
     CREATE: [],
     UPDATE: [],
@@ -107,8 +108,9 @@ export function createManager(): ModifiedDataManager {
       return !!dataMap[type].length;
     },
 
-    push(type: ModificationTypeCode, row: Row) {
+    push(type: ModificationTypeCode, row: Row, mixed = false) {
       const { rowKey } = row;
+      mixedOrder = mixedOrder || mixed;
       if (type === 'UPDATE' || type === 'DELETE') {
         splice('UPDATE', rowKey);
         // if the row was already registered in createdRows,
@@ -148,6 +150,10 @@ export function createManager(): ModifiedDataManager {
       dataMap.CREATE = [];
       dataMap.UPDATE = [];
       dataMap.DELETE = [];
+    },
+
+    isMixedOrder() {
+      return mixedOrder;
     }
   };
 }

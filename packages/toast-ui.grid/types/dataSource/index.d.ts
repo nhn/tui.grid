@@ -108,8 +108,9 @@ export interface ModifiedDataManager {
   getAllModifiedData: (options: ModifiedRowsOptions) => ModifiedRows;
   isModified: () => boolean;
   isModifiedByType: (type: ModificationTypeCode) => boolean;
-  push: (type: ModificationTypeCode, row: Row) => void;
+  push: (type: ModificationTypeCode, row: Row, mixed?: boolean) => void;
   clearSpecificRows: (rowMap: MutationParams) => void;
   clear: (type: RequestTypeCode) => void;
   clearAll: () => void;
+  isMixedOrder: () => boolean;
 }
