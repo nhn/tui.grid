@@ -9,15 +9,7 @@ import {
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
 import { ColumnInfo } from '@t/store/column';
-import {
-  OptRow,
-  OptAppendRow,
-  OptRemoveRow,
-  ResetOptions,
-  SortStateResetOption,
-  FilterStateResetOption,
-  PageStateResetOption
-} from '@t/options';
+import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
@@ -27,8 +19,7 @@ import {
   isEmpty,
   someProp,
   findPropIndex,
-  silentSplice,
-  pruneObject
+  silentSplice
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
@@ -43,10 +34,10 @@ import { createTreeRawRow } from '../store/helper/tree';
 import {
   sort,
   initSortState,
-  changeSortState,
   updateSortKey,
   sortByCurrentState,
-  resetSortKey
+  resetSortKey,
+  resetSortState
 } from './sort';
 import {
   findIndexByRowKey,
@@ -68,11 +59,11 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter, updateFilters, clearFilter } from './filter';
+import { initFilter, resetFilterState } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
-import { updatePageOptions, updatePageWhenRemovingRow } from './pagination';
+import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
 import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
 import { createObservableData } from './lazyObservable';
 
@@ -520,49 +511,6 @@ export function clearData(store: Store) {
   setCheckedAllRows(store);
 
   getDataManager(id).clearAll();
-}
-
-function resetSortState(store: Store, sortState?: SortStateResetOption) {
-  const { data, column } = store;
-  if (sortState) {
-    const { columnName, ascending, multiple } = sortState;
-
-    if (column.allColumnMap[columnName].sortable) {
-      changeSortState(store, columnName, ascending, multiple, false);
-      notify(data, 'sortState');
-    }
-  } else {
-    initSortState(data);
-  }
-}
-
-function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
-  if (filterState) {
-    const { columnFilterState, columnName } = filterState;
-    const columnFilterOption = store.column.allColumnMap[columnName].filter;
-
-    if (columnFilterOption) {
-      if (columnFilterState) {
-        const nextState = {
-          conditionFn: () => true,
-          type: columnFilterOption.type,
-          state: columnFilterState,
-          columnName,
-          operator: columnFilterOption.operator
-        };
-        updateFilters(store, columnName, nextState);
-      } else {
-        clearFilter(store, columnName);
-      }
-    }
-  } else {
-    initFilter(store);
-  }
-}
-
-function resetPageState(store: Store, totalCount: number, pageState?: PageStateResetOption) {
-  const pageOptions = pageState ? pruneObject(pageState) : { page: 1, totalCount };
-  updatePageOptions(store, pageOptions, true);
 }
 
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {

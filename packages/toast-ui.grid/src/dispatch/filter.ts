@@ -5,7 +5,7 @@ import {
   ActiveColumnAddress,
   Filter
 } from '@t/store/filterLayerState';
-import { OptFilter } from '@t/options';
+import { OptFilter, FilterStateResetOption } from '@t/options';
 import { Store } from '@t/store';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
@@ -307,4 +307,28 @@ export function emitAfterFilter(store: Store, eventType: EventType, columnName: 
     const gridEvent = createFilterEvent(store, type, { columnName });
     eventBus.trigger(type, gridEvent);
   });
+}
+
+export function resetFilterState(store: Store, filterState?: FilterStateResetOption) {
+  if (filterState) {
+    const { columnFilterState, columnName } = filterState;
+    const columnFilterOption = store.column.allColumnMap[columnName].filter;
+
+    if (columnFilterOption) {
+      if (columnFilterState) {
+        const nextState = {
+          conditionFn: () => true,
+          type: columnFilterOption.type,
+          state: columnFilterState,
+          columnName,
+          operator: columnFilterOption.operator
+        };
+        updateFilters(store, columnName, nextState);
+      } else {
+        clearFilter(store, columnName);
+      }
+    }
+  } else {
+    initFilter(store);
+  }
 }

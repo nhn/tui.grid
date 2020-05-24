@@ -1,6 +1,7 @@
 import { PageOptions } from '@t/store/data';
 import { Store } from '@t/store';
-import { isEmpty, shallowEqual } from '../helper/common';
+import { PageStateResetOption } from '@t/options';
+import { isEmpty, shallowEqual, pruneObject } from '../helper/common';
 import { isScrollPagination } from '../query/data';
 import { initScrollPosition } from './viewport';
 import { initSelection } from './selection';
@@ -63,4 +64,9 @@ export function updatePageWhenRemovingRow(store: Store, deletedCount: number) {
       true
     );
   }
+}
+
+export function resetPageState(store: Store, totalCount: number, pageState?: PageStateResetOption) {
+  const pageOptions = pageState ? pruneObject(pageState) : { page: 1, totalCount };
+  updatePageOptions(store, pageOptions, true);
 }
