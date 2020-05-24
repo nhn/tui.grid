@@ -1,7 +1,8 @@
 import { Store } from '@t/store';
 import { SortedColumn, Data } from '@t/store/data';
 import { SortingType } from '@t/store/column';
-import { findPropIndex } from '../helper/common';
+import { SortStateResetOption } from '@t/options';
+import { findPropIndex, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
@@ -250,5 +251,23 @@ export function sortByCurrentState(store: Store) {
   if (isSorted(data)) {
     const { columnName, ascending } = data.sortState.columns[0];
     sort(store, columnName, ascending, true, false);
+  }
+}
+
+export function resetSortState(store: Store, sortState?: SortStateResetOption) {
+  const { data, column } = store;
+  if (sortState) {
+    const { columnName, ascending, multiple } = sortState;
+    const { sortingType, sortable } = column.allColumnMap[columnName];
+
+    if (sortable) {
+      const cancelable = isUndefined(ascending);
+      const nextAscending = cancelable ? sortingType === 'asc' : ascending;
+
+      changeSortState(store, columnName, nextAscending, multiple, cancelable);
+      notify(data, 'sortState');
+    }
+  } else {
+    initSortState(data);
   }
 }
