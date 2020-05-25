@@ -233,17 +233,17 @@ describe('type: scroll', () => {
 });
 
 describe('API', () => {
-  it('should recaluclate pagination size after setTotalCount API', () => {
+  beforeEach(() => {
     createGrid();
+  });
 
-    cy.gridInstance().invoke('setTotalCount', 20);
+  it('should recaluclate pagination size after setPaginationTotalCount API', () => {
+    cy.gridInstance().invoke('setPaginationTotalCount', 20);
 
     assertLastPage(2);
   });
 
-  it('should get pagination size after getTotalCount API', () => {
-    createGrid();
-
+  it('should get pagination size after getPaginationTotalCount API', () => {
     cy.gridInstance()
       .invoke('getTotalCount')
       .should('eq', TOTAL_COUNT);
@@ -251,10 +251,13 @@ describe('API', () => {
 });
 
 describe('event', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+
   it('should trigger beforePageMove event before moving page', () => {
     const callback = cy.stub();
 
-    createGrid();
     cy.gridInstance().invoke('on', 'beforePageMove', callback);
 
     moveToNextPage();
@@ -265,7 +268,6 @@ describe('event', () => {
   it('should trigger afterPageMove event after moving page', () => {
     const callback = cy.stub();
 
-    createGrid();
     cy.gridInstance().invoke('on', 'afterPageMove', callback);
 
     moveToNextPage();
@@ -275,8 +277,6 @@ describe('event', () => {
 });
 
 it('should apply the pageState after calling resetData with pageState option', () => {
-  createGrid();
-
   const pageState = { page: 2, totalCount: 20, perPage: 5 };
 
   cy.gridInstance().invoke('resetData', data, { pageState });

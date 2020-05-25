@@ -265,9 +265,9 @@ declare namespace tui {
 
     public getFormattedValue(rowKey: RowKey, columnName: string): string | null;
 
-    public setTotalCount(totalCount: number): void;
+    public setPaginationTotalCount(totalCount: number): void;
 
-    public getTotalCount(): number;
+    public getPaginationTotalCount(): number;
   }
 }
 
