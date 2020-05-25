@@ -66,7 +66,9 @@ export type GridEventName =
   | 'beforeFilter'
   | 'afterFilter'
   | 'beforeUnfilter'
-  | 'afterUnfilter';
+  | 'afterUnfilter'
+  | 'beforePageMove'
+  | 'afterPageMove';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -444,7 +446,14 @@ export interface FilterStateResetOption {
   columnFilterState?: FilterState[];
 }
 
+export interface PageStateResetOption {
+  page: number;
+  totalCount?: number;
+  perPage?: number;
+}
+
 export interface ResetOptions {
   sortState?: SortStateResetOption;
   filterState?: FilterStateResetOption;
+  pageState?: PageStateResetOption;
 }

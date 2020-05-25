@@ -264,6 +264,10 @@ declare namespace tui {
     public appendRows(data: OptRow[]): void;
 
     public getFormattedValue(rowKey: RowKey, columnName: string): string | null;
+
+    public setPaginationTotalCount(totalCount: number): void;
+
+    public getPaginationTotalCount(): number;
   }
 }
 

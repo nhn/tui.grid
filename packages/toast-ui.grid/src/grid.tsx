@@ -81,7 +81,7 @@ if ((module as any).hot) {
  * @param {Object} options
  *      @param {HTMLElement} el - The target element to create grid.
  *      @param {Array|Object} [options.data] - Grid data for making rows. When using the data source, sets to object.
- *      @param {Object} [options.pageOptions={}] The object for the pagination options with the data source.
+ *      @param {Object} [options.pageOptions={}] The object for the pagination options.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=40] - The height of the header area.
  *      @param {number} [options.header.align=center] - Horizontal alignment of the header content.
@@ -141,8 +141,6 @@ if ((module as any).hot) {
  *      @param {string} [options.keyColumnName] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
- *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
- *          If set to null or false, pagination will not be used.
  *      @param {string} [options.selectionUnit='cell'] - The unit of selection on Grid. ('cell', 'row')
  *      @param {Array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
@@ -1256,6 +1254,7 @@ export default class Grid implements TuiGrid {
 
   /**
    * Return an instance of tui.Pagination.
+   * @deprecated
    * @returns {tui.Pagination}
    */
   public getPagination() {
@@ -1649,9 +1648,25 @@ export default class Grid implements TuiGrid {
    * Return the formatted value of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the target row.
    * @param {string} columnName - The name of the column
-   * @returns {number|string|boolean|null} - The value of the cell
+   * @returns {string|null} - The formatted value of the cell
    */
   public getFormattedValue(rowKey: RowKey, columnName: string): string | null {
     return getFormattedValue(this.store, rowKey, columnName);
+  }
+
+  /**
+   * Set total count of items for calculating the pagination.
+   * @param {number} totalCount - total count
+   */
+  public setPaginationTotalCount(totalCount: number) {
+    this.dispatch('updatePageOptions', { totalCount });
+  }
+
+  /**
+   * Get total count of items with the current pagination
+   * @returns {number} - total count
+   */
+  public getPaginationTotalCount() {
+    return this.store.data.pageOptions.totalCount;
   }
 }

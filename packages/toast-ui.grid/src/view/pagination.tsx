@@ -9,12 +9,15 @@ import { cls } from '../helper/dom';
 import { shallowEqual, isNumber, isEmpty } from '../helper/common';
 import { getDataProvider, getPaginationManager, getInstance } from '../instance';
 import { PaginationManager } from '../pagination/paginationManager';
+import { getEventBus, EventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 interface StoreProps {
   pageOptions: PageOptions;
   dataProvider: DataProvider;
   paginationHolder: PaginationManager;
   grid: Grid;
+  eventBus: EventBus;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -85,19 +88,32 @@ class PaginationComp extends Component<Props> {
   }
 
   private addEventListener() {
-    const { dataProvider, pageOptions, dispatch } = this.props;
-    this.tuiPagination!.on('beforeMove', (evt: any) => {
-      const currentPage = evt.page;
-      if (pageOptions.useClient) {
-        dispatch('movePage', currentPage);
-      } else {
-        dataProvider.readData(currentPage);
+    const { dataProvider, pageOptions, dispatch, eventBus } = this.props;
+
+    this.tuiPagination!.on('beforeMove', (ev: any) => {
+      const { page } = ev;
+      const gridEvent = new GridEvent({ page });
+
+      eventBus.trigger('beforePageMove', gridEvent);
+
+      if (!gridEvent.isStopped()) {
+        if (pageOptions.useClient) {
+          dispatch('movePage', page);
+        } else {
+          dataProvider.readData(page);
+        }
       }
+    });
+    this.tuiPagination!.on('afterMove', (ev: any) => {
+      const gridEvent = new GridEvent({ page: ev.page });
+
+      eventBus.trigger('afterPageMove', gridEvent);
     });
   }
 
   private removeEventListener() {
     this.tuiPagination!.off('beforeMove');
+    this.tuiPagination!.off('afterMove');
   }
 
   public render({ pageOptions }: Props) {
@@ -118,5 +134,6 @@ export const Pagination = connect<StoreProps>(({ id, data }) => ({
   pageOptions: data.pageOptions,
   dataProvider: getDataProvider(id),
   paginationHolder: getPaginationManager(id),
-  grid: getInstance(id)
+  grid: getInstance(id),
+  eventBus: getEventBus(id)
 }))(PaginationComp);

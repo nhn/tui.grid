@@ -114,6 +114,8 @@ grid.on('mousedown', (ev) => {
 - `beforeUnfilter` : 데이터의 필터링이 해제되기 전
 - `afterUnfilter` : 데이터의 필터링이 해제된 후
 - `filter` : 데이터를 필터링한 경우 (**deprecated 되었으니** `afterFilter`를 사용)
+- `beforePageMove` : 페이지를 이동하기 전
+- `afterPageMove` : 페이지를 이동한 후
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.

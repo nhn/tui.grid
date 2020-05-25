@@ -355,4 +355,15 @@ describe('resetData API with sortState', () => {
       .invoke('getSortState')
       .should('eql', { useClient: true, columns: [{ columnName: 'sortKey', ascending: true }] });
   });
+
+  it('should release the sort state of column after calling resetData with sortState option', () => {
+    const sortState = { columnName: 'alphabetA', multiple: true };
+
+    cy.gridInstance().invoke('sort', 'alphabetA', false);
+
+    cy.gridInstance().invoke('resetData', data, { sortState });
+
+    assertHaveNotSortingBtnClass('@first', 'btn-sorting-up');
+    assertHaveNotSortingBtnClass('@first', 'btn-sorting-down');
+  });
 });
