@@ -1,19 +1,26 @@
 import { Store } from '@t/store';
 import { Column } from '@t/store/column';
-import { Row, Data } from '@t/store/data';
+import { Row, Data, ViewRow } from '@t/store/data';
 import { Range } from '@t/store/selection';
 import { OriginData } from '@t/dispatch';
-import { isObservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
 import { createData, generateDataCreationKey, createViewRow } from '../store/data';
 import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
+import { silentSplice } from '../helper/common';
 
-function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
+function getDataToBeObservable(
+  acc: OriginData,
+  row: Row,
+  viewRow: ViewRow,
+  index: number,
+  treeColumnName?: string
+) {
   if (treeColumnName && row._attributes.tree!.hidden) {
     return acc;
   }
 
-  if (!isObservable(row)) {
+  if (!isObservable(row) || (viewRow && !isObservable(viewRow.valueMap))) {
     acc.rows.push(row);
     acc.targetIndexes.push(index);
   }
@@ -22,11 +29,14 @@ function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeCol
 }
 
 function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
+  const [start, end] = rowRange;
+  const viewData = data.viewData.slice(start, end);
+
   return data.rawData
-    .slice(...rowRange)
+    .slice(start, end)
     .reduce(
       (acc: OriginData, row, index) =>
-        getDataToBeObservable(acc, row, index + rowRange[0], treeColumnName),
+        getDataToBeObservable(acc, row, viewData[index], index + start, treeColumnName),
       {
         rows: [],
         targetIndexes: []
@@ -35,11 +45,14 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 }
 
 function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
+  const [start, end] = rowRange;
+  const { rawData, viewData } = data;
+
   return data
-    .filteredIndex!.slice(...rowRange)
+    .filteredIndex!.slice(start, end)
     .reduce(
       (acc: OriginData, rowIndex) =>
-        getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),
+        getDataToBeObservable(acc, rawData[rowIndex], viewData[rowIndex], rowIndex, treeColumnName),
       { rows: [], targetIndexes: [] }
     );
 }
@@ -54,9 +67,10 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
-    data.viewData.splice(targetIndex, 1, viewData[index]);
-    data.rawData.splice(targetIndex, 1, rawData[index]);
+    silentSplice(data.rawData, targetIndex, 1, rawData[index]);
+    silentSplice(data.viewData, targetIndex, 1, viewData[index]);
   }
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 function changeToObservableTreeData(
@@ -79,9 +93,10 @@ function changeToObservableTreeData(
     const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
-    viewData.splice(foundIndex, 1, viewRow);
-    rawData.splice(foundIndex, 1, rawRow);
+    silentSplice(rawData, foundIndex, 1, rawRow);
+    silentSplice(viewData, foundIndex, 1, viewRow);
   });
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 export function fillMissingColumnData(column: Column, rawData: Row[]) {

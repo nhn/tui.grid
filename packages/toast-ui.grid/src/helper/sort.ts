@@ -1,5 +1,5 @@
 import { isBlank, isNumber, convertToNumber } from './common';
-import { CellValue, SortedColumn, Row, ViewRow } from '@t/store/data';
+import { CellValue, SortedColumn, Row } from '@t/store/data';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
@@ -57,25 +57,6 @@ export function sortRawData(columns: SortedColumn[]) {
       }
     }
 
-    return 0;
-  };
-}
-
-export function sortViewData(columns: SortedColumn[]) {
-  const comparators = getComparators(columns);
-
-  return (rowA: ViewRow, rowB: ViewRow) => {
-    for (const { name: columnName, comparator } of comparators) {
-      let result = 0;
-
-      const valueA = columnName === 'sortKey' ? rowA.sortKey : rowA.valueMap[columnName].value;
-      const valueB = columnName === 'sortKey' ? rowB.sortKey : rowB.valueMap[columnName].value;
-
-      result = comparator(valueA, valueB);
-      if (result) {
-        return result;
-      }
-    }
     return 0;
   };
 }

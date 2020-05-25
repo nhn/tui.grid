@@ -1,21 +1,23 @@
 import { Store } from '@t/store';
-import { SortedColumn, Data } from '@t/store/data';
+import { SortedColumn, Data, ViewRow, Row } from '@t/store/data';
 import { SortingType } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
-import { sortRawData, sortViewData } from '../helper/sort';
+import { sortRawData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import { updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
-import { createObservableData } from './lazyObservable';
+
+function createSoretedViewData(rawData: Row[]) {
+  return rawData.map(
+    ({ rowKey, sortKey, uniqueKey }) => ({ rowKey, sortKey, uniqueKey } as ViewRow)
+  );
+}
 
 function sortData(store: Store) {
-  // @TODO: find more practical way to make observable
-  // makes all data observable to sort the data properly;
-  createObservableData(store, true);
   const { data } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
@@ -29,15 +31,16 @@ function sortData(store: Store) {
   if (isScrollPagination(data, true)) {
     // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
     const targetRawData = rawData.slice(...pageRowRange);
-    const targetViewData = viewData.slice(...pageRowRange);
+
     targetRawData.sort(sortRawData(options));
-    targetViewData.sort(sortViewData(options));
+
+    const targetViewData = createSoretedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
     rawData.sort(sortRawData(options));
-    viewData.sort(sortViewData(options));
+    data.viewData = createSoretedViewData(rawData);
   }
 }
 

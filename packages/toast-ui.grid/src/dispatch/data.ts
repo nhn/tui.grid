@@ -122,15 +122,15 @@ export function setValue(
   const { column, data, id } = store;
   const { rawData, viewData, sortState } = data;
   const { allColumnMap, columnsWithoutRowHeader } = column;
-  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
-  const targetRow = rawData[rowIdx];
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const targetRow = rawData[rowIndex];
 
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
   if (checkCellState) {
-    makeObservable(store, rowIdx);
-    const { disabled, editable } = viewData[rowIdx].valueMap[columnName];
+    makeObservable(store, rowIndex);
+    const { disabled, editable } = viewData[rowIndex].valueMap[columnName];
 
     if (disabled || !editable) {
       return;
@@ -168,9 +168,9 @@ export function setValue(
     const { spanCount } = rowSpanMap[columnName];
     // update sub rows value
     for (let count = 1; count < spanCount; count += 1) {
-      rawData[rowIdx + count][columnName] = value;
+      rawData[rowIndex + count][columnName] = value;
       updateSummaryValueByCell(store, columnName, { orgValue, value });
-      getDataManager(id).push('UPDATE', rawData[rowIdx + count]);
+      getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
     }
   }
 
@@ -329,14 +329,14 @@ function applyPasteDataToRawData(
 
   const columnNames = mapProp('name', visibleColumnsWithRowHeader);
 
-  for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+  for (let rowIndex = 0; rowIndex + startRowIndex <= endRowIndex; rowIndex += 1) {
     let pasted = false;
-    const rawRowIndex = rowIdx + startRowIndex;
-    for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
-      const name = columnNames[columnIdx + startColumnIndex];
+    const rawRowIndex = rowIndex + startRowIndex;
+    for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
+      const name = columnNames[columnIndex + startColumnIndex];
       if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
         pasted = true;
-        filteredRawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+        filteredRawData[rawRowIndex][name] = pasteData[rowIndex][columnIndex];
       }
     }
     if (pasted) {
@@ -438,8 +438,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
   const inserted = at !== rawData.length;
 
-  silentSplice(viewData, at, 0, viewRow);
   silentSplice(rawData, at, 0, rawRow);
+  silentSplice(viewData, at, 0, viewRow);
   makeObservable(store, at);
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
@@ -472,8 +472,8 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   updatePageWhenRemovingRow(store, 1);
 
-  viewData.splice(rowIndex, 1);
   const [removedRow] = rawData.splice(rowIndex, 1);
+  viewData.splice(rowIndex, 1);
   updateHeights(store);
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -503,8 +503,8 @@ export function clearData(store: Store) {
   initSortState(data);
   initFilter(store);
   rowCoords.heights = [];
-  data.viewData = [];
   data.rawData = [];
+  data.viewData = [];
   updatePageOptions(store, { totalCount: 0, page: 1 }, true);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
@@ -528,8 +528,8 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   resetFilterState(store, filterState);
   resetPageState(store, rawData.length, pageState);
 
-  data.viewData = viewData;
   data.rawData = rawData;
+  data.viewData = viewData;
   updateHeights(store);
   updateAllSummaryValues(store);
   setLoadingState(store, getLoadingState(rawData));
@@ -667,8 +667,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
-  silentSplice(viewData, rowIndex, 1, viewRow);
   silentSplice(rawData, rowIndex, 1, rawRow);
+  silentSplice(viewData, rowIndex, 1, viewRow);
   makeObservable(store, rowIndex);
 
   sortByCurrentState(store);
@@ -699,11 +699,11 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   }
 
   const minIndex = Math.min(currentIndex, targetIndex);
-  const [viewRow] = viewData.splice(currentIndex, 1);
-  const [rawRow] = rawData.splice(currentIndex, 1);
+  const [rawRow] = silentSplice(rawData, currentIndex, 1);
+  const [viewRow] = silentSplice(viewData, currentIndex, 1);
 
-  viewData.splice(targetIndex, 0, viewRow);
   rawData.splice(targetIndex, 0, rawRow);
+  viewData.splice(targetIndex, 0, viewRow);
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
@@ -742,8 +742,8 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   const startIndex = data.rawData.length;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
 
-  data.viewData = data.viewData.concat(viewData);
   data.rawData = data.rawData.concat(rawData);
+  data.viewData = data.viewData.concat(viewData);
 
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
