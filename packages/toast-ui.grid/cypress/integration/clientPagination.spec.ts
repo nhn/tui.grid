@@ -283,7 +283,7 @@ it('should apply the pageState after calling resetData with pageState option', (
 
   cy.gridInstance().invoke('resetData', data, { pageState });
 
-  // assertSelectedPage(2);
-  // assertLastPage(4);
-  // assertRowLength(5);
+  assertSelectedPage(2);
+  assertLastPage(4);
+  assertRowLength(5);
 });

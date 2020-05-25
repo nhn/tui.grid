@@ -1191,6 +1191,11 @@ export default class Grid implements TuiGrid {
    *         @param {Object} [options.filterState.columnFilterState] - The column filter state of column which will apply to the grid.
    *             @param {string} [options.filterState.columnFilterState.code] - Code for column filter(ex. 'eq', 'gt').
    *             @param {string} [options.filterState.columnFilterState.value] - Input value for column filter.
+   *     @param {Object} [options.pageState] - If set the pageState, the pagination state will be applied when the new rows are set.
+   *       It is recommended that you do not use it unless you are getting the paginated data by communicating with the server without DataSource.
+   *         @param {number} [options.pageState.page] - Target page number.
+   *         @param {number} [options.pageState.totalCount] - The total pagination count.
+   *         @param {number} [options.pageState.perPage] - Number of rows per page.
    */
   public resetData(data: OptRow[], options: ResetOptions = {}) {
     this.dispatch('resetData', data, options);

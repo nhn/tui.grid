@@ -33,7 +33,8 @@
       "tmpdoc/dispatch/focus.js",
       "tmpdoc/view/bodyArea.js",
       "tmpdoc/query/sort.js",
-      "tmpdoc/query/filter.js"
+      "tmpdoc/query/filter.js",
+      "tmpdoc/view/pagination.js"
     ],
     "fileLink": false
   },

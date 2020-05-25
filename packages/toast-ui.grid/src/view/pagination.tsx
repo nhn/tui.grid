@@ -94,6 +94,12 @@ class PaginationComp extends Component<Props> {
       const { page } = ev;
       const gridEvent = new GridEvent({ page });
 
+      /**
+       * Occurs before moving the page.
+       * @event Grid#beforePageMove
+       * @property {number} page - Target page number
+       * @property {Grid} instance - Current grid instance
+       */
       eventBus.trigger('beforePageMove', gridEvent);
 
       if (!gridEvent.isStopped()) {
@@ -107,6 +113,12 @@ class PaginationComp extends Component<Props> {
     this.tuiPagination!.on('afterMove', (ev: any) => {
       const gridEvent = new GridEvent({ page: ev.page });
 
+      /**
+       * Occurs after moving the page.
+       * @event Grid#afterPageMove
+       * @property {number} page - Target page number
+       * @property {Grid} instance - Current grid instance
+       */
       eventBus.trigger('afterPageMove', gridEvent);
     });
   }
