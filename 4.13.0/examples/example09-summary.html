@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>9. Summary</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/summary.md"
+        target="_blank"
+        >here</a
+      >. The "footer" option to use summary feature is deprecated since 2.5.0 version and this
+			option is replaced by the "summary" option.
+			<br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/babel" class="code-js">
+    const gridData = [];
+    (function() {
+      for (let i = 0; i < 120; i += 1) {
+        gridData.push({
+          c1: 'User' + (i + 1),
+          c2: ((i + 5) % 8) * 100 + i,
+          c3: ((i + 3) % 7) * 60
+        });
+      }
+    })();
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: false,
+      bodyHeight: 300,
+      rowHeaders: ['rowNum'],
+      columns: [
+        {
+          header: 'User ID',
+          name: 'c1',
+          align: 'center',
+          editor: 'text'
+        },
+        {
+          header: 'Score',
+          name: 'c2',
+          className: 'clickable',
+          editor: 'text'
+        },
+        {
+          header: 'Item Count',
+          name: 'c3',
+          editor: 'text'
+        }
+      ],
+      summary: {
+        height: 40,
+        position: 'bottom', // or 'top'
+        columnContent: {
+          c2: {
+            template: function(valueMap) {
+              return `MAX: ${valueMap.max}<br>MIN: ${valueMap.min}`;
+            }
+          },
+          c3: {
+            template: function(valueMap) {
+              return `TOTAL: ${valueMap.sum} <br>AVG: ${valueMap.avg.toFixed(2)}`;
+            }
+          }
+        }
+      }
+    });
+  </script>
+</html>

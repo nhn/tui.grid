@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>6. Attributes</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <style type="text/css">
+      .red.tui-grid-cell {
+        background-color: #f8e0e0;
+      }
+      .blue.tui-grid-cell {
+        background-color: #cef6f5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="description">
+      With the _attributes option, you can assign a class to each row, or set various settings<br />
+      such as disabled, rowSpan, check and etc. You can see the options
+      <a href="https://nhn.github.io/tui.grid/latest/" target="_blank">here</a>
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/babel" class="code-js">
+    const gridData = [
+      {
+        name: 'Beautiful Lies',
+        artist: 'Birdy',
+        release: '2016.03.26',
+        type: 'Deluxe',
+        genre: 'Pop'
+      },
+      {
+        name: 'X',
+        artist: 'Ed Sheeran',
+        release: '2014.06.24',
+        type: 'Deluxe',
+        genre: 'Pop',
+        _attributes: {
+          disabled: true // A current row is disabled
+        }
+      },
+      {
+        name: 'Moves Like Jagger',
+        release: '2011.08.08',
+        artist: 'Maroon5',
+        type: 'Single',
+        genre: 'Pop,Rock',
+        _attributes: {
+          checkDisabled: true // A checkbox is disabled only
+        }
+      },
+      {
+        name: 'A Head Full Of Dreams',
+        artist: 'Coldplay',
+        release: '2015.12.04',
+        type: 'Deluxe',
+        genre: 'Rock',
+        _attributes: {
+          checked: true, // A checkbox is already checked while rendering
+          className: {
+            // Add class name on a row
+            row: ['red']
+          }
+        }
+      },
+      {
+        name: '19',
+        artist: 'Adele',
+        release: '2008.01.27',
+        type: 'EP',
+        genre: 'Pop,R&B',
+        _attributes: {
+          rowSpan: {
+            // Merge rows
+            artist: 3,
+            genre: 2
+          }
+        }
+      },
+      {
+        name: '21',
+        artist: 'Adele',
+        release: '2011.01.21',
+        type: 'Deluxe',
+        genre: 'Pop,R&B'
+      },
+      {
+        name: '25',
+        artist: 'Adele',
+        release: '2015.11.20',
+        type: 'EP',
+        genre: 'Pop',
+        _attributes: {
+          className: {
+            // Add class name on each columns
+            column: {
+              type: ['blue'],
+              genre: ['blue']
+            }
+          }
+        }
+      }
+    ];
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: false,
+      scrollY: false,
+      rowHeaders: ['checkbox'],
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ]
+    });
+  </script>
+</html>
