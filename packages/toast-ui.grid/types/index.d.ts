@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.12.1
+// Type definitions for TOAST UI Grid v4.13.0
 // TypeScript Version: 3.7.2
 
 import { CellValue, RowKey, Row, SortState, RowSpan, InvalidRow } from './store/data';
