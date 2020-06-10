@@ -205,17 +205,28 @@ describe('scrollEnd', () => {
     cy.wrap(callback).should('be.calledOnce');
   });
 
-  it('should not occur scrollEnd event after scrolling horizontally ', () => {
+  it('should not occur scrollEnd event after scrolling horizontally', () => {
     const callback = cy.stub();
 
     cy.gridInstance().invoke('on', 'scrollEnd', callback);
 
-    // scroll at the bottommost
-    cy.focusAndWait(19, 'name');
     // scroll horizontally
-    cy.focusAndWait(19, 'age');
+    cy.focusAndWait(10, 'age');
 
-    cy.wrap(callback).should('be.calledOnce');
+    cy.wrap(callback).should('not.be.called');
+  });
+
+  it('should not occur scrollEnd event after calling resetData API', () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'scrollEnd', callback);
+
+    // scroll horizontally
+    cy.focusAndWait(10, 'age');
+
+    cy.gridInstance().invoke('resetData', [{ name: 'Lee', age: 20 }]);
+
+    cy.wrap(callback).should('not.be.calledOnce');
   });
 });
 
