@@ -627,7 +627,7 @@ export function create({
         if (type === 'pagination') {
           start = (page - 1) * perPage;
         }
-        end = pageRowLastIndex < end ? pageRowLastIndex : end;
+        end = pageRowLastIndex > 0 && pageRowLastIndex < end ? pageRowLastIndex : end;
       }
 
       return [start, end] as Range;
