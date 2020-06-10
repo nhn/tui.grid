@@ -72,6 +72,8 @@ class BodyAreaComp extends Component<Props> {
     pageY: null
   };
 
+  private prevScrollLeft = 0;
+
   private scrollToNextDebounced = debounce(() => {
     this.props.dispatch('scrollToNext');
   }, 200);
@@ -83,7 +85,7 @@ class BodyAreaComp extends Component<Props> {
     dispatch('setScrollTop', scrollTop);
     if (side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
-      if (scrollHeight - scrollTop === clientHeight && this.props.scrollLeft === scrollLeft) {
+      if (scrollHeight - scrollTop === clientHeight && this.prevScrollLeft === scrollLeft) {
         const gridEvent = new GridEvent();
         /**
          * Occurs when scroll at the bottommost
@@ -94,6 +96,7 @@ class BodyAreaComp extends Component<Props> {
 
         this.scrollToNextDebounced();
       }
+      this.prevScrollLeft = scrollLeft;
     }
   };
 
