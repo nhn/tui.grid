@@ -226,7 +226,7 @@ describe('scrollEnd', () => {
 
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', age: 20 }]);
 
-    cy.wrap(callback).should('not.be.calledOnce');
+    cy.wrap(callback).should('not.be.called');
   });
 });
 
