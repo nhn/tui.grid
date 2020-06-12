@@ -842,7 +842,7 @@ describe('with resizable column options', () => {
     ];
   });
 
-  it('width not automatically resize when expanded without resizable option', () => {
+  it('width should not be automatically resize when expanding without resizable option', () => {
     targetColumns[0].resizable = false;
     createGridWidthResizableOption();
 
@@ -867,7 +867,7 @@ describe('with resizable column options', () => {
     });
   });
 
-  it('width should be not resized when existing width is wider than child node width', () => {
+  it('width should not be resized when existing width is wider than child node width', () => {
     targetData[0]._children![0].c1 = 'short';
     createGridWidthResizableOption();
 
@@ -878,7 +878,7 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
   });
 
-  it('width resize automatically with child expanded attribute', () => {
+  it('width should be resized automatically with child expanded attribute', () => {
     targetData[0]._children![0]._attributes!.expanded = true;
     createGridWidthResizableOption();
 
