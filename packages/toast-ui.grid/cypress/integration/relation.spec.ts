@@ -1,5 +1,10 @@
 import { cls } from '../../src/helper/dom';
-import { data, sortedColumns, unsortedColumns } from '../../samples/relations';
+import {
+  data,
+  orderedRelationColumns,
+  unorderedRelationColumns1,
+  unorderedRelationColumns2
+} from '../../samples/relations';
 import Grid from '@/grid';
 import { deepCopyArray } from '@/helper/common';
 
@@ -23,29 +28,98 @@ before(() => {
   cy.visit('/dist');
 });
 
-['sorted', 'unsorted'].forEach(type => {
-  const columns = type === 'sorted' ? sortedColumns : unsortedColumns;
+describe('ordered relation column', () => {
+  beforeEach(() => {
+    cy.createGrid({ data, columns: orderedRelationColumns });
+  });
 
-  describe(`in case of ${type} column with relation`, () => {
+  it('should display relation data properly', () => {
+    cy.getRsideBody().should('have.cellData', [
+      ['', '', '', 'Select'],
+      ['Overseas', 'R&B', 'Marry You', 'no'],
+      ['Etc', 'OST', 'City Of Stars', 'relation']
+    ]);
+  });
+
+  it('should change state by relations', () => {
+    changeCellValues(0);
+
+    assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+  });
+
+  it('change cell disabled state with empty value', () => {
+    cy.gridInstance().invoke('setValue', 1, 'category1', '');
+
+    cy.getCell(1, 'category2').should('have.class', `${cls('cell-disabled')}`);
+    cy.getCell(1, 'category3').should('have.class', `${cls('cell-disabled')}`);
+  });
+
+  it('change cell editable state', () => {
+    cy.gridInstance().invoke('setValue', 1, 'category1', '01');
+
+    cy.getCell(1, 'category2').should('have.not.class', `${cls('cell-editable')}`);
+  });
+
+  it('relation columns could be set through setColumns()', () => {
+    const filteredColumns = orderedRelationColumns.filter(column => column.name !== 'category4');
+    cy.gridInstance().invoke('setColumns', filteredColumns);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['', '', ''],
+      ['Overseas', 'R&B', 'Marry You'],
+      ['Etc', 'OST', 'City Of Stars']
+    ]);
+
+    changeCellValues(0);
+
+    assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+  });
+
+  it('should display relation with added data after calling appendRow()', () => {
+    const expected = ['Overseas', 'R&B', 'Marry You', 'no'];
+
+    cy.gridInstance().invoke('appendRow', {
+      category1: '02',
+      category2: '02_03',
+      category3: '02_03_0001',
+      category4: '01'
+    });
+
+    cy.getCells(3).each(($cell, index) => {
+      cy.wrap($cell).should('have.text', expected[index]);
+    });
+
+    changeCellValues(3);
+
+    assertRelationData(3, ['Overseas', 'Pop', 'Youth']);
+  });
+
+  it('should display relation data after calling resetData()', () => {
+    cy.gridInstance().invoke('resetData', deepCopyArray(data.slice(1, 3)));
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Overseas', 'R&B', 'Marry You', 'no'],
+      ['Etc', 'OST', 'City Of Stars', 'relation']
+    ]);
+
+    changeCellValues(0);
+
+    assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+  });
+});
+
+describe('unordered relation column', () => {
+  context('example1', () => {
     beforeEach(() => {
-      cy.createGrid({ data, columns });
+      cy.createGrid({ data, columns: unorderedRelationColumns1 });
     });
 
     it('should display relation data properly', () => {
-      const expected =
-        type === 'sorted'
-          ? [
-              ['', '', '', 'Select'],
-              ['Overseas', 'R&B', 'Marry You', 'no'],
-              ['Etc', 'OST', 'City Of Stars', 'relation']
-            ]
-          : [
-              ['', '', 'Select', ''],
-              ['R&B', 'Overseas', 'no', 'Marry You'],
-              ['OST', 'Etc', 'relation', 'City Of Stars']
-            ];
-
-      cy.getRsideBody().should('have.cellData', expected);
+      cy.getRsideBody().should('have.cellData', [
+        ['', '', 'Select', ''],
+        ['R&B', 'Overseas', 'no', 'Marry You'],
+        ['OST', 'Etc', 'relation', 'City Of Stars']
+      ]);
     });
 
     it('should change state by relations', () => {
@@ -68,22 +142,16 @@ before(() => {
     });
 
     it('relation columns could be set through setColumns()', () => {
-      const expected =
-        type === 'sorted'
-          ? [
-              ['', '', ''],
-              ['Overseas', 'R&B', 'Marry You'],
-              ['Etc', 'OST', 'City Of Stars']
-            ]
-          : [
-              ['', '', ''],
-              ['R&B', 'Overseas', 'Marry You'],
-              ['OST', 'Etc', 'City Of Stars']
-            ];
-      const filteredColumns = columns.filter(column => column.name !== 'category4');
+      const filteredColumns = unorderedRelationColumns1.filter(
+        column => column.name !== 'category4'
+      );
       cy.gridInstance().invoke('setColumns', filteredColumns);
 
-      cy.getRsideBody().should('have.cellData', expected);
+      cy.getRsideBody().should('have.cellData', [
+        ['', '', ''],
+        ['R&B', 'Overseas', 'Marry You'],
+        ['OST', 'Etc', 'City Of Stars']
+      ]);
 
       changeCellValues(0);
 
@@ -91,10 +159,7 @@ before(() => {
     });
 
     it('should display relation with added data after calling appendRow()', () => {
-      const expected =
-        type === 'sorted'
-          ? ['Overseas', 'R&B', 'Marry You', 'no']
-          : ['R&B', 'Overseas', 'no', 'Marry You'];
+      const expected = ['R&B', 'Overseas', 'no', 'Marry You'];
 
       cy.gridInstance().invoke('appendRow', {
         category1: '02',
@@ -113,19 +178,94 @@ before(() => {
     });
 
     it('should display relation data after calling resetData()', () => {
-      const expected =
-        type === 'sorted'
-          ? [
-              ['Overseas', 'R&B', 'Marry You', 'no'],
-              ['Etc', 'OST', 'City Of Stars', 'relation']
-            ]
-          : [
-              ['R&B', 'Overseas', 'no', 'Marry You'],
-              ['OST', 'Etc', 'relation', 'City Of Stars']
-            ];
       cy.gridInstance().invoke('resetData', deepCopyArray(data.slice(1, 3)));
 
-      cy.getRsideBody().should('have.cellData', expected);
+      cy.getRsideBody().should('have.cellData', [
+        ['R&B', 'Overseas', 'no', 'Marry You'],
+        ['OST', 'Etc', 'relation', 'City Of Stars']
+      ]);
+
+      changeCellValues(0);
+
+      assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+    });
+  });
+
+  context('example2', () => {
+    beforeEach(() => {
+      cy.createGrid({ data, columns: unorderedRelationColumns2 });
+    });
+
+    it('should display relation data properly', () => {
+      cy.getRsideBody().should('have.cellData', [
+        ['', 'Select', '', ''],
+        ['R&B', 'no', 'Marry You', 'Overseas'],
+        ['OST', 'relation', 'City Of Stars', 'Etc']
+      ]);
+    });
+
+    it('should change state by relations', () => {
+      changeCellValues(0);
+
+      assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+    });
+
+    it('change cell disabled state with empty value', () => {
+      cy.gridInstance().invoke('setValue', 1, 'category1', '');
+
+      cy.getCell(1, 'category2').should('have.class', `${cls('cell-disabled')}`);
+      cy.getCell(1, 'category3').should('have.class', `${cls('cell-disabled')}`);
+    });
+
+    it('change cell editable state', () => {
+      cy.gridInstance().invoke('setValue', 1, 'category1', '01');
+
+      cy.getCell(1, 'category2').should('have.not.class', `${cls('cell-editable')}`);
+    });
+
+    it('relation columns could be set through setColumns()', () => {
+      const filteredColumns = unorderedRelationColumns2.filter(
+        column => column.name !== 'category4'
+      );
+      cy.gridInstance().invoke('setColumns', filteredColumns);
+
+      cy.getRsideBody().should('have.cellData', [
+        ['', '', ''],
+        ['R&B', 'Marry You', 'Overseas'],
+        ['OST', 'City Of Stars', 'Etc']
+      ]);
+
+      changeCellValues(0);
+
+      assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+    });
+
+    it('should display relation with added data after calling appendRow()', () => {
+      const expected = ['R&B', 'no', 'Marry You', 'Overseas'];
+
+      cy.gridInstance().invoke('appendRow', {
+        category1: '02',
+        category2: '02_03',
+        category3: '02_03_0001',
+        category4: '01'
+      });
+
+      cy.getCells(3).each(($cell, index) => {
+        cy.wrap($cell).should('have.text', expected[index]);
+      });
+
+      changeCellValues(3);
+
+      assertRelationData(3, ['Overseas', 'Pop', 'Youth']);
+    });
+
+    it('should display relation data after calling resetData()', () => {
+      cy.gridInstance().invoke('resetData', deepCopyArray(data.slice(1, 3)));
+
+      cy.getRsideBody().should('have.cellData', [
+        ['R&B', 'no', 'Marry You', 'Overseas'],
+        ['OST', 'relation', 'City Of Stars', 'Etc']
+      ]);
 
       changeCellValues(0);
 
