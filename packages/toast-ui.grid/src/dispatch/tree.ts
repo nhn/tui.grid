@@ -33,6 +33,8 @@ import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/co
 import { cls } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 
+let computedFontStyle = '';
+
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
 
@@ -147,11 +149,20 @@ function getTextWidth(text: string, font: string) {
 }
 
 function getComputedFontStyle() {
-  const firstTreeNode = document.querySelector(
-    `.${cls('tree-wrapper-relative')} .${cls('cell-content')}`
-  )!;
+  const firstTreeCellNode = document.querySelector(`.${cls('tree-wrapper-relative')}`)!;
+  const walker = document.createTreeWalker(firstTreeCellNode, 4);
+  let node: Node = firstTreeCellNode;
 
-  const compStyle = getComputedStyle(firstTreeNode);
+  while (walker.nextNode()) {
+    node = walker.currentNode;
+
+    if (node.nodeType === 3) {
+      node = node.parentElement!;
+      break;
+    }
+  }
+
+  const compStyle = getComputedStyle(node as Element);
   const fontSize = compStyle.getPropertyValue('font-size');
   const fontWeight = compStyle.getPropertyValue('font-weight');
   const fontFamily = compStyle.getPropertyValue('font-family');
@@ -166,31 +177,38 @@ function getChildTreeNodeMaxWidth(
   treeColumnName: string,
   useIcon?: boolean
 ) {
-  const fontStyle = getComputedFontStyle();
   const CELL_CONTENT_LEFT_PADDING = 14;
   const CELL_CONTENT_RIGHT_PADDING = 5;
+  let maxLength = 0;
 
-  return Math.max(
-    ...childRowKeys.map(rowKey => {
+  computedFontStyle = computedFontStyle || getComputedFontStyle();
+
+  const getMaxWidth = childRowKeys.reduce(
+    (acc: () => number, rowKey) => {
       const row = findProp('rowKey', rowKey, rawData)!;
       const value = row[treeColumnName];
       const { formatter, defaultValue } = column;
-      const indentWidth = getTreeIndentWidth(getDepth(rawData, row), useIcon);
-
       const formattedValue = getFormattedValue(
         { row, column, value },
         formatter,
         defaultValue || value
       );
 
-      return (
-        getTextWidth(formattedValue, fontStyle) +
-        indentWidth +
-        CELL_CONTENT_LEFT_PADDING +
-        CELL_CONTENT_RIGHT_PADDING
-      );
-    })
+      if (formattedValue.length > maxLength) {
+        maxLength = formattedValue.length;
+        acc = () =>
+          getTextWidth(formattedValue, computedFontStyle) +
+          getTreeIndentWidth(getDepth(rawData, row), useIcon) +
+          CELL_CONTENT_LEFT_PADDING +
+          CELL_CONTENT_RIGHT_PADDING;
+      }
+
+      return acc;
+    },
+    () => 0
   );
+
+  return getMaxWidth();
 }
 
 function collapse(store: Store, row: Row, recursive?: boolean) {
