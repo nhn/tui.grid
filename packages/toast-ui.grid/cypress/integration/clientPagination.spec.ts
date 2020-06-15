@@ -230,6 +230,18 @@ describe('type: scroll', () => {
       .find('input')
       .should('not.be.checked');
   });
+
+  it('should display the appended row after removing all rows', () => {
+    createGridWithScrollType();
+
+    // remove all checked rows
+    cy.gridInstance().invoke('checkAll', true);
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.gridInstance().invoke('appendRow', appendedData);
+
+    cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+  });
 });
 
 describe('API', () => {
