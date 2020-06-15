@@ -4,7 +4,7 @@ import { Row, Data, ViewRow } from '@t/store/data';
 import { Range } from '@t/store/selection';
 import { OriginData } from '@t/dispatch';
 import { isObservable, notify } from '../helper/observable';
-import { createData, generateDataCreationKey, createViewRow } from '../store/data';
+import { generateDataCreationKey, createViewRow, createRawRow } from '../store/data';
 import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
 import { silentSplice } from '../helper/common';
@@ -59,19 +59,46 @@ function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: 
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
+  const { rawData } = data;
+  const { columnMapWithRelation, keyColumnName } = column;
+
   fillMissingColumnData(column, rows);
 
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
-  const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
+  // const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
 
-  for (let index = 0, end = rawData.length; index < end; index += 1) {
+  for (let index = 0, end = rows.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
-    silentSplice(data.rawData, targetIndex, 1, rawData[index]);
-    silentSplice(data.viewData, targetIndex, 1, viewData[index]);
+
+    const rawRow = createRawRow(rows[index], index, columnMapWithRelation, {
+      lazyObservable: false,
+      prevRow: prevRows[index],
+      keyColumnName
+    });
+    const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData);
+
+    silentSplice(data.rawData, targetIndex, 1, rawRow);
+    silentSplice(data.viewData, targetIndex, 1, viewRow);
   }
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
+
+// function changeToObservableData(column: Column, data: Data, originData: OriginData) {
+//   const { targetIndexes, rows } = originData;
+//   fillMissingColumnData(column, rows);
+
+//   // prevRows is needed to create rowSpan
+//   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
+//   const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
+
+//   for (let index = 0, end = rawData.length; index < end; index += 1) {
+//     const targetIndex = targetIndexes[index];
+//     silentSplice(data.rawData, targetIndex, 1, rawData[index]);
+//     silentSplice(data.viewData, targetIndex, 1, viewData[index]);
+//   }
+//   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+// }
 
 function changeToObservableTreeData(
   column: Column,
