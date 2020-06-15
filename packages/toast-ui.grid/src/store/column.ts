@@ -457,7 +457,7 @@ export function create({
     },
 
     get validationColumns() {
-      return this.allColumns.filter(({ validation }) => !!validation);
+      return this.allColumns.filter(({ validation }) => !isEmpty(validation));
     },
 
     get ignoredColumns() {
