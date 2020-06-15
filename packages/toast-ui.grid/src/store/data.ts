@@ -140,6 +140,7 @@ function getRowHeaderValue(row: Row, columnName: string) {
 function getValidationCode(
   value: CellValue,
   row: Row,
+  rawData: Row[],
   columnName: string,
   validation?: Validation
 ) {
@@ -149,10 +150,17 @@ function getValidationCode(
     return invalidStates;
   }
 
-  const { required, dataType, min, max, regExp, validatorFn } = validation;
+  const { required, dataType, min, max, regExp, validatorFn, unique } = validation;
 
   if (required && isBlank(value)) {
     invalidStates.push('REQUIRED');
+  }
+
+  if (unique) {
+    const filtered = rawData.filter(r => r !== row && r[columnName] === value);
+    if (filtered.length) {
+      invalidStates.push('UNIQUE');
+    }
   }
 
   if (isFunction(validatorFn)) {
@@ -207,6 +215,7 @@ export function createRowSpan(
 
 function createViewCell(
   row: Row,
+  rawData: Row[],
   column: ColumnInfo,
   relationMatched = true,
   relationListItems?: ListItem[]
@@ -238,7 +247,7 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode(value, row, name, validation),
+    invalidStates: getValidationCode(value, row, rawData, name, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
   };
@@ -247,6 +256,7 @@ function createViewCell(
 function createRelationViewCell(
   name: string,
   row: Row,
+  rawData: Row[],
   columnMap: Dictionary<ColumnInfo>,
   valueMap: Dictionary<CellRenderData>
 ) {
@@ -271,7 +281,13 @@ function createRelationViewCell(
       ? someProp('value', targetValue, targetListItems)
       : true;
 
-    const cellData = createViewCell(row, columnMap[targetName], relationMatched, targetListItems);
+    const cellData = createViewCell(
+      row,
+      rawData,
+      columnMap[targetName],
+      relationMatched,
+      targetListItems
+    );
 
     if (!targetEditable) {
       cellData.editable = false;
@@ -316,7 +332,7 @@ export function createViewRow(
     if (!related) {
       __unobserveFns__.push(
         observe(() => {
-          valueMap[name] = createViewCell(row, columnMap[name]);
+          valueMap[name] = createViewCell(row, rawData, columnMap[name]);
         })
       );
     }
@@ -324,7 +340,7 @@ export function createViewRow(
     if (relationMap && Object.keys(relationMap).length) {
       __unobserveFns__.push(
         observe(() => {
-          createRelationViewCell(name, row, columnMap, valueMap);
+          createRelationViewCell(name, row, rawData, columnMap, valueMap);
         })
       );
     }
