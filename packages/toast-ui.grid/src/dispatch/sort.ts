@@ -18,28 +18,28 @@ function createSoretedViewData(rawData: Row[]) {
 }
 
 function sortData(store: Store) {
-  const { data } = store;
+  const { data, column } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
-  const options: SortedColumn[] = [...columns];
+  const sortedColumns: SortedColumn[] = [...columns];
 
   if (columns.length !== 1 || columns[0].columnName !== 'sortKey') {
     // Columns that are not sorted by sortState must be sorted by sortKey
-    options.push({ columnName: 'sortKey', ascending: true });
+    // options.push({ columnName: 'sortKey', ascending: true });
   }
 
   if (isScrollPagination(data, true)) {
     // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
     const targetRawData = rawData.slice(...pageRowRange);
 
-    targetRawData.sort(sortRawData(options));
+    targetRawData.sort(sortRawData(column, sortedColumns));
 
     const targetViewData = createSoretedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
-    rawData.sort(sortRawData(options));
+    rawData.sort(sortRawData(column, sortedColumns));
     data.viewData = createSoretedViewData(rawData);
   }
 }
