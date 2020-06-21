@@ -113,7 +113,7 @@ describe('API', () => {
     it('should change values of specific column', () => {
       cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
 
-      cy.getColumnCells('name').should('sameColumnData', 'Park');
+      cy.getColumnCells('name').should('have.sameColumnData', 'Park');
     });
 
     it('should not change values of disabled cell with checkCellState: true', () => {
