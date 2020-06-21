@@ -232,7 +232,8 @@ export function createColumn(
     escapeHTML,
     ignored,
     filter,
-    className
+    className,
+    comparator
   } = column;
 
   const editorOptions = createEditorOptions(editor);
@@ -275,7 +276,8 @@ export function createColumn(
     filter: filterOptions,
     headerRenderer,
     className,
-    disabled
+    disabled,
+    comparator
   });
 }
 

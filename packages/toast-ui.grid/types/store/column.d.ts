@@ -127,6 +127,7 @@ export interface CommonColumnInfo {
   sortingType?: SortingType;
   onBeforeChange?: GridEventListener;
   onAfterChange?: GridEventListener;
+  comparator?: (valueA: CellValue, valueB: CellValue) => number;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {
