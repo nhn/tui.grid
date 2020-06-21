@@ -517,6 +517,7 @@ export function create({
         perPage: 20,
         type: 'pagination',
         position: 'bottom',
+        visiblePages: 10,
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
       };

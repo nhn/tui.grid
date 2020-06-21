@@ -109,6 +109,7 @@ export interface PageOptions {
   totalCount?: number;
   type?: 'scroll' | 'pagination';
   position?: 'top' | 'bottom';
+  visiblePages?: number;
 }
 
 export interface InvalidRow {
