@@ -1,5 +1,6 @@
 import { data } from '../../samples/pagination';
 import { OptRow } from '@t/options';
+import { PageOptions } from '@t/store/data';
 
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
@@ -21,12 +22,13 @@ const appendedData = {
   orderId: 'jj'
 };
 
-function createGrid(newData?: OptRow[]) {
+function createGrid(newData?: OptRow[], pageOptions?: PageOptions) {
   cy.createGrid({
     data: newData || data.slice(0, TOTAL_COUNT),
     pageOptions: {
       useClient: true,
-      perPage: PER_PAGE_COUNT
+      perPage: PER_PAGE_COUNT,
+      ...pageOptions
     },
     rowHeaders: ['checkbox'],
     columns
@@ -298,4 +300,13 @@ it('should apply the pageState after calling resetData with pageState option', (
   assertSelectedPage(2);
   assertLastPage(4);
   assertRowLength(5);
+});
+
+it('should display the pagination component with visiblePages option', () => {
+  createGrid(data.slice(0, 100), { visiblePages: 5 });
+
+  cy.get(`.tui-last-child`).should('have.text', '...');
+  cy.get(`.tui-last-child`)
+    .prev()
+    .should('have.text', '5');
 });
