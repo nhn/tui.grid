@@ -231,3 +231,9 @@ export function unobservedInvoke(fn: Function) {
   fn();
   paused = false;
 }
+
+export function batchedInvokeObserver(fn: Function) {
+  pending = true;
+  fn();
+  pending = false;
+}
