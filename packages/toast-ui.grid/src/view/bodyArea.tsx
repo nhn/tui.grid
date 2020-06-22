@@ -109,6 +109,7 @@ class BodyAreaComp extends Component<Props> {
     const { side, dispatch } = this.props;
 
     if (hasClass(targetElement, 'cell-dummy')) {
+      dispatch('saveAndFinishEditing');
       dispatch('initFocus');
       dispatch('initSelection');
       return;

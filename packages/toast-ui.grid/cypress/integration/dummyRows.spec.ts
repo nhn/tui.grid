@@ -26,3 +26,14 @@ it('should inialize focus and selection layer', () => {
   cy.getByCls('layer-focus').should('not.exist');
   cy.getByCls('layer-selection').should('not.visible');
 });
+
+it('should save the editing result when clicking the dummy cell', () => {
+  cy.gridInstance().invoke('startEditing', 0, 'id');
+  cy.getByCls('content-text').type('test');
+
+  cy.getByCls('cell-dummy')
+    .first()
+    .click();
+
+  cy.getCell(0, 'id').should('have.text', 'test');
+});
