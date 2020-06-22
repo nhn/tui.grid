@@ -1,7 +1,8 @@
 import { RowKey, CellValue } from '@t/store/data';
 import { OptColumn, OptGrid, OptRow } from '@t/options';
-import { cls } from '../../src/helper/dom';
 import GridEvent from '@/event/gridEvent';
+import { CellRenderer, CellRendererProps } from '@t/renderer';
+import { cls } from '../../src/helper/dom';
 
 type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 
@@ -791,23 +792,59 @@ describe('with resizable column options', () => {
   const DEPTH_TWO_MAX_WIDTH = 295;
   const DEPTH_THREE_MAX_WIDTH = 348;
 
-  beforeEach(() => {
-    data[0].c1 = 'looooooooooooooong contents';
-    data[0]._children[0]._attributes.expanded = false;
-    data[0]._children[0].c1 = 'looooooooooooooong child contents';
-    data[0]._children[0]._children[0].c1 = 'looooooooooooooong child child contents';
+  let targetData: OptRow[] = [];
+  let targetColumns: OptColumn[] = [];
 
-    columns[0].width = DEPTH_ONE_MAX_WIDTH;
-    columns[0].resizable = true;
-  });
-
-  it('width not automatically resize when expanded without resizable option', () => {
-    columns[0].resizable = false;
-    createGrid({
+  function createGridWidthResizableOption() {
+    cy.createGrid({
+      data: targetData,
+      columns: targetColumns,
       treeColumnOptions: {
         name: 'c1'
       }
     });
+  }
+
+  beforeEach(() => {
+    targetColumns = [
+      { name: 'c1', editor: 'text', width: DEPTH_ONE_MAX_WIDTH, resizable: true },
+      { name: 'c2' }
+    ];
+    targetData = [
+      {
+        c1: 'looooooooooooooong contents',
+        _children: [
+          {
+            c1: 'looooooooooooooong child contents',
+            _attributes: {
+              expanded: false
+            },
+            _children: [
+              {
+                c1: 'looooooooooooooong child child contents',
+                _attributes: {
+                  expanded: false
+                },
+                _children: [
+                  {
+                    c1: 'qux'
+                  },
+                  {
+                    c1: 'quxx',
+                    _children: []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ];
+  });
+
+  it('width should not be automatically resize when expanding without resizable option', () => {
+    targetColumns[0].resizable = false;
+    createGridWidthResizableOption();
 
     cy.gridInstance().invoke('expand', 0);
 
@@ -815,12 +852,8 @@ describe('with resizable column options', () => {
   });
 
   ['UI', 'API'].forEach(type => {
-    it(`width resize automatically when expand by ${type}`, () => {
-      createGrid({
-        treeColumnOptions: {
-          name: 'c1'
-        }
-      });
+    it(`width should be resized automatically when expanding by ${type}`, () => {
+      createGridWidthResizableOption();
 
       assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
@@ -834,14 +867,9 @@ describe('with resizable column options', () => {
     });
   });
 
-  it('width is not resized when existing width is wider than child node width', () => {
-    data[0]._children[0].c1 = 'short';
-
-    createGrid({
-      treeColumnOptions: {
-        name: 'c1'
-      }
-    });
+  it('width should not be resized when existing width is wider than child node width', () => {
+    targetData[0]._children![0].c1 = 'short';
+    createGridWidthResizableOption();
 
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
@@ -850,14 +878,9 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
   });
 
-  it('width resize automatically with child expanded attribute', () => {
-    data[0]._children[0]._attributes.expanded = true;
-
-    createGrid({
-      treeColumnOptions: {
-        name: 'c1'
-      }
-    });
+  it('width should be resized automatically with child expanded attribute', () => {
+    targetData[0]._children![0]._attributes!.expanded = true;
+    createGridWidthResizableOption();
 
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
@@ -866,12 +889,38 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
   });
 
-  it('width resize automatically when call expandAll()', () => {
-    createGrid({
-      treeColumnOptions: {
-        name: 'c1'
+  it('width should be resized automatically when calling expandAll()', () => {
+    createGridWidthResizableOption();
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+
+    cy.gridInstance().invoke('expandAll');
+
+    assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
+  });
+
+  it('width should be resized with custom renderer automatically when calling expandAll()', () => {
+    class CustomRenderer implements CellRenderer {
+      private el: HTMLElement;
+
+      constructor(props: CellRendererProps) {
+        const el = document.createElement('div');
+
+        this.el = el;
+        this.render(props);
       }
-    });
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props: CellRendererProps) {
+        this.el.innerText = props.formattedValue || '';
+      }
+    }
+
+    targetColumns[0].renderer = CustomRenderer;
+    createGridWidthResizableOption();
 
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
