@@ -1,6 +1,6 @@
-import { OptRow, Dictionary } from '../../../types/options';
+import { OptRow } from '../../../types/options';
 import { Row, RowKey } from '../../../types/store/data';
-import { ColumnInfo } from '../../../types/store/column';
+import { Column } from '../../../types/store/column';
 import { createRawRow } from '../data';
 import { isExpanded, getDepth, isLeaf, isHidden } from '../../query/tree';
 import { observable, observe } from '../../helper/observable';
@@ -15,8 +15,9 @@ interface TreeDataOption {
 }
 
 interface TreeDataCreationOption {
+  id: number;
   data: OptRow[];
-  columnMap: Dictionary<ColumnInfo>;
+  column: Column;
   keyColumnName?: string;
   lazyObservable?: boolean;
   disabled?: boolean;
@@ -59,9 +60,10 @@ function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
 }
 
 export function createTreeRawRow(
+  id: number,
   row: OptRow,
   parentRow: Row | null,
-  columnMap: Dictionary<ColumnInfo>,
+  column: Column,
   options = {} as TreeDataOption
 ) {
   let childRowKeys = [] as RowKey[];
@@ -71,7 +73,7 @@ export function createTreeRawRow(
   const { keyColumnName, offset, lazyObservable = false, disabled = false } = options;
   // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
-  const rawRow = createRawRow(row, targetTreeRowKey, columnMap, {
+  const rawRow = createRawRow(id, row, targetTreeRowKey, column, {
     keyColumnName,
     lazyObservable,
     disabled
@@ -104,21 +106,22 @@ export function createTreeRawRow(
 }
 
 export function flattenTreeData(
+  id: number,
   data: OptRow[],
   parentRow: Row | null,
-  columnMap: Dictionary<ColumnInfo>,
+  column: Column,
   options: TreeDataOption
 ) {
   const flattenedRows: Row[] = [];
 
   data.forEach(row => {
-    const rawRow = createTreeRawRow(row, parentRow, columnMap, options);
+    const rawRow = createTreeRawRow(id, row, parentRow, column, options);
 
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
-        flattenedRows.push(...flattenTreeData(row._children, rawRow, columnMap, options));
+        flattenedRows.push(...flattenTreeData(id, row._children, rawRow, column, options));
       }
     }
   });
@@ -127,8 +130,9 @@ export function flattenTreeData(
 }
 
 export function createTreeRawData({
+  id,
   data,
-  columnMap,
+  column,
   keyColumnName,
   lazyObservable = false,
   disabled = false
@@ -138,7 +142,7 @@ export function createTreeRawData({
     treeRowKey = -1;
   }
 
-  return flattenTreeData(data, null, columnMap, {
+  return flattenTreeData(id, data, null, column, {
     keyColumnName,
     lazyObservable,
     disabled

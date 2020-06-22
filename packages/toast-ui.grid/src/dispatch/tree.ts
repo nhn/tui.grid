@@ -366,12 +366,11 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
   const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
   const { parentRowKey, offset } = options;
   const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
-  const rawRows = flattenTreeData([row], parentRow!, columnMapWithRelation, {
+  const rawRows = flattenTreeData(id, [row], parentRow!, column, {
     keyColumnName: column.keyColumnName,
     offset
   });
@@ -379,9 +378,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   fillMissingColumnData(column, rawRows);
 
   rawData.splice(startIdx, 0, ...rawRows);
-  const viewRows = rawRows.map(rawRow =>
-    createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon)
-  );
+  const viewRows = rawRows.map(rawRow => createViewRow(id, rawRow, rawData, column));
   viewData.splice(startIdx, 0, ...viewRows);
   const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);

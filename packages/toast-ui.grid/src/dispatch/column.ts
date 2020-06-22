@@ -84,7 +84,7 @@ export function setColumnWidth(
 }
 
 export function setColumns(store: Store, optColumns: OptColumn[]) {
-  const { column, data } = store;
+  const { column, data, id } = store;
   const {
     columnOptions,
     copyOptions,
@@ -120,7 +120,6 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
-  const { columnMapWithRelation, treeColumnName, treeIcon, emptyRow } = column;
 
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
@@ -129,7 +128,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   });
 
   data.rawData = data.rawData.map(row => {
-    const newRow = { ...emptyRow, ...row };
+    const newRow = { ...column.emptyRow, ...row };
     newRow.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
     return newRow;
@@ -137,7 +136,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   data.viewData = data.rawData.map(row =>
     isObservable(row)
-      ? createViewRow(row, columnMapWithRelation, data.rawData, treeColumnName, treeIcon)
+      ? createViewRow(id, row, data.rawData, column)
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
 
