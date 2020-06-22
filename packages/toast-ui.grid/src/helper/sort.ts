@@ -40,7 +40,8 @@ function getComparators(columns: SortedColumn[], columnMap: Dictionary<ColumnInf
       name: columnName,
       comparator: ascending
         ? comparator
-        : (valueA: CellValue, valueB: CellValue) => -comparator(valueA, valueB)
+        : (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) =>
+            -comparator(valueA, valueB, rowA, rowB)
     });
   });
 
@@ -54,7 +55,7 @@ export function sortRawData(column: Column, columns: SortedColumn[]) {
     for (const { name: columnName, comparator } of comparators) {
       let result = 0;
 
-      result = comparator(rowA[columnName], rowB[columnName]);
+      result = comparator(rowA[columnName], rowB[columnName], rowA, rowB);
       if (result) {
         return result;
       }
