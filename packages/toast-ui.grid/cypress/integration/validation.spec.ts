@@ -266,3 +266,92 @@ it('validate changed value after calling setColumns API', () => {
 
   cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
 });
+
+describe('should check the validation of cell - unique', () => {
+  beforeEach(() => {
+    const duplicateData = [
+      { name: 'pen', price: 2000 },
+      { name: 'note', price: 10000 },
+      { name: 'note', price: 4000 }
+    ];
+    cy.createGrid({
+      data: duplicateData,
+      columns: [
+        {
+          name: 'name',
+          validation: {
+            unique: true
+          }
+        }
+      ],
+      rowHeaders: ['checkbox']
+    });
+  });
+
+  it('check `unique` validation on initial rendering', () => {
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling appendRow', () => {
+    cy.gridInstance().invoke('appendRow', { name: 'pen', price: 3000 });
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling appendRows', () => {
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'pen', price: 100 },
+      { name: 'eraser', price: 3200 }
+    ]);
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(4, 'name').should('not.have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling setColumnValues', () => {
+    cy.gridInstance().invoke('setColumnValues', 'name', 'pen');
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling removeRow', () => {
+    cy.gridInstance().invoke('removeRow', 1);
+
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('not.have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling removeCheckedRows', () => {
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('not.have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling setRow', () => {
+    cy.gridInstance().invoke('setRow', 2, { name: 'pen', price: 100 });
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling setValue', () => {
+    cy.gridInstance().invoke('setValue', 2, 'name', 'pen');
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+  });
+});
