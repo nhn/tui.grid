@@ -23,11 +23,6 @@ function sortData(store: Store) {
   const { columns } = sortState;
   const sortedColumns: SortedColumn[] = [...columns];
 
-  if (columns.length !== 1 || columns[0].columnName !== 'sortKey') {
-    // Columns that are not sorted by sortState must be sorted by sortKey
-    // options.push({ columnName: 'sortKey', ascending: true });
-  }
-
   if (isScrollPagination(data, true)) {
     // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
     const targetRawData = rawData.slice(...pageRowRange);

@@ -53,9 +53,8 @@ export function sortRawData(column: Column, columns: SortedColumn[]) {
 
   return (rowA: Row, rowB: Row) => {
     for (const { name: columnName, comparator } of comparators) {
-      let result = 0;
+      const result = comparator(rowA[columnName], rowB[columnName], rowA, rowB);
 
-      result = comparator(rowA[columnName], rowB[columnName], rowA, rowB);
       if (result) {
         return result;
       }
