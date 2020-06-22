@@ -22,6 +22,7 @@ export type ValidationType =
   | 'MAX'
   | 'REGEXP'
   | 'VALIDATOR_FN';
+export type Comparator = (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) => number;
 
 export interface ClipboardCopyOptions {
   useFormattedValue?: boolean;
@@ -127,7 +128,7 @@ export interface CommonColumnInfo {
   sortingType?: SortingType;
   onBeforeChange?: GridEventListener;
   onAfterChange?: GridEventListener;
-  comparator?: (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) => number;
+  comparator?: Comparator;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {

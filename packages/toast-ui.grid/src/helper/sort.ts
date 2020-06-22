@@ -1,6 +1,4 @@
-import { CellValue, SortedColumn, Row } from '@t/store/data';
-import { Column, ColumnInfo } from '@t/store/column';
-import { Dictionary } from '@t/options';
+import { CellValue, Row, SortedColumnWithComprator } from '@t/store/data';
 import { isBlank, isNumber, convertToNumber } from './common';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
@@ -29,12 +27,12 @@ export function compare(valueA: CellValue, valueB: CellValue) {
   return result;
 }
 
-function getComparators(columns: SortedColumn[], columnMap: Dictionary<ColumnInfo>) {
+function getComparators(columns: SortedColumnWithComprator[]) {
   const comparators: { name: string; comparator: Function }[] = [];
 
   columns.forEach(column => {
-    const { columnName, ascending } = column;
-    const comparator = columnMap[columnName]?.comparator || compare;
+    const { columnName, ascending, comparator: customComparator } = column;
+    const comparator = customComparator || compare;
 
     comparators.push({
       name: columnName,
@@ -48,8 +46,8 @@ function getComparators(columns: SortedColumn[], columnMap: Dictionary<ColumnInf
   return comparators;
 }
 
-export function sortRawData(column: Column, columns: SortedColumn[]) {
-  const comparators = getComparators(columns, column.allColumnMap);
+export function sortRawData(columns: SortedColumnWithComprator[]) {
+  const comparators = getComparators(columns);
 
   return (rowA: Row, rowB: Row) => {
     for (const { name: columnName, comparator } of comparators) {

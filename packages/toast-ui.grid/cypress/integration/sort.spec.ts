@@ -374,13 +374,8 @@ describe('sort the data with custom comparator', () => {
     const comparatorA = (a: CellValue, b: CellValue) => {
       const lengthA = (a as string).length;
       const lengthB = (b as string).length;
-      if (lengthA < lengthB) {
-        return -1;
-      }
-      if (lengthA > lengthB) {
-        return 1;
-      }
-      return 0;
+
+      return lengthA - lengthB;
     };
     const comparatorB = (a: CellValue, b: CellValue, rowA: Row, rowB: Row) => {
       if (rowA.alphabetA! < rowB.alphabetA!) {

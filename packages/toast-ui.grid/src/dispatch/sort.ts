@@ -1,5 +1,5 @@
 import { Store } from '@t/store';
-import { SortedColumn, Data, ViewRow, Row } from '@t/store/data';
+import { Data, ViewRow, Row } from '@t/store/data';
 import { SortingType } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
@@ -21,20 +21,23 @@ function sortData(store: Store) {
   const { data, column } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
-  const sortedColumns: SortedColumn[] = [...columns];
+  const sortedColumns = columns.map(sortedColumn => ({
+    ...sortedColumn,
+    comparator: column.allColumnMap[sortedColumn.columnName]?.comparator
+  }));
 
   if (isScrollPagination(data, true)) {
     // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
     const targetRawData = rawData.slice(...pageRowRange);
 
-    targetRawData.sort(sortRawData(column, sortedColumns));
+    targetRawData.sort(sortRawData(sortedColumns));
 
     const targetViewData = createSoretedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
-    rawData.sort(sortRawData(column, sortedColumns));
+    rawData.sort(sortRawData(sortedColumns));
     data.viewData = createSoretedViewData(rawData);
   }
 }

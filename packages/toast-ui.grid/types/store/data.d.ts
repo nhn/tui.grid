@@ -1,6 +1,6 @@
 import { Dictionary } from '../options';
 import { Filter } from './filterLayerState';
-import { ValidationType, InvalidColumn } from './column';
+import { ValidationType, InvalidColumn, Comparator } from './column';
 import { Range } from './selection';
 
 // Add object type for in case of handling object data in custom renderer
@@ -94,6 +94,8 @@ export interface SortedColumn {
   columnName: string;
   ascending: boolean;
 }
+
+export type SortedColumnWithComprator = SortedColumn & { comparator?: Comparator };
 
 export interface ListItem {
   text: string;
