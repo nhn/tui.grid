@@ -113,7 +113,7 @@ function createGrid() {
 
 // @TODO: need to unify the duplicated assert function in sort.spec.ts, filter.spec.ts, clientPagination.spec.ts
 function assertColumnData(column: string, text: string) {
-  cy.getColumnCells(column).should('sameColumnData', text);
+  cy.getColumnCells(column).should('have.sameColumnData', text);
 }
 
 function assertHaveSortingBtnClass(columnName: string, className: ClassNameType) {

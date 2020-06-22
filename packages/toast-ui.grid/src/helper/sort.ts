@@ -1,5 +1,5 @@
+import { CellValue, Row, SortedColumnWithComprator } from '@t/store/data';
 import { isBlank, isNumber, convertToNumber } from './common';
-import { CellValue, SortedColumn, Row } from '@t/store/data';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
@@ -27,31 +27,32 @@ export function compare(valueA: CellValue, valueB: CellValue) {
   return result;
 }
 
-function getComparators(columns: SortedColumn[]) {
+function getComparators(columns: SortedColumnWithComprator[]) {
   const comparators: { name: string; comparator: Function }[] = [];
 
   columns.forEach(column => {
-    const { columnName, ascending } = column;
+    const { columnName, ascending, comparator: customComparator } = column;
+    const comparator = customComparator || compare;
 
     comparators.push({
       name: columnName,
       comparator: ascending
-        ? compare
-        : (valueA: CellValue, valueB: CellValue) => -compare(valueA, valueB)
+        ? comparator
+        : (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) =>
+            -comparator(valueA, valueB, rowA, rowB)
     });
   });
 
   return comparators;
 }
 
-export function sortRawData(columns: SortedColumn[]) {
+export function sortRawData(columns: SortedColumnWithComprator[]) {
   const comparators = getComparators(columns);
 
   return (rowA: Row, rowB: Row) => {
     for (const { name: columnName, comparator } of comparators) {
-      let result = 0;
+      const result = comparator(rowA[columnName], rowB[columnName], rowA, rowB);
 
-      result = comparator(rowA[columnName], rowB[columnName]);
       if (result) {
         return result;
       }

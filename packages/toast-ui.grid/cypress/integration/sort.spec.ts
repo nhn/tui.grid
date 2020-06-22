@@ -2,6 +2,7 @@ import { OptColumn, Dictionary } from '@t/options';
 import { cls, ClassNameType } from '../../src/helper/dom';
 import { sortData as data } from '../../samples/basic';
 import { compare } from '@/helper/sort';
+import { CellValue, Row } from '@t/store/data';
 
 const columns: OptColumn[] = [
   { name: 'alphabetA', minWidth: 150, sortable: true },
@@ -31,18 +32,18 @@ function assertHaveNotSortingBtnClass(target: string, className: ClassNameType) 
 function assertOriginData(columnName: string) {
   const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
 
-  cy.getColumnCells(columnName).should('columnData', expectValues);
+  cy.getColumnCells(columnName).should('have.columnData', expectValues);
 }
 
 function assertSortedData(columnName: string, ascending = true) {
   const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
   expectValues.sort((a, b) => (ascending ? compare(a, b) : -compare(a, b)));
 
-  cy.getColumnCells(columnName).should('columnData', expectValues);
+  cy.getColumnCells(columnName).should('have.columnData', expectValues);
 }
 
 function compareColumnData(columnName: string, expectValues: string[] | number[]) {
-  cy.getColumnCells(columnName).should('columnData', expectValues);
+  cy.getColumnCells(columnName).should('have.columnData', expectValues);
 }
 
 before(() => {
@@ -365,5 +366,74 @@ describe('resetData API with sortState', () => {
 
     assertHaveNotSortingBtnClass('@first', 'btn-sorting-up');
     assertHaveNotSortingBtnClass('@first', 'btn-sorting-down');
+  });
+});
+
+describe('sort the data with custom comparator', () => {
+  beforeEach(() => {
+    const comparatorA = (a: CellValue, b: CellValue) => {
+      const lengthA = (a as string).length;
+      const lengthB = (b as string).length;
+
+      return lengthA - lengthB;
+    };
+    const comparatorB = (a: CellValue, b: CellValue, rowA: Row, rowB: Row) => {
+      if (rowA.alphabetA! < rowB.alphabetA!) {
+        return -1;
+      }
+      if (rowA.alphabetA! > rowB.alphabetA!) {
+        return 1;
+      }
+      return 0;
+    };
+    const columnWithCustomComparator: OptColumn[] = [
+      { name: 'alphabetA', minWidth: 150, sortable: true, comparator: comparatorA },
+      {
+        name: 'alphabetB',
+        minWidth: 150,
+        sortable: true,
+        sortingType: 'desc',
+        comparator: comparatorA
+      },
+      {
+        name: 'numberA',
+        minWidth: 150,
+        sortable: true,
+        sortingType: 'desc',
+        comparator: comparatorB
+      }
+    ];
+    cy.createGrid({ data, columns: columnWithCustomComparator });
+    createSortButtonAlias();
+  });
+
+  ['API', 'UI'].forEach(type => {
+    it(`should sort the data in ascending order by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('sort', 'alphabetA', true);
+      } else {
+        cy.get('@first').click();
+      }
+      compareColumnData('alphabetA', ['A', 'C', 'A', 'A', 'D', 'A', 'BCA', 'BAA', 'FGA']);
+    });
+
+    it(`should sort the data in descending order by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('sort', 'alphabetB', false);
+      } else {
+        cy.get('@second').click();
+      }
+      compareColumnData('alphabetB', ['B', 'A', 'A', 'B', 'B', 'E', 'C', 'A', 'F']);
+    });
+
+    it(`should sort the data with other row data by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('sort', 'numberA', false);
+      } else {
+        cy.get('@third').click();
+      }
+      compareColumnData('alphabetA', ['FGA', 'D', 'C', 'BCA', 'BAA', 'A', 'A', 'A', 'A']);
+      compareColumnData('numberA', ['25', '1', '1', '2', '20', '1', '1', '10', '24']);
+    });
   });
 });
