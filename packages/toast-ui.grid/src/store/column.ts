@@ -35,7 +35,8 @@ import {
   isUndefined,
   isNumber,
   findProp,
-  uniq
+  uniq,
+  isEmpty
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -465,10 +466,20 @@ export function create({
       // copy the array to prevent to affect allColumns property
       const copiedColumns = [...this.allColumns];
       copiedColumns.sort((columnA, columnB) => {
-        if (columnA.relationMap?.[columnB.name]) {
+        const hasRelationMapA = !isEmpty(columnA.relationMap);
+        const hasRelationMapB = !isEmpty(columnB.relationMap);
+
+        if (hasRelationMapA && hasRelationMapB) {
+          if (columnA.relationMap?.[columnB.name]) {
+            return -1;
+          }
+          return columnB.relationMap?.[columnA.name] ? 1 : 0;
+        }
+
+        if (hasRelationMapA) {
           return -1;
         }
-        return columnB.relationMap?.[columnA.name] ? 1 : 0;
+        return hasRelationMapB ? 1 : 0;
       });
 
       return createMapFromArray(copiedColumns, 'name');

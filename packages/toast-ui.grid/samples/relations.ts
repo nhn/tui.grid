@@ -131,7 +131,7 @@ export const data = [
   }
 ];
 
-export const sortedColumns = [
+export const orderedRelationColumns = [
   {
     header: 'Category1',
     name: 'category1',
@@ -215,7 +215,7 @@ export const sortedColumns = [
   }
 ];
 
-export const unsortedColumns = [
+export const unorderedRelationColumns1 = [
   {
     header: 'Category2',
     name: 'category2',
@@ -296,5 +296,89 @@ export const unsortedColumns = [
         listItems: []
       }
     }
+  }
+];
+
+export const unorderedRelationColumns2 = [
+  {
+    header: 'Category2',
+    name: 'category2',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
+    },
+    relations: [
+      {
+        targetNames: ['category3'],
+        listItems({ value }: { value: string }) {
+          return threeDepthData[value];
+        },
+        editable({ value }: { value: string }) {
+          return value !== '01_02';
+        },
+        disabled({ value }: { value: string }) {
+          return !value;
+        }
+      }
+    ]
+  },
+  {
+    header: 'No relation',
+    name: 'category4',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'Select', value: '' },
+          { text: 'no', value: '01' },
+          { text: 'relation', value: '02' }
+        ]
+      }
+    }
+  },
+  {
+    header: 'Category3',
+    name: 'category3',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
+    }
+  },
+  {
+    header: 'Category1',
+    name: 'category1',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: '', value: '' },
+          { text: 'Domestic', value: '01' },
+          { text: 'Overseas', value: '02' },
+          { text: 'Etc', value: '03' }
+        ]
+      }
+    },
+    relations: [
+      {
+        targetNames: ['category2'],
+        listItems({ value }: { value: string }) {
+          return twoDepthData[value];
+        },
+        editable({ value }: { value: string }) {
+          return value !== '01';
+        },
+        disabled({ value }: { value: string }) {
+          return !value;
+        }
+      }
+    ]
   }
 ];
