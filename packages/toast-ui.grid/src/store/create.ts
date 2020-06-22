@@ -14,8 +14,10 @@ import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
 import { setAutoBodyHeight } from '../dispatch/dimension';
 import { createObservableData } from '../dispatch/lazyObservable';
+import { createValidationMap } from './helper/validation';
 
 export function createStore(id: number, options: OptGrid): Store {
+  createValidationMap(id);
   const {
     el,
     width,
@@ -138,9 +140,13 @@ export function createStore(id: number, options: OptGrid): Store {
     setAutoBodyHeight(store);
   });
   // makes the data observable as changes viewport
-  observe(() => {
-    createObservableData(store);
-  });
+  observe(
+    () => {
+      createObservableData(store);
+    },
+    false,
+    'lazyObservable'
+  );
 
   return store;
 }

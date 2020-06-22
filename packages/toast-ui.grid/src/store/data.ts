@@ -13,42 +13,26 @@ import {
   SortState,
   RawRowOptions
 } from '@t/store/data';
-import {
-  Column,
-  FormatterProps,
-  Formatter,
-  Validation,
-  ValidationType,
-  ColumnInfo
-} from '@t/store/column';
+import { Column, FormatterProps, Formatter, ColumnInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
 import { OptRow, Dictionary } from '@t/options';
 import { Range } from '@t/store/selection';
-import {
-  observable,
-  observe,
-  Observable,
-  getOriginObject,
-  unobservedInvoke
-} from '../helper/observable';
+import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {
   someProp,
   encodeHTMLEntity,
-  isBlank,
   isUndefined,
   isBoolean,
   isEmpty,
-  isString,
   isNumber,
   isFunction,
-  convertToNumber,
   assign,
-  omit,
   isNull
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
+import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 
 interface DataOption {
@@ -61,11 +45,30 @@ interface DataOption {
 }
 
 interface DataCreationOption {
+  id: number;
   data: OptRow[];
   column: Column;
   lazyObservable?: boolean;
   prevRows?: Row[];
   disabled?: boolean;
+}
+
+interface ViewCellCreationOption {
+  id: number;
+  row: Row;
+  rawData: Row[];
+  column: ColumnInfo;
+  relationMatched?: boolean;
+  relationListItems?: ListItem[];
+}
+
+interface RelationViewCellCreationOption {
+  id: number;
+  name: string;
+  row: Row;
+  rawData: Row[];
+  columnMap: Dictionary<ColumnInfo>;
+  valueMap: Dictionary<CellRenderData>;
 }
 
 let dataCreationKey = '';
@@ -137,73 +140,6 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
-function getValidationCode(
-  value: CellValue,
-  row: Row,
-  rawData: Row[],
-  columnName: string,
-  validation?: Validation
-) {
-  const invalidStates: ValidationType[] = [];
-
-  if (!validation) {
-    return invalidStates;
-  }
-
-  const { required, dataType, min, max, regExp, validatorFn, unique } = validation;
-
-  if (required && isBlank(value)) {
-    invalidStates.push('REQUIRED');
-  }
-
-  if (unique) {
-    const filtered = rawData.filter(r => r !== row && r[columnName] === value);
-    if (filtered.length) {
-      invalidStates.push('UNIQUE');
-    }
-  }
-
-  if (isFunction(validatorFn)) {
-    const originRow = omit(
-      getOriginObject(row as Observable<Row>),
-      'sortKey',
-      'uniqueKey',
-      '_relationListItemMap',
-      '_disabledPriority'
-    ) as Row;
-
-    unobservedInvoke(() => {
-      if (!validatorFn(value, originRow, columnName)) {
-        invalidStates.push('VALIDATOR_FN');
-      }
-    });
-  }
-
-  if (dataType === 'string' && !isString(value)) {
-    invalidStates.push('TYPE_STRING');
-  }
-
-  if (regExp && isString(value) && !regExp.test(value)) {
-    invalidStates.push('REGEXP');
-  }
-
-  const numberValue = convertToNumber(value);
-
-  if (dataType === 'number' && !isNumber(numberValue)) {
-    invalidStates.push('TYPE_NUMBER');
-  }
-
-  if (min && isNumber(numberValue) && numberValue < min) {
-    invalidStates.push('MIN');
-  }
-
-  if (max && isNumber(numberValue) && numberValue > max) {
-    invalidStates.push('MAX');
-  }
-
-  return invalidStates;
-}
-
 export function createRowSpan(
   mainRow: boolean,
   rowKey: RowKey,
@@ -213,13 +149,8 @@ export function createRowSpan(
   return { mainRow, mainRowKey: rowKey, count, spanCount };
 }
 
-function createViewCell(
-  row: Row,
-  rawData: Row[],
-  column: ColumnInfo,
-  relationMatched = true,
-  relationListItems?: ListItem[]
-): CellRenderData {
+function createViewCell(option: ViewCellCreationOption): CellRenderData {
+  const { id, row, rawData, column, relationMatched = true, relationListItems } = option;
   const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
@@ -247,19 +178,20 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode(value, row, rawData, name, validation),
+    invalidStates: getValidationCode({ id, value, row, rawData, validation, columnName: name }),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
   };
 }
 
-function createRelationViewCell(
-  name: string,
-  row: Row,
-  rawData: Row[],
-  columnMap: Dictionary<ColumnInfo>,
-  valueMap: Dictionary<CellRenderData>
-) {
+function createRelationViewCell({
+  id,
+  name,
+  row,
+  rawData,
+  columnMap,
+  valueMap
+}: RelationViewCellCreationOption) {
   const { editable, disabled, value } = valueMap[name];
   const { relationMap = {} } = columnMap[name];
 
@@ -281,13 +213,14 @@ function createRelationViewCell(
       ? someProp('value', targetValue, targetListItems)
       : true;
 
-    const cellData = createViewCell(
+    const cellData = createViewCell({
+      id,
       row,
       rawData,
-      columnMap[targetName],
       relationMatched,
-      targetListItems
-    );
+      column: columnMap[targetName],
+      relationListItems: targetListItems
+    });
 
     if (!targetEditable) {
       cellData.editable = false;
@@ -305,14 +238,10 @@ function createRelationViewCell(
   });
 }
 
-export function createViewRow(
-  row: Row,
-  columnMap: Dictionary<ColumnInfo>,
-  rawData: Row[],
-  treeColumnName?: string,
-  treeIcon?: boolean
-) {
+export function createViewRow(id: number, row: Row, rawData: Row[], column: Column) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
+  const { columnMapWithRelation: columnMap } = column;
+  const { treeColumnName = '', treeIcon = true } = column;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach(name => {
@@ -332,7 +261,7 @@ export function createViewRow(
     if (!related) {
       __unobserveFns__.push(
         observe(() => {
-          valueMap[name] = createViewCell(row, rawData, columnMap[name]);
+          valueMap[name] = createViewCell({ id, row, rawData, column: columnMap[name] });
         })
       );
     }
@@ -340,7 +269,7 @@ export function createViewRow(
     if (relationMap && Object.keys(relationMap).length) {
       __unobserveFns__.push(
         observe(() => {
-          createRelationViewCell(name, row, rawData, columnMap, valueMap);
+          createRelationViewCell({ id, name, row, rawData, columnMap, valueMap });
         })
       );
     }
@@ -460,9 +389,10 @@ function createRowSpanMap(row: OptRow, rowSpan: RowSpanAttributeValue, prevRow?:
 }
 
 export function createRawRow(
+  id: number,
   row: OptRow,
   index: number,
-  columnMap: Dictionary<ColumnInfo>,
+  column: Column,
   options: RawRowOptions = {}
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
@@ -486,12 +416,17 @@ export function createRawRow(
   row._disabledPriority = row._disabledPriority || {};
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
-  setRowRelationListItems(row as Row, columnMap);
+  setRowRelationListItems(row as Row, column.columnMapWithRelation);
+
+  if (lazyObservable) {
+    addUniqueInfoMap(id, row, column);
+  }
 
   return (lazyObservable ? row : observable(row)) as Row;
 }
 
 export function createData({
+  id,
   data,
   column,
   lazyObservable = false,
@@ -499,20 +434,21 @@ export function createData({
   disabled = false
 }: DataCreationOption) {
   generateDataCreationKey();
-  const { keyColumnName, columnMapWithRelation, treeColumnName = '', treeIcon = true } = column;
+  const { keyColumnName, treeColumnName = '' } = column;
   let rawData: Row[];
 
   if (treeColumnName) {
     rawData = createTreeRawData({
+      id,
       data,
-      columnMap: columnMapWithRelation,
+      column,
       keyColumnName,
       lazyObservable,
       disabled
     });
   } else {
     rawData = data.map((row, index, rows) =>
-      createRawRow(row, index, columnMapWithRelation, {
+      createRawRow(id, row, index, column, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable,
@@ -524,7 +460,7 @@ export function createData({
   const viewData = rawData.map((row: Row) =>
     lazyObservable
       ? ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
-      : createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon)
+      : createViewRow(id, row, rawData, column)
   );
 
   return { rawData, viewData };
@@ -572,9 +508,10 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  disabled
+  disabled,
+  id
 }: DataOption): Observable<Data> {
-  const { rawData, viewData } = createData({ data, column, lazyObservable: true, disabled });
+  const { rawData, viewData } = createData({ id, data, column, lazyObservable: true, disabled });
 
   const sortState: SortState = {
     useClient: useClientSort,
