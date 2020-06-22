@@ -2,6 +2,7 @@ import { OptColumn, Dictionary } from '@t/options';
 import { cls, ClassNameType } from '../../src/helper/dom';
 import { sortData as data } from '../../samples/basic';
 import { compare } from '@/helper/sort';
+import { CellValue, Row } from '@t/store/data';
 
 const columns: OptColumn[] = [
   { name: 'alphabetA', minWidth: 150, sortable: true },
@@ -370,19 +371,42 @@ describe('resetData API with sortState', () => {
 
 describe('sort the data with custom comparator', () => {
   beforeEach(() => {
-    const comparator = (a: any, b: any) => {
-      if (a.length < b.length) {
+    const comparatorA = (a: CellValue, b: CellValue) => {
+      const lengthA = (a as string).length;
+      const lengthB = (b as string).length;
+      if (lengthA < lengthB) {
         return -1;
       }
-      if (a.length > b.length) {
+      if (lengthA > lengthB) {
+        return 1;
+      }
+      return 0;
+    };
+    const comparatorB = (a: CellValue, b: CellValue, rowA: Row, rowB: Row) => {
+      if (rowA.alphabetA! < rowB.alphabetA!) {
+        return -1;
+      }
+      if (rowA.alphabetA! > rowB.alphabetA!) {
         return 1;
       }
       return 0;
     };
     const columnWithCustomComparator: OptColumn[] = [
-      { name: 'alphabetA', minWidth: 150, sortable: true, comparator },
-      { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'desc', comparator },
-      { name: 'numberA', minWidth: 150, sortable: true, sortingType: 'desc' }
+      { name: 'alphabetA', minWidth: 150, sortable: true, comparator: comparatorA },
+      {
+        name: 'alphabetB',
+        minWidth: 150,
+        sortable: true,
+        sortingType: 'desc',
+        comparator: comparatorA
+      },
+      {
+        name: 'numberA',
+        minWidth: 150,
+        sortable: true,
+        sortingType: 'desc',
+        comparator: comparatorB
+      }
     ];
     cy.createGrid({ data, columns: columnWithCustomComparator });
     createSortButtonAlias();
@@ -405,6 +429,16 @@ describe('sort the data with custom comparator', () => {
         cy.get('@second').click();
       }
       compareColumnData('alphabetB', ['B', 'A', 'A', 'B', 'B', 'E', 'C', 'A', 'F']);
+    });
+
+    it(`should sort the data with other row data by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('sort', 'numberA', false);
+      } else {
+        cy.get('@third').click();
+      }
+      compareColumnData('alphabetA', ['FGA', 'D', 'C', 'BCA', 'BAA', 'A', 'A', 'A', 'A']);
+      compareColumnData('numberA', ['25', '1', '1', '2', '20', '1', '1', '10', '24']);
     });
   });
 });
