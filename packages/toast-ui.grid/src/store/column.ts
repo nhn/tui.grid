@@ -466,20 +466,20 @@ export function create({
       // copy the array to prevent to affect allColumns property
       const copiedColumns = [...this.allColumns];
       copiedColumns.sort((columnA, columnB) => {
-        const hasARelationMap = !isEmpty(columnA.relationMap);
-        const hasBRelationMap = !isEmpty(columnB.relationMap);
+        const hasRelationMapA = !isEmpty(columnA.relationMap);
+        const hasRelationMapB = !isEmpty(columnB.relationMap);
 
-        if (hasARelationMap && hasBRelationMap) {
+        if (hasRelationMapA && hasRelationMapB) {
           if (columnA.relationMap?.[columnB.name]) {
             return -1;
           }
           return columnB.relationMap?.[columnA.name] ? 1 : 0;
         }
 
-        if (hasARelationMap) {
+        if (hasRelationMapA) {
           return -1;
         }
-        return hasBRelationMap ? 1 : 0;
+        return hasRelationMapB ? 1 : 0;
       });
 
       return createMapFromArray(copiedColumns, 'name');
