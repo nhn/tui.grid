@@ -22,7 +22,7 @@ import {
   silentSplice
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
-import { notify, isObservable } from '../helper/observable';
+import { notify, isObservable, batchedInvokeObserver } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -487,14 +487,17 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     return;
   }
 
+  let removedRow = {} as Row;
   const nextRow = rawData[rowIndex + 1];
 
   updatePageWhenRemovingRow(store, 1);
   removeUniqueInfoMap(id, rawData[rowIndex], column);
 
-  const [removedRow] = rawData.splice(rowIndex, 1);
-  viewData.splice(rowIndex, 1);
-  updateHeights(store);
+  batchedInvokeObserver(() => {
+    [removedRow] = rawData.splice(rowIndex, 1);
+    viewData.splice(rowIndex, 1);
+    updateHeights(store);
+  });
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
@@ -728,8 +731,10 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   const [rawRow] = silentSplice(rawData, currentIndex, 1);
   const [viewRow] = silentSplice(viewData, currentIndex, 1);
 
-  rawData.splice(targetIndex, 0, rawRow);
-  viewData.splice(targetIndex, 0, viewRow);
+  batchedInvokeObserver(() => {
+    rawData.splice(targetIndex, 0, rawRow);
+    viewData.splice(targetIndex, 0, viewRow);
+  });
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);

@@ -5,7 +5,7 @@ import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { createViewRow, getFormattedValue } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
-import { notify } from '../helper/observable';
+import { notify, batchedInvokeObserver } from '../helper/observable';
 import { getDataManager } from '../instance';
 import {
   isUpdatableRowAttr,
@@ -377,16 +377,19 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   fillMissingColumnData(column, rawRows);
 
-  rawData.splice(startIdx, 0, ...rawRows);
-  const viewRows = rawRows.map(rawRow => createViewRow(id, rawRow, rawData, column));
-  viewData.splice(startIdx, 0, ...viewRows);
-  const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
-  heights.splice(startIdx, 0, ...rowHeights);
-
-  rawRows.forEach(rawRow => {
+  batchedInvokeObserver(() => {
+    rawData.splice(startIdx, 0, ...rawRows);
+    const viewRows = rawRows.map(rawRow => createViewRow(id, rawRow, rawData, column));
+    viewData.splice(startIdx, 0, ...viewRows);
+  });
+  const rowHeights = rawRows.map(rawRow => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
     getDataManager(id).push('CREATE', rawRow, true);
+
+    return getRowHeight(rawRow, dimension.rowHeight);
   });
+  heights.splice(startIdx, 0, ...rowHeights);
+
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, startIdx);
   setCheckedAllRows(store);
@@ -411,9 +414,12 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
 
   const startIdx = findIndexByRowKey(data, column, id, rowKey);
   const deleteCount = getDescendantRows(store, rowKey).length + 1;
+  let removedRows: Row[] = [];
 
-  const removedRows = rawData.splice(startIdx, deleteCount);
-  viewData.splice(startIdx, deleteCount);
+  batchedInvokeObserver(() => {
+    removedRows = rawData.splice(startIdx, deleteCount);
+    viewData.splice(startIdx, deleteCount);
+  });
   heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
