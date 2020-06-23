@@ -282,6 +282,12 @@ describe('should check the validation of cell - unique', () => {
           validation: {
             unique: true
           }
+        },
+        {
+          name: 'price',
+          validation: {
+            unique: true
+          }
         }
       ],
       rowHeaders: ['checkbox']
@@ -353,5 +359,15 @@ describe('should check the validation of cell - unique', () => {
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(1, 'name').should('not.have.class', cls('cell-invalid'));
     cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('clear existing unique info properly after calling resetData', () => {
+    cy.gridInstance().invoke('resetData', [
+      { name: 'note', price: 10000 },
+      { name: 'pen', price: 2000 }
+    ]);
+
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('not.have.class', cls('cell-invalid'));
   });
 });
