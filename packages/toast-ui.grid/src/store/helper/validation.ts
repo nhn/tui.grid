@@ -19,6 +19,7 @@ import {
   Observable,
   getRunningObservers
 } from '../../helper/observable';
+import { getInstance } from '../../instance';
 
 type UniqueInfoMap = Record<string, Record<string, RowKey[]>>;
 
@@ -33,7 +34,6 @@ interface ValidationOption {
   id: number;
   value: CellValue;
   row: Row;
-  rawData: Row[];
   columnName: string;
   validation?: Validation;
 }
@@ -142,14 +142,7 @@ const validateDataUniqueness = (rawData: Row[], columnName: string) => {
   });
 };
 
-export function getValidationCode({
-  id,
-  value,
-  row,
-  rawData,
-  columnName,
-  validation
-}: ValidationOption) {
+export function getValidationCode({ id, value, row, columnName, validation }: ValidationOption) {
   const invalidStates: ValidationType[] = [];
 
   if (!validation) {
@@ -172,6 +165,12 @@ export function getValidationCode({
       !isValidatingUniquenessMap[columnName] &&
       !includes(getRunningObservers(), 'lazyObservable')
     ) {
+      let rawData: Row[] = [];
+      unobservedInvoke(() => {
+        // @TODO: should get the latest rawData through function(not private field of the grid instance)
+        // @ts-ignore
+        rawData = getInstance(id).store.data.rawData;
+      });
       isValidatingUniquenessMap[columnName] = true;
       validateDataUniqueness(rawData, columnName);
     }

@@ -279,6 +279,7 @@ describe('should check the validation of cell - unique', () => {
       columns: [
         {
           name: 'name',
+          editor: 'text',
           validation: {
             unique: true
           }
@@ -307,6 +308,19 @@ describe('should check the validation of cell - unique', () => {
     cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('check `unique` validation after calling appendRows', () => {
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'pen', price: 100 },
+      { name: 'eraser', price: 3200 }
+    ]);
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(4, 'name').should('not.have.class', cls('cell-invalid'));
   });
 
   it('check `unique` validation after calling appendRows', () => {
