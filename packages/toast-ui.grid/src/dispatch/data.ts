@@ -153,7 +153,7 @@ export function setValue(
   const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
 
-  replaceColumnUniqueInfoMap(id, column, rowKey, columnName, orgValue, value);
+  replaceColumnUniqueInfoMap(id, column, { rowKey, columnName, prevValue: orgValue, value });
 
   targetRow[columnName] = value;
   setRowRelationListItems(targetRow, allColumnMap);
@@ -237,14 +237,12 @@ export function setColumnValues(
     }
 
     if (targetRow[columnName] !== value && valid) {
-      replaceColumnUniqueInfoMap(
-        id,
-        column,
-        targetRow.rowKey,
+      replaceColumnUniqueInfoMap(id, column, {
+        rowKey: targetRow.rowKey,
         columnName,
-        targetRow[columnName],
+        prevValue: targetRow[columnName],
         value
-      );
+      });
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
     }
@@ -349,7 +347,12 @@ function applyPasteDataToRawData(
         const targetRow = filteredRawData[rawRowIndex];
         const value = pasteData[rowIndex][columnIndex];
 
-        replaceColumnUniqueInfoMap(id, column, targetRow.rowKey, name, targetRow[name], value);
+        replaceColumnUniqueInfoMap(id, column, {
+          rowKey: targetRow.rowKey,
+          columnName: name,
+          prevValue: targetRow[name],
+          value
+        });
         pasted = true;
         targetRow[name] = value;
       }
@@ -537,7 +540,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
 
   clearUniqueInfoMap(id);
 
-  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true, id });
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -763,7 +766,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   }
 
   const startIndex = data.rawData.length;
-  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true, id });
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
 
   data.rawData = data.rawData.concat(rawData);
   data.viewData = data.viewData.concat(viewData);

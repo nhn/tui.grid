@@ -22,6 +22,13 @@ import {
 
 type UniqueInfoMap = Record<string, Record<string, RowKey[]>>;
 
+interface TargetCellInfo {
+  rowKey: RowKey;
+  columnName: string;
+  prevValue: CellValue;
+  value: CellValue;
+}
+
 interface ValidationOption {
   id: number;
   value: CellValue;
@@ -92,14 +99,10 @@ function addColumnUniqueInfoMap(
   uniqueInfoMap[value][columnName].push(rowKey);
 }
 
-// eslint-disable-next-line max-params
 export function replaceColumnUniqueInfoMap(
   id: number,
   column: Column,
-  rowKey: RowKey,
-  columnName: string,
-  prevValue: CellValue,
-  value: CellValue
+  { rowKey, columnName, prevValue, value }: TargetCellInfo
 ) {
   if (some(({ name }) => name === columnName, column.validationColumns)) {
     removeColumnUniqueInfoMap(id, rowKey, columnName, prevValue);

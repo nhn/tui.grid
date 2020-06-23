@@ -55,7 +55,7 @@ function clearQueue() {
 }
 
 export function getRunningObservers() {
-  return queue.map(id => observerInfoMap[id].name).filter(name => !!name);
+  return queue.map(id => observerInfoMap[id].name).filter(name => name);
 }
 
 function callObserver(observerId: string) {
