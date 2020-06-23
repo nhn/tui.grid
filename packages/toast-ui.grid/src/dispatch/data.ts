@@ -67,11 +67,11 @@ import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './
 import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
 import { createObservableData } from './lazyObservable';
 import {
-  removeColumnUniqueInfoMap,
-  addColumnUniqueInfoMap,
   removeUniqueInfoMap,
   clearUniqueInfoMap,
-  invokeWithUniqueValidationColumn
+  replaceColumnUniqueInfoMap,
+  forceValidateUniqueness,
+  forceValidateColumnUniqueness
 } from '../store/helper/validation';
 
 function updateHeightsWithFilteredData(store: Store) {
@@ -153,8 +153,7 @@ export function setValue(
   const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
 
-  removeColumnUniqueInfoMap(id, rowKey, columnName, orgValue);
-  addColumnUniqueInfoMap(id, rowKey, columnName, value);
+  replaceColumnUniqueInfoMap(id, column, rowKey, columnName, orgValue, value);
 
   targetRow[columnName] = value;
   setRowRelationListItems(targetRow, allColumnMap);
@@ -238,15 +237,20 @@ export function setColumnValues(
     }
 
     if (targetRow[columnName] !== value && valid) {
-      removeColumnUniqueInfoMap(id, targetRow.rowKey, columnName, targetRow[columnName]);
-      addColumnUniqueInfoMap(id, targetRow.rowKey, columnName, value);
+      replaceColumnUniqueInfoMap(
+        id,
+        column,
+        targetRow.rowKey,
+        columnName,
+        targetRow[columnName],
+        value
+      );
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
     }
   });
-  // trick for forcing to validate the uniqueness
-  invokeWithUniqueValidationColumn(column, name => notify(data.rawData[0], name));
   updateSummaryValueByColumn(store, columnName, { value });
+  forceValidateColumnUniqueness(data.rawData, column, columnName);
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -342,12 +346,17 @@ function applyPasteDataToRawData(
     for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
       const name = columnNames[columnIndex + startColumnIndex];
       if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
+        const targetRow = filteredRawData[rawRowIndex];
+        const value = pasteData[rowIndex][columnIndex];
+
+        replaceColumnUniqueInfoMap(id, column, targetRow.rowKey, name, targetRow[name], value);
         pasted = true;
-        filteredRawData[rawRowIndex][name] = pasteData[rowIndex][columnIndex];
+        targetRow[name] = value;
       }
     }
     if (pasted) {
       getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
+      forceValidateUniqueness(data.rawData, column);
     }
   }
 }
@@ -801,15 +810,9 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
 }
 
 function postUpdateAfterManipulation(store: Store, rowIndex: number, state: LoadingState) {
-  const { data, column } = store;
-
   setLoadingState(store, state);
   updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
-
-  if (data.rawData.length) {
-    // trick for forcing to validate the uniqueness
-    invokeWithUniqueValidationColumn(column, name => notify(data.rawData[0], name));
-  }
+  forceValidateUniqueness(store.data.rawData, store.column);
 }

@@ -3,13 +3,13 @@ import { Validation, ValidationType, Column } from '@t/store/column';
 import { RowKey, CellValue, Row } from '@t/store/data';
 import {
   isString,
-  debounce,
   isBlank,
   isFunction,
   omit,
   convertToNumber,
   isNumber,
-  includes
+  includes,
+  some
 } from '../../helper/common';
 import {
   isObservable,
@@ -31,9 +31,8 @@ interface ValidationOption {
   validation?: Validation;
 }
 
-const UNIQUENESS_DEBOUNCE_TIME = 50;
 const instanceValidationMap: Record<number, UniqueInfoMap> = {};
-let validatingUniqueness = false;
+const isValidatingUniquenessMap: Record<string, boolean> = {};
 
 export function createValidationMap(id: number) {
   instanceValidationMap[id] = {};
@@ -63,7 +62,7 @@ export function clearUniqueInfoMap(id: number) {
   instanceValidationMap[id] = {};
 }
 
-export function removeColumnUniqueInfoMap(
+function removeColumnUniqueInfoMap(
   id: number,
   rowKey: RowKey,
   columnName: string,
@@ -71,6 +70,7 @@ export function removeColumnUniqueInfoMap(
 ) {
   const value = String(cellValue);
   const uniqueInfoMap = instanceValidationMap[id];
+
   if (uniqueInfoMap && uniqueInfoMap[value] && uniqueInfoMap[value][columnName]) {
     uniqueInfoMap[value][columnName] = uniqueInfoMap[value][columnName].filter(
       targetRowKey => targetRowKey !== rowKey
@@ -78,7 +78,7 @@ export function removeColumnUniqueInfoMap(
   }
 }
 
-export function addColumnUniqueInfoMap(
+function addColumnUniqueInfoMap(
   id: number,
   rowKey: RowKey,
   columnName: string,
@@ -86,25 +86,58 @@ export function addColumnUniqueInfoMap(
 ) {
   const value = String(cellValue);
   const uniqueInfoMap = instanceValidationMap[id];
+
   uniqueInfoMap[value] = uniqueInfoMap[value] || {};
   uniqueInfoMap[value][columnName] = uniqueInfoMap[value][columnName] || [];
   uniqueInfoMap[value][columnName].push(rowKey);
 }
 
-export function hasDuplicateValue(id: number, columnName: string, cellValue: CellValue) {
+// eslint-disable-next-line max-params
+export function replaceColumnUniqueInfoMap(
+  id: number,
+  column: Column,
+  rowKey: RowKey,
+  columnName: string,
+  prevValue: CellValue,
+  value: CellValue
+) {
+  if (some(({ name }) => name === columnName, column.validationColumns)) {
+    removeColumnUniqueInfoMap(id, rowKey, columnName, prevValue);
+    addColumnUniqueInfoMap(id, rowKey, columnName, value);
+  }
+}
+
+export function forceValidateUniqueness(rawData: Row[], column: Column) {
+  if (rawData.length) {
+    // trick for forcing to validate the uniqueness
+    invokeWithUniqueValidationColumn(column, name => notify(rawData[0], name));
+  }
+}
+
+export function forceValidateColumnUniqueness(rawData: Row[], column: Column, columnName: string) {
+  if (some(({ name }) => name === columnName, column.validationColumns) && rawData.length) {
+    // trick for forcing to validate the uniqueness
+    notify(rawData[0], columnName);
+  }
+}
+
+function hasDuplicateValue(id: number, columnName: string, cellValue: CellValue) {
   const value = String(cellValue);
   const uniqueInfoMap = instanceValidationMap[id];
+
   return uniqueInfoMap && uniqueInfoMap[value] && uniqueInfoMap[value][columnName]?.length > 1;
 }
 
-const validateDataUniqueness = debounce((rawData: Row[], rowKey: RowKey, columnName: string) => {
+const validateDataUniqueness = (rawData: Row[], columnName: string) => {
   rawData.forEach(row => {
-    if (isObservable(row) && row.rowKey !== rowKey) {
+    if (isObservable(row)) {
       notify(row, columnName);
     }
   });
-  validatingUniqueness = false;
-}, UNIQUENESS_DEBOUNCE_TIME);
+  setTimeout(() => {
+    isValidatingUniquenessMap[columnName] = false;
+  });
+};
 
 export function getValidationCode({
   id,
@@ -132,9 +165,12 @@ export function getValidationCode({
     }
 
     // prevent recursive call of 'validateDataUniqueness' when scrolling or manipulating the data
-    if (!validatingUniqueness && !includes(getRunningObservers(), 'lazyObservable')) {
-      validatingUniqueness = true;
-      validateDataUniqueness(rawData, row.rowKey, columnName);
+    if (
+      !isValidatingUniquenessMap[columnName] &&
+      !includes(getRunningObservers(), 'lazyObservable')
+    ) {
+      isValidatingUniquenessMap[columnName] = true;
+      validateDataUniqueness(rawData, columnName);
     }
   }
 
