@@ -317,7 +317,7 @@ describe('should check the validation of cell - unique', () => {
   });
 
   it('check `unique` validation after calling setColumnValues', () => {
-    cy.gridInstance().invoke('setColumnValues', 'name', 'pen');
+    cy.gridInstance().invoke('setColumnValues', 'name', 'eraser');
 
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
