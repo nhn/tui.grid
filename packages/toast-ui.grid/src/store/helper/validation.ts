@@ -41,7 +41,7 @@ interface ValidationOption {
 const instanceValidationMap: Record<number, UniqueInfoMap> = {};
 const isValidatingUniquenessMap: Record<string, boolean> = {};
 
-export function createValidationMap(id: number) {
+export function createNewValidationMap(id: number) {
   instanceValidationMap[id] = {};
 }
 
@@ -63,10 +63,6 @@ export function removeUniqueInfoMap(id: number, row: OptRow, column: Column) {
   invokeWithUniqueValidationColumn(column, name =>
     removeColumnUniqueInfoMap(id, row.rowKey as RowKey, name, row[name])
   );
-}
-
-export function clearUniqueInfoMap(id: number) {
-  instanceValidationMap[id] = {};
 }
 
 function removeColumnUniqueInfoMap(
@@ -110,14 +106,18 @@ export function replaceColumnUniqueInfoMap(
   }
 }
 
-export function forceValidateUniqueness(rawData: Row[], column: Column) {
+export function forceValidateUniquenessOfColumns(rawData: Row[], column: Column) {
   if (rawData.length) {
     // trick for forcing to validate the uniqueness
     invokeWithUniqueValidationColumn(column, name => notify(rawData[0], name));
   }
 }
 
-export function forceValidateColumnUniqueness(rawData: Row[], column: Column, columnName: string) {
+export function forceValidateUniquenessOfColumn(
+  rawData: Row[],
+  column: Column,
+  columnName: string
+) {
   if (some(({ name }) => name === columnName, column.validationColumns) && rawData.length) {
     // trick for forcing to validate the uniqueness
     notify(rawData[0], columnName);
@@ -128,19 +128,43 @@ function hasDuplicateValue(id: number, columnName: string, cellValue: CellValue)
   const value = String(cellValue);
   const uniqueInfoMap = instanceValidationMap[id];
 
-  return uniqueInfoMap && uniqueInfoMap[value] && uniqueInfoMap[value][columnName]?.length > 1;
+  return !!(uniqueInfoMap && uniqueInfoMap[value] && uniqueInfoMap[value][columnName]?.length > 1);
 }
 
-const validateDataUniqueness = (rawData: Row[], columnName: string) => {
-  rawData.forEach(row => {
-    if (isObservable(row)) {
-      notify(row, columnName);
-    }
-  });
-  setTimeout(() => {
-    isValidatingUniquenessMap[columnName] = false;
-  });
-};
+function validateDataUniqueness(
+  id: number,
+  value: CellValue,
+  columnName: string,
+  invalidStates: ValidationType[]
+) {
+  if (hasDuplicateValue(id, columnName, value)) {
+    invalidStates.push('UNIQUE');
+  }
+
+  // prevent recursive call of 'validateDataUniqueness' when scrolling or manipulating the data
+  if (
+    !isValidatingUniquenessMap[columnName] &&
+    !includes(getRunningObservers(), 'lazyObservable')
+  ) {
+    let rawData: Row[] = [];
+    unobservedInvoke(() => {
+      // @TODO: should get the latest rawData through function(not private field of the grid instance)
+      // @ts-ignore
+      rawData = getInstance(id).store.data.rawData;
+    });
+    isValidatingUniquenessMap[columnName] = true;
+
+    rawData.forEach(row => {
+      if (isObservable(row)) {
+        notify(row, columnName);
+      }
+    });
+
+    setTimeout(() => {
+      isValidatingUniquenessMap[columnName] = false;
+    });
+  }
+}
 
 export function getValidationCode({ id, value, row, columnName, validation }: ValidationOption) {
   const invalidStates: ValidationType[] = [];
@@ -156,24 +180,7 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
   }
 
   if (unique) {
-    if (hasDuplicateValue(id, columnName, value)) {
-      invalidStates.push('UNIQUE');
-    }
-
-    // prevent recursive call of 'validateDataUniqueness' when scrolling or manipulating the data
-    if (
-      !isValidatingUniquenessMap[columnName] &&
-      !includes(getRunningObservers(), 'lazyObservable')
-    ) {
-      let rawData: Row[] = [];
-      unobservedInvoke(() => {
-        // @TODO: should get the latest rawData through function(not private field of the grid instance)
-        // @ts-ignore
-        rawData = getInstance(id).store.data.rawData;
-      });
-      isValidatingUniquenessMap[columnName] = true;
-      validateDataUniqueness(rawData, columnName);
-    }
+    validateDataUniqueness(id, value, columnName, invalidStates);
   }
 
   if (isFunction(validatorFn)) {
@@ -206,11 +213,11 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
     invalidStates.push('TYPE_NUMBER');
   }
 
-  if (min && isNumber(numberValue) && numberValue < min) {
+  if (isNumber(min) && isNumber(numberValue) && numberValue < min) {
     invalidStates.push('MIN');
   }
 
-  if (max && isNumber(numberValue) && numberValue > max) {
+  if (isNumber(max) && isNumber(numberValue) && numberValue > max) {
     invalidStates.push('MAX');
   }
 

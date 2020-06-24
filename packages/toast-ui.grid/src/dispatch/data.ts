@@ -68,10 +68,10 @@ import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan
 import { createObservableData } from './lazyObservable';
 import {
   removeUniqueInfoMap,
-  clearUniqueInfoMap,
+  createNewValidationMap,
   replaceColumnUniqueInfoMap,
-  forceValidateUniqueness,
-  forceValidateColumnUniqueness
+  forceValidateUniquenessOfColumns,
+  forceValidateUniquenessOfColumn
 } from '../store/helper/validation';
 
 function updateHeightsWithFilteredData(store: Store) {
@@ -248,7 +248,7 @@ export function setColumnValues(
     }
   });
   updateSummaryValueByColumn(store, columnName, { value });
-  forceValidateColumnUniqueness(data.rawData, column, columnName);
+  forceValidateUniquenessOfColumn(data.rawData, column, columnName);
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -359,7 +359,7 @@ function applyPasteDataToRawData(
     }
     if (pasted) {
       getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
-      forceValidateUniqueness(data.rawData, column);
+      forceValidateUniquenessOfColumns(data.rawData, column);
     }
   }
 }
@@ -517,7 +517,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 export function clearData(store: Store) {
   const { data, id, rowCoords } = store;
 
-  clearUniqueInfoMap(id);
+  createNewValidationMap(id);
   initScrollPosition(store);
   initFocus(store);
   initSelection(store);
@@ -538,7 +538,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   const { data, column, id } = store;
   const { sortState, filterState, pageState } = options;
 
-  clearUniqueInfoMap(id);
+  createNewValidationMap(id);
 
   const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
   const eventBus = getEventBus(id);
@@ -817,5 +817,5 @@ function postUpdateAfterManipulation(store: Store, rowIndex: number, state: Load
   updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
-  forceValidateUniqueness(store.data.rawData, store.column);
+  forceValidateUniquenessOfColumns(store.data.rawData, store.column);
 }

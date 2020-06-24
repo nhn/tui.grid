@@ -176,6 +176,16 @@ if ((module as any).hot) {
  *              will be checked to be not empty.
  *          @param {number|string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
  *              Available types are 'string' and 'number'.
+ *          @param {number} [options.columns.validation.min] - If set to numeric value, the data of the column
+ *              will be checked to be greater than 'min' value.
+ *              Available types are 'string' and 'number'.
+ *          @param {number} [options.columns.validation.max] - If set to numeric value, the data of the column
+ *              will be checked to be less than 'max' value.
+ *          @param {RegExp} [options.columns.validation.regExp] - If set to regular expression, the data of the column
+ *              will be checked using the regular expression.
+ *          @param {function} [options.columns.validation.validatorFn] - If set to function, the data of the column
+ *              will be checked using the result of the custom validator.
+ *          @param {boolean} [options.columns.validation.unique] - If set to true, check the uniqueness on the data of the column.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
  *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
@@ -189,6 +199,8 @@ if ((module as any).hot) {
  *              the right side of the column header, which executes the sort action when clicked.
  *          @param {string} [options.columns.sortingType='asc'] - If set to 'desc', will execute descending sort initially
  *              when sort button is clicked.
+ *          @param {function} [options.columns.comparator] - The custom comparator that sorts the data of the column.
+ *              The return value should be same as the result of general 'compareFunction'.
  *          @param {function} [options.columns.onBeforeChange] - The function that will be
  *              called before changing the value of the cell. If stop() method in event object is called,
  *              the changing will be canceled.

@@ -14,10 +14,10 @@ import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
 import { setAutoBodyHeight } from '../dispatch/dimension';
 import { createObservableData } from '../dispatch/lazyObservable';
-import { createValidationMap } from './helper/validation';
+import { createNewValidationMap } from './helper/validation';
 
 export function createStore(id: number, options: OptGrid): Store {
-  createValidationMap(id);
+  createNewValidationMap(id);
   const {
     el,
     width,

@@ -50,12 +50,12 @@ interface DataCreationOption {
   disabled?: boolean;
 }
 
-interface ViewCellCreationOption {
+interface RelationInfo {
   relationMatched?: boolean;
   relationListItems?: ListItem[];
 }
 
-interface RelationViewCellCreationOption {
+interface ViewCellInfo {
   columnMap: Dictionary<ColumnInfo>;
   valueMap: Dictionary<CellRenderData>;
 }
@@ -142,9 +142,9 @@ function createViewCell(
   id: number,
   row: Row,
   column: ColumnInfo,
-  option: ViewCellCreationOption = {}
+  relationInfo: RelationInfo = {}
 ): CellRenderData {
-  const { relationMatched = true, relationListItems } = option;
+  const { relationMatched = true, relationListItems } = relationInfo;
   const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
@@ -182,7 +182,7 @@ function createRelationViewCell(
   id: number,
   name: string,
   row: Row,
-  { columnMap, valueMap }: RelationViewCellCreationOption
+  { columnMap, valueMap }: ViewCellInfo
 ) {
   const { editable, disabled, value } = valueMap[name];
   const { relationMap = {} } = columnMap[name];
