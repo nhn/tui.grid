@@ -66,6 +66,13 @@ import { isRowHeader } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
 import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
 import { createObservableData } from './lazyObservable';
+import {
+  removeUniqueInfoMap,
+  createNewValidationMap,
+  replaceColumnUniqueInfoMap,
+  forceValidateUniquenessOfColumns,
+  forceValidateUniquenessOfColumn
+} from '../store/helper/validation';
 
 function updateHeightsWithFilteredData(store: Store) {
   if (store.data.filters) {
@@ -87,7 +94,7 @@ export function updateHeights(store: Store) {
 export function makeObservable(store: Store, rowIndex: number) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
+  const { treeColumnName } = column;
   const rawRow = rawData[rowIndex];
 
   if (isObservable(rawRow)) {
@@ -96,18 +103,11 @@ export function makeObservable(store: Store, rowIndex: number) {
 
   if (treeColumnName) {
     const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[rowIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
-    viewData[rowIndex] = createViewRow(
-      rawData[rowIndex],
-      columnMapWithRelation,
-      rawData,
-      treeColumnName,
-      treeIcon
-    );
+    rawData[rowIndex] = createTreeRawRow(id, rawRow, parentRow || null, column);
   } else {
-    rawData[rowIndex] = createRawRow(rawRow, rowIndex, columnMapWithRelation);
-    viewData[rowIndex] = createViewRow(rawData[rowIndex], columnMapWithRelation, rawData);
+    rawData[rowIndex] = createRawRow(id, rawRow, rowIndex, column);
   }
+  viewData[rowIndex] = createViewRow(id, rawData[rowIndex], rawData, column);
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
@@ -152,6 +152,8 @@ export function setValue(
   const { rowSpanMap } = targetRow;
   const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
+
+  replaceColumnUniqueInfoMap(id, column, { rowKey, columnName, prevValue: orgValue, value });
 
   targetRow[columnName] = value;
   setRowRelationListItems(targetRow, allColumnMap);
@@ -225,7 +227,7 @@ export function setColumnValues(
     // @TODO: find more practical way to make observable
     createObservableData(store, true);
   }
-  const { id, data } = store;
+  const { id, data, column } = store;
   data.rawData.forEach((targetRow, index) => {
     let valid = true;
 
@@ -235,11 +237,18 @@ export function setColumnValues(
     }
 
     if (targetRow[columnName] !== value && valid) {
+      replaceColumnUniqueInfoMap(id, column, {
+        rowKey: targetRow.rowKey,
+        columnName,
+        prevValue: targetRow[columnName],
+        value
+      });
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
     }
   });
   updateSummaryValueByColumn(store, columnName, { value });
+  forceValidateUniquenessOfColumn(data.rawData, column, columnName);
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -335,12 +344,22 @@ function applyPasteDataToRawData(
     for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
       const name = columnNames[columnIndex + startColumnIndex];
       if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
+        const targetRow = filteredRawData[rawRowIndex];
+        const value = pasteData[rowIndex][columnIndex];
+
+        replaceColumnUniqueInfoMap(id, column, {
+          rowKey: targetRow.rowKey,
+          columnName: name,
+          prevValue: targetRow[name],
+          value
+        });
         pasted = true;
-        filteredRawData[rawRowIndex][name] = pasteData[rowIndex][columnIndex];
+        targetRow[name] = value;
       }
     }
     if (pasted) {
       getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
+      forceValidateUniquenessOfColumns(data.rawData, column);
     }
   }
 }
@@ -471,6 +490,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const nextRow = rawData[rowIndex + 1];
 
   updatePageWhenRemovingRow(store, 1);
+  removeUniqueInfoMap(id, rawData[rowIndex], column);
 
   const [removedRow] = rawData.splice(rowIndex, 1);
   viewData.splice(rowIndex, 1);
@@ -497,6 +517,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 export function clearData(store: Store) {
   const { data, id, rowCoords } = store;
 
+  createNewValidationMap(id);
   initScrollPosition(store);
   initFocus(store);
   initSelection(store);
@@ -516,7 +537,10 @@ export function clearData(store: Store) {
 export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
   const { data, column, id } = store;
   const { sortState, filterState, pageState } = options;
-  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
+
+  createNewValidationMap(id);
+
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -656,13 +680,15 @@ export function updateRowNumber({ data }: Store, startIndex: number) {
 }
 
 export function setRow(store: Store, rowIndex: number, row: OptRow) {
-  const { data, id } = store;
+  const { data, id, column } = store;
   const { rawData, viewData, sortState } = data;
   const orgRow = rawData[rowIndex];
 
   if (!orgRow) {
     return;
   }
+
+  removeUniqueInfoMap(id, orgRow, column);
 
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
@@ -730,7 +756,7 @@ export function scrollToNext(store: Store) {
 }
 
 export function appendRows(store: Store, inputData: OptRow[]) {
-  const { data, column } = store;
+  const { data, column, id } = store;
 
   if (!column.keyColumnName) {
     const rowKey = getMaxRowKey(data);
@@ -740,7 +766,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   }
 
   const startIndex = data.rawData.length;
-  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
 
   data.rawData = data.rawData.concat(rawData);
   data.viewData = data.viewData.concat(viewData);
@@ -752,7 +778,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
 }
 
 export function removeRows(store: Store, targetRows: RemoveTargetRows) {
-  const { data, id, focus } = store;
+  const { data, id, focus, column } = store;
   const { sortState, viewData, rawData } = data;
   const { rowIndexes, rows, nextRows } = targetRows;
   const deletedCount = rowIndexes.length;
@@ -763,6 +789,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
     const nextRow = nextRows[i];
     const [removedRow] = silentSplice(rawData, rowIndex - i, 1);
     silentSplice(viewData, rowIndex - i, 1);
+    removeUniqueInfoMap(id, removedRow, column);
 
     if (nextRow) {
       if (isRowSpanEnabled(sortState)) {
@@ -790,4 +817,5 @@ function postUpdateAfterManipulation(store: Store, rowIndex: number, state: Load
   updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
+  forceValidateUniquenessOfColumns(store.data.rawData, store.column);
 }

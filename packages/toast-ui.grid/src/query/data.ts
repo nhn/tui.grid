@@ -188,9 +188,8 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
 export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, rowKey?: RowKey) {
   generateDataCreationKey();
 
-  const { data, column } = store;
+  const { data, column, id } = store;
   const { rawData } = data;
-  const { columnMapWithRelation } = column;
   const prevRow = rawData[rowIndex - 1];
   const options = { prevRow, lazyObservable: true };
 
@@ -199,12 +198,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
   }
 
   const index = getMaxRowKey(data);
-  const rawRow = createRawRow(
-    { ...column.emptyRow, ...row },
-    index,
-    columnMapWithRelation,
-    options
-  );
+  const rawRow = createRawRow(id, { ...column.emptyRow, ...row }, index, column, options);
   const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
 
   return { rawRow, viewRow, prevRow };

@@ -4,7 +4,7 @@ import { Row, Data, ViewRow } from '@t/store/data';
 import { Range } from '@t/store/selection';
 import { OriginData } from '@t/dispatch';
 import { isObservable, notify } from '../helper/observable';
-import { createData, generateDataCreationKey, createViewRow } from '../store/data';
+import { generateDataCreationKey, createViewRow, createRawRow } from '../store/data';
 import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
 import { silentSplice } from '../helper/common';
@@ -57,31 +57,40 @@ function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: 
     );
 }
 
-function changeToObservableData(column: Column, data: Data, originData: OriginData) {
+function changeToObservableData(id: number, column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
+  const { rawData } = data;
+
   fillMissingColumnData(column, rows);
 
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
-  const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
 
-  for (let index = 0, end = rawData.length; index < end; index += 1) {
+  for (let index = 0, end = rows.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
-    silentSplice(data.rawData, targetIndex, 1, rawData[index]);
-    silentSplice(data.viewData, targetIndex, 1, viewData[index]);
+
+    const rawRow = createRawRow(id, rows[index], index, column, {
+      lazyObservable: false,
+      prevRow: prevRows[index],
+      keyColumnName: column.keyColumnName
+    });
+    const viewRow = createViewRow(id, rawRow, rawData, column);
+
+    silentSplice(data.rawData, targetIndex, 1, rawRow);
+    silentSplice(data.viewData, targetIndex, 1, viewRow);
   }
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 function changeToObservableTreeData(
+  id: number,
   column: Column,
   data: Data,
-  originData: OriginData,
-  id: number
+  originData: OriginData
 ) {
   const { rows } = originData;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
+
   fillMissingColumnData(column, rows);
 
   // create new creation key for updating the observe function of hoc component
@@ -89,8 +98,8 @@ function changeToObservableTreeData(
 
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
-    const rawRow = createTreeRawRow(row, parentRow || null, columnMapWithRelation);
-    const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
+    const rawRow = createTreeRawRow(id, row, parentRow || null, column);
+    const viewRow = createViewRow(id, rawRow, rawData, column);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
     silentSplice(rawData, foundIndex, 1, rawRow);
@@ -118,8 +127,8 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 
   if (treeColumnName) {
-    changeToObservableTreeData(column, data, originData, id);
+    changeToObservableTreeData(id, column, data, originData);
   } else {
-    changeToObservableData(column, data, originData);
+    changeToObservableData(id, column, data, originData);
   }
 }

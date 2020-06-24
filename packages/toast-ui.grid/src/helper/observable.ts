@@ -8,6 +8,7 @@ interface ObserverInfo {
   fn: Function;
   targetObserverIdSets: BooleanSet[];
   sync: boolean;
+  name?: string;
 }
 
 export type Observable<T extends Dictionary<any>> = T & {
@@ -51,6 +52,10 @@ function clearQueue() {
   queue = [];
   observerIdMap = {};
   pending = false;
+}
+
+export function getRunningObservers() {
+  return queue.map(id => observerInfoMap[id].name).filter(name => name);
 }
 
 function callObserver(observerId: string) {
@@ -103,9 +108,9 @@ export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
-export function observe(fn: Function, sync = false) {
+export function observe(fn: Function, sync = false, name = '') {
   const observerId = generateObserverId();
-  observerInfoMap[observerId] = { fn, targetObserverIdSets: [], sync };
+  observerInfoMap[observerId] = { fn, targetObserverIdSets: [], sync, name };
   run(observerId);
 
   // return unobserve function

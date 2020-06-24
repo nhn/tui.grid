@@ -21,7 +21,9 @@ export type ValidationType =
   | 'MIN'
   | 'MAX'
   | 'REGEXP'
-  | 'VALIDATOR_FN';
+  | 'VALIDATOR_FN'
+  | 'UNIQUE';
+
 export type Comparator = (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) => number;
 
 export interface ClipboardCopyOptions {
@@ -69,6 +71,7 @@ export interface Validation {
   min?: number;
   max?: number;
   regExp?: RegExp;
+  unique?: boolean;
   validatorFn?: (value: CellValue, row: Row, columnName: string) => boolean;
 }
 
