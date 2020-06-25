@@ -489,6 +489,26 @@ function applyFilterToRawData(
   return data;
 }
 
+function createPageOptions(userPageOptions: PageOptions, rawData: Row[]) {
+  const pageOptions = (isEmpty(userPageOptions)
+    ? {}
+    : {
+        useClient: false,
+        page: 1,
+        perPage: 20,
+        type: 'pagination',
+        ...userPageOptions,
+        totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
+      }) as Required<PageOptions>;
+
+  if (pageOptions.type === 'pagination') {
+    pageOptions.position = pageOptions.position || 'bottom';
+    pageOptions.visiblePages = pageOptions.visiblePages || 10;
+  }
+
+  return pageOptions;
+}
+
 export function create({
   data,
   column,
@@ -508,18 +528,7 @@ export function create({
       }
     ]
   };
-
-  const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)
-    ? ({} as Required<PageOptions>)
-    : {
-        useClient: false,
-        page: 1,
-        perPage: 20,
-        type: 'pagination',
-        position: 'bottom',
-        ...userPageOptions,
-        totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
-      };
+  const pageOptions = createPageOptions(userPageOptions, rawData);
 
   return observable({
     rawData,
