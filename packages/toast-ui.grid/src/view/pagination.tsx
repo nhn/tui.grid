@@ -6,7 +6,7 @@ import Grid from '../grid';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import { shallowEqual, isNumber, isEmpty } from '../helper/common';
+import { shallowEqual, isNumber } from '../helper/common';
 import { getDataProvider, getPaginationManager, getInstance } from '../instance';
 import { PaginationManager } from '../pagination/paginationManager';
 import { getEventBus, EventBus } from '../event/eventBus';
@@ -32,9 +32,6 @@ class PaginationComp extends Component<Props> {
   }
 
   public componentDidMount() {
-    if (!this.el) {
-      return;
-    }
     this.createPagination();
   }
 
@@ -129,17 +126,14 @@ class PaginationComp extends Component<Props> {
     this.tuiPagination!.off('afterMove');
   }
 
-  public render({ pageOptions }: Props) {
+  public render() {
     return (
-      !isEmpty(pageOptions) &&
-      pageOptions.type === 'pagination' && (
-        <div
-          ref={el => {
-            this.el = el;
-          }}
-          class={`tui-pagination ${cls('pagination')}`}
-        />
-      )
+      <div
+        ref={el => {
+          this.el = el;
+        }}
+        class={`tui-pagination ${cls('pagination')}`}
+      />
     );
   }
 }

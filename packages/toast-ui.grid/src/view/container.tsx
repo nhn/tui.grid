@@ -330,6 +330,7 @@ export class ContainerComp extends Component<Props> {
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
+
     return (
       <div
         {...attrs}
@@ -347,7 +348,7 @@ export class ContainerComp extends Component<Props> {
           this.el = el;
         }}
       >
-        {(!!pageOptions.position && pageOptions.position === 'top') && <Pagination />}
+        {pageOptions.position === 'top' && <Pagination />}
         <div
           class={cls(
             'content-area',
@@ -366,7 +367,7 @@ export class ContainerComp extends Component<Props> {
         {heightResizable && <HeightResizeHandle />}
         <StateLayer />
         <Clipboard />
-        {(!pageOptions.position || pageOptions.position === 'bottom') && <Pagination />}
+        {pageOptions.position === 'bottom' && <Pagination />}
         <FilterLayer />
       </div>
     );
