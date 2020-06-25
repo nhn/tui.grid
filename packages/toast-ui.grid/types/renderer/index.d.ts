@@ -5,7 +5,7 @@ import {
   AlignType,
   VAlignType,
   SortingType,
-  ColumnFilterOption
+  ColumnFilterOption,
 } from '../store/column';
 
 export type CellRendererProps = CellRenderData & {

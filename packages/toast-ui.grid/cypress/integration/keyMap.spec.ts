@@ -13,12 +13,12 @@ beforeEach(() => {
     { name: 'Han', value: 1 },
     { name: 'Kim', value: 2 },
     { name: 'Ryu', value: 3 },
-    { name: 'Lee', value: 4 }
+    { name: 'Lee', value: 4 },
   ];
 
   const columns = [
     { name: 'name', editor: 'text' },
-    { name: 'value', editor: 'text' }
+    { name: 'value', editor: 'text' },
   ];
 
   cy.createGrid({ data, columns });
@@ -33,15 +33,11 @@ function clipboardType(key: string) {
 }
 
 function assertFocusedCell(columnName: string, rowKey: number) {
-  cy.gridInstance()
-    .invoke('getFocusedCell')
-    .should('have.subset', { columnName, rowKey });
+  cy.gridInstance().invoke('getFocusedCell').should('have.subset', { columnName, rowKey });
 }
 
 function assertSelectedRange(range: { start: Range; end: Range }) {
-  cy.gridInstance()
-    .invoke('getSelectionRange')
-    .should('be.eql', range);
+  cy.gridInstance().invoke('getSelectionRange').should('be.eql', range);
 }
 
 describe('editor', () => {
@@ -66,7 +62,7 @@ describe('editor', () => {
     assertEditFinished();
   });
 
-  ['backspace', 'del'].forEach(key => {
+  ['backspace', 'del'].forEach((key) => {
     it(`delete focused content by pressing ${key}`, () => {
       cy.getCellByIdx(0, 0).click();
       clipboardType(`{${key}}`);
@@ -208,7 +204,7 @@ describe('Selection', () => {
     assertSelectedRange({ start: [0, 0], end: [3, 1] });
   });
 
-  ['backspace', 'del'].forEach(key => {
+  ['backspace', 'del'].forEach((key) => {
     it(`delete selection content by pressing ${key}`, () => {
       const range = { start: [0, 0], end: [1, 1] };
       cy.gridInstance().invoke('setSelectionRange', range);
@@ -218,7 +214,7 @@ describe('Selection', () => {
         ['', ''],
         ['', ''],
         ['Ryu', '3'],
-        ['Lee', '4']
+        ['Lee', '4'],
       ]);
     });
   });

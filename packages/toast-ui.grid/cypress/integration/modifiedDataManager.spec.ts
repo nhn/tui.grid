@@ -19,11 +19,11 @@ interface ModifiedRowsMap {
 
 const data = [
   { name: 'Kim', age: 10 },
-  { name: 'Lee', age: 20 }
+  { name: 'Lee', age: 20 },
 ];
 const columns = [
   { name: 'name', editor: 'text' },
-  { name: 'age', editor: 'text' }
+  { name: 'age', editor: 'text' },
 ];
 
 before(() => {
@@ -37,8 +37,8 @@ beforeEach(() => {
 function assertModifiedRowsLength(lengthMap: ModifiedRowsLengthMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
-    .should(rows => {
-      Object.keys(rows).forEach(type => {
+    .should((rows) => {
+      Object.keys(rows).forEach((type) => {
         expect(rows[type]).to.have.length(lengthMap[type as keyof ModifiedRowsLengthMap]);
       });
     });
@@ -47,8 +47,8 @@ function assertModifiedRowsLength(lengthMap: ModifiedRowsLengthMap) {
 function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
-    .should(rows => {
-      Object.keys(modifiedRowsMap).forEach(type => {
+    .should((rows) => {
+      Object.keys(modifiedRowsMap).forEach((type) => {
         expect(rows[type][0]).to.contain(modifiedRowsMap[type as keyof ModifiedRowsMap]![0]);
       });
     });
@@ -95,8 +95,8 @@ describe('update rows', () => {
     assertModifiedRowsContainsObject({
       updatedRows: [
         { name: 'Park', age: 10 },
-        { name: 'Park', age: 20 }
-      ]
+        { name: 'Park', age: 20 },
+      ],
     });
   });
 
@@ -124,12 +124,12 @@ describe('update rows', () => {
     assertModifiedRowsContainsObject({
       updatedRows: [
         { name: 'Kim', age: 10 },
-        { name: 'Kim', age: 20 }
-      ]
+        { name: 'Kim', age: 20 },
+      ],
     });
   });
 
-  ['backspace', 'del'].forEach(key => {
+  ['backspace', 'del'].forEach((key) => {
     it(`should add updated row, when focused row is modified by ${key} keyMap`, () => {
       cy.getCellByIdx(0, 0).click();
       clipboardType(`{${key}}`);
@@ -147,8 +147,8 @@ describe('update rows', () => {
         // @ts-ignore
         updatedRows: [
           { name: '', age: '' },
-          { name: '', age: '' }
-        ]
+          { name: '', age: '' },
+        ],
       });
     });
   });

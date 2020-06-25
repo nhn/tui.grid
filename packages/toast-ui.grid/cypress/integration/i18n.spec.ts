@@ -21,8 +21,8 @@ describe('i18n', () => {
   it('when setting messages for the existing locale code, the locale messages are changed.', () => {
     i18n.setLanguage('en', {
       display: {
-        noData: 'empty'
-      }
+        noData: 'empty',
+      },
     });
     expect(i18n.get('display.noData')).to.eql('empty');
   });
@@ -30,8 +30,8 @@ describe('i18n', () => {
   it('when setting messages for the new locale code, the locale messages are set and changed.', () => {
     i18n.setLanguage('fr', {
       display: {
-        noData: 'empty2'
-      }
+        noData: 'empty2',
+      },
     });
     expect(i18n.get('display.noData')).to.eql('empty2');
   });

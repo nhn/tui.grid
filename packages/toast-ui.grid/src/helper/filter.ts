@@ -3,7 +3,7 @@ import {
   FilterOptionType,
   NumberFilterCode,
   TextFilterCode,
-  DateFilterCode
+  DateFilterCode,
 } from '@t/store/filterLayerState';
 import { CellValue } from '@t/store/data';
 import { isString, endsWith, startsWith } from './common';
@@ -21,14 +21,14 @@ export const filterSelectOption: FilterSelectOption = {
     gt: '>',
     lte: '<=',
     gte: '>=',
-    ne: '!='
+    ne: '!=',
   },
   text: {
     contain: 'Contains',
     eq: 'Equals',
     ne: 'Not equals',
     start: 'Starts with',
-    end: 'Ends with'
+    end: 'Ends with',
   },
   date: {
     eq: 'Equals',
@@ -36,8 +36,8 @@ export const filterSelectOption: FilterSelectOption = {
     after: 'After',
     afterEq: 'After or Equal',
     before: 'Before',
-    beforeEq: 'Before or Equal'
-  }
+    beforeEq: 'Before or Equal',
+  },
 };
 
 export function getUnixTime(value: CellValue) {
@@ -53,12 +53,12 @@ function getPredicateWithType(
     number: Number,
     text: String,
     select: String,
-    date: getUnixTime
+    date: getUnixTime,
   }[type];
 
   return code === 'eq'
-    ? cellValue => convertFn(cellValue) === convertFn(inputValue)
-    : cellValue => convertFn(cellValue) !== convertFn(inputValue);
+    ? (cellValue) => convertFn(cellValue) === convertFn(inputValue)
+    : (cellValue) => convertFn(cellValue) !== convertFn(inputValue);
 }
 
 export function getFilterConditionFn(
@@ -71,37 +71,37 @@ export function getFilterConditionFn(
     case 'ne':
       return getPredicateWithType(code, type, inputValue);
     case 'lt':
-      return cellValue => Number(cellValue) < Number(inputValue);
+      return (cellValue) => Number(cellValue) < Number(inputValue);
     case 'gt':
-      return cellValue => Number(cellValue) > Number(inputValue);
+      return (cellValue) => Number(cellValue) > Number(inputValue);
     case 'lte':
-      return cellValue => Number(cellValue) <= Number(inputValue);
+      return (cellValue) => Number(cellValue) <= Number(inputValue);
     case 'gte':
-      return cellValue => Number(cellValue) >= Number(inputValue);
+      return (cellValue) => Number(cellValue) >= Number(inputValue);
     case 'contain':
-      return cellValue =>
+      return (cellValue) =>
         isString(cellValue) && isString(inputValue) && cellValue.indexOf(inputValue) !== -1;
     case 'start':
-      return cellValue =>
+      return (cellValue) =>
         isString(cellValue) && isString(inputValue) && startsWith(inputValue, cellValue);
     case 'end':
-      return cellValue =>
+      return (cellValue) =>
         isString(cellValue) && isString(inputValue) && endsWith(inputValue, cellValue);
     case 'after':
-      return cellValue => getUnixTime(cellValue) > getUnixTime(inputValue);
+      return (cellValue) => getUnixTime(cellValue) > getUnixTime(inputValue);
     case 'afterEq':
-      return cellValue => getUnixTime(cellValue) >= getUnixTime(inputValue);
+      return (cellValue) => getUnixTime(cellValue) >= getUnixTime(inputValue);
     case 'before':
-      return cellValue => getUnixTime(cellValue) < getUnixTime(inputValue);
+      return (cellValue) => getUnixTime(cellValue) < getUnixTime(inputValue);
     case 'beforeEq':
-      return cellValue => getUnixTime(cellValue) <= getUnixTime(inputValue);
+      return (cellValue) => getUnixTime(cellValue) <= getUnixTime(inputValue);
     default:
       throw new Error('code not available.');
   }
 }
 
 export function composeConditionFn(fns: Function[], operator?: OperatorType) {
-  return function(value: CellValue) {
+  return function (value: CellValue) {
     return fns.reduce((acc, fn: Function) => {
       return operator === 'OR' ? acc || fn(value) : acc && fn(value);
     }, operator !== 'OR');

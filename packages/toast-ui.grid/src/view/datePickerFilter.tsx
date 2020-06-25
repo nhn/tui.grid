@@ -5,7 +5,7 @@ import {
   ActiveColumnAddress,
   NumberFilterCode,
   TextFilterCode,
-  DateFilterCode
+  DateFilterCode,
 } from '@t/store/filterLayerState';
 import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
@@ -70,9 +70,9 @@ class DatePickerFilterComp extends Component<Props> {
       type: 'date',
       input: {
         element: this.inputEl,
-        format: options.format
+        format: options.format,
       },
-      usageStatistics
+      usageStatistics,
     };
 
     this.datePickerEl = new TuiDatePicker(
@@ -139,12 +139,12 @@ class DatePickerFilterComp extends Component<Props> {
       <div>
         <div className={cls('filter-dropdown')}>
           <select
-            ref={ref => {
+            ref={(ref) => {
               this.selectEl = ref;
             }}
             onChange={this.handleChange}
           >
-            {Object.keys(selectOption).map(key => {
+            {Object.keys(selectOption).map((key) => {
               return (
                 <option value={key} key={key} selected={code === key}>
                   {selectOption[key as DateFilterCode]}
@@ -155,7 +155,7 @@ class DatePickerFilterComp extends Component<Props> {
         </div>
         <div className={cls('datepicker-input-container')}>
           <input
-            ref={ref => {
+            ref={(ref) => {
               this.inputEl = ref;
             }}
             type="text"
@@ -166,7 +166,7 @@ class DatePickerFilterComp extends Component<Props> {
           {showIcon && <i className={cls('date-icon')} onClick={this.openDatePicker} />}
         </div>
         <div
-          ref={ref => {
+          ref={(ref) => {
             this.calendarWrapper = ref;
           }}
           style={{ marginTop: '-4px' }}
@@ -188,7 +188,7 @@ export const DatePickerFilter = connect<StoreProps, OwnProps>(
       columnAddress,
       filterIndex,
       filters,
-      filterState
+      filterState,
     };
   }
 )(DatePickerFilterComp);

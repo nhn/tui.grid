@@ -3,12 +3,12 @@ import { notify, observable, observe } from '@/helper/observable';
 it('observe() should invoke callback function whenever related props changed', () => {
   const person = observable({
     name: 'Kim',
-    age: 20
+    age: 20,
   });
 
   const book = observable({
     title: 'JS Guide',
-    author: 'Lee'
+    author: 'Lee',
   });
 
   const callback1 = cy.stub();
@@ -43,7 +43,7 @@ it('computed (getter) property and observe', () => {
     },
     get p3() {
       return `${this.p2}3`;
-    }
+    },
   });
 
   expect(person.p2).to.eql('12');
@@ -76,7 +76,7 @@ it('observe returns a function which stops observing', () => {
     },
     get p3() {
       return `${this.p2}3`;
-    }
+    },
   });
 
   const callback1 = cy.stub();
@@ -108,7 +108,7 @@ it('notify methods should invoke observers', () => {
     p1: '1',
     get p2() {
       return `${this.p1}2`;
-    }
+    },
   });
 
   const callback1 = cy.stub();
@@ -129,7 +129,7 @@ it('notify methods should invoke observers', () => {
 it('observe should react to conditional logic', () => {
   const person = observable({
     flag: false,
-    name: 'Kim'
+    name: 'Kim',
   });
 
   const callback = cy.stub();
@@ -241,7 +241,7 @@ describe('batch update', () => {
         get sum() {
           callback1();
           return this.start + this.end;
-        }
+        },
       },
       true
     );
@@ -252,7 +252,7 @@ describe('batch update', () => {
       get sum() {
         callback2();
         return this.start + this.end;
-      }
+      },
     });
 
     observe(() => {
@@ -280,7 +280,7 @@ describe('batch update', () => {
         get sum() {
           callback1();
           return this.start + this.end;
-        }
+        },
       },
       true
     );

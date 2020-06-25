@@ -10,7 +10,7 @@ import { findProp, findPropIndex, includes, some, sum } from '../helper/common';
 import {
   getChildHeaderCount,
   getComplexColumnsHierarchy,
-  getHierarchyMaxRowCount
+  getHierarchyMaxRowCount,
 } from '../query/column';
 
 interface OwnProps {
@@ -86,7 +86,7 @@ class ColumnResizerComp extends Component<Props> {
 
     const attrs = {
       [dataAttr.COLUMN_INDEX]: index,
-      [dataAttr.COLUMN_NAME]: name
+      [dataAttr.COLUMN_NAME]: name,
     };
 
     return (
@@ -98,16 +98,16 @@ class ColumnResizerComp extends Component<Props> {
           height,
           width: WIDTH,
           left: offsetX + width - HALF_WIDTH,
-          bottom: offsetY
+          bottom: offsetY,
         }}
-        onMouseDown={ev => this.handleMouseDown(ev, name)}
+        onMouseDown={(ev) => this.handleMouseDown(ev, name)}
       />
     );
   }
 
   private isHideChildColumns(name: string) {
     return some(
-      item => includes(item.childNames, name) && !!item.hideChildHeaders,
+      (item) => includes(item.childNames, name) && !!item.hideChildHeaders,
       this.props.complexColumns
     );
   }
@@ -143,7 +143,7 @@ class ColumnResizerComp extends Component<Props> {
       let startIndex = Number.MAX_VALUE;
       let endIndex = Number.MIN_VALUE;
       const { childNames } = findProp('name', name, complexColumns)!;
-      childNames.forEach(childName => {
+      childNames.forEach((childName) => {
         startIndex = Math.min(startIndex, this.findComplexColumnStartIndex(childName));
         endIndex = Math.max(startIndex, this.findComplexColumnEndIndex(childName));
       });
@@ -162,7 +162,7 @@ class ColumnResizerComp extends Component<Props> {
 
     return {
       width: sum(widths.slice(startIndex, endIndex + 1)),
-      offsetX: offsets[startIndex] + cellBorder
+      offsetX: offsets[startIndex] + cellBorder,
     };
   }
 
@@ -174,7 +174,7 @@ class ColumnResizerComp extends Component<Props> {
     const nameMap: Dictionary<boolean> = {};
     const resizerInfo: ResizerInfo[] = [];
 
-    hierarchies.forEach(cols => {
+    hierarchies.forEach((cols) => {
       const len = cols.length;
       let offsetY = headerHeight;
       cols.forEach((col, idx) => {
@@ -187,7 +187,7 @@ class ColumnResizerComp extends Component<Props> {
             name,
             height,
             offsetY,
-            ...this.getResizerCoords(name)
+            ...this.getResizerCoords(name),
           });
           nameMap[name] = true;
         }
@@ -217,6 +217,6 @@ export const ColumnResizer = connect<StoreProps, OwnProps>(
     cellBorderWidth: dimension.cellBorderWidth,
     columns: column.visibleColumnsBySideWithRowHeader[side],
     complexColumns: column.complexColumnHeaders,
-    allColumnMap: column.allColumnMap
+    allColumnMap: column.allColumnMap,
   })
 )(ColumnResizerComp);

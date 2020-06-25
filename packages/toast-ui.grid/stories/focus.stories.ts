@@ -3,7 +3,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Focus'
+  title: 'Focus',
 };
 
 type Options = {
@@ -24,13 +24,13 @@ const data = [
   {
     name: 'Moves Like Jagger',
     artist: 'Maroon5',
-    type: 'Single'
-  }
+    type: 'Single',
+  },
 ];
 const columns: OptColumn[] = [
   { name: 'name' },
   { name: 'artist' },
-  { name: 'type', whiteSpace: 'pre' }
+  { name: 'type', whiteSpace: 'pre' },
 ];
 
 function createGrid(options?: Options) {
@@ -85,10 +85,10 @@ export const focusWithWhitespace = () => {
       {
         name: 'Moves Like Jagger',
         artist: 'Maroon5',
-        type: 'grid         example\ngrid newline and clipboard example\n\ngrid example'
-      }
+        type: 'grid         example\ngrid newline and clipboard example\n\ngrid example',
+      },
     ],
-    rowHeight: 'auto'
+    rowHeight: 'auto',
   };
   // @ts-ignore
   const { el, grid } = createGrid(options);

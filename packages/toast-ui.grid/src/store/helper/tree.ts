@@ -55,7 +55,7 @@ function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
     depth,
     indentWidth,
     leaf: isLeaf(row),
-    expanded: isExpanded(row)
+    expanded: isExpanded(row),
   };
 }
 
@@ -76,13 +76,13 @@ export function createTreeRawRow(
   const rawRow = createRawRow(id, row, targetTreeRowKey, column, {
     keyColumnName,
     lazyObservable,
-    disabled
+    disabled,
   });
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
     childRowKeys,
-    hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false
+    hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false,
   };
 
   if (parentRow) {
@@ -96,8 +96,8 @@ export function createTreeRawRow(
   const tree = {
     ...defaultAttributes,
     ...((Array.isArray(row._children) || childRowKeys.length) && {
-      expanded: !!row._attributes!.expanded
-    })
+      expanded: !!row._attributes!.expanded,
+    }),
   };
 
   rawRow._attributes.tree = lazyObservable ? tree : observable(tree);
@@ -114,7 +114,7 @@ export function flattenTreeData(
 ) {
   const flattenedRows: Row[] = [];
 
-  data.forEach(row => {
+  data.forEach((row) => {
     const rawRow = createTreeRawRow(id, row, parentRow, column, options);
 
     flattenedRows.push(rawRow);
@@ -135,7 +135,7 @@ export function createTreeRawData({
   column,
   keyColumnName,
   lazyObservable = false,
-  disabled = false
+  disabled = false,
 }: TreeDataCreationOption) {
   // only reset the rowKey on lazy observable data
   if (lazyObservable) {
@@ -145,7 +145,7 @@ export function createTreeRawData({
   return flattenTreeData(id, data, null, column, {
     keyColumnName,
     lazyObservable,
-    disabled
+    disabled,
   });
 }
 

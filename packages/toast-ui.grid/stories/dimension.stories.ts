@@ -5,7 +5,7 @@ import '../src/css/grid.css';
 import { range } from '../src/helper/common';
 
 export default {
-  title: 'Dimension'
+  title: 'Dimension',
 };
 
 const columns = [{ name: 'name' }, { name: 'artist' }];
@@ -46,17 +46,17 @@ bodyHeightAuto.story = { parameters: { notes: bodyHeightAutoNote } };
 export const rowHeightAuto = () => {
   const myColumns: OptGrid['columns'] = [
     { name: 'col1', whiteSpace: 'pre' },
-    { name: 'col2', whiteSpace: 'normal' }
+    { name: 'col2', whiteSpace: 'normal' },
   ];
   const myData = [
     {
       col1: 'Long\n\n\n\n\n\nSeven new lines',
-      col2: 'Short'
+      col2: 'Short',
     },
     {
       col1: 'Short',
-      col2: range(100).join('-')
-    }
+      col2: range(100).join('-'),
+    },
   ];
 
   return createGrid({ data: myData, columns: myColumns, rowHeight: 'auto' }).el;

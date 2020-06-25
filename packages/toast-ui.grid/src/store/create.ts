@@ -41,7 +41,7 @@ export function createStore(id: number, options: OptGrid): Store {
     pageOptions = {},
     treeColumnOptions = { name: '' },
     header = {},
-    disabled = false
+    disabled = false,
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -50,7 +50,7 @@ export function createStore(id: number, options: OptGrid): Store {
     complexColumns = [],
     align = 'center',
     valign = 'middle',
-    columns: columnHeaders = []
+    columns: columnHeaders = [],
   } = header;
   const column = createColumn({
     columns: options.columns,
@@ -63,7 +63,7 @@ export function createStore(id: number, options: OptGrid): Store {
     align,
     valign,
     columnHeaders,
-    disabled
+    disabled,
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],
@@ -71,7 +71,7 @@ export function createStore(id: number, options: OptGrid): Store {
     pageOptions,
     useClientSort,
     id,
-    disabled
+    disabled,
   });
   const dimension = createDimension({
     column,
@@ -87,7 +87,7 @@ export function createStore(id: number, options: OptGrid): Store {
     summaryPosition,
     scrollX,
     scrollY,
-    headerHeight
+    headerHeight,
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
@@ -97,7 +97,7 @@ export function createStore(id: number, options: OptGrid): Store {
     dimension,
     rowCoords,
     columnCoords,
-    showDummyRows
+    showDummyRows,
   });
   const focus = createFocus({
     data,
@@ -107,7 +107,7 @@ export function createStore(id: number, options: OptGrid): Store {
     rowCoords,
     editingEvent,
     tabMode,
-    id
+    id,
   });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({
@@ -116,7 +116,7 @@ export function createStore(id: number, options: OptGrid): Store {
     column,
     dimension,
     rowCoords,
-    data
+    data,
   });
   const filterLayerState = createFilterLayerState();
   const renderState = createRenderState();
@@ -133,7 +133,7 @@ export function createStore(id: number, options: OptGrid): Store {
     summary,
     selection,
     renderState,
-    filterLayerState
+    filterLayerState,
   });
   // manual observe to resolve circular references
   observe(() => {

@@ -46,7 +46,7 @@ function updateSummaryValue(
     sum: filteredSum,
     min: filteredMin,
     max: filteredMax,
-    cnt: filteredCnt
+    cnt: filteredCnt,
   } = summaryValue.filtered;
 
   switch (type) {
@@ -110,8 +110,8 @@ function updateSummaryValue(
       min: filteredMin,
       max: filteredMax,
       avg: filteredAvg,
-      cnt: filteredCnt
-    }
+      cnt: filteredCnt,
+    },
   };
 
   notify(summary, 'summaryValues');

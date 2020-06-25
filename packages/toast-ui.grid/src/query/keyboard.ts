@@ -41,7 +41,7 @@ export function getNextCellIndex(
   const {
     data,
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
-    rowCoords: { heights }
+    rowCoords: { heights },
   } = store;
 
   const { viewData, sortState, filteredRawData, filteredViewData } = data;
@@ -141,7 +141,7 @@ export function getRemoveRange(store: Store) {
   if (!isNull(totalColumnIndex) && !isNull(originalRowIndex)) {
     return {
       column: [totalColumnIndex, totalColumnIndex],
-      row: [originalRowIndex, originalRowIndex]
+      row: [originalRowIndex, originalRowIndex],
     };
   }
   return null;

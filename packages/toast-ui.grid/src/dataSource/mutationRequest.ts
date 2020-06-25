@@ -5,7 +5,7 @@ import {
   RequestType,
   AjaxConfig,
   Url,
-  MutationParams
+  MutationParams,
 } from '@t/dataSource';
 import { Store } from '@t/store';
 import { isUndefined, isFunction } from '../helper/common';
@@ -30,7 +30,7 @@ const requestTypeCodeMap = {
   createData: 'CREATE',
   updateData: 'UPDATE',
   deleteData: 'DELETE',
-  modifyData: 'MODIFY'
+  modifyData: 'MODIFY',
 } as const;
 
 function createRequestParams(store: Store, type: RequestTypeCode, requestOptions: RequestOptions) {
@@ -53,7 +53,7 @@ function createRequestOptions(ajaxConfig: AjaxConfig, requestOptions = {}) {
     checkedOnly: false,
     modifiedOnly: true,
     showConfirm: true,
-    withCredentials: ajaxConfig.withCredentials
+    withCredentials: ajaxConfig.withCredentials,
   };
   return { ...defaultOptions, ...requestOptions };
 }
@@ -82,7 +82,7 @@ function send(config: Config, sendOptions: SendOptions) {
       postCallback: callback,
       eventBus: getEventBus(id),
       ...ajaxConfig,
-      withCredentials: isUndefined(withCredentials) ? ajaxConfig.withCredentials : withCredentials
+      withCredentials: isUndefined(withCredentials) ? ajaxConfig.withCredentials : withCredentials,
     });
   }
 }

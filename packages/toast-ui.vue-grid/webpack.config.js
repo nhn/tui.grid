@@ -7,20 +7,20 @@ module.exports = {
     filename: 'toastui-vue-grid.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'toastui',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   resolve: {
     alias: {
-      vue: 'vue/dist/vue.js'
-    }
+      vue: 'vue/dist/vue.js',
+    },
   },
   externals: {
     'tui-grid': {
       commonjs: 'tui-grid',
       commonjs2: 'tui-grid',
       amd: 'tui-grid',
-      root: ['tui', 'Grid']
-    }
+      root: ['tui', 'Grid'],
+    },
   },
   module: {
     rules: [
@@ -28,7 +28,7 @@ module.exports = {
         enforce: 'pre',
         test: /\.(js|vue)$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader'
+        loader: 'eslint-loader',
       },
       {
         test: /\.js$/,
@@ -36,15 +36,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
+            presets: ['@babel/preset-env'],
+          },
+        },
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
-      }
-    ]
+        loader: 'vue-loader',
+      },
+    ],
   },
-  plugins: [new VueLoaderPlugin()]
+  plugins: [new VueLoaderPlugin()],
 };

@@ -18,7 +18,7 @@ describe('getElement()', () => {
   it('should returns the HTMLElement of the given cell address', () => {
     const data = [
       { c1: 10, c2: 20 },
-      { c1: 20, c2: 30 }
+      { c1: 20, c2: 30 },
     ];
     const columns = [{ name: 'c1' }, { name: 'c2' }];
 
@@ -40,7 +40,7 @@ describe('refreshLayout()', () => {
   it('should re-calculate width and height', () => {
     const data = [
       { c1: 10, c2: 20 },
-      { c1: 20, c2: 30 }
+      { c1: 20, c2: 30 },
     ];
     const columns = [{ name: 'c1' }, { name: 'c2' }];
     const bodyHeight = 'fitToParent';
@@ -49,15 +49,11 @@ describe('refreshLayout()', () => {
 
     cy.gridInstance().invoke('refreshLayout');
 
-    cy.getByCls('container')
-      .invoke('width')
-      .should('to.eq', 817);
+    cy.getByCls('container').invoke('width').should('to.eq', 817);
 
-    cy.getByCls('rside-area')
-      .invoke('width')
-      .should('eq', 817);
+    cy.getByCls('rside-area').invoke('width').should('eq', 817);
 
-    cy.getByCls('rside-area').within($el => {
+    cy.getByCls('rside-area').within(($el) => {
       const headerAreaHeight = $el.find(`.${cls('header-area')}`).height()!;
       const bodyAreaHeight = $el.find(`.${cls('body-area')}`).height()!;
 
@@ -65,12 +61,8 @@ describe('refreshLayout()', () => {
       expect(headerAreaHeight + bodyAreaHeight).to.eq(599);
     });
 
-    cy.getCell(0, 'c1')
-      .invoke('width')
-      .should('to.eq', 400);
+    cy.getCell(0, 'c1').invoke('width').should('to.eq', 400);
 
-    cy.getCell(0, 'c2')
-      .invoke('width')
-      .should('to.eq', 400);
+    cy.getCell(0, 'c2').invoke('width').should('to.eq', 400);
   });
 });

@@ -19,7 +19,7 @@ function setSelection(start: Address, end: Address) {
 }
 
 function assertDisabledColumn(columnName: string, disabled: boolean) {
-  cy.getColumnCells(columnName).each($el => {
+  cy.getColumnCells(columnName).each(($el) => {
     if (disabled) {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     } else {
@@ -29,7 +29,7 @@ function assertDisabledColumn(columnName: string, disabled: boolean) {
 }
 
 function assertColumnClassName(columnName: string, className: string) {
-  cy.getColumnCells(columnName).each($el => {
+  cy.getColumnCells(columnName).each(($el) => {
     cy.wrap($el).should('have.class', className);
   });
 }
@@ -42,7 +42,7 @@ describe('setColumns()', () => {
   beforeEach(() => {
     const data = [
       { id: 1, name: 'Kim', score: 90, grade: 'A' },
-      { id: 2, name: 'Lee', score: 80, grade: 'B' }
+      { id: 2, name: 'Lee', score: 80, grade: 'B' },
     ];
     const columns = [{ name: 'id' }, { name: 'name' }];
     cy.createGrid({ data, columns });
@@ -54,7 +54,7 @@ describe('setColumns()', () => {
 
     cy.getRsideBody().should('have.cellData', [
       ['1', '90', 'A'],
-      ['2', '80', 'B']
+      ['2', '80', 'B'],
     ]);
   });
 
@@ -62,7 +62,7 @@ describe('setColumns()', () => {
     const columns = [
       { name: 'id', editor: 'text' },
       { name: 'score' },
-      { name: 'grade', editor: 'text' }
+      { name: 'grade', editor: 'text' },
     ];
     startEditingAt(0, 0);
     setColumns(columns);
@@ -75,7 +75,7 @@ describe('setColumns()', () => {
     const columns = [
       { name: 'id', editor: 'text' },
       { name: 'score' },
-      { name: 'grade', editor: 'text' }
+      { name: 'grade', editor: 'text' },
     ];
     setSelection([0, 0], [1, 1]);
     setColumns(columns);
@@ -97,16 +97,14 @@ describe('API', () => {
   beforeEach(() => {
     const data = [
       { id: 1, name: 'Kim', score: 90, grade: 'A' },
-      { id: 2, name: 'Lee', score: 80, grade: 'B' }
+      { id: 2, name: 'Lee', score: 80, grade: 'B' },
     ];
     const columns = [{ name: 'name' }, { name: 'score', disabled: true }];
     cy.createGrid({ data, columns });
   });
 
   it('getColumnValues()', () => {
-    cy.gridInstance()
-      .invoke('getColumnValues', 'name')
-      .should('eql', ['Kim', 'Lee']);
+    cy.gridInstance().invoke('getColumnValues', 'name').should('eql', ['Kim', 'Lee']);
   });
 
   context('setColumnValues()', () => {
@@ -126,9 +124,7 @@ describe('API', () => {
 
   it('getIndexOfColumn()', () => {
     ['name', 'score'].forEach((column, index) => {
-      cy.gridInstance()
-        .invoke('getIndexOfColumn', column)
-        .should('eq', index);
+      cy.gridInstance().invoke('getIndexOfColumn', column).should('eq', index);
     });
   });
 
@@ -146,19 +142,19 @@ describe('API', () => {
 describe('formatter', () => {
   const data = [
     { name: 'Kim', age: 30 },
-    { name: 'Lee', age: 40 }
+    { name: 'Lee', age: 40 },
   ];
 
   const ageFormatterProps1 = {
     column: { name: 'age' },
     row: data[0],
-    value: 30
+    value: 30,
   };
 
   const ageFormatterProps2 = {
     column: { name: 'age' },
     row: data[1],
-    value: 40
+    value: 40,
   };
 
   function assertAgeFormatterCallProps(formatterStub: any) {
@@ -172,12 +168,12 @@ describe('formatter', () => {
     const columns = [
       {
         name: 'name',
-        formatter: ({ value }: FormatterProps) => `Mr. ${value}`
+        formatter: ({ value }: FormatterProps) => `Mr. ${value}`,
       },
       {
         name: 'age',
-        formatter: formatterStub.returns('AGE')
-      }
+        formatter: formatterStub.returns('AGE'),
+      },
     ];
 
     cy.createGrid({ data, columns });
@@ -197,13 +193,13 @@ describe('escapeHTML', () => {
     const columns = [
       {
         name: 'name',
-        escapeHTML: true
+        escapeHTML: true,
       },
       {
         name: 'age',
         formatter: ({ value }: FormatterProps) => `${value}<br/>`,
-        escapeHTML: true
-      }
+        escapeHTML: true,
+      },
     ];
 
     cy.createGrid({ data, columns });
@@ -218,19 +214,19 @@ describe('defaultValue', () => {
     const columns = [
       {
         name: 'name',
-        defaultValue: 'Kim'
+        defaultValue: 'Kim',
       },
       {
         name: 'age',
-        defaultValue: '30'
-      }
+        defaultValue: '30',
+      },
     ];
 
     cy.createGrid({ data, columns });
 
     cy.getRsideBody().should('have.cellData', [
       ['Lee', '20'],
-      ['Kim', '30']
+      ['Kim', '30'],
     ]);
   });
 });
@@ -240,12 +236,12 @@ describe('column className', () => {
     const data = [
       {
         name: 'Kim',
-        age: 30
+        age: 30,
       },
       {
         name: 'Lee',
-        age: 40
-      }
+        age: 40,
+      },
     ];
     const columns = [{ name: 'name', className: 'column-test-c' }, { name: 'age' }];
 
@@ -263,18 +259,18 @@ describe('column disable', () => {
       {
         name: 'Kim',
         age: 30,
-        location: 'seoul'
+        location: 'seoul',
       },
       {
         name: 'Lee',
         age: 40,
-        location: 'busan'
+        location: 'busan',
       },
       {
         name: 'Han',
         age: 28,
-        location: 'Bundang'
-      }
+        location: 'Bundang',
+      },
     ];
     const columns = [{ name: 'name', disabled: true }, { name: 'age' }, { name: 'location' }];
 

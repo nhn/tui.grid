@@ -2,12 +2,12 @@ import { OptColumn } from '@t/options';
 
 const columns: OptColumn[] = [
   { name: 'A', minWidth: 150 },
-  { name: 'B', minWidth: 150 }
+  { name: 'B', minWidth: 150 },
 ];
 const data = [
   { A: 1, B: 2 },
   { A: 3, B: 2 },
-  { A: 4, B: 2 }
+  { A: 4, B: 2 },
 ];
 
 type Address = [number, number];
@@ -28,7 +28,7 @@ before(() => {
 });
 
 describe('getSelectionRange', () => {
-  ['API', 'UI'].forEach(type => {
+  ['API', 'UI'].forEach((type) => {
     it(`selection by ${type}`, () => {
       cy.createGrid({ data, columns });
       const range = { start: [0, 0], end: [1, 1] };
@@ -38,17 +38,13 @@ describe('getSelectionRange', () => {
         setSelectionByUI([0, 0], [1, 1]);
       }
 
-      cy.gridInstance()
-        .invoke('getSelectionRange')
-        .should('eql', range);
+      cy.gridInstance().invoke('getSelectionRange').should('eql', range);
     });
   });
 
   it('select column by clicking header', () => {
     cy.createGrid({ data, columns });
-    cy.get('th[data-column-name=A]')
-      .eq(0)
-      .click();
+    cy.get('th[data-column-name=A]').eq(0).click();
 
     cy.gridInstance()
       .invoke('getSelectionRange')
@@ -69,12 +65,10 @@ describe('getSelectionRange', () => {
     cy.createGrid({
       data,
       columns,
-      header: { height: 60, complexColumns: [{ header: 'C', name: 'C', childNames: ['A', 'B'] }] }
+      header: { height: 60, complexColumns: [{ header: 'C', name: 'C', childNames: ['A', 'B'] }] },
     });
 
-    cy.get('th[data-column-name=C]')
-      .eq(0)
-      .click();
+    cy.get('th[data-column-name=C]').eq(0).click();
 
     cy.gridInstance()
       .invoke('getSelectionRange')

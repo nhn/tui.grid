@@ -4,7 +4,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Header'
+  title: 'Header',
 };
 
 type Options = {
@@ -48,7 +48,7 @@ function createGrid(options: Options) {
   const grid = new Grid({
     el,
     columns,
-    ...options
+    ...options,
   });
 
   return { el, grid };
@@ -60,14 +60,14 @@ export const alignAndVerticalAlign = () => {
       {
         name: 'artist',
         align: 'left',
-        valign: 'top'
+        valign: 'top',
       },
       {
         name: 'type',
         align: 'right',
-        valign: 'bottom'
-      }
-    ]
+        valign: 'bottom',
+      },
+    ],
   };
   const { el } = createGrid({ header });
   const rootEl = document.createElement('div');
@@ -96,36 +96,36 @@ export const complexColumnHeader = () => {
   const columns = [
     {
       header: 'Name',
-      name: 'name'
+      name: 'name',
     },
     {
       header: 'Artist',
-      name: 'artist'
+      name: 'artist',
     },
     {
       header: 'Type',
-      name: 'type'
+      name: 'type',
     },
     {
       header: 'Release',
-      name: 'release'
+      name: 'release',
     },
     {
       header: 'Genre',
-      name: 'genre'
+      name: 'genre',
     },
     {
       header: 'Price',
-      name: 'price'
+      name: 'price',
     },
     {
       header: 'Download',
-      name: 'downloadCount'
+      name: 'downloadCount',
     },
     {
       header: 'Listen',
-      name: 'listenCount'
-    }
+      name: 'listenCount',
+    },
   ];
   const header = {
     height: 200,
@@ -133,19 +133,19 @@ export const complexColumnHeader = () => {
       {
         header: 'Extra',
         name: 'mergeColumn2',
-        childNames: ['type', 'release', 'genre']
+        childNames: ['type', 'release', 'genre'],
       },
       {
         header: 'Count',
         name: 'mergeColumn4',
-        childNames: ['downloadCount', 'listenCount']
+        childNames: ['downloadCount', 'listenCount'],
       },
       {
         header: 'Album Info',
         name: 'mergeColumn5',
-        childNames: ['price', 'mergeColumn2', 'mergeColumn4']
-      }
-    ]
+        childNames: ['price', 'mergeColumn2', 'mergeColumn4'],
+      },
+    ],
   };
   const { el } = createGrid({ header, columns });
   const rootEl = document.createElement('div');
@@ -173,9 +173,9 @@ export const mergedColumnHeader = () => {
         header: 'name',
         name: 'mergeColumn6',
         childNames: ['name', 'artist'],
-        hideChildHeaders: true
-      }
-    ]
+        hideChildHeaders: true,
+      },
+    ],
   };
   const { el } = createGrid({ data, header });
   const rootEl = document.createElement('div');
@@ -198,17 +198,17 @@ export const customColumnHeader = () => {
     columns: [
       {
         name: 'name',
-        renderer: CustomRenderer
+        renderer: CustomRenderer,
       },
       {
         name: 'artist',
-        renderer: CustomRenderer
+        renderer: CustomRenderer,
       },
       {
         name: 'type',
-        renderer: CustomRenderer
-      }
-    ]
+        renderer: CustomRenderer,
+      },
+    ],
   };
   const { el } = createGrid({ header });
   const rootEl = document.createElement('div');

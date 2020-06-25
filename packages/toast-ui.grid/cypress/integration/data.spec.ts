@@ -8,10 +8,7 @@ function invokeFilter(columnName: string, states: any) {
 }
 
 function applyAliasHeaderCheckbox() {
-  cy.getByCls('cell-row-header')
-    .get('input')
-    .eq(0)
-    .as('checkbox');
+  cy.getByCls('cell-row-header').get('input').eq(0).as('checkbox');
 }
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
@@ -56,7 +53,7 @@ function assertHeaderCheckboxStatus(checked: boolean) {
 }
 
 function assertCheckboxStatus(checked: boolean) {
-  cy.get('input').should($el => {
+  cy.get('input').should(($el) => {
     $el.each((_, elem) => {
       expect(elem.checked).eq(checked);
     });
@@ -66,11 +63,11 @@ function assertCheckboxStatus(checked: boolean) {
 function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'> = {}) {
   const data = [
     { name: 'Kim', age: 10 },
-    { name: 'Lee', age: 20 }
+    { name: 'Lee', age: 20 },
   ];
   const columns = [
     { name: 'name', editor: 'text', sortable: true, filter: 'text' },
-    { name: 'age', editor: 'text', sortable: true }
+    { name: 'age', editor: 'text', sortable: true },
   ];
 
   cy.createGrid({ data, columns, scrollY: true, bodyHeight: 400, ...options });
@@ -81,11 +78,11 @@ function createGridWithLargeData(options: Omit<OptGrid, 'el' | 'columns' | 'data
     { name: 'Kim', age: 10 },
     { name: 'Lee', age: 20 },
     { name: 'Ryu', age: 30 },
-    { name: 'Han', age: 40 }
+    { name: 'Han', age: 40 },
   ];
   const columns = [
     { name: 'name', editor: 'text', sortable: true, filter: 'text' },
-    { name: 'age', editor: 'text', sortable: true }
+    { name: 'age', editor: 'text', sortable: true },
   ];
 
   cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, ...options });
@@ -118,13 +115,11 @@ describe('appendRow()', () => {
     createGrid();
     cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 }, { focus: true });
 
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', {
-        rowKey: 2,
-        columnName: 'name',
-        value: 'Park'
-      });
+    cy.gridInstance().invoke('getFocusedCell').should('eql', {
+      rowKey: 2,
+      columnName: 'name',
+      value: 'Park',
+    });
   });
 
   it('if first argument is undefined, insert empty object', () => {
@@ -140,10 +135,7 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('removeRow', 0);
     cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
 
-    cy.gridInstance()
-      .invoke('getRowAt', 1)
-      .its('rowKey')
-      .should('eq', 2);
+    cy.gridInstance().invoke('getRowAt', 1).its('rowKey').should('eq', 2);
   });
 
   it('rowKey is created properly as max index on empty grid', () => {
@@ -151,10 +143,7 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('resetData', []);
     cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
 
-    cy.gridInstance()
-      .invoke('getRowAt', 0)
-      .its('rowKey')
-      .should('eq', 0);
+    cy.gridInstance().invoke('getRowAt', 0).its('rowKey').should('eq', 0);
   });
 
   it('should insert empty value for each column as append the empty row', () => {
@@ -243,13 +232,11 @@ describe('prependRow()', () => {
     createGrid();
     cy.gridInstance().invoke('prependRow', { name: 'Park', age: 30 }, { focus: true });
 
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', {
-        rowKey: 2,
-        columnName: 'name',
-        value: 'Park'
-      });
+    cy.gridInstance().invoke('getFocusedCell').should('eql', {
+      rowKey: 2,
+      columnName: 'name',
+      value: 'Park',
+    });
   });
 
   it('if first argument is undefined, insert empty object', () => {
@@ -275,7 +262,7 @@ describe('prependRow()', () => {
     cy.gridInstance().invoke('prependRow', {
       name: 'han',
       age: 29,
-      _attributes: { checked: true }
+      _attributes: { checked: true },
     });
 
     assertCheckboxStatus(true);
@@ -337,11 +324,9 @@ describe('removeRow()', () => {
 
     cy.getByCls('body-container')
       .invoke('height')
-      .then(prevHeight => {
+      .then((prevHeight) => {
         cy.gridInstance().invoke('removeRow', 1);
-        cy.getByCls('body-area')
-          .invoke('height')
-          .should('be.lt', prevHeight);
+        cy.getByCls('body-area').invoke('height').should('be.lt', prevHeight);
       });
   });
 
@@ -419,12 +404,8 @@ describe('removeCheckedRows()', () => {
     cy.getCell(0, 'name').should('exist');
     cy.getCell(1, 'name').should('not.exist');
 
-    cy.getRowHeaderCell(0, '_checked')
-      .find('input')
-      .should('not.be.checked');
-    cy.getHeaderCell('_checked')
-      .find('input')
-      .should('not.be.checked');
+    cy.getRowHeaderCell(0, '_checked').find('input').should('not.be.checked');
+    cy.getHeaderCell('_checked').find('input').should('not.be.checked');
   });
 });
 
@@ -456,16 +437,14 @@ describe('resetData()', () => {
   it('focus, editing cell is removed when resets all data', () => {
     cy.gridInstance().invoke('resetData', [
       { name: 'Park', age: 30 },
-      { name: 'Han', age: 40 }
+      { name: 'Han', age: 40 },
     ]);
 
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', {
-        rowKey: null,
-        columnName: null,
-        value: null
-      });
+    cy.gridInstance().invoke('getFocusedCell').should('eql', {
+      rowKey: null,
+      columnName: null,
+      value: null,
+    });
     cy.getByCls('layer-editing').should('not.be.visible');
   });
 
@@ -479,10 +458,10 @@ describe('resetData()', () => {
 
     cy.gridInstance().invoke('resetData', [
       { name: 'Park', age: 30 },
-      { name: 'Han', age: 40 }
+      { name: 'Han', age: 40 },
     ]);
 
-    cy.get(`.${cls('rside-area')} .${cls('body-container')}`).should($container => {
+    cy.get(`.${cls('rside-area')} .${cls('body-container')}`).should(($container) => {
       expect($container.height()).to.lessThan(800);
     });
   });
@@ -496,7 +475,7 @@ describe('getters', () => {
   function getRowDataWithAttrs(rowNum: number) {
     const data = [
       { name: 'Kim', age: 10 },
-      { name: 'Lee', age: 20 }
+      { name: 'Lee', age: 20 },
     ];
 
     return {
@@ -507,28 +486,24 @@ describe('getters', () => {
         disabled: false,
         className: {
           row: [],
-          column: {}
+          column: {},
         },
         rowNum,
         // eslint-disable-next-line no-undefined
-        rowSpan: undefined
-      }
+        rowSpan: undefined,
+      },
     };
   }
 
   context('getRow()', () => {
     it('should return row matching given rowKey', () => {
-      cy.gridInstance()
-        .invoke('getRow', 0)
-        .should('have.subset', getRowDataWithAttrs(1));
+      cy.gridInstance().invoke('getRow', 0).should('have.subset', getRowDataWithAttrs(1));
     });
 
     it('should return row matching given rowKey regardless of filtering the data', () => {
       cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
 
-      cy.gridInstance()
-        .invoke('getRow', 0)
-        .should('have.subset', getRowDataWithAttrs(1));
+      cy.gridInstance().invoke('getRow', 0).should('have.subset', getRowDataWithAttrs(1));
     });
 
     it('should return row matching given rowKey after appedngind the row and clearing modified data', () => {
@@ -541,71 +516,53 @@ describe('getters', () => {
           disabled: false,
           className: {
             row: [],
-            column: {}
+            column: {},
           },
-          rowNum: 2
-        }
+          rowNum: 2,
+        },
       };
 
       cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 10 }, { at: 1 });
       cy.gridInstance().invoke('clearModifiedData');
 
-      cy.gridInstance()
-        .invoke('getRow', 2)
-        .should('have.subset', row);
+      cy.gridInstance().invoke('getRow', 2).should('have.subset', row);
     });
   });
 
   context('getRowAt()', () => {
     it('should return row by given index', () => {
-      cy.gridInstance()
-        .invoke('getRowAt', 0)
-        .should('have.subset', getRowDataWithAttrs(1));
+      cy.gridInstance().invoke('getRowAt', 0).should('have.subset', getRowDataWithAttrs(1));
 
-      cy.gridInstance()
-        .invoke('getRowAt', 1)
-        .should('have.subset', getRowDataWithAttrs(2));
+      cy.gridInstance().invoke('getRowAt', 1).should('have.subset', getRowDataWithAttrs(2));
     });
 
     it('should return row by given index regardless of filtering the data', () => {
       cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
 
-      cy.gridInstance()
-        .invoke('getRowAt', 0)
-        .should('have.subset', getRowDataWithAttrs(1));
+      cy.gridInstance().invoke('getRowAt', 0).should('have.subset', getRowDataWithAttrs(1));
 
-      cy.gridInstance()
-        .invoke('getRowAt', 1)
-        .should('have.subset', getRowDataWithAttrs(2));
+      cy.gridInstance().invoke('getRowAt', 1).should('have.subset', getRowDataWithAttrs(2));
     });
   });
 
   context('getIndexOfRow()', () => {
     it('should return the index of the row matching given rowKey', () => {
-      cy.gridInstance()
-        .invoke('getIndexOfRow', 0)
-        .should('eq', 0);
+      cy.gridInstance().invoke('getIndexOfRow', 0).should('eq', 0);
 
-      cy.gridInstance()
-        .invoke('getIndexOfRow', 1)
-        .should('eq', 1);
+      cy.gridInstance().invoke('getIndexOfRow', 1).should('eq', 1);
     });
 
     it('should return the index of the row matching given rowKey regardless of filtering the data', () => {
       cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
 
-      cy.gridInstance()
-        .invoke('getIndexOfRow', 0)
-        .should('eq', 0);
+      cy.gridInstance().invoke('getIndexOfRow', 0).should('eq', 0);
     });
 
     it('should return the index of the row matching given rowKey after appedngind the row and clearing modified data', () => {
       cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 10 }, { at: 1 });
       cy.gridInstance().invoke('clearModifiedData');
 
-      cy.gridInstance()
-        .invoke('getIndexOfRow', 2)
-        .should('have.subset', 1);
+      cy.gridInstance().invoke('getIndexOfRow', 2).should('have.subset', 1);
     });
   });
 
@@ -616,9 +573,7 @@ describe('getters', () => {
   });
 
   it('getRowCount() returns the total number of the rows', () => {
-    cy.gridInstance()
-      .invoke('getRowCount')
-      .should('eq', 2);
+    cy.gridInstance().invoke('getRowCount').should('eq', 2);
   });
 });
 
@@ -632,9 +587,7 @@ describe('rows', () => {
       .its('0')
       .and('have.subset', { name: 'Kim', age: 10 });
 
-    cy.gridInstance()
-      .invoke('findRows', { name: 'Lee', age: 10 })
-      .should('have.length', 0);
+    cy.gridInstance().invoke('findRows', { name: 'Lee', age: 10 }).should('have.length', 0);
 
     cy.gridInstance()
       .invoke('findRows', (row: Row) => !!row.age && row.age > 10)
@@ -670,7 +623,7 @@ describe('setRow()', () => {
     cy.gridInstance().invoke('sort', 'age', false, true);
     cy.gridInstance().invoke('setRow', 1, {
       name: 'Ryu',
-      age: '20'
+      age: '20',
     });
 
     cy.gridInstance()
@@ -678,8 +631,8 @@ describe('setRow()', () => {
       .should('have.subset', {
         columns: [
           { columnName: 'name', ascending: true },
-          { columnName: 'age', ascending: false }
-        ]
+          { columnName: 'age', ascending: false },
+        ],
       });
   });
 
@@ -689,7 +642,7 @@ describe('setRow()', () => {
     cy.gridInstance().invoke('sort', 'name', false);
     cy.gridInstance().invoke('setRow', 1, {
       name: 'Ryu',
-      age: '20'
+      age: '20',
     });
 
     // check the position based on sorted data
@@ -712,7 +665,7 @@ describe('setRow()', () => {
     cy.gridInstance().invoke('setRow', 1, {
       name: 'han',
       age: 29,
-      _attributes: { checkDisabled: true }
+      _attributes: { checkDisabled: true },
     });
 
     assertHeaderCheckboxDisabled(true);
@@ -751,7 +704,7 @@ describe('moveRow()', () => {
     createGridWithLargeData();
   });
 
-  ['sort', 'filter'].forEach(type => {
+  ['sort', 'filter'].forEach((type) => {
     it(`if ${type} data, moving should not be executed`, () => {
       if (type === 'sort') {
         cy.gridInstance().invoke('sort', 'name', true);
@@ -792,19 +745,17 @@ it('row._attributes should be maintained on calling resetData', () => {
       name: 'Kim',
       age: 10,
       _attributes: {
-        checked: true
-      }
+        checked: true,
+      },
     },
-    { name: 'Lee', age: 20 }
+    { name: 'Lee', age: 20 },
   ];
   const columns = [{ name: 'name' }, { name: 'age' }];
 
   cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
   cy.gridInstance().invoke('resetData', data);
 
-  cy.getRowHeaderCell(0, '_checked')
-    .find('input')
-    .should('be.checked');
+  cy.getRowHeaderCell(0, '_checked').find('input').should('be.checked');
 });
 
 describe('appendRows()', () => {
@@ -813,14 +764,14 @@ describe('appendRows()', () => {
 
     cy.gridInstance().invoke('appendRows', [
       { name: 'Han', age: 21 },
-      { name: 'Ryu', age: 25 }
+      { name: 'Ryu', age: 25 },
     ]);
 
     cy.getRsideBody().should('have.cellData', [
       ['Kim', '10'],
       ['Lee', '20'],
       ['Han', '21'],
-      ['Ryu', '25']
+      ['Ryu', '25'],
     ]);
   });
 
@@ -830,14 +781,14 @@ describe('appendRows()', () => {
     cy.gridInstance().invoke('sort', 'name', true);
     cy.gridInstance().invoke('appendRows', [
       { name: 'Han', age: 21 },
-      { name: 'Ryu', age: 25 }
+      { name: 'Ryu', age: 25 },
     ]);
 
     cy.getRsideBody().should('have.cellData', [
       ['Han', '21'],
       ['Kim', '10'],
       ['Lee', '20'],
-      ['Ryu', '25']
+      ['Ryu', '25'],
     ]);
   });
 
@@ -847,13 +798,13 @@ describe('appendRows()', () => {
     cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
     cy.gridInstance().invoke('appendRows', [
       { name: 'Lee', age: 30 },
-      { name: 'Lee', age: 40 }
+      { name: 'Lee', age: 40 },
     ]);
 
     cy.getRsideBody().should('have.cellData', [
       ['Lee', '20'],
       ['Lee', '30'],
-      ['Lee', '40']
+      ['Lee', '40'],
     ]);
   });
 
@@ -864,7 +815,7 @@ describe('appendRows()', () => {
 
     cy.gridInstance().invoke('appendRows', [
       { name: 'han', age: 29 },
-      { name: 'jung', age: 29 }
+      { name: 'jung', age: 29 },
     ]);
 
     assertHeaderCheckboxDisabled(false);
@@ -876,7 +827,7 @@ describe('appendRows()', () => {
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance().invoke('appendRows', [
       { name: 'Lee', age: 30, _attributes: { checked: true } },
-      { name: 'Lee', age: 40, _attributes: { checked: true } }
+      { name: 'Lee', age: 40, _attributes: { checked: true } },
     ]);
 
     assertCheckboxStatus(true);
@@ -888,7 +839,7 @@ describe('appendRows()', () => {
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance().invoke('appendRows', [
       { name: 'Lee', age: 30, _attributes: { checked: true } },
-      { name: 'Lee', age: 40 }
+      { name: 'Lee', age: 40 },
     ]);
 
     assertHeaderCheckboxStatus(false);
@@ -907,7 +858,7 @@ describe('setValue()', () => {
 
     cy.getRsideBody().should('have.cellData', [
       ['Han', '10'],
-      ['Lee', '20']
+      ['Lee', '20'],
     ]);
   });
 
@@ -916,7 +867,7 @@ describe('setValue()', () => {
 
     cy.getRsideBody().should('have.cellData', [
       ['Kim', '10'],
-      ['Lee', '20']
+      ['Lee', '20'],
     ]);
   });
 });
@@ -927,31 +878,29 @@ it('should change the value of the hidden cell', () => {
   const columns = [
     { name: 'name' },
     { name: 'age' },
-    { name: 'gender', hidden: true, onBeforeChange, onAfterChange }
+    { name: 'gender', hidden: true, onBeforeChange, onAfterChange },
   ];
   const data = [
     { name: 'Kim', age: 10, gender: 'female' },
-    { name: 'Lee', age: 20, gender: 'male' }
+    { name: 'Lee', age: 20, gender: 'male' },
   ];
   // @ts-ignore
   createGrid({ columns, data });
 
   cy.gridInstance().invoke('setValue', 0, 'gender', 'male');
 
-  cy.gridInstance()
-    .invoke('getValue', 0, 'gender')
-    .should('eq', 'male');
+  cy.gridInstance().invoke('getValue', 0, 'gender').should('eq', 'male');
   cy.wrap(onBeforeChange).should('be.calledWithMatch', {
     rowKey: 0,
     columnName: 'gender',
     value: 'female',
-    nextValue: 'male'
+    nextValue: 'male',
   });
   cy.wrap(onAfterChange).should('be.calledWithMatch', {
     rowKey: 0,
     columnName: 'gender',
     value: 'male',
-    prevValue: 'female'
+    prevValue: 'female',
   });
 });
 
@@ -963,29 +912,21 @@ describe('getValue()', () => {
   });
 
   it('should get the value of the cell', () => {
-    cy.gridInstance()
-      .invoke('getValue', 0, 'name')
-      .should('eq', 'Kim');
+    cy.gridInstance().invoke('getValue', 0, 'name').should('eq', 'Kim');
   });
 
   it('should get the value of the filtered cell', () => {
     invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
 
-    cy.gridInstance()
-      .invoke('getValue', 0, 'name')
-      .should('eq', 'Kim');
+    cy.gridInstance().invoke('getValue', 0, 'name').should('eq', 'Kim');
   });
 
   it('should return null when there is no matched rowKey ', () => {
-    cy.gridInstance()
-      .invoke('getValue', 3, 'name')
-      .should('eq', null);
+    cy.gridInstance().invoke('getValue', 3, 'name').should('eq', null);
   });
 
   it('should return null when there is no matched columnName ', () => {
-    cy.gridInstance()
-      .invoke('getValue', 0, 'none')
-      .should('eq', null);
+    cy.gridInstance().invoke('getValue', 0, 'none').should('eq', null);
   });
 });
 
@@ -996,37 +937,29 @@ describe('getFormattedValue()', () => {
         name: 'name',
         formatter({ value }: FormatterProps) {
           return `formatted${value}`;
-        }
+        },
       },
-      { name: 'age' }
+      { name: 'age' },
     ];
     // @ts-ignore
     createGrid({ columns });
   });
 
   it('should get the formatted value of the cell', () => {
-    cy.gridInstance()
-      .invoke('getFormattedValue', 0, 'name')
-      .should('eq', 'formattedKim');
+    cy.gridInstance().invoke('getFormattedValue', 0, 'name').should('eq', 'formattedKim');
   });
 
   it('should get the formatted value of the filtered cell', () => {
     invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
 
-    cy.gridInstance()
-      .invoke('getFormattedValue', 0, 'name')
-      .should('eq', 'formattedKim');
+    cy.gridInstance().invoke('getFormattedValue', 0, 'name').should('eq', 'formattedKim');
   });
 
   it('should return null when there is no matched rowKey ', () => {
-    cy.gridInstance()
-      .invoke('getFormattedValue', 3, 'name')
-      .should('eq', null);
+    cy.gridInstance().invoke('getFormattedValue', 3, 'name').should('eq', null);
   });
 
   it('should return null when there is no matched columnName ', () => {
-    cy.gridInstance()
-      .invoke('getFormattedValue', 0, 'none')
-      .should('eq', null);
+    cy.gridInstance().invoke('getFormattedValue', 0, 'none').should('eq', null);
   });
 });

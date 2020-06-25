@@ -7,7 +7,7 @@ import {
   OptColumnHeaderInfo,
   OptComplexColumnInfo,
   Dictionary,
-  OptFilter
+  OptFilter,
 } from '@t/options';
 import {
   ColumnOptions,
@@ -20,7 +20,7 @@ import {
   ClipboardCopyOptions,
   ColumnFilterOption,
   Column,
-  ColumnHeaderInfo
+  ColumnHeaderInfo,
 } from '@t/store/column';
 import { FilterOptionType } from '@t/store/filterLayerState';
 import { observable } from '../helper/observable';
@@ -36,7 +36,7 @@ import {
   isNumber,
   findProp,
   uniq,
-  isEmpty
+  isEmpty,
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -47,7 +47,7 @@ const ROW_HEADER = 40;
 const COLUMN = 50;
 const rowHeadersMap = {
   rowNum: '_number',
-  checkbox: '_checked'
+  checkbox: '_checked',
 };
 
 export function validateRelationColumn(columnInfos: ColumnInfo[]) {
@@ -64,7 +64,7 @@ export function validateRelationColumn(columnInfos: ColumnInfo[]) {
     }
 
     if (!isUndefined(relationMap)) {
-      Object.keys(relationMap).forEach(targetName => {
+      Object.keys(relationMap).forEach((targetName) => {
         const targetColumn = findProp('name', targetName, columnInfos)!;
         // copy the 'relation' array to prevent to push all relation column into same array
         checkCircularRelation(targetColumn, [...relations]);
@@ -72,7 +72,7 @@ export function validateRelationColumn(columnInfos: ColumnInfo[]) {
     }
   }
 
-  columnInfos.forEach(column => {
+  columnInfos.forEach((column) => {
     if (!checked[column.name]) {
       checkCircularRelation(column, []);
     }
@@ -86,8 +86,8 @@ function createBuiltInEditorOptions(editorType: string, options?: Dictionary<any
     type: editInfo[0],
     options: {
       ...editInfo[1],
-      ...options
-    }
+      ...options,
+    },
   };
 }
 
@@ -128,13 +128,13 @@ function createTreeInfo(treeColumnOptions: OptTree, name: string) {
 
 function createRelationMap(relations: Relations[]) {
   const relationMap: Dictionary<Relations> = {};
-  relations.forEach(relation => {
+  relations.forEach((relation) => {
     const { editable, disabled, listItems, targetNames = [] } = relation;
-    targetNames.forEach(targetName => {
+    targetNames.forEach((targetName) => {
       relationMap[targetName] = {
         editable,
         disabled,
-        listItems
+        listItems,
       };
     });
   });
@@ -152,7 +152,7 @@ function createColumnHeaderInfo(name: string, columnHeaderInfo: ColumnHeaderInfo
   return {
     headerAlign,
     headerVAlign,
-    headerRenderer
+    headerRenderer,
   };
 }
 
@@ -160,14 +160,14 @@ export function createColumnFilterOption(filter: FilterOptionType | OptFilter): 
   const defaultOption = {
     type: isObject(filter) ? filter.type : filter!,
     showApplyBtn: false,
-    showClearBtn: false
+    showClearBtn: false,
   };
 
   if (isString(filter)) {
     if (filter === 'select') {
       return {
         ...defaultOption,
-        operator: 'OR'
+        operator: 'OR',
       };
     }
   }
@@ -178,7 +178,7 @@ export function createColumnFilterOption(filter: FilterOptionType | OptFilter): 
       // @ts-ignore
       ...(filter.type === 'select'
         ? omit(filter, 'showApplyBtn', 'showClearBtn', 'operator', 'options')
-        : filter)
+        : filter),
     };
   }
 
@@ -187,9 +187,9 @@ export function createColumnFilterOption(filter: FilterOptionType | OptFilter): 
 
 export function createRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
-  relations.forEach(relation => {
+  relations.forEach((relation) => {
     const { targetNames = [] } = relation;
-    targetNames.forEach(targetName => {
+    targetNames.forEach((targetName) => {
       relationColumns.push(targetName);
     });
   });
@@ -233,7 +233,7 @@ export function createColumn(
     ignored,
     filter,
     className,
-    comparator
+    comparator,
   } = column;
 
   const editorOptions = createEditorOptions(editor);
@@ -277,7 +277,7 @@ export function createColumn(
     headerRenderer,
     className,
     disabled,
-    comparator
+    comparator,
   });
 }
 
@@ -292,7 +292,7 @@ function createRowHeader(data: OptRowHeader, columnHeaderInfo: ColumnHeaderInfo)
 
   const defaultHeader = rowNumColumn ? 'No. ' : DEF_ROW_HEADER_INPUT;
   const rendererOptions = renderer || {
-    type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
+    type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer,
   };
 
   const { headerAlign, headerVAlign, headerRenderer } = createColumnHeaderInfo(
@@ -314,7 +314,7 @@ function createRowHeader(data: OptRowHeader, columnHeaderInfo: ColumnHeaderInfo)
     minWidth: baseMinWith,
     headerAlign,
     headerVAlign,
-    headerRenderer
+    headerRenderer,
   });
 }
 
@@ -334,7 +334,7 @@ function createComplexColumnHeaders(
     headerVAlign,
     headerRenderer: renderer || null,
     hideChildHeaders,
-    resizable
+    resizable,
   });
 }
 
@@ -363,7 +363,7 @@ export function create({
   align,
   valign,
   columnHeaders,
-  disabled
+  disabled,
 }: ColumnOption): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -371,9 +371,11 @@ export function create({
   }, []);
 
   const columnHeaderInfo = { columnHeaders, align, valign };
-  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, columnHeaderInfo));
+  const rowHeaderInfos = rowHeaders.map((rowHeader) =>
+    createRowHeader(rowHeader, columnHeaderInfo)
+  );
 
-  const columnInfos = columns.map(column =>
+  const columnInfos = columns.map((column) =>
     createColumn(
       column,
       columnOptions,
@@ -392,10 +394,10 @@ export function create({
   const {
     name: treeColumnName,
     useIcon: treeIcon = true,
-    useCascadingCheckbox: treeCascadingCheckbox = true
+    useCascadingCheckbox: treeCascadingCheckbox = true,
   } = treeColumnOptions;
 
-  const complexColumnHeaders = complexColumns.map(column =>
+  const complexColumnHeaders = complexColumns.map((column) =>
     createComplexColumnHeaders(column, columnHeaderInfo)
   );
 
@@ -411,7 +413,7 @@ export function create({
       columnOptions,
       treeColumnOptions,
       relationColumns,
-      rowHeaders: rowHeaderInfos
+      rowHeaders: rowHeaderInfos,
     },
 
     get allColumnMap() {
@@ -433,7 +435,7 @@ export function create({
     get visibleColumnsBySide() {
       return {
         L: this.visibleColumns.slice(0, this.frozenCount),
-        R: this.visibleColumns.slice(this.frozenCount)
+        R: this.visibleColumns.slice(this.frozenCount),
       };
     },
 
@@ -442,7 +444,7 @@ export function create({
 
       return {
         L: this.visibleColumnsWithRowHeader.slice(0, frozenLastIndex),
-        R: this.visibleColumnsWithRowHeader.slice(frozenLastIndex)
+        R: this.visibleColumnsWithRowHeader.slice(frozenLastIndex),
       };
     },
 
@@ -495,6 +497,6 @@ export function create({
       return this.columnsWithoutRowHeader.reduce((acc, { name }) => ({ ...acc, [name]: null }), {});
     },
 
-    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
+    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox }),
   });
 }

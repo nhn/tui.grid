@@ -20,27 +20,27 @@ const commonConfig = {
           {
             loader: require.resolve('ts-loader'),
             options: {
-              transpileOnly: true
-            }
-          }
+              transpileOnly: true,
+            },
+          },
         ],
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
-      '@t': path.resolve('types')
-    }
+      '@t': path.resolve('types'),
+    },
   },
   output: {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
     filename: package.name + (minify ? '.min' : '') + '.js',
     publicPath: '/dist',
-    path: path.resolve(__dirname, 'dist')
-  }
+    path: path.resolve(__dirname, 'dist'),
+  },
 };
 module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
@@ -49,42 +49,42 @@ module.exports = (env, { mode = 'development' }) => {
       `TOAST UI Grid`,
       `@version ${version} | ${new Date().toDateString()}`,
       `@author ${author}`,
-      `@license ${license}`
+      `@license ${license}`,
     ].join('\n');
     const productionConfig = {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
-          filename: package.name + (minify ? '.min' : '') + '.css'
+          filename: package.name + (minify ? '.min' : '') + '.css',
         }),
-        new webpack.BannerPlugin({ banner, entryOnly: true })
+        new webpack.BannerPlugin({ banner, entryOnly: true }),
       ],
       module: {
         rules: [
           {
             test: /\.css$/,
             exclude: /node_modules(?!\/@toast-ui\/select-box)/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader']
-          }
-        ]
+            use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          },
+        ],
       },
       externals: {
         'tui-pagination': {
           commonjs: 'tui-pagination',
           commonjs2: 'tui-pagination',
           amd: 'tui-pagination',
-          root: ['tui', 'Pagination']
+          root: ['tui', 'Pagination'],
         },
         'tui-date-picker': {
           commonjs: 'tui-date-picker',
           commonjs2: 'tui-date-picker',
           amd: 'tui-date-picker',
-          root: ['tui', 'DatePicker']
-        }
+          root: ['tui', 'DatePicker'],
+        },
       },
       optimization: {
-        minimize: false
-      }
+        minimize: false,
+      },
     };
 
     if (minify) {
@@ -94,15 +94,15 @@ module.exports = (env, { mode = 'development' }) => {
             terserOptions: {
               compress: {
                 drop_console: true, // eslint-disable-line camelcase
-                warnings: true
+                warnings: true,
               },
               output: {
-                comments: /TOAST UI Grid/i
-              }
-            }
+                comments: /TOAST UI Grid/i,
+              },
+            },
           }),
-          new OptimizeCSSAssetsPlugin({})
-        ]
+          new OptimizeCSSAssetsPlugin({}),
+        ],
       };
     }
 
@@ -116,21 +116,21 @@ module.exports = (env, { mode = 'development' }) => {
       rules: [
         {
           test: /\.css$/,
-          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
-        }
-      ]
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        },
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin({
         filename: 'dist/index.html',
-        template: 'index.html'
-      })
+        template: 'index.html',
+      }),
     ],
     devServer: {
       inline: true,
       host: '0.0.0.0',
       port: 8000,
-      disableHostCheck: true
-    }
+      disableHostCheck: true,
+    },
   });
 };

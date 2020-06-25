@@ -14,6 +14,6 @@ export function createPaginationManager(): PaginationManager {
 
     getPagination() {
       return pagination;
-    }
+    },
   };
 }

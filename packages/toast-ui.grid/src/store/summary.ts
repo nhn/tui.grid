@@ -5,13 +5,13 @@ import {
   SummaryColumnContentMap,
   Summary,
   SummaryColumnContents,
-  SummaryValues
+  SummaryValues,
 } from '@t/store/summary';
 import { observable } from '../helper/observable';
 import {
   castToSummaryColumnContent,
   extractSummaryColumnContent,
-  getSummaryValue
+  getSummaryValue,
 } from '../helper/summary';
 import { someProp } from '../helper/common';
 
@@ -40,8 +40,8 @@ export function createSummaryValue(
       min: 0,
       max: 0,
       avg: 0,
-      cnt: 0
-    }
+      cnt: 0,
+    },
   };
 }
 
@@ -55,13 +55,13 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     const columnContent = orgColumnContent || {};
     const summaryColumns = Object.keys(columnContent);
     const filteredSummaryColumns = summaryColumns.filter(
-      columnName => !someProp('name', columnName, column.allColumns)
+      (columnName) => !someProp('name', columnName, column.allColumns)
     );
     const targetColumns = castedDefaultContent
       ? column.allColumns.map(({ name }) => name).concat(filteredSummaryColumns)
       : summaryColumns;
 
-    targetColumns.forEach(columnName => {
+    targetColumns.forEach((columnName) => {
       const castedColumnContent = castToSummaryColumnContent(columnContent[columnName]);
       const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 

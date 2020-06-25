@@ -12,7 +12,7 @@ const STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 const presetOptions: ThemeOptionsMapType = {
   default: presetDefault,
   striped,
-  clean
+  clean,
 };
 
 const styleGenMethodMap = {
@@ -21,20 +21,20 @@ const styleGenMethodMap = {
   scrollbar: styleGen.scrollbar,
   heightResizeHandle: styleGen.heightResizeHandle,
   pagination: styleGen.pagination,
-  selection: styleGen.selection
+  selection: styleGen.selection,
 };
 
 const styleGenAreaMethodMap = {
   header: styleGen.headerArea,
   body: styleGen.bodyArea,
-  summary: styleGen.summaryArea
+  summary: styleGen.summaryArea,
 };
 
 const styleGenRowMethodMap = {
   odd: styleGen.rowOdd,
   even: styleGen.rowEven,
   dummy: styleGen.rowDummy,
-  hover: styleGen.rowHover
+  hover: styleGen.rowHover,
 };
 
 const styleGenCellMethodMap = {
@@ -54,7 +54,7 @@ const styleGenCellMethodMap = {
   oddRow: styleGen.rowOdd,
   evenRow: styleGen.rowEven,
   currentRow: styleGen.cellCurrentRow,
-  dummy: styleGen.rowDummy
+  dummy: styleGen.rowDummy,
 };
 
 function buildCssString(options: OptPreset): string {
@@ -66,7 +66,7 @@ function buildCssString(options: OptPreset): string {
   const { area, cell, row } = options;
   const styles: string[] = [];
 
-  Object.keys(styleGenMethodMap).forEach(key => {
+  Object.keys(styleGenMethodMap).forEach((key) => {
     const keyWithType = key as KeyType;
     const value = options[keyWithType];
 
@@ -77,7 +77,7 @@ function buildCssString(options: OptPreset): string {
   });
 
   if (area) {
-    Object.keys(styleGenAreaMethodMap).forEach(key => {
+    Object.keys(styleGenAreaMethodMap).forEach((key) => {
       const keyWithType = key as AreaKeyType;
       const value = area[keyWithType];
 
@@ -89,7 +89,7 @@ function buildCssString(options: OptPreset): string {
   }
 
   if (cell) {
-    Object.keys(styleGenCellMethodMap).forEach(key => {
+    Object.keys(styleGenCellMethodMap).forEach((key) => {
       const keyWithType = key as CellKeyType;
       const value = cell[keyWithType];
 
@@ -102,7 +102,7 @@ function buildCssString(options: OptPreset): string {
 
   if (row) {
     // Written later to override the row style in cell style
-    Object.keys(styleGenRowMethodMap).forEach(key => {
+    Object.keys(styleGenRowMethodMap).forEach((key) => {
       const keyWithType = key as RowKeyType;
       const value = row[keyWithType];
       if (value) {
@@ -148,5 +148,5 @@ export default {
    */
   isApplied() {
     return !!document.getElementById(STYLE_ELEMENT_ID);
-  }
+  },
 };

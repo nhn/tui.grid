@@ -50,7 +50,7 @@ class BodyRowComp extends Component<Props> {
     rowHeight,
     autoRowHeight,
     hoveredRowKey,
-    focusedRowKey
+    focusedRowKey,
   }: Props) {
     const isOddRow = rowIndex % 2 === 0;
 
@@ -65,7 +65,7 @@ class BodyRowComp extends Component<Props> {
             [!isNull(focusedRowKey) && focusedRowKey === viewRow.rowKey, 'cell-current-row']
           )}
         >
-          {columns.map(columnInfo => {
+          {columns.map((columnInfo) => {
             // Pass row object directly instead of passing value of it only,
             // so that BodyCell component can watch the change of value using selector function.
             return (
@@ -90,6 +90,6 @@ export const BodyRow = connect<StoreProps, OwnProps>(
     autoRowHeight: dimension.autoRowHeight,
     cellBorderWidth: dimension.cellBorderWidth,
     hoveredRowKey: renderState.hoveredRowKey,
-    focusedRowKey: focus.rowKey
+    focusedRowKey: focus.rowKey,
   })
 )(BodyRowComp);

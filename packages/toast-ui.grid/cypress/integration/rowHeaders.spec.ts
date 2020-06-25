@@ -1,10 +1,7 @@
 const columns = [{ name: 'name', minWidth: 150 }];
 
 function assertHeaderCheckboxStatus(disable: boolean) {
-  cy.getByCls('cell-row-header')
-    .get('input')
-    .eq(0)
-    .as('checkbox');
+  cy.getByCls('cell-row-header').get('input').eq(0).as('checkbox');
 
   if (disable) {
     cy.get('@checkbox').should('be.checked');
@@ -21,7 +18,7 @@ beforeEach(() => {
   cy.createGrid({
     data: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
     rowHeaders: ['checkbox'],
-    columns
+    columns,
   });
 });
 
@@ -37,7 +34,7 @@ describe('row header API', () => {
   it('checkAll, uncheckAll', () => {
     cy.gridInstance().invoke('checkAll');
 
-    cy.get('input').should($el => {
+    cy.get('input').should(($el) => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.true;
       });
@@ -45,7 +42,7 @@ describe('row header API', () => {
 
     cy.gridInstance().invoke('uncheckAll');
 
-    cy.get('input').should($el => {
+    cy.get('input').should(($el) => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.false;
       });
@@ -58,7 +55,7 @@ describe('row header API', () => {
 
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
-      .should(result => {
+      .should((result) => {
         expect(result).to.include.members([0, 2]);
       });
   });
@@ -68,10 +65,10 @@ describe('row header API', () => {
     cy.gridInstance().invoke('check', 2);
     cy.gridInstance()
       .invoke('getCheckedRows')
-      .should(result => {
+      .should((result) => {
         expect(result).to.contain.subset([
           { rowKey: 0, name: 'A' },
-          { rowKey: 2, name: 'C' }
+          { rowKey: 2, name: 'C' },
         ]);
       });
   });
@@ -83,14 +80,14 @@ describe('row header API', () => {
         id: i,
         name: `name${i}`,
         artist: `artist${i}`,
-        type: `type${i}`
+        type: `type${i}`,
       });
     }
     cy.gridInstance().invoke('setBodyHeight', 300);
     cy.gridInstance().invoke('resetData', gridData);
     cy.gridInstance().invoke('checkAll');
 
-    cy.get('input').should($el => {
+    cy.get('input').should(($el) => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.true;
       });
@@ -98,7 +95,7 @@ describe('row header API', () => {
 
     cy.gridInstance().invoke('uncheckAll');
 
-    cy.get('input').should($el => {
+    cy.get('input').should(($el) => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.false;
       });
@@ -112,21 +109,21 @@ it('checkedAllRows initial value has to be set properly', () => {
       {
         name: 'A',
         _attributes: {
-          checked: true
-        }
+          checked: true,
+        },
       },
       {
         name: 'X',
         _attributes: {
-          checked: true
-        }
-      }
+          checked: true,
+        },
+      },
     ],
     rowHeaders: ['checkbox'],
-    columns
+    columns,
   });
 
-  cy.get('input').should($el => {
+  cy.get('input').should(($el) => {
     $el.each((_, elem) => {
       expect(elem.checked).to.be.true;
     });
@@ -141,16 +138,14 @@ it('rowHeader with custom options.', () => {
         type: 'rowNum',
         header: 'row number',
         width: 100,
-        align: 'right'
-      }
+        align: 'right',
+      },
     ],
-    columns
+    columns,
   });
 
-  cy.getRowHeaderCells('_number').within($el => {
-    cy.wrap($el)
-      .should('have.css', 'width', '100px')
-      .and('have.css', 'text-align', 'right');
+  cy.getRowHeaderCells('_number').within(($el) => {
+    cy.wrap($el).should('have.css', 'width', '100px').and('have.css', 'text-align', 'right');
   });
 });
 

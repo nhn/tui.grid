@@ -71,7 +71,7 @@ export function find<T>(predicate: (item: T) => boolean, arr: T[]) {
 }
 
 export function findProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
-  return find(item => item[propName] === value, arr);
+  return find((item) => item[propName] === value, arr);
 }
 
 export function some<T>(predicate: (item: T) => boolean, arr: T[]) {
@@ -92,7 +92,7 @@ export function findIndex<T>(predicate: (item: T) => boolean, arr: T[]) {
 }
 
 export function findPropIndex<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
-  return findIndex(item => item[propName] === value, arr);
+  return findIndex((item) => item[propName] === value, arr);
 }
 
 export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
@@ -107,11 +107,11 @@ export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number
 }
 
 export function findOffsetIndex(offsets: number[], targetOffset: number) {
-  return findPrevIndex(offsets, offset => offset > targetOffset);
+  return findPrevIndex(offsets, (offset) => offset > targetOffset);
 }
 
 export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
-  return arr.map(item => item[propName]);
+  return arr.map((item) => item[propName]);
 }
 
 export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
@@ -163,7 +163,7 @@ export function deepCopy<T extends Obj>(obj: T) {
 }
 
 export function assign(targetObj: Obj, obj: Obj) {
-  Object.keys(obj).forEach(prop => {
+  Object.keys(obj).forEach((prop) => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
         targetObj[prop] = obj[prop];
@@ -177,7 +177,7 @@ export function assign(targetObj: Obj, obj: Obj) {
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {
-  const targetIdx = findIndex(item => item === targetItem, arr);
+  const targetIdx = findIndex((item) => item === targetItem, arr);
   if (targetIdx !== -1) {
     arr.splice(targetIdx, 1);
   }
@@ -187,7 +187,7 @@ export function removeArrayItem<T>(targetItem: T, arr: T[]) {
 
 export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   const resultMap: { [key: string]: T } = {};
-  arr.forEach(item => {
+  arr.forEach((item) => {
     const key = String(item[propName]);
     resultMap[key] = item;
   });
@@ -224,11 +224,11 @@ export function encodeHTMLEntity(html: string) {
     '&': 'amp',
     '<': 'lt',
     '>': 'gt',
-    "'": '#39'
+    "'": '#39',
   };
   type EntityKey = keyof typeof entities;
 
-  return html.replace(/[<>&"']/g, match => `&${entities[match as EntityKey]};`);
+  return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
 }
 
 export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
@@ -327,7 +327,7 @@ export function debounce(fn: Function, wait: number, immediate = false) {
   let timeout: number | null = null;
 
   return (...args: any[]) => {
-    const later = function() {
+    const later = function () {
       timeout = -1;
       if (!immediate) {
         fn(...args);
@@ -357,7 +357,7 @@ export function pruneObject<T>(obj: T) {
 
 export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Omit<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (!includes(propNames, key as K)) {
       resultMap[key as OmitedKey<T, K>] = obj[key as OmitedKey<T, K>];
     }
@@ -367,7 +367,7 @@ export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: 
 
 export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Pick<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (includes(propNames, key as K)) {
       resultMap[key as PickedKey<T, K>] = obj[key as PickedKey<T, K>];
     }
@@ -401,7 +401,7 @@ function removeDoubleQuotes(text: string) {
 }
 
 function replaceNewlineToSubchar(text: string) {
-  return text.replace(/"([^"]|"")*"/g, value =>
+  return text.replace(/"([^"]|"")*"/g, (value) =>
     value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
   );
 }
@@ -412,13 +412,15 @@ export function convertTextToData(text: string) {
   // before spliting the text by newline characters.
   text = replaceNewlineToSubchar(text);
 
-  return text.split(/\r?\n/).map(row =>
-    row.split('\t').map(column =>
-      removeDoubleQuotes(column)
-        .replace(CUSTOM_LF_REGEXP, LF)
-        .replace(CUSTOM_CR_REGEXP, CR)
-    )
-  );
+  return text
+    .split(/\r?\n/)
+    .map((row) =>
+      row
+        .split('\t')
+        .map((column) =>
+          removeDoubleQuotes(column).replace(CUSTOM_LF_REGEXP, LF).replace(CUSTOM_CR_REGEXP, CR)
+        )
+    );
 }
 
 export function silentSplice<T>(arr: T[], start: number, deleteCount: number, ...items: T[]): T[] {

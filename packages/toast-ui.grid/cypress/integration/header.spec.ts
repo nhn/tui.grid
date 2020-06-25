@@ -29,7 +29,7 @@ class CustomRenderer implements HeaderRenderer {
 }
 
 function assertColumnWidth(firstColumnName: string, width: number) {
-  cy.getColumnCells(firstColumnName).each($el => {
+  cy.getColumnCells(firstColumnName).each(($el) => {
     expect($el.width()).to.eql(width);
   });
 }
@@ -42,7 +42,7 @@ function assertAlign(columnName: string, align: AlignType, valign: VAlignType) {
 
 const data = [
   { id: 1, name: 'Kim', score: 90, grade: 'A' },
-  { id: 2, name: 'Lee', score: 80, grade: 'B' }
+  { id: 2, name: 'Lee', score: 80, grade: 'B' },
 ];
 
 before(() => {
@@ -59,8 +59,8 @@ describe('header align', () => {
         height: 100,
         align: 'left',
         valign: 'top',
-        columns: [{ name: 'grade', valign: 'bottom' }]
-      }
+        columns: [{ name: 'grade', valign: 'bottom' }],
+      },
     });
   });
 
@@ -90,16 +90,16 @@ describe('complex column header', () => {
             name: 'nameHeader',
             childNames: ['id', 'name'],
             hideChildHeaders: true,
-            resizable: true
+            resizable: true,
           },
           {
             header: 'scoreInfo',
             name: 'complexColumn',
             childNames: ['score', 'grade'],
-            resizable: true
-          }
-        ]
-      }
+            resizable: true,
+          },
+        ],
+      },
     });
   });
 
@@ -142,9 +142,9 @@ describe('complex column header', () => {
         {
           header: 'nameInformation',
           name: 'complexColumn',
-          childNames: ['id', 'name']
-        }
-      ]
+          childNames: ['id', 'name'],
+        },
+      ],
     });
 
     cy.getHeaderCell('complexColumn').should('exist');
@@ -156,7 +156,7 @@ describe('complex column header', () => {
     cy.gridInstance().invoke('setColumnHeaders', {
       score: '_score',
       grade: '_grade',
-      complexColumn: '_scoreInfo'
+      complexColumn: '_scoreInfo',
     });
 
     cy.getHeaderCell('score').should('have.text', '_score');
@@ -193,7 +193,7 @@ it('should change the header height after calling setHeader()', () => {
   cy.createGrid({ data, columns });
   cy.gridInstance().invoke('setHeader', { height });
 
-  cy.getByCls('cell-header').each($headers => {
+  cy.getByCls('cell-header').each(($headers) => {
     cy.wrap($headers)
       .invoke('height')
       .should('eq', height - paddingHorizontal);
@@ -214,16 +214,16 @@ describe('header customizing', () => {
             header: 'info',
             name: 'mergeColumn1',
             childNames: ['id', 'name'],
-            renderer: CustomRenderer
-          }
+            renderer: CustomRenderer,
+          },
         ],
         columns: [
           {
             name: 'id',
-            renderer: CustomRenderer
-          }
-        ]
-      }
+            renderer: CustomRenderer,
+          },
+        ],
+      },
     });
   });
 
@@ -234,17 +234,13 @@ describe('header customizing', () => {
 
   it('should header selection is operated properly', () => {
     cy.getHeaderCell('mergeColumn1').within(() => {
-      cy.root()
-        .get('.custom')
-        .click();
+      cy.root().get('.custom').click();
 
-      cy.gridInstance()
-        .invoke('getFocusedCell')
-        .should('eql', {
-          rowKey: 0,
-          columnName: 'id',
-          value: 1
-        });
+      cy.gridInstance().invoke('getFocusedCell').should('eql', {
+        rowKey: 0,
+        columnName: 'id',
+        value: 1,
+      });
     });
   });
 });

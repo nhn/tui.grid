@@ -20,7 +20,7 @@ interface ViewportOption {
 }
 
 function findIndexByPosition(offsets: number[], position: number) {
-  const rowOffset = findIndex(offset => offset > position, offsets);
+  const rowOffset = findIndex((offset) => offset > position, offsets);
 
   return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
 }
@@ -67,7 +67,7 @@ export function create({
   dimension,
   rowCoords,
   columnCoords,
-  showDummyRows
+  showDummyRows,
 }: ViewportOption): Observable<Viewport> {
   return observable({
     scrollLeft: 0,
@@ -78,7 +78,7 @@ export function create({
       const { scrollbarWidth, cellBorderWidth } = dimension;
       const { areaWidth, widths } = columnCoords;
       let totalRWidth = 0;
-      widths.R.forEach(width => {
+      widths.R.forEach((width) => {
         totalRWidth += width + cellBorderWidth;
       });
 
@@ -144,6 +144,6 @@ export function create({
       }
 
       return 0;
-    }
+    },
   });
 }

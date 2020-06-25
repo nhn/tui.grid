@@ -11,7 +11,7 @@ const PER_PAGE = 10;
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true, editor: 'text' },
-  { name: 'name', minWidth: 150, editor: 'text' }
+  { name: 'name', minWidth: 150, editor: 'text' },
 ];
 
 const data = {
@@ -21,40 +21,31 @@ const data = {
     createData: { url: '/api/create', method: 'POST' },
     updateData: { url: '/api/update', method: 'PUT' },
     deleteData: { url: '/api/delete', method: 'DELETE' },
-    modifyData: { url: '/api/modify', method: 'POST' }
-  }
+    modifyData: { url: '/api/modify', method: 'POST' },
+  },
 };
 
 function createSortButonAlias() {
-  cy.getByCls('btn-sorting')
-    .first()
-    .as('first');
+  cy.getByCls('btn-sorting').first().as('first');
 }
 
 function assertDataLength(len: number) {
-  cy.gridInstance()
-    .invoke('getData')
-    .should('have.length', len);
+  cy.gridInstance().invoke('getData').should('have.length', len);
 }
 
 function assertIsModified(isModified: boolean) {
-  cy.gridInstance()
-    .invoke('isModified')
-    .should('eq', isModified);
+  cy.gridInstance().invoke('isModified').should('eq', isModified);
 }
 
 function assertModifiedRowsLength(type: string, len: number) {
-  cy.gridInstance()
-    .invoke('getModifiedRows')
-    .its(type)
-    .should('have.length', len);
+  cy.gridInstance().invoke('getModifiedRows').its(type).should('have.length', len);
 }
 
 function assertModifiedRowsContainsObject(type: string, obj: object) {
   cy.gridInstance()
     .invoke('getModifiedRows')
     .its(type)
-    .should(rows => {
+    .should((rows) => {
       expect(rows[0]).to.contain(obj);
     });
 }
@@ -69,7 +60,7 @@ function assertHaveNotSortingBtnClass(className: ClassNameType) {
 
 function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
-  const testData = (sortedData as Dictionary<any>[]).map(sample => String(sample[columnName]));
+  const testData = (sortedData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
   cy.getColumnCells(columnName).each(($el, index) => {
     cy.wrap($el).should('have.text', testData[index]);
@@ -78,10 +69,10 @@ function assertSortedData(columnName: string, ascending = true) {
 
 function assertPagingData(columnName: string, page = 1, perPage = PER_PAGE) {
   const pagingData = page === 1 ? sampleData.slice(0, perPage) : sampleData.slice(perPage);
-  const testData = (pagingData as Dictionary<any>[]).map(sample => String(sample[columnName]));
+  const testData = (pagingData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
   cy.getColumnCells(columnName)
-    .filter(index => index < perPage)
+    .filter((index) => index < perPage)
     .each(($el, index) => {
       cy.wrap($el).should('have.text', testData[index]);
     });
@@ -92,7 +83,7 @@ function createGrid(dataSource?: DataSource) {
     data: { ...(dataSource || data) },
     columns,
     useClientSort: false,
-    pageOptions: { perPage: PER_PAGE }
+    pageOptions: { perPage: PER_PAGE },
   });
 }
 
@@ -103,7 +94,7 @@ function createGridWithConfig(optionType: string, stub: Function) {
     serializer(params: Params) {
       stub();
       return Cypress.$.param(params);
-    }
+    },
   };
 
   if (optionType === 'dataSource') {
@@ -115,14 +106,14 @@ function createGridWithConfig(optionType: string, stub: Function) {
         readData: {
           url: '/api/read',
           method: 'GET',
-          ...config
+          ...config,
         },
         updateData: {
           url: '/api/update',
           method: 'PUT',
-          ...config
-        }
-      }
+          ...config,
+        },
+      },
     });
   }
 }
@@ -147,7 +138,7 @@ it('initialize grid with server side data', () => {
 });
 
 describe('create grid with dataSource config', () => {
-  ['dataSource', 'api'].forEach(optionType => {
+  ['dataSource', 'api'].forEach((optionType) => {
     it(`The ${optionType} config for ajax is applied properly`, () => {
       const stub = cy.stub();
       createGridWithConfig(optionType, stub);
@@ -161,19 +152,17 @@ describe('create grid with dataSource config', () => {
 
       cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
 
-      cy.wait('@updateData')
-        .its('requestHeaders')
-        .should('contain', {
-          'x-custom-header': 'x-custom-header',
-          'Content-Type': 'application/json; charset=UTF-8'
-        });
+      cy.wait('@updateData').its('requestHeaders').should('contain', {
+        'x-custom-header': 'x-custom-header',
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
       cy.wrap(stub).should('be.calledOnce');
     });
   });
 
   it('calling readData should be successful with initParams option', () => {
     createGrid({
-      api: { readData: { url: '/api/read', method: 'GET', initParams: { a: '1' } } }
+      api: { readData: { url: '/api/read', method: 'GET', initParams: { a: '1' } } },
     });
     cy.wait('@readPageWithInitParams');
 
@@ -183,7 +172,7 @@ describe('create grid with dataSource config', () => {
 
   it('request should be successful with url function type option', () => {
     createGrid({
-      api: { readData: { url: () => '/api/read', method: 'GET' } }
+      api: { readData: { url: () => '/api/read', method: 'GET' } },
     });
     cy.wait('@readPage1');
 
@@ -194,7 +183,7 @@ describe('create grid with dataSource config', () => {
   it('hideLoadingBar option should be applied properly', () => {
     createGrid({
       api: { readData: { url: '/api/read', method: 'GET', initParams: { a: '1' } } },
-      hideLoadingBar: true
+      hideLoadingBar: true,
     });
 
     cy.get(`.${cls('layer-state-loading')}`, { timeout: 500 }).should('not.exist');
@@ -226,13 +215,13 @@ describe('sort()', () => {
         columns: [
           {
             columnName: 'sortKey',
-            ascending: true
-          }
-        ]
+            ascending: true,
+          },
+        ],
       });
   });
 
-  ['UI', 'API'].forEach(type => {
+  ['UI', 'API'].forEach((type) => {
     it(`server side data is sorted by ${type}`, () => {
       createSortButonAlias();
 
@@ -286,7 +275,7 @@ describe('sort()', () => {
         sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: false },
         columnName: 'id',
         ascending: true,
-        multiple: false
+        multiple: false,
       });
     });
 
@@ -307,7 +296,7 @@ describe('sort()', () => {
 
       cy.wrap(callback).should('be.calledWithMatch', {
         sortState: { columns: [{ columnName: 'id', ascending: true }], useClient: false },
-        columnName: 'id'
+        columnName: 'id',
       });
     });
 
@@ -331,7 +320,7 @@ describe('sort()', () => {
 
       cy.wrap(callback).should('be.calledWithMatch', {
         sortState: { columns: [{ columnName: 'id', ascending: false }], useClient: false },
-        columnName: 'id'
+        columnName: 'id',
       });
     });
 
@@ -355,7 +344,7 @@ describe('sort()', () => {
 
       cy.wrap(callback).should('be.calledWithMatch', {
         sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: false },
-        columnName: 'id'
+        columnName: 'id',
       });
     });
   });
@@ -410,18 +399,14 @@ describe('API', () => {
       cy.gridInstance().invoke('setRequestParams', { a: 2 });
       cy.gridInstance().invoke('readData', 1);
 
-      cy.wait('@readPageWithRequestParams')
-        .its('status')
-        .should('eq', 200);
+      cy.wait('@readPageWithRequestParams').its('status').should('eq', 200);
     });
 
     it('with request API', () => {
       cy.gridInstance().invoke('setRequestParams', { a: 2 });
       cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
 
-      cy.wait('@updateData')
-        .its('requestBody')
-        .should('eq', 'a=2');
+      cy.wait('@updateData').its('requestBody').should('eq', 'a=2');
     });
   });
 });
@@ -451,7 +436,7 @@ describe('getModifiedRows(), request()', () => {
     assertModifiedRowsContainsObject('createdRows', {
       id: 21,
       name: 'JS test',
-      artist: 'JS'
+      artist: 'JS',
     });
     assertIsModified(true);
 
@@ -497,25 +482,19 @@ describe('request()', () => {
   it('check request body when modifiedOnly is false', () => {
     cy.gridInstance().invoke('request', 'modifyData', { modifiedOnly: false, showConfirm: false });
 
-    cy.wait('@modifyData')
-      .its('requestBody')
-      .should('contain', 'rows');
+    cy.wait('@modifyData').its('requestBody').should('contain', 'rows');
   });
 
   it('check request body when checkedOnly is true', () => {
     cy.gridInstance().invoke('setValue', 2, 'name', 'JS test');
     cy.gridInstance().invoke('request', 'modifyData', { checkedOnly: true, showConfirm: false });
 
-    cy.wait('@modifyData')
-      .its('requestBody')
-      .should('eq', '');
+    cy.wait('@modifyData').its('requestBody').should('eq', '');
 
     cy.gridInstance().invoke('check', 2);
     cy.gridInstance().invoke('request', 'modifyData', { checkedOnly: true, showConfirm: false });
 
-    cy.wait('@modifyData')
-      .its('requestBody')
-      .should('be.not.eq', '');
+    cy.wait('@modifyData').its('requestBody').should('be.not.eq', '');
   });
 
   it('check confirm message', () => {
@@ -543,9 +522,9 @@ describe('custom request event', () => {
   beforeEach(() => {
     createGrid({
       api: {
-        readData: { url: () => '/api/read', method: 'GET' }
+        readData: { url: () => '/api/read', method: 'GET' },
       },
-      initialRequest: false
+      initialRequest: false,
     });
   });
 
@@ -560,7 +539,7 @@ describe('custom request event', () => {
     cy.wait('@readPage1');
 
     const xhr = {
-      url: 'http://localhost:8000/api/read?perPage=10&page=1'
+      url: 'http://localhost:8000/api/read?perPage=10&page=1',
     };
 
     cy.wrap(onBeforeRequest).should('be.calledWithMatch', { xhr });
@@ -572,9 +551,9 @@ it('stop custom event if prev event is prevented.', () => {
   createGrid({
     api: {
       readData: { url: () => '/api/read', method: 'GET' },
-      modifyData: { url: '/api/modify', method: 'POST' }
+      modifyData: { url: '/api/modify', method: 'POST' },
     },
-    initialRequest: false
+    initialRequest: false,
   });
 
   const onBeforeRequest = cy.stub();

@@ -32,28 +32,28 @@ class FocusLayerComp extends Component<Props> {
       top,
       left,
       width: cellBorderWidth,
-      height: height + cellBorderWidth
+      height: height + cellBorderWidth,
     };
 
     const topStyle = {
       top: top === 0 ? cellBorderWidth : top,
       left,
       width: width + cellBorderWidth,
-      height: cellBorderWidth
+      height: cellBorderWidth,
     };
 
     const rightStyle = {
       top,
       left: left + width,
       width: cellBorderWidth,
-      height: height + cellBorderWidth
+      height: height + cellBorderWidth,
     };
 
     const bottomStyle = {
       top: top + height,
       left,
       width: width + cellBorderWidth,
-      height: cellBorderWidth
+      height: cellBorderWidth,
     };
 
     return (
@@ -73,6 +73,6 @@ export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, {
   return {
     active: !!editingAddress || navigating,
     cellPosRect: side === focus.side ? cellPosRect : null,
-    cellBorderWidth: dimension.cellBorderWidth
+    cellBorderWidth: dimension.cellBorderWidth,
   };
 })(FocusLayerComp);

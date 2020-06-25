@@ -9,14 +9,17 @@ describe('CREATE TYPE', () => {
   const data = [
     { name: 'Lee', age: 20 },
     { name: 'Han', age: 28 },
-    { name: 'Ryu', age: 22 }
+    { name: 'Ryu', age: 22 },
   ];
 
-  ['renderer', 'renderer type'].forEach(option => {
+  ['renderer', 'renderer type'].forEach((option) => {
     it(`create custom renderer by ${option} property`, () => {
       const columns = [
         { name: 'name' },
-        { name: 'age', renderer: option === 'renderer' ? CustomRenderer : { type: CustomRenderer } }
+        {
+          name: 'age',
+          renderer: option === 'renderer' ? CustomRenderer : { type: CustomRenderer },
+        },
       ];
 
       cy.createGrid({ data, columns });

@@ -5,7 +5,7 @@ import {
   ModifiedDataManager,
   ModifiedRows,
   RequestTypeCode,
-  MutationParams
+  MutationParams,
 } from '../../../types/dataSource';
 import { OptRow } from '../../../types/options';
 import { Row, RowKey } from '../../../types/store/data';
@@ -15,7 +15,7 @@ import {
   isUndefined,
   omit,
   isObject,
-  forEachObject
+  forEachObject,
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
 
@@ -24,7 +24,7 @@ type ParamNameMap = { [type in ModificationTypeCode]: string };
 const paramNameMap: ParamNameMap = {
   CREATE: 'createdRows',
   UPDATE: 'updatedRows',
-  DELETE: 'deletedRows'
+  DELETE: 'deletedRows',
 };
 
 // @TODO: fix 'Row' type with record(Dictionary) type to use negate type or other type utility
@@ -33,25 +33,25 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
     checkedOnly = false,
     withRawData = false,
     rowKeyOnly = false,
-    ignoredColumns = []
+    ignoredColumns = [],
   } = options;
-  let rows = targetRows.map(row => getOriginObject(row as Observable<Row>));
+  let rows = targetRows.map((row) => getOriginObject(row as Observable<Row>));
 
   if (checkedOnly) {
-    rows = rows.filter(row => row._attributes.checked);
+    rows = rows.filter((row) => row._attributes.checked);
   }
   if (ignoredColumns.length) {
     // @ts-ignore
-    rows = rows.map(row => omit(row, ...ignoredColumns));
+    rows = rows.map((row) => omit(row, ...ignoredColumns));
   }
   if (!withRawData) {
     // @ts-ignore
-    rows = rows.map(row =>
+    rows = rows.map((row) =>
       omit(row, 'sortKey', 'uniqueKey', '_attributes', '_relationListItemMap', '_disabledPriority')
     );
   }
   if (rowKeyOnly) {
-    return rows.map(row => row.rowKey);
+    return rows.map((row) => row.rowKey);
   }
   return rows;
 }
@@ -62,10 +62,10 @@ export function createManager(): ModifiedDataManager {
   const dataMap: ModifiedDataMap = {
     CREATE: [],
     UPDATE: [],
-    DELETE: []
+    DELETE: [],
   };
   const splice = (type: ModificationTypeCode, rowKey: RowKey, row?: Row) => {
-    const index = findIndex(createdRow => createdRow.rowKey === rowKey, dataMap[type]);
+    const index = findIndex((createdRow) => createdRow.rowKey === rowKey, dataMap[type]);
     if (index !== -1) {
       if (isUndefined(row)) {
         dataMap[type].splice(index, 1);
@@ -83,7 +83,7 @@ export function createManager(): ModifiedDataManager {
   return {
     // only for restore
     setOriginData(data: OptRow[]) {
-      originData = data.map(row => ({ ...row }));
+      originData = data.map((row) => ({ ...row }));
     },
 
     getOriginData() {
@@ -96,7 +96,7 @@ export function createManager(): ModifiedDataManager {
 
     getAllModifiedData(options: ModifiedRowsOptions) {
       return Object.keys(dataMap)
-        .map(key => this.getModifiedData(key as ModificationTypeCode, options))
+        .map((key) => this.getModifiedData(key as ModificationTypeCode, options))
         .reduce((acc, data) => ({ ...acc, ...data }), {} as ModifiedRows);
     },
 
@@ -154,6 +154,6 @@ export function createManager(): ModifiedDataManager {
 
     isMixedOrder() {
       return mixedOrder;
-    }
+    },
   };
 }

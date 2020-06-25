@@ -11,7 +11,7 @@ const SCROLL_PER_PAGE_COUNT = 50;
 
 const columns = [
   { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
-  { name: 'orderName', sortable: true }
+  { name: 'orderName', sortable: true },
 ];
 
 function createGridWithPagination(newData?: OptRow[]) {
@@ -19,9 +19,9 @@ function createGridWithPagination(newData?: OptRow[]) {
     data: newData || data.slice(0, 20),
     pageOptions: {
       useClient: true,
-      perPage: PER_PAGE_COUNT
+      perPage: PER_PAGE_COUNT,
     },
-    columns
+    columns,
   });
 }
 
@@ -32,10 +32,10 @@ function createGridWithScrollType(newData?: OptRow[]) {
     pageOptions: {
       useClient: true,
       perPage: SCROLL_PER_PAGE_COUNT,
-      type: 'scroll'
+      type: 'scroll',
     },
     rowHeaders: ['rowNum'],
-    columns
+    columns,
   });
 }
 
@@ -45,14 +45,14 @@ function createGridWithRelationColumns() {
       category1: '02',
       category2: '02_03',
       category3: '02_03_0001',
-      category4: '01'
+      category4: '01',
     },
     {
       category1: '03',
       category2: '03_01',
       category3: '03_01_0001',
-      category4: '02'
-    }
+      category4: '02',
+    },
   ];
   const relationColumns = [
     {
@@ -66,18 +66,18 @@ function createGridWithRelationColumns() {
             { text: '', value: '' },
             { text: 'Domestic', value: '01' },
             { text: 'Overseas', value: '02' },
-            { text: 'Etc', value: '03' }
-          ]
-        }
+            { text: 'Etc', value: '03' },
+          ],
+        },
       },
       relations: [
         {
           targetNames: ['category2'],
           listItems({ value }: { value: string }) {
             return twoDepthData[value];
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       header: 'Category2',
@@ -90,16 +90,16 @@ function createGridWithRelationColumns() {
           targetNames: ['category3'],
           listItems({ value }: { value: string }) {
             return threeDepthData[value];
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       header: 'Category3',
       name: 'category3',
       formatter: 'listItemText',
-      editor: 'select'
-    }
+      editor: 'select',
+    },
   ];
   cy.createGrid({ data: relationData, columns: relationColumns });
 }
@@ -107,7 +107,7 @@ function createGridWithRelationColumns() {
 function createGrid() {
   cy.createGrid({
     data: data.slice(0, 20),
-    columns
+    columns,
   });
 }
 
@@ -135,10 +135,10 @@ function assertSortedData(page: number, columnName: string, ascending?: boolean)
     .invoke('getData')
     .should((rows: OptRow[]) => {
       const length = SCROLL_PER_PAGE_COUNT * page;
-      const actualValues = rows.slice(0, length).map(row => row[columnName]) as string[];
+      const actualValues = rows.slice(0, length).map((row) => row[columnName]) as string[];
       const expectValues = ([...data] as OptRow[])
         .slice(0, length)
-        .map(row => row[columnName]) as string[];
+        .map((row) => row[columnName]) as string[];
 
       if (isBoolean(ascending)) {
         if (ascending) {
@@ -191,7 +191,7 @@ describe('pagination + sort', () => {
       ['Visit', 'RyuSeonIm'],
       ['Visit', 'Hanjung'],
       ['Parcel', 'ChoJungEun'],
-      ['Parcel', 'YooDongSik']
+      ['Parcel', 'YooDongSik'],
     ]);
   });
 
@@ -210,7 +210,7 @@ describe('pagination + sort', () => {
       ['ExpressDelivery', 'YooDongSik'],
       ['ExpressDelivery', 'LeeJaeSung'],
       ['ExpressDelivery', 'Hanjung'],
-      ['ExpressDelivery', 'ParkJungHwan']
+      ['ExpressDelivery', 'ParkJungHwan'],
     ]);
   });
 });
@@ -281,7 +281,7 @@ describe('filter + sort', () => {
       ['Visit', 'RyuJinKyung'],
       ['Visit', 'Hanjung'],
       ['Visit', 'RyuSeonIm'],
-      ['Visit', 'Hanjung']
+      ['Visit', 'Hanjung'],
     ]);
 
     cy.gridInstance().invoke('sort', 'orderName', false);
@@ -296,7 +296,7 @@ describe('filter + sort', () => {
       ['Visit', 'Hanjung'],
       ['Visit', 'Hanjung'],
       ['Visit', 'Hanjung'],
-      ['Visit', 'Hanjung']
+      ['Visit', 'Hanjung'],
     ]);
   });
 
@@ -314,7 +314,7 @@ describe('filter + sort', () => {
       ['Visit', 'Hanjung'],
       ['Visit', 'Hanjung'],
       ['Visit', 'Hanjung'],
-      ['Visit', 'Hanjung']
+      ['Visit', 'Hanjung'],
     ]);
   });
 });
@@ -337,7 +337,7 @@ describe('pagination + filter + sort', () => {
       ['Visit', 'KimDongWoo'],
       ['Visit', 'KimSungHo'],
       ['Visit', 'RyuJinKyung'],
-      ['Visit', 'RyuSeonIm']
+      ['Visit', 'RyuSeonIm'],
     ]);
   });
 });
@@ -406,7 +406,7 @@ describe('pagination(infinite scroll) + sort', () => {
     cy.gridInstance()
       .invoke('getData')
       .should((rows: Row[]) => {
-        const actualValues = rows.map(row => row._attributes.rowNum);
+        const actualValues = rows.map((row) => row._attributes.rowNum);
         const expectValues = rows.map((_, index) => index + 1);
         expect(actualValues).eql(expectValues);
       });
@@ -453,7 +453,7 @@ describe('pagination(infinite scroll) + filter', () => {
     cy.gridInstance()
       .invoke('getData')
       .should((rows: Row[]) => {
-        const actualValues = rows.map(row => row._attributes.rowNum);
+        const actualValues = rows.map((row) => row._attributes.rowNum);
         const expectValues = rows.map((_, index) => index + 1);
         expect(actualValues).eql(expectValues);
       });

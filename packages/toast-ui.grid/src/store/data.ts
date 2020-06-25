@@ -11,7 +11,7 @@ import {
   ViewRow,
   Data,
   SortState,
-  RawRowOptions
+  RawRowOptions,
 } from '@t/store/data';
 import { Column, FormatterProps, Formatter, ColumnInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
@@ -28,7 +28,7 @@ import {
   isNumber,
   isFunction,
   assign,
-  isNull
+  isNull,
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -174,7 +174,7 @@ function createViewCell(
     disabled: cellDisabled,
     invalidStates: getValidationCode({ id, value, row, validation, columnName: name }),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
-    value
+    value,
   };
 }
 
@@ -187,11 +187,11 @@ function createRelationViewCell(
   const { editable, disabled, value } = valueMap[name];
   const { relationMap = {} } = columnMap[name];
 
-  Object.keys(relationMap).forEach(targetName => {
+  Object.keys(relationMap).forEach((targetName) => {
     const {
       editable: editableCallback,
       disabled: disabledCallback,
-      listItems: listItemsCallback
+      listItems: listItemsCallback,
     } = relationMap[targetName];
     const relationCbParams = { value, editable, disabled, row };
     const targetEditable = getEditable(editableCallback, relationCbParams);
@@ -207,7 +207,7 @@ function createRelationViewCell(
 
     const cellData = createViewCell(id, row, columnMap[targetName], {
       relationMatched,
-      relationListItems: targetListItems
+      relationListItems: targetListItems,
     });
 
     if (!targetEditable) {
@@ -232,14 +232,14 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
   const { treeColumnName = '', treeIcon = true } = column;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
-  Object.keys(columnMap).forEach(name => {
+  Object.keys(columnMap).forEach((name) => {
     initValueMap[name] = null;
   });
 
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
   const __unobserveFns__: Function[] = [];
 
-  Object.keys(columnMap).forEach(name => {
+  Object.keys(columnMap).forEach((name) => {
     const { related, relationMap, className } = columnMap[name];
     if (className) {
       row._attributes.className.column[name] = className.split(' ');
@@ -270,7 +270,7 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
     rowSpanMap,
     valueMap,
     __unobserveFns__,
-    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) })
+    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) }),
   };
 }
 
@@ -282,8 +282,8 @@ function getAttributes(row: OptRow, index: number, lazyObservable: boolean, disa
     checkDisabled: disabled,
     className: {
       row: [],
-      column: {}
-    }
+      column: {},
+    },
   };
 
   if (row._attributes) {
@@ -295,7 +295,7 @@ function getAttributes(row: OptRow, index: number, lazyObservable: boolean, disa
       row._attributes.className = {
         row: [],
         column: {},
-        ...row._attributes.className
+        ...row._attributes.className,
       };
     }
   }
@@ -313,7 +313,7 @@ function createRelationListItems(name: string, row: Row, columnMap: Dictionary<C
   const relationCbParams = { value, editable, disabled, row };
   const relationListItemMap: Dictionary<ListItem[]> = {};
 
-  Object.keys(relationMap).forEach(targetName => {
+  Object.keys(relationMap).forEach((targetName) => {
     relationListItemMap[targetName] = getListItems(
       relationMap[targetName].listItems,
       relationCbParams
@@ -324,7 +324,7 @@ function createRelationListItems(name: string, row: Row, columnMap: Dictionary<C
 
 export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const relationListItemMap = { ...row._relationListItemMap };
-  Object.keys(columnMap).forEach(name => {
+  Object.keys(columnMap).forEach((name) => {
     assign(relationListItemMap, createRelationListItems(name, row, columnMap));
   });
   row._relationListItemMap = relationListItemMap;
@@ -337,7 +337,7 @@ function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
     return mainRowSpanMap;
   }
 
-  Object.keys(rowSpan).forEach(columnName => {
+  Object.keys(rowSpan).forEach((columnName) => {
     const spanCount = rowSpan[columnName];
     mainRowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
   });
@@ -347,7 +347,7 @@ function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
 function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
   const subRowSpanMap: RowSpanMap = {};
 
-  Object.keys(prevRowSpanMap).forEach(columnName => {
+  Object.keys(prevRowSpanMap).forEach((columnName) => {
     const prevRowSpan = prevRowSpanMap[columnName];
     const { mainRowKey, count, spanCount } = prevRowSpan;
     if (spanCount > 1 - count) {
@@ -430,7 +430,7 @@ export function createData(
       column,
       keyColumnName,
       lazyObservable,
-      disabled
+      disabled,
     });
   } else {
     rawData = data.map((row, index, rows) =>
@@ -438,7 +438,7 @@ export function createData(
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable,
-        disabled
+        disabled,
       })
     );
   }
@@ -498,7 +498,7 @@ function createPageOptions(userPageOptions: PageOptions, rawData: Row[]) {
         perPage: 20,
         type: 'pagination',
         ...userPageOptions,
-        totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
+        totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!,
       }) as Required<PageOptions>;
 
   if (pageOptions.type === 'pagination') {
@@ -515,7 +515,7 @@ export function create({
   pageOptions: userPageOptions,
   useClientSort,
   disabled,
-  id
+  id,
 }: DataOption): Observable<Data> {
   const { rawData, viewData } = createData(id, data, column, { lazyObservable: true, disabled });
 
@@ -524,9 +524,9 @@ export function create({
     columns: [
       {
         columnName: 'sortKey',
-        ascending: true
-      }
-    ]
+        ascending: true,
+      },
+    ],
   };
   const pageOptions = createPageOptions(userPageOptions, rawData);
 
@@ -535,7 +535,7 @@ export function create({
     viewData,
     sortState,
     pageOptions,
-    checkedAllRows: rawData.length ? !rawData.some(row => !row._attributes.checked) : false,
+    checkedAllRows: rawData.length ? !rawData.some((row) => !row._attributes.checked) : false,
     disabledAllCheckbox: disabled,
     filters: null,
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
@@ -556,13 +556,15 @@ export function create({
       const { filteredRawData, filters } = this;
       return filters
         ? filteredRawData
-            .filter(row => !isNull(cachedFilteredIndex[row.rowKey]))
-            .map(row => cachedFilteredIndex[row.rowKey]!)
+            .filter((row) => !isNull(cachedFilteredIndex[row.rowKey]))
+            .map((row) => cachedFilteredIndex[row.rowKey]!)
         : null;
     },
 
     get filteredViewData(this: Data) {
-      return this.filters ? this.filteredIndex!.map(index => this.viewData[index]) : this.viewData;
+      return this.filters
+        ? this.filteredIndex!.map((index) => this.viewData[index])
+        : this.viewData;
     },
 
     get pageRowRange(this: Data) {
@@ -580,6 +582,6 @@ export function create({
       }
 
       return [start, end] as Range;
-    }
+    },
   });
 }

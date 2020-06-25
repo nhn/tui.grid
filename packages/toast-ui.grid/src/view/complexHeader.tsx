@@ -122,7 +122,7 @@ export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => 
   const {
     column: { rowHeaderCount, visibleColumnsBySideWithRowHeader, complexColumnHeaders },
     dimension: { headerHeight, cellBorderWidth },
-    selection: { rangeBySide }
+    selection: { rangeBySide },
   } = store;
 
   return {
@@ -131,6 +131,6 @@ export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => 
     columns: visibleColumnsBySideWithRowHeader[side],
     complexColumnHeaders,
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
-    rowHeaderCount
+    rowHeaderCount,
   };
 })(ComplexHeaderComp);

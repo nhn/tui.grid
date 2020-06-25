@@ -47,7 +47,7 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
         sortState,
         columnName,
         ascending,
-        multiple
+        multiple,
       };
       break;
     /**
@@ -62,7 +62,7 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
       props = {
         sortState,
         columnName,
-        multiple
+        multiple,
       };
       break;
     /**
@@ -92,7 +92,7 @@ export function createSortEvent(eventType: EventType, eventParams: EventParams) 
     case 'afterUnsort':
       props = {
         sortState,
-        columnName
+        columnName,
       };
       break;
     default: // do nothing

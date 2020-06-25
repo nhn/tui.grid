@@ -28,7 +28,7 @@ const dispatchMap = {
   ...tree,
   ...sort,
   ...filter,
-  ...pagination
+  ...pagination,
 };
 
 type DispatchMap = typeof dispatchMap;

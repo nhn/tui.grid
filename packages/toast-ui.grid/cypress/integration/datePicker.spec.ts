@@ -3,7 +3,7 @@ export {};
 const columns = [
   {
     name: 'default',
-    editor: 'datePicker'
+    editor: 'datePicker',
   },
   {
     name: 'timePicker',
@@ -11,9 +11,9 @@ const columns = [
       type: 'datePicker',
       options: {
         format: 'yyyy-MM-dd HH:mm A',
-        timepicker: true
-      }
-    }
+        timepicker: true,
+      },
+    },
   },
   {
     name: 'timePickerWithTab',
@@ -23,10 +23,10 @@ const columns = [
         format: 'yyyy-MM-dd HH:mm A',
         timepicker: {
           layoutType: 'tab',
-          inputType: 'spinbox'
-        }
-      }
-    }
+          inputType: 'spinbox',
+        },
+      },
+    },
   },
   {
     name: 'monthPicker',
@@ -35,9 +35,9 @@ const columns = [
       options: {
         format: 'yyyy-MM',
         type: 'month',
-        showIcon: false
-      }
-    }
+        showIcon: false,
+      },
+    },
   },
   {
     name: 'yearPicker',
@@ -45,10 +45,10 @@ const columns = [
       type: 'datePicker',
       options: {
         format: 'yyyy',
-        type: 'year'
-      }
-    }
-  }
+        type: 'year',
+      },
+    },
+  },
 ];
 const data = [
   {
@@ -57,8 +57,8 @@ const data = [
     timePicker: '2019-11-11 11:11 AM',
     timePickerWithTab: '2019-11-11 11:11 AM',
     monthPicker: '2019-11',
-    yearPicker: '2019'
-  }
+    yearPicker: '2019',
+  },
 ];
 
 before(() => {
@@ -68,7 +68,7 @@ before(() => {
 beforeEach(() => {
   cy.createGrid({
     data,
-    columns
+    columns,
   });
 });
 
@@ -85,9 +85,7 @@ describe('default datePicker', () => {
   it('select the date, the selected date is applied in the cell.', () => {
     cy.gridInstance().invoke('startEditing', 0, 'default');
 
-    cy.get('.tui-calendar-date')
-      .contains('14')
-      .click();
+    cy.get('.tui-calendar-date').contains('14').click();
 
     cy.gridInstance().invoke('finishEditing');
 
@@ -101,10 +99,7 @@ describe('timepicker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'timePicker');
 
-    cy.get('.tui-timepicker-hour')
-      .get('select')
-      .eq(2)
-      .select('PM');
+    cy.get('.tui-timepicker-hour').get('select').eq(2).select('PM');
 
     cy.gridInstance().invoke('finishEditing');
 
@@ -116,12 +111,8 @@ describe('timepicker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'timePickerWithTab');
 
-    cy.get('.tui-datepicker-selector-button')
-      .eq(1)
-      .click();
-    cy.get('.tui-timepicker-btn-up')
-      .eq(1)
-      .click();
+    cy.get('.tui-datepicker-selector-button').eq(1).click();
+    cy.get('.tui-timepicker-btn-up').eq(1).click();
 
     cy.gridInstance().invoke('finishEditing');
 
@@ -135,9 +126,7 @@ describe('month picker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
-    cy.get('.tui-calendar-month .tui-is-selectable')
-      .contains('Mar')
-      .click();
+    cy.get('.tui-calendar-month .tui-is-selectable').contains('Mar').click();
 
     cy.gridInstance().invoke('finishEditing');
 
@@ -151,9 +140,7 @@ describe('year picker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'yearPicker');
 
-    cy.get('.tui-calendar-year .tui-is-selectable')
-      .contains('2020')
-      .click({ force: true });
+    cy.get('.tui-calendar-year .tui-is-selectable').contains('2020').click({ force: true });
 
     cy.gridInstance().invoke('finishEditing');
 
@@ -172,9 +159,7 @@ describe('show icon', () => {
 it('focus the editing cell when datepicker layer is closed', () => {
   cy.gridInstance().invoke('startEditing', 0, 'default');
   cy.focused().as('editingInput');
-  cy.get('.tui-calendar-date')
-    .contains('14')
-    .click();
+  cy.get('.tui-calendar-date').contains('14').click();
 
   cy.get('@editingInput').should('be.focused');
 });

@@ -38,7 +38,7 @@ class BodyRowsComp extends Component<Props> {
             columns={columns}
           />
         ))}
-        {range(dummyRowCount).map(index => (
+        {range(dummyRowCount).map((index) => (
           <BodyDummyRow
             key={`dummy-${index}`}
             index={rows.length + index}
@@ -54,5 +54,5 @@ export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column, data 
   rowIndexOffset: viewport.rowRange[0] - data.pageRowRange[0],
   rows: viewport.rows,
   columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
-  dummyRowCount: viewport.dummyRowCount
+  dummyRowCount: viewport.dummyRowCount,
 }))(BodyRowsComp);

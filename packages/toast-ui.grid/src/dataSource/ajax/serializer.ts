@@ -32,7 +32,7 @@ function serializeParams(key: string, value: any, serializedList: string[]) {
       serializeParams(`${key}[${isObject(arrVal) ? index : ''}]`, arrVal, serializedList);
     });
   } else if (isObject(value)) {
-    Object.keys(value).forEach(objKey => {
+    Object.keys(value).forEach((objKey) => {
       serializeParams(`${key}[${objKey}]`, (value as Dictionary<any>)[objKey], serializedList);
     });
   } else {
@@ -45,7 +45,7 @@ export function serialize(params: Params) {
     return '';
   }
   const serializedList: string[] = [];
-  Object.keys(params).forEach(key => {
+  Object.keys(params).forEach((key) => {
     serializeParams(key, params[key], serializedList);
   });
   return serializedList.join('&');

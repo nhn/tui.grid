@@ -44,7 +44,7 @@ export function getChangedScrollPosition(store: Store, side: Side, changedCellPo
     dimension: { bodyHeight, scrollXHeight, scrollYWidth, tableBorderWidth },
     columnCoords: { areaWidth },
     focus: { cellPosRect: focusedCellPostRect },
-    viewport
+    viewport,
   } = store;
 
   const { scrollLeft, scrollTop } = viewport;

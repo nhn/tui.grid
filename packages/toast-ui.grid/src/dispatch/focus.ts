@@ -29,7 +29,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const gridEvent = new GridEvent({
     rowKey,
     columnName,
-    value: filteredRawData[foundIndex][columnName]
+    value: filteredRawData[foundIndex][columnName],
   });
 
   /**
@@ -97,7 +97,7 @@ export function changeFocus(
     rowKey,
     columnName,
     prevColumnName: focus.columnName,
-    prevRowKey: focus.rowKey
+    prevRowKey: focus.rowKey,
   });
 
   /**

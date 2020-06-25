@@ -46,7 +46,7 @@ export class BodyCellComp extends Component<Props> {
       grid,
       rowKey,
       columnInfo,
-      ...renderData
+      ...renderData,
     });
     const rendererEl = this.renderer.getElement();
     this.el.appendChild(rendererEl);
@@ -74,7 +74,7 @@ export class BodyCellComp extends Component<Props> {
         grid,
         rowKey,
         columnInfo,
-        ...renderData
+        ...renderData,
       });
       this.calculateRowHeight(nextProps);
     }
@@ -123,7 +123,7 @@ export class BodyCellComp extends Component<Props> {
       refreshRowHeight,
       defaultRowHeight,
       dispatch,
-      cellBorderWidth
+      cellBorderWidth,
     } = props;
 
     if (refreshRowHeight) {
@@ -148,16 +148,16 @@ export class BodyCellComp extends Component<Props> {
       columnInfo: { align, valign, name, validation = {} },
       treeInfo,
       selectedRow,
-      rowSpanAttr
+      rowSpanAttr,
     } = this.props;
 
     const style = {
       textAlign: align,
-      verticalAlign: valign
+      verticalAlign: valign,
     };
     const attrs = {
       [dataAttr.ROW_KEY]: String(rowKey),
-      [dataAttr.COLUMN_NAME]: name
+      [dataAttr.COLUMN_NAME]: name,
     };
     const classNames = `${cls(
       'cell',
@@ -177,7 +177,7 @@ export class BodyCellComp extends Component<Props> {
           <div
             class={cls('tree-wrapper-valign-center')}
             style={{ paddingLeft: treeInfo.indentWidth }}
-            ref={el => {
+            ref={(el) => {
               this.el = el;
             }}
           >
@@ -191,7 +191,7 @@ export class BodyCellComp extends Component<Props> {
         {...rowSpanAttr}
         style={style}
         class={classNames}
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
         onMouseDown={() => this.handleMouseDown(name, rowKey)}
@@ -220,7 +220,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       selectedRow: range
         ? rowIndexWithPage >= range.row[0] && rowIndexWithPage <= range.row[1]
         : false,
-      cellBorderWidth
+      cellBorderWidth,
     };
   }
 )(BodyCellComp);

@@ -61,7 +61,7 @@ class SortingButtonComp extends Component<Props> {
 export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
   const {
     data: { sortState },
-    id
+    id,
   } = store;
   const { columnName, sortingType = 'asc' } = props;
   const { columns } = sortState;
@@ -74,6 +74,6 @@ export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
     ascending,
     dataProvider: getDataProvider(id),
     defaultAscending: sortingType === 'asc',
-    active: index !== -1
+    active: index !== -1,
   };
 })(SortingButtonComp);

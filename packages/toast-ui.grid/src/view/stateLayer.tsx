@@ -43,13 +43,13 @@ export const StateLayer = connect(({ data, dimension }) => {
     cellBorderWidth,
     tableBorderWidth,
     scrollXHeight,
-    scrollYWidth
+    scrollYWidth,
   } = dimension;
   return {
     loadingState: data.loadingState,
     top: headerHeight + cellBorderWidth,
     height: bodyHeight - scrollXHeight - tableBorderWidth,
     left: 0,
-    right: scrollYWidth + tableBorderWidth
+    right: scrollYWidth + tableBorderWidth,
   };
 })(StateLayerComp);

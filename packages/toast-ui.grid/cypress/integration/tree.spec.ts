@@ -15,35 +15,33 @@ const data = [
       {
         c1: 'bar',
         _attributes: {
-          expanded: true
+          expanded: true,
         },
         _children: [
           {
             c1: 'baz',
             _attributes: {
-              expanded: false
+              expanded: false,
             },
             _children: [
               {
-                c1: 'qux'
+                c1: 'qux',
               },
               {
                 c1: 'quxx',
-                _children: []
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+                _children: [],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 function assertColumnWidth(columnName: string, width: number) {
-  cy.getColumnCells(columnName).each($el => {
-    cy.wrap($el)
-      .invoke('width')
-      .should('eq', width);
+  cy.getColumnCells(columnName).each(($el) => {
+    cy.wrap($el).invoke('width').should('eq', width);
   });
 }
 
@@ -66,10 +64,7 @@ function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
 }
 
 function assertModifiedRowsLength(type: ModifiedType, length: number) {
-  cy.gridInstance()
-    .invoke('getModifiedRows')
-    .its(type)
-    .should('have.length', length);
+  cy.gridInstance().invoke('getModifiedRows').its(type).should('have.length', length);
 }
 
 function assertHasChildren(rowKey: RowKey, columnName: string, exist: boolean) {
@@ -82,7 +77,7 @@ function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'>) {
   cy.createGrid({
     data,
     columns,
-    ...options
+    ...options,
   });
 }
 
@@ -111,8 +106,8 @@ describe('treeColumnOptions', () => {
     it('creates tree column.', () => {
       createGrid({
         treeColumnOptions: {
-          name: 'c2'
-        }
+          name: 'c2',
+        },
       });
 
       cy.gridInstance().invoke('expand', 0, true);
@@ -126,16 +121,14 @@ describe('treeColumnOptions', () => {
     beforeEach(() => {
       createGrid({
         treeColumnOptions: {
-          name: 'c1'
-        }
+          name: 'c1',
+        },
       });
     });
 
     it('creates icon on cell by default.', () => {
       cy.getCell(0, 'c1').within(() => {
-        cy.getByCls('tree-icon')
-          .its('length')
-          .should('be.eql', 1);
+        cy.getByCls('tree-icon').its('length').should('be.eql', 1);
       });
     });
 
@@ -143,8 +136,8 @@ describe('treeColumnOptions', () => {
       createGrid({
         treeColumnOptions: {
           name: 'c1',
-          useIcon: false
-        }
+          useIcon: false,
+        },
       });
 
       cy.getCell(0, 'c1').within(() => {
@@ -165,8 +158,8 @@ describe('treeColumnOptions', () => {
         rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
-          useCascadingCheckbox: true
-        }
+          useCascadingCheckbox: true,
+        },
       });
 
       cy.gridInstance().invoke('check', 2);
@@ -188,8 +181,8 @@ describe('treeColumnOptions', () => {
         rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
-          useCascadingCheckbox: false
-        }
+          useCascadingCheckbox: false,
+        },
       });
 
       cy.gridInstance().invoke('check', 2);
@@ -214,16 +207,16 @@ describe('toggle button', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   });
 
   it(`is created when row data has '_children' property.`, () => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
     cy.gridInstance().invoke('expand', 0, true);
 
@@ -247,7 +240,7 @@ describe('toggle button', () => {
     });
   });
 
-  ['UI', 'API'].forEach(type => {
+  ['UI', 'API'].forEach((type) => {
     it(`from expanded to collapse by ${type}`, () => {
       cy.gridInstance().invoke('expand', 0);
       if (type === 'UI') {
@@ -275,8 +268,8 @@ describe('collapse()', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   });
 
@@ -305,8 +298,8 @@ describe('collapseAll()', () => {
   it('hides descendent rows.', () => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
     cy.gridInstance().invoke('expand', 0);
 
@@ -328,8 +321,8 @@ describe('expand()', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   });
 
@@ -368,8 +361,8 @@ describe('expandAll()', () => {
   it('shows descendent rows.', () => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
     cy.gridInstance().invoke('expandAll');
 
@@ -384,8 +377,8 @@ describe('appendRow()', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   });
 
@@ -402,7 +395,7 @@ describe('appendRow()', () => {
   it('appends internal row on root.', () => {
     const appendedData = {
       c1: 'a',
-      _children: [{ c1: 'b' }, { c1: 'c' }]
+      _children: [{ c1: 'b' }, { c1: 'c' }],
     };
 
     cy.gridInstance().invoke('appendRow', appendedData);
@@ -425,9 +418,9 @@ describe('appendTreeRow()', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
+        name: 'c1',
       },
-      rowHeaders: ['checkbox', 'rowNum']
+      rowHeaders: ['checkbox', 'rowNum'],
     });
   });
 
@@ -451,24 +444,20 @@ describe('appendTreeRow()', () => {
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
 
-    cy.getHeaderCell('_checked')
-      .find('input')
-      .should('not.be.checked');
+    cy.getHeaderCell('_checked').find('input').should('not.be.checked');
   });
 
   it('should check the children of added data with checked option', () => {
     const appendedData = {
       c1: 'test',
       _children: [{ c1: 'b' }, { c1: 'c' }],
-      _attributes: { checked: true }
+      _attributes: { checked: true },
     };
 
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
 
-    cy.gridInstance()
-      .invoke('getCheckedRows')
-      .should('have.length', 8);
+    cy.gridInstance().invoke('getCheckedRows').should('have.length', 8);
   });
 
   it('should update row number after calling appendTreeRow()', () => {
@@ -485,7 +474,7 @@ describe('appendTreeRow()', () => {
     beforeEach(() => {
       appendedData = {
         c1: 'a',
-        _children: [{ c1: 'b' }, { c1: 'c' }]
+        _children: [{ c1: 'b' }, { c1: 'c' }],
       };
     });
 
@@ -530,7 +519,7 @@ describe('appendTreeRow()', () => {
     beforeEach(() => {
       appendedData = {
         c1: 'a',
-        _children: [{ c1: 'b' }, { c1: 'c' }]
+        _children: [{ c1: 'b' }, { c1: 'c' }],
       };
     });
 
@@ -538,7 +527,7 @@ describe('appendTreeRow()', () => {
       cy.gridInstance()
         .invoke('getChildRows', 0)
         .its(`${offset}`)
-        .then(row => {
+        .then((row) => {
           cy.getCell(row.rowKey, 'c1').should('have.text', 'a');
           assertHasChildren(row.rowKey, 'c1', true);
         });
@@ -554,7 +543,7 @@ describe('appendTreeRow()', () => {
     it('inserts to the first when offset is set 0.', () => {
       cy.gridInstance().invoke('appendTreeRow', appendedData, {
         parentRowKey: 0,
-        offset: 0
+        offset: 0,
       });
       cy.gridInstance().invoke('expand', 0);
 
@@ -565,7 +554,7 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('appendTreeRow', { name: 'qux' }, { parentRowKey: 0 });
       cy.gridInstance().invoke('appendTreeRow', appendedData, {
         parentRowKey: 0,
-        offset: 1
+        offset: 1,
       });
       cy.gridInstance().invoke('expand', 0);
 
@@ -578,9 +567,9 @@ describe('removeTreeRow()', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
+        name: 'c1',
       },
-      rowHeaders: ['checkbox', 'rowNum']
+      rowHeaders: ['checkbox', 'rowNum'],
     });
     cy.gridInstance().invoke('expand', 0, true);
   });
@@ -611,9 +600,7 @@ describe('removeTreeRow()', () => {
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance().invoke('removeTreeRow', 3);
 
-    cy.getHeaderCell('_checked')
-      .find('input')
-      .should('not.be.checked');
+    cy.getHeaderCell('_checked').find('input').should('not.be.checked');
   });
 
   it('should update row number after calling removeTreeRow()', () => {
@@ -646,8 +633,8 @@ describe('removeTreeRow()', () => {
 it('attaches tree rows only expanded to DOM element.', () => {
   createGrid({
     treeColumnOptions: {
-      name: 'c1'
-    }
+      name: 'c1',
+    },
   });
 
   getRsideBodyRows().should('have.length', 1);
@@ -665,8 +652,8 @@ describe('modified data is added', () => {
   beforeEach(() => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   });
 
@@ -676,9 +663,9 @@ describe('modified data is added', () => {
       _children: [
         {
           c1: 'b',
-          _children: [{ c1: 'c' }]
-        }
-      ]
+          _children: [{ c1: 'c' }],
+        },
+      ],
     });
 
     assertModifiedRowsLength('createdRows', 3);
@@ -705,14 +692,14 @@ describe('events', () => {
     beforeEach(() => {
       createGrid({
         treeColumnOptions: {
-          name: 'c1'
-        }
+          name: 'c1',
+        },
       });
       callback = cy.stub();
       cy.gridInstance().invoke('on', 'expand', callback);
     });
 
-    ['UI', 'API'].forEach(type => {
+    ['UI', 'API'].forEach((type) => {
       it(`The 'expand' event is emitted by ${type}.`, () => {
         if (type === 'UI') {
           clickTreeBtn(0, 'c1');
@@ -747,14 +734,14 @@ describe('events', () => {
     beforeEach(() => {
       createGrid({
         treeColumnOptions: {
-          name: 'c1'
-        }
+          name: 'c1',
+        },
       });
       callback = cy.stub();
       cy.gridInstance().invoke('on', 'collapse', callback);
     });
 
-    ['UI', 'API'].forEach(type => {
+    ['UI', 'API'].forEach((type) => {
       it(`The 'collapse' event is emitted by ${type}.`, () => {
         cy.gridInstance().invoke('expand', 0);
         if (type === 'UI') {
@@ -800,15 +787,15 @@ describe('with resizable column options', () => {
       data: targetData,
       columns: targetColumns,
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
   }
 
   beforeEach(() => {
     targetColumns = [
       { name: 'c1', editor: 'text', width: DEPTH_ONE_MAX_WIDTH, resizable: true },
-      { name: 'c2' }
+      { name: 'c2' },
     ];
     targetData = [
       {
@@ -817,28 +804,28 @@ describe('with resizable column options', () => {
           {
             c1: 'looooooooooooooong child contents',
             _attributes: {
-              expanded: false
+              expanded: false,
             },
             _children: [
               {
                 c1: 'looooooooooooooong child child contents',
                 _attributes: {
-                  expanded: false
+                  expanded: false,
                 },
                 _children: [
                   {
-                    c1: 'qux'
+                    c1: 'qux',
                   },
                   {
                     c1: 'quxx',
-                    _children: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                    _children: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ];
   });
 
@@ -851,7 +838,7 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
   });
 
-  ['UI', 'API'].forEach(type => {
+  ['UI', 'API'].forEach((type) => {
     it(`width should be resized automatically when expanding by ${type}`, () => {
       createGridWidthResizableOption();
 
@@ -934,8 +921,8 @@ describe('editing tree cell', () => {
   it('should change the tree cell properly', () => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
 
     editCell(0, 'c1', 'FOO');
@@ -946,8 +933,8 @@ describe('editing tree cell', () => {
   it('should not be able to edit the collpased tree cell', () => {
     createGrid({
       treeColumnOptions: {
-        name: 'c1'
-      }
+        name: 'c1',
+      },
     });
 
     cy.gridInstance().invoke('startEditing', 1, 'c1');

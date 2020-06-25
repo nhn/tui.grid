@@ -3,16 +3,16 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Dummy Rows'
+  title: 'Dummy Rows',
 };
 
 const data = [
   { name: 'Beautiful Lies', artist: 'Birdy' },
-  { name: 'X', artist: 'Ed Sheeran' }
+  { name: 'X', artist: 'Ed Sheeran' },
 ];
 const columns = [
   { name: 'name', minWidth: 150 },
-  { name: 'artist', minWidth: 150 }
+  { name: 'artist', minWidth: 150 },
 ];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -29,7 +29,7 @@ export const dummyRows = () => {
     data,
     columns,
     bodyHeight: 400,
-    showDummyRows: true
+    showDummyRows: true,
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);

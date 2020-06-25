@@ -28,6 +28,6 @@ export const SortingOrder = connect<StoreProps, OwnProps>((store, props) => {
 
   return {
     order,
-    showOrder
+    showOrder,
   };
 })(SortingOrderComp);

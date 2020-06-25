@@ -57,7 +57,7 @@ export function setColumnWidth(
   for (let idx = startIdx; idx <= endIdx; idx += 1) {
     resizedColumns.push({
       columnName: columns[idx].name,
-      width: widths[idx - startIdx]
+      width: widths[idx - startIdx],
     });
   }
 
@@ -89,7 +89,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     columnOptions,
     copyOptions,
     treeColumnOptions,
-    rowHeaders
+    rowHeaders,
   } = column.dataForColumnCreation;
 
   const relationColumns = optColumns.reduce(
@@ -101,7 +101,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     []
   );
 
-  const columnInfos = optColumns.map(optColumn =>
+  const columnInfos = optColumns.map((optColumn) =>
     createColumn(
       optColumn,
       columnOptions,
@@ -121,20 +121,20 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   column.allColumns = [...rowHeaders, ...columnInfos];
 
-  data.viewData.forEach(viewRow => {
+  data.viewData.forEach((viewRow) => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
-      viewRow.__unobserveFns__.forEach(fn => fn());
+      viewRow.__unobserveFns__.forEach((fn) => fn());
     }
   });
 
-  data.rawData = data.rawData.map(row => {
+  data.rawData = data.rawData.map((row) => {
     const newRow = { ...column.emptyRow, ...row };
     newRow.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
     return newRow;
   });
 
-  data.viewData = data.rawData.map(row =>
+  data.viewData = data.rawData.map((row) =>
     isObservable(row)
       ? createViewRow(id, row, data.rawData, column)
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
@@ -156,7 +156,7 @@ function setColumnsHiddenValue(column: Column, columnName: string, hidden: boole
   if (complexColumnHeaders.length) {
     const complexColumn = findProp('name', columnName, complexColumnHeaders);
     if (complexColumn) {
-      complexColumn.childNames.forEach(childName => {
+      complexColumn.childNames.forEach((childName) => {
         allColumnMap[childName].hidden = hidden;
       });
       return;
@@ -190,7 +190,7 @@ export function setComplexColumnHeaders(store: Store, complexColumnHeaders: Comp
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
   const { complexColumnHeaders, allColumnMap } = column;
 
-  Object.keys(columnsMap).forEach(columnName => {
+  Object.keys(columnsMap).forEach((columnName) => {
     const col = allColumnMap[columnName];
     if (col) {
       col.header = columnsMap[columnName];

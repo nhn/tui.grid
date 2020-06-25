@@ -4,7 +4,7 @@ import {
   Column,
   CustomValidator,
   ErrorInfo,
-  CustomValidatorResultWithMeta
+  CustomValidatorResultWithMeta,
 } from '@t/store/column';
 import { RowKey, CellValue, Row } from '@t/store/data';
 import {
@@ -16,7 +16,7 @@ import {
   isNumber,
   includes,
   some,
-  isBoolean
+  isBoolean,
 } from '../../helper/common';
 import {
   isObservable,
@@ -24,7 +24,7 @@ import {
   unobservedInvoke,
   getOriginObject,
   Observable,
-  getRunningObservers
+  getRunningObservers,
 } from '../../helper/observable';
 import { getInstance } from '../../instance';
 
@@ -61,13 +61,13 @@ export function invokeWithUniqueValidationColumn(column: Column, fn: (name: stri
 }
 
 export function addUniqueInfoMap(id: number, row: OptRow, column: Column) {
-  invokeWithUniqueValidationColumn(column, name =>
+  invokeWithUniqueValidationColumn(column, (name) =>
     addColumnUniqueInfoMap(id, row.rowKey as RowKey, name, row[name])
   );
 }
 
 export function removeUniqueInfoMap(id: number, row: OptRow, column: Column) {
-  invokeWithUniqueValidationColumn(column, name =>
+  invokeWithUniqueValidationColumn(column, (name) =>
     removeColumnUniqueInfoMap(id, row.rowKey as RowKey, name, row[name])
   );
 }
@@ -83,7 +83,7 @@ function removeColumnUniqueInfoMap(
 
   if (uniqueInfoMap && uniqueInfoMap[value] && uniqueInfoMap[value][columnName]) {
     uniqueInfoMap[value][columnName] = uniqueInfoMap[value][columnName].filter(
-      targetRowKey => targetRowKey !== rowKey
+      (targetRowKey) => targetRowKey !== rowKey
     );
   }
 }
@@ -116,7 +116,7 @@ export function replaceColumnUniqueInfoMap(
 export function forceValidateUniquenessOfColumns(rawData: Row[], column: Column) {
   if (rawData.length) {
     // trick for forcing to validate the uniqueness
-    invokeWithUniqueValidationColumn(column, name => notify(rawData[0], name));
+    invokeWithUniqueValidationColumn(column, (name) => notify(rawData[0], name));
   }
 }
 
@@ -161,7 +161,7 @@ function validateDataUniqueness(
     });
     isValidatingUniquenessMap[columnName] = true;
 
-    rawData.forEach(row => {
+    rawData.forEach((row) => {
       if (isObservable(row)) {
         notify(row, columnName);
       }

@@ -5,7 +5,7 @@ import {
   createNestedClassRule,
   buildAll,
   createWebkitScrollbarRules,
-  createIEScrollbarRule
+  createIEScrollbarRule,
 } from './cssRuleBuilder';
 import {
   OptTableOutlineStyle,
@@ -21,25 +21,19 @@ import {
   OptCellStyle,
   OptBasicCellStyle,
   OptCellDummyStyle,
-  OptRowHoverStyle
+  OptRowHoverStyle,
 } from '@t/options';
 
 function bgTextRuleString(className: ClassNameType, options: OptBasicCellStyle): string {
   const { background, text } = options;
 
-  return createClassRule(className)
-    .bg(background)
-    .text(text)
-    .build();
+  return createClassRule(className).bg(background).text(text).build();
 }
 
 function bgBorderRuleString(className: ClassNameType, options: OptPaginationStyle): string {
   const { background, border } = options;
 
-  return createClassRule(className)
-    .bg(background)
-    .border(border)
-    .build();
+  return createClassRule(className).bg(background).border(border).build();
 }
 
 export function outline(options: OptTableOutlineStyle): string {
@@ -64,9 +58,7 @@ export function outline(options: OptTableOutlineStyle): string {
 }
 
 export function frozenBorder(options: OptFrozenBorderStyle): string {
-  return createClassRule('frozen-border')
-    .bg(options.border)
-    .build();
+  return createClassRule('frozen-border').bg(options.border).build();
 }
 
 export function scrollbar(options: OptScrollbarStyle): string {
@@ -80,18 +72,14 @@ export function scrollbar(options: OptScrollbarStyle): string {
   const xOuterBorderRule = createClassRule('content-area').border(border);
   const yInnerBorderRule = createClassRule('scrollbar-y-inner-border').bg(border);
   const yOuterBorderRule = createClassRule('scrollbar-y-outer-border').bg(border);
-  const spaceRightTopRule = createClassRule('scrollbar-right-top')
-    .bg(emptySpace)
-    .border(border);
+  const spaceRightTopRule = createClassRule('scrollbar-right-top').bg(emptySpace).border(border);
   const spaceRightBottomRule = createClassRule('scrollbar-right-bottom')
     .bg(emptySpace)
     .border(border);
   const spaceLeftBottomRule = createClassRule('scrollbar-left-bottom')
     .bg(emptySpace)
     .border(border);
-  const frozenBorderRule = createClassRule('scrollbar-frozen-border')
-    .bg(emptySpace)
-    .border(border);
+  const frozenBorderRule = createClassRule('scrollbar-frozen-border').bg(emptySpace).border(border);
 
   return buildAll([
     ...webkitScrollbarRules,
@@ -103,7 +91,7 @@ export function scrollbar(options: OptScrollbarStyle): string {
     spaceRightTopRule,
     spaceRightBottomRule,
     spaceLeftBottomRule,
-    frozenBorderRule
+    frozenBorderRule,
   ]);
 }
 
@@ -120,23 +108,16 @@ export function selection(options: OptSelectionLayerStyle): string {
 }
 
 export function headerArea(options: OptTableHeaderStyle): string {
-  return createClassRule('header-area')
-    .bg(options.background)
-    .border(options.border)
-    .build();
+  return createClassRule('header-area').bg(options.background).border(options.border).build();
 }
 
 export function bodyArea(options: OptTableBodyStyle): string {
-  return createClassRule('body-area')
-    .bg(options.background)
-    .build();
+  return createClassRule('body-area').bg(options.background).build();
 }
 
 export function summaryArea(options: OptTableSummaryStyle): string {
   const { border, background } = options;
-  const contentAreaRule = createClassRule('summary-area')
-    .bg(background)
-    .border(border);
+  const contentAreaRule = createClassRule('summary-area').bg(background).border(border);
   const bodyAreaRule = createNestedClassRule(' .', ['has-summary-top', 'body-area']).border(border);
 
   return buildAll([contentAreaRule, bodyAreaRule]);
@@ -157,7 +138,7 @@ export function cellHeader(options: OptCellStyle): string {
     'show-lside-area',
     'lside-area',
     'header-area',
-    'table'
+    'table',
   ]).verticalBorderStyle(options, 'right');
   const cellRule = createClassRule('cell-header')
     .bg(background)
@@ -174,7 +155,7 @@ export function cellRowHeader(options: OptCellStyle): string {
     'show-lside-area',
     'lside-area',
     'body-area',
-    'table'
+    'table',
   ]).verticalBorderStyle(options, 'right');
   const cellRule = createClassRule('cell-row-header')
     .bg(background)
@@ -191,7 +172,7 @@ export function cellSummary(options: OptCellStyle): string {
     'show-lside-area',
     'lside-area',
     'summary-area',
-    'table'
+    'table',
   ]).verticalBorderStyle(options, 'right');
   const cellRule = createClassRule('cell-summary')
     .bg(background)
@@ -203,21 +184,15 @@ export function cellSummary(options: OptCellStyle): string {
 }
 
 export function rowEven(options: OptBasicCellStyle): string {
-  return create('.tui-grid-row-even>td')
-    .bg(options.background)
-    .build();
+  return create('.tui-grid-row-even>td').bg(options.background).build();
 }
 
 export function rowOdd(options: OptBasicCellStyle): string {
-  return create('.tui-grid-row-odd>td')
-    .bg(options.background)
-    .build();
+  return create('.tui-grid-row-odd>td').bg(options.background).build();
 }
 
 export function rowHover(options: OptRowHoverStyle): string {
-  return create('.tui-grid-row-hover>.tui-grid-cell')
-    .bg(options.background)
-    .build();
+  return create('.tui-grid-row-hover>.tui-grid-cell').bg(options.background).build();
 }
 
 export function rowDummy(options: OptCellDummyStyle): string {
@@ -267,10 +242,7 @@ export function cellDisabled(options: OptBasicCellStyle): string {
 export function cellInvalid(options: OptBasicCellStyle): string {
   const { background, text } = options;
 
-  return createNestedClassRule('.', ['cell-invalid', 'cell'])
-    .bg(background)
-    .text(text)
-    .build();
+  return createNestedClassRule('.', ['cell-invalid', 'cell']).bg(background).text(text).build();
 }
 
 export function cellCurrentRow(options: OptBasicCellStyle): string {

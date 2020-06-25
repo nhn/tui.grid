@@ -9,7 +9,7 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
 ) {
   type Props = OwnProps & SelectedProps & DispatchProps;
 
-  return function(WrappedComponent: AnyComponent<Props>) {
+  return function (WrappedComponent: AnyComponent<Props>) {
     return class extends Component<OwnProps, SelectedProps> {
       public static displayName = `Connect:${WrappedComponent.name}`;
 

@@ -15,9 +15,7 @@ function clickFilterBtn() {
 }
 
 function selectFilterCode(option: any) {
-  cy.getByCls('filter-container')
-    .find('select')
-    .select(option);
+  cy.getByCls('filter-container').find('select').select(option);
 }
 
 function clickCloseBtn() {
@@ -51,9 +49,7 @@ function applyFilterByUI(option: any, value: string) {
 }
 
 function toggleSelectFilter(index: number) {
-  getFilterListItem()
-    .eq(index)
-    .click();
+  getFilterListItem().eq(index).click();
 }
 
 function applyFilterBySelectUI(index: number) {
@@ -102,7 +98,7 @@ describe('UI: Layer', () => {
 describe('UI: Button', () => {
   const columns = [
     { name: 'id', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
-    { name: 'age' }
+    { name: 'age' },
   ];
   const data = [
     { id: 'player1', age: 10 },
@@ -111,7 +107,7 @@ describe('UI: Button', () => {
     { id: 'player4', age: 35 },
     { id: 'player5', age: 40 },
     { id: 'player6', age: 20 },
-    { id: 'player7', age: 30 }
+    { id: 'player7', age: 30 },
   ];
 
   beforeEach(() => {
@@ -147,14 +143,14 @@ describe('apply filter (type: number)', () => {
     { id: 'player4', score: 65 },
     { id: 'player5', score: 50 },
     { id: 'player6', score: 90 },
-    { id: 'player7', score: 90 }
+    { id: 'player7', score: 90 },
   ];
 
   beforeEach(() => {
     cy.createGrid({ data, columns });
   });
 
-  ['API', 'UI'].forEach(method => {
+  ['API', 'UI'].forEach((method) => {
     it(`code:gt by ${method}`, () => {
       if (method === 'API') {
         invokeFilter('score', [{ code: 'gt', value: 70 }]);
@@ -165,7 +161,7 @@ describe('apply filter (type: number)', () => {
       cy.getRsideBody().should('have.cellData', [
         ['player1', '80'],
         ['player6', '90'],
-        ['player7', '90']
+        ['player7', '90'],
       ]);
     });
 
@@ -180,7 +176,7 @@ describe('apply filter (type: number)', () => {
         ['player1', '80'],
         ['player2', '70'],
         ['player6', '90'],
-        ['player7', '90']
+        ['player7', '90'],
       ]);
     });
 
@@ -194,7 +190,7 @@ describe('apply filter (type: number)', () => {
       cy.getRsideBody().should('have.cellData', [
         ['player3', '60'],
         ['player4', '65'],
-        ['player5', '50']
+        ['player5', '50'],
       ]);
     });
 
@@ -209,7 +205,7 @@ describe('apply filter (type: number)', () => {
         ['player2', '70'],
         ['player3', '60'],
         ['player4', '65'],
-        ['player5', '50']
+        ['player5', '50'],
       ]);
     });
 
@@ -222,7 +218,7 @@ describe('apply filter (type: number)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player6', '90'],
-        ['player7', '90']
+        ['player7', '90'],
       ]);
     });
 
@@ -238,7 +234,7 @@ describe('apply filter (type: number)', () => {
         ['player2', '70'],
         ['player3', '60'],
         ['player4', '65'],
-        ['player5', '50']
+        ['player5', '50'],
       ]);
     });
   });
@@ -254,14 +250,14 @@ describe('apply filter (type: text)', () => {
     { id: 'player5', name: 'Park' },
     { id: 'player6', name: 'Lee' },
     { id: 'player7', name: 'Yoo' },
-    { id: 'player8', name: 'Lim' }
+    { id: 'player8', name: 'Lim' },
   ];
 
   beforeEach(() => {
     cy.createGrid({ data, columns });
   });
 
-  ['API', 'UI'].forEach(method => {
+  ['API', 'UI'].forEach((method) => {
     it(`code:eq by ${method}`, () => {
       if (method === 'API') {
         invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
@@ -286,7 +282,7 @@ describe('apply filter (type: text)', () => {
         ['player4', 'Han'],
         ['player5', 'Park'],
         ['player7', 'Yoo'],
-        ['player8', 'Lim']
+        ['player8', 'Lim'],
       ]);
     });
 
@@ -299,7 +295,7 @@ describe('apply filter (type: text)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player4', 'Han'],
-        ['player5', 'Park']
+        ['player5', 'Park'],
       ]);
     });
 
@@ -312,7 +308,7 @@ describe('apply filter (type: text)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player6', 'Lee'],
-        ['player8', 'Lim']
+        ['player8', 'Lim'],
       ]);
     });
 
@@ -325,7 +321,7 @@ describe('apply filter (type: text)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player2', 'Kim'],
-        ['player8', 'Lim']
+        ['player8', 'Lim'],
       ]);
     });
   });
@@ -349,14 +345,14 @@ describe('apply filter (type: select)', () => {
     { id: 'player5', name: 'Park' },
     { id: 'player6', name: 'Lee' },
     { id: 'player7', name: 'Yoo' },
-    { id: 'player8', name: 'Lim' }
+    { id: 'player8', name: 'Lim' },
   ];
 
   beforeEach(() => {
     cy.createGrid({ data, columns });
   });
 
-  ['API', 'UI'].forEach(method => {
+  ['API', 'UI'].forEach((method) => {
     it(`code:eq by ${method}`, () => {
       if (method === 'API') {
         invokeFilter('id', [
@@ -366,7 +362,7 @@ describe('apply filter (type: select)', () => {
           { code: 'eq', value: 'player5' },
           { code: 'eq', value: 'player6' },
           { code: 'eq', value: 'player7' },
-          { code: 'eq', value: 'player8' }
+          { code: 'eq', value: 'player8' },
         ]);
       } else {
         applyFilterBySelectUI(1);
@@ -378,7 +374,7 @@ describe('apply filter (type: select)', () => {
         ['player5', 'Park'],
         ['player6', 'Lee'],
         ['player7', 'Yoo'],
-        ['player8', 'Lim']
+        ['player8', 'Lim'],
       ]);
     });
   });
@@ -387,9 +383,7 @@ describe('apply filter (type: select)', () => {
     clickFilterBtn();
     inputFilterValue('player3');
 
-    getFilterListItem()
-      .its('length')
-      .should('eq', 2);
+    getFilterListItem().its('length').should('eq', 2);
   });
 
   it('When clicking selectAll checkbox, apply all list item checkbox and filtering.', () => {
@@ -407,7 +401,7 @@ describe('apply filter (type: select)', () => {
       ['player5', 'Park'],
       ['player6', 'Lee'],
       ['player7', 'Yoo'],
-      ['player8', 'Lim']
+      ['player8', 'Lim'],
     ]);
   });
 });
@@ -422,14 +416,14 @@ describe('apply filter (type: datepicker)', () => {
     { id: 'player5', date: '2016.06.27' },
     { id: 'player6', date: '2018.11.02' },
     { id: 'player7', date: '2019.12.25' },
-    { id: 'player8', date: '2020.03.03' }
+    { id: 'player8', date: '2020.03.03' },
   ];
 
   beforeEach(() => {
     cy.createGrid({ data, columns });
   });
 
-  ['API', 'UI'].forEach(method => {
+  ['API', 'UI'].forEach((method) => {
     it(`code:eq by ${method}`, () => {
       if (method === 'API') {
         invokeFilter('date', [{ code: 'eq', value: '2019.09.18' }]);
@@ -454,7 +448,7 @@ describe('apply filter (type: datepicker)', () => {
         ['player5', '2016.06.27'],
         ['player6', '2018.11.02'],
         ['player7', '2019.12.25'],
-        ['player8', '2020.03.03']
+        ['player8', '2020.03.03'],
       ]);
     });
 
@@ -467,7 +461,7 @@ describe('apply filter (type: datepicker)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player3', '2020.01.03'],
-        ['player8', '2020.03.03']
+        ['player8', '2020.03.03'],
       ]);
     });
 
@@ -481,7 +475,7 @@ describe('apply filter (type: datepicker)', () => {
       cy.getRsideBody().should('have.cellData', [
         ['player3', '2020.01.03'],
         ['player7', '2019.12.25'],
-        ['player8', '2020.03.03']
+        ['player8', '2020.03.03'],
       ]);
     });
 
@@ -504,7 +498,7 @@ describe('apply filter (type: datepicker)', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player4', '2017.07.27'],
-        ['player5', '2016.06.27']
+        ['player5', '2016.06.27'],
       ]);
     });
   });
@@ -519,7 +513,7 @@ describe('filter API', () => {
     { id: 'player4', age: 35 },
     { id: 'player5', age: 40 },
     { id: 'player6', age: 20 },
-    { id: 'player7', age: 30 }
+    { id: 'player7', age: 30 },
   ];
 
   beforeEach(() => {
@@ -532,7 +526,7 @@ describe('filter API', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['player3', '30'],
-        ['player7', '30']
+        ['player7', '30'],
       ]);
 
       cy.gridInstance().invoke('unfilter', 'age');
@@ -544,14 +538,14 @@ describe('filter API', () => {
         ['player4', '35'],
         ['player5', '40'],
         ['player6', '20'],
-        ['player7', '30']
+        ['player7', '30'],
       ]);
     });
 
     it('unfilter the all columns properly', () => {
       const columnsWithMultiFilter = [
         { name: 'id', filter: 'text' },
-        { name: 'age', filter: 'number' }
+        { name: 'age', filter: 'number' },
       ];
       cy.createGrid({ data, columns: columnsWithMultiFilter });
 
@@ -567,7 +561,7 @@ describe('filter API', () => {
         ['player4', '35'],
         ['player5', '40'],
         ['player6', '20'],
-        ['player7', '30']
+        ['player7', '30'],
       ]);
     });
   });
@@ -580,8 +574,8 @@ describe('filter API', () => {
         {
           columnName: 'age',
           state: [{ code: 'eq', value: 30 }],
-          type: 'number'
-        }
+          type: 'number',
+        },
       ]);
   });
 
@@ -601,7 +595,7 @@ describe('filter API', () => {
 describe('filtering data with button option', () => {
   const columns = [
     { name: 'id', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
-    { name: 'age' }
+    { name: 'age' },
   ];
   const data = [
     { id: 'player1', age: 10 },
@@ -610,7 +604,7 @@ describe('filtering data with button option', () => {
     { id: 'player4', age: 35 },
     { id: 'player5', age: 40 },
     { id: 'player6', age: 20 },
-    { id: 'player7', age: 30 }
+    { id: 'player7', age: 30 },
   ];
 
   beforeEach(() => {
@@ -632,7 +626,7 @@ describe('filtering data with button option', () => {
       ['player4', '35'],
       ['player5', '40'],
       ['player6', '20'],
-      ['player7', '30']
+      ['player7', '30'],
     ]);
   });
 
@@ -646,7 +640,7 @@ describe('filtering data with button option', () => {
       ['player4', '35'],
       ['player5', '40'],
       ['player6', '20'],
-      ['player7', '30']
+      ['player7', '30'],
     ]);
 
     cy.getByCls('filter-btn-apply').click();
@@ -664,27 +658,25 @@ it('filtering data with operator option', () => {
     { id: 'player4', age: 35 },
     { id: 'player5', age: 40 },
     { id: 'player6', age: 20 },
-    { id: 'player7', age: 30 }
+    { id: 'player7', age: 30 },
   ];
 
   cy.createGrid({ data, columns });
   clickFilterBtn();
   cy.getByCls('filter-input').type('10');
-  cy.getByCls('filter-input')
-    .eq(1)
-    .type('30');
+  cy.getByCls('filter-input').eq(1).type('30');
 
   cy.getRsideBody().should('have.cellData', [
     ['player1', '10'],
     ['player3', '30'],
-    ['player7', '30']
+    ['player7', '30'],
   ]);
 });
 
 it('multiple filters are applied correctly.', () => {
   const columns = [
     { name: 'name', filter: 'text' },
-    { name: 'age', filter: 'number' }
+    { name: 'age', filter: 'number' },
   ];
   const data = [
     { name: 'player1', age: 10 },
@@ -694,7 +686,7 @@ it('multiple filters are applied correctly.', () => {
     { name: 'player4', age: 40 },
     { name: 'player5', age: 20 },
     { name: 'player4', age: 30 },
-    { name: 'player4', age: 40 }
+    { name: 'player4', age: 40 },
   ];
   cy.createGrid({ data, columns });
   cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'player4' }]);
@@ -702,14 +694,14 @@ it('multiple filters are applied correctly.', () => {
   cy.getRsideBody().should('have.cellData', [
     ['player4', '40'],
     ['player4', '30'],
-    ['player4', '40']
+    ['player4', '40'],
   ]);
 
   cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '40' }]);
 
   cy.getRsideBody().should('have.cellData', [
     ['player4', '40'],
-    ['player4', '40']
+    ['player4', '40'],
   ]);
 });
 
@@ -717,7 +709,7 @@ describe('check other option when filtering', () => {
   beforeEach(() => {
     const columns = [
       { name: 'name', filter: 'text' },
-      { name: 'age', filter: 'number' }
+      { name: 'age', filter: 'number' },
     ];
     const data = [
       { id: 'player1', age: 10 },
@@ -726,7 +718,7 @@ describe('check other option when filtering', () => {
       { id: 'player4', age: 35 },
       { id: 'player5', age: 40 },
       { id: 'player6', age: 20 },
-      { id: 'player7', age: 30 }
+      { id: 'player7', age: 30 },
     ];
     cy.createGrid({ data, columns, rowHeaders: ['rowNum', 'checkbox'] });
   });
@@ -742,7 +734,7 @@ describe('check other option when filtering', () => {
       ['35'],
       ['40'],
       ['20'],
-      ['30']
+      ['30'],
     ]);
   });
 
@@ -765,9 +757,7 @@ describe('check other option when filtering', () => {
 
     cy.gridInstance().invoke('unfilter', 'age');
 
-    getCellCheckbox()
-      .filter('input[type=checkbox]:checked')
-      .should('have.length', 2);
+    getCellCheckbox().filter('input[type=checkbox]:checked').should('have.length', 2);
     getHeaderCheckbox().should('not.be.checked');
   });
 });
@@ -779,9 +769,9 @@ describe('apply filter with formatted value', () => {
         {
           name: 'id',
           filter: 'select',
-          formatter: ({ value }: FormatterProps) => `formatted_${value}`
+          formatter: ({ value }: FormatterProps) => `formatted_${value}`,
         },
-        { name: 'name' }
+        { name: 'name' },
       ];
       const data = [
         { id: 'player1', name: 'Choi' },
@@ -791,7 +781,7 @@ describe('apply filter with formatted value', () => {
         { id: 'player5', name: 'Park' },
         { id: 'player6', name: 'Lee' },
         { id: 'player7', name: 'Yoo' },
-        { id: 'player8', name: 'Lim' }
+        { id: 'player8', name: 'Lim' },
       ];
       cy.createGrid({ data, columns });
     });
@@ -800,8 +790,8 @@ describe('apply filter with formatted value', () => {
       clickFilterBtn();
 
       getFilterListItem()
-        .filter(index => index > 0)
-        .each($el => {
+        .filter((index) => index > 0)
+        .each(($el) => {
           cy.wrap($el).should('contain.text', 'formatted');
         });
     });
@@ -810,9 +800,7 @@ describe('apply filter with formatted value', () => {
       clickFilterBtn();
       inputFilterValue('formatted');
 
-      getFilterListItem()
-        .its('length')
-        .should('eq', 9);
+      getFilterListItem().its('length').should('eq', 9);
     });
 
     it('When clicking selectAll checkbox, apply all list item checkbox and filtering.', () => {
@@ -830,11 +818,11 @@ describe('apply filter with formatted value', () => {
         ['formatted_player5', 'Park'],
         ['formatted_player6', 'Lee'],
         ['formatted_player7', 'Yoo'],
-        ['formatted_player8', 'Lim']
+        ['formatted_player8', 'Lim'],
       ]);
     });
 
-    ['API', 'UI'].forEach(method => {
+    ['API', 'UI'].forEach((method) => {
       it(`code:eq by ${method}`, () => {
         if (method === 'API') {
           invokeFilter('id', [
@@ -844,7 +832,7 @@ describe('apply filter with formatted value', () => {
             { code: 'eq', value: 'formatted_player5' },
             { code: 'eq', value: 'formatted_player6' },
             { code: 'eq', value: 'formatted_player7' },
-            { code: 'eq', value: 'formatted_player8' }
+            { code: 'eq', value: 'formatted_player8' },
           ]);
         } else {
           applyFilterBySelectUI(1);
@@ -857,7 +845,7 @@ describe('apply filter with formatted value', () => {
           ['formatted_player5', 'Park'],
           ['formatted_player6', 'Lee'],
           ['formatted_player7', 'Yoo'],
-          ['formatted_player8', 'Lim']
+          ['formatted_player8', 'Lim'],
         ]);
       });
     });
@@ -869,9 +857,9 @@ describe('apply filter with formatted value', () => {
         {
           name: 'id',
           filter: 'text',
-          formatter: ({ value }: FormatterProps) => `formatted_${value}`
+          formatter: ({ value }: FormatterProps) => `formatted_${value}`,
         },
-        { name: 'name' }
+        { name: 'name' },
       ];
       const data = [
         { id: 'player1', name: 'Choi' },
@@ -881,12 +869,12 @@ describe('apply filter with formatted value', () => {
         { id: 'player5', name: 'Park' },
         { id: 'player6', name: 'Lee' },
         { id: 'player7', name: 'Yoo' },
-        { id: 'player8', name: 'Lim' }
+        { id: 'player8', name: 'Lim' },
       ];
       cy.createGrid({ data, columns });
     });
 
-    ['API', 'UI'].forEach(method => {
+    ['API', 'UI'].forEach((method) => {
       it(`code:eq by ${method}`, () => {
         if (method === 'API') {
           invokeFilter('id', [{ code: 'eq', value: 'formatted_player1' }]);
@@ -903,13 +891,13 @@ describe('apply filter with formatted value', () => {
     beforeEach(() => {
       const columns = [
         {
-          name: 'id'
+          name: 'id',
         },
         {
           name: 'age',
           filter: 'number',
-          formatter: ({ value }: FormatterProps) => Number(value) - 1
-        }
+          formatter: ({ value }: FormatterProps) => Number(value) - 1,
+        },
       ];
       const data = [
         { id: 'player1', age: 20 },
@@ -919,12 +907,12 @@ describe('apply filter with formatted value', () => {
         { id: 'player5', age: 50 },
         { id: 'player6', age: 40 },
         { id: 'player7', age: 30 },
-        { id: 'player8', age: 20 }
+        { id: 'player8', age: 20 },
       ];
       cy.createGrid({ data, columns });
     });
 
-    ['API', 'UI'].forEach(method => {
+    ['API', 'UI'].forEach((method) => {
       it(`code:eq by ${method}`, () => {
         if (method === 'API') {
           invokeFilter('age', [{ code: 'eq', value: 19 }]);
@@ -934,7 +922,7 @@ describe('apply filter with formatted value', () => {
 
         cy.getRsideBody().should('have.cellData', [
           ['player1', '19'],
-          ['player8', '19']
+          ['player8', '19'],
         ]);
       });
     });
@@ -951,7 +939,7 @@ describe('resetData API with filterState', () => {
       { id: 'player4', age: 35 },
       { id: 'player5', age: 40 },
       { id: 'player6', age: 20 },
-      { id: 'player7', age: 30 }
+      { id: 'player7', age: 30 },
     ];
     const columns = [{ name: 'id' }, { name: 'age', filter: { type: 'text', operator: 'OR' } }];
     cy.createGrid({ data, columns });
@@ -970,9 +958,7 @@ describe('resetData API with filterState', () => {
 
     cy.gridInstance().invoke('resetData', data, { filterState });
 
-    cy.gridInstance()
-      .invoke('getFilterState')
-      .should('eq', null);
+    cy.gridInstance().invoke('getFilterState').should('eq', null);
   });
 
   it('should remove the filterState', () => {

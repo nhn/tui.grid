@@ -1,12 +1,12 @@
 module.exports = {
   env: {
-    mocha: true
+    mocha: true,
   },
   globals: {
     cy: 'readonly',
     Cypress: 'readonly',
     expect: 'readonly',
-    chai: 'readonly'
+    chai: 'readonly',
   },
   rules: {
     'newline-before-return': 0,
@@ -14,6 +14,6 @@ module.exports = {
     'no-unused-expressions': 0,
     'dot-notation': 0,
     'max-nested-callbacks': [2, { max: 5 }],
-    'no-var-require': 0
-  }
+    'no-var-require': 0,
+  },
 };

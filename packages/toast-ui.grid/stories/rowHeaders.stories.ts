@@ -6,7 +6,7 @@ import '../src/css/grid.css';
 import '../samples/css/rowHeaders.css';
 
 export default {
-  title: 'Row Headers'
+  title: 'Row Headers',
 };
 
 const columns = [{ name: 'name', minWidth: 150 }];
@@ -91,7 +91,7 @@ export const rowNum = () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['rowNum']
+    rowHeaders: ['rowNum'],
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -110,7 +110,7 @@ export const checkboxRowHeader = () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['checkbox']
+    rowHeaders: ['checkbox'],
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -129,7 +129,7 @@ export const checkedRowHeader = () => {
   const { el, grid } = createGrid({
     data,
     columns,
-    rowHeaders: ['checkbox']
+    rowHeaders: ['checkbox'],
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -150,7 +150,7 @@ export const rowNumAndCheckboxRowHeaders = () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['rowNum', 'checkbox']
+    rowHeaders: ['rowNum', 'checkbox'],
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -173,8 +173,8 @@ export const customRowHeader = () => {
       {
         type: 'rowNum',
         renderer: {
-          type: RowNumberRenderer
-        }
+          type: RowNumberRenderer,
+        },
       },
       {
         type: 'checkbox',
@@ -185,10 +185,10 @@ export const customRowHeader = () => {
             </label>
           `,
         renderer: {
-          type: SingleCheckRenderer
-        }
-      }
-    ]
+          type: SingleCheckRenderer,
+        },
+      },
+    ],
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);

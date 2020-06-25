@@ -25,7 +25,7 @@ class FilterOperatorComp extends Component<Props> {
 
     return (
       <div className={cls('filter-comparator-container')}>
-        {['AND', 'OR'].map(operatorType => {
+        {['AND', 'OR'].map((operatorType) => {
           const checked = operator === operatorType;
 
           return (
@@ -52,5 +52,5 @@ class FilterOperatorComp extends Component<Props> {
 }
 
 export const FilterOperator = connect<StoreProps, OwnProps>((_, { filterState }) => ({
-  operator: filterState!.operator || 'AND'
+  operator: filterState!.operator || 'AND',
 }))(FilterOperatorComp);

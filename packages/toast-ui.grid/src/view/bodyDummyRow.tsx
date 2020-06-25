@@ -19,7 +19,7 @@ const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
 
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
-      {columnNames.map(name => {
+      {columnNames.map((name) => {
         const attrs = { [dataAttr.COLUMN_NAME]: name };
 
         return (
@@ -35,5 +35,5 @@ const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
 };
 
 export const BodyDummyRow = connect<StoreProps, OwnProps>(({ dimension: { rowHeight } }) => ({
-  rowHeight
+  rowHeight,
 }))(BodyDummyRowComp);

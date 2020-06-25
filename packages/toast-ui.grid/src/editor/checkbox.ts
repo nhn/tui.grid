@@ -114,7 +114,7 @@ export class CheckboxEditor implements CellEditor {
     const keyName = getKeyStrokeString(ev);
     if (isArrowKey(keyName)) {
       ev.preventDefault();
-      const elementIdx = findIndex(id => id === this.hoveredItemId, this.elementIds);
+      const elementIdx = findIndex((id) => id === this.hoveredItemId, this.elementIds);
       const totalCount = this.elementIds.length;
       const offset = totalCount + (keyName === 'down' || keyName === 'right' ? 1 : -1);
       const id = this.elementIds[(elementIdx + offset) % totalCount];
@@ -165,7 +165,7 @@ export class CheckboxEditor implements CellEditor {
   private setValue(value: CellValue) {
     String(value)
       .split(',')
-      .forEach(inputValue => {
+      .forEach((inputValue) => {
         const input = this.layer.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
         if (input) {
           input.checked = true;

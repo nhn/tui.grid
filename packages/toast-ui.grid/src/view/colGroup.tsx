@@ -41,6 +41,6 @@ export const ColGroup = connect<StoreProps, OwnProps>(
       useViewport && side === 'R'
         ? viewport.columns
         : column.visibleColumnsBySideWithRowHeader[side],
-    borderWidth: dimension.cellBorderWidth
+    borderWidth: dimension.cellBorderWidth,
   })
 )(ColGroupComp);

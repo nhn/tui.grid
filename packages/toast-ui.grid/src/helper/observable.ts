@@ -55,7 +55,7 @@ function clearQueue() {
 }
 
 export function getRunningObservers() {
-  return queue.map(id => observerInfoMap[id].name).filter(name => name);
+  return queue.map((id) => observerInfoMap[id].name).filter((name) => name);
 }
 
 function callObserver(observerId: string) {
@@ -98,7 +98,7 @@ function setValue<T, K extends keyof T>(
       patchArrayMethods(value, resultObj, key as string);
     }
     storage[key] = value;
-    Object.keys(observerIdSet).forEach(observerId => {
+    Object.keys(observerIdSet).forEach((observerId) => {
       run(observerId);
     });
   }
@@ -115,7 +115,7 @@ export function observe(fn: Function, sync = false, name = '') {
 
   // return unobserve function
   return () => {
-    observerInfoMap[observerId].targetObserverIdSets.forEach(idSet => {
+    observerInfoMap[observerId].targetObserverIdSets.forEach((idSet) => {
       delete idSet[observerId];
     });
     delete observerInfoMap[observerId];
@@ -144,7 +144,7 @@ function makeObservableData<T extends Dictionary<any>>(
         observerInfoMap[observerId].targetObserverIdSets.push(observerIdSet);
       }
       return storage[key];
-    }
+    },
   });
 
   if (isFunction(getter)) {
@@ -167,7 +167,7 @@ function makeObservableData<T extends Dictionary<any>>(
     Object.defineProperty(resultObj, key, {
       set(value) {
         setValue(storage, resultObj, observerIdSet, key, value);
-      }
+      },
     });
   }
 }
@@ -194,10 +194,10 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 
   Object.defineProperties(resultObj, {
     __storage__: { value: storage },
-    __propObserverIdSetMap__: { value: propObserverIdSetMap }
+    __propObserverIdSetMap__: { value: propObserverIdSetMap },
   });
 
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     makeObservableData(obj, resultObj, key, storage, propObserverIdSetMap, sync);
   });
 
@@ -205,14 +205,14 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 }
 
 function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K) {
-  Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
+  Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
     run(observerId);
   });
 }
 
 export function notify<T, K extends keyof T>(obj: T, ...keys: K[]) {
   if (isObservable(obj)) {
-    keys.forEach(key => notifyUnit(obj, key));
+    keys.forEach((key) => notifyUnit(obj, key));
   }
 }
 

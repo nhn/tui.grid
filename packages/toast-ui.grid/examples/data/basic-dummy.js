@@ -12,7 +12,7 @@ var gridData = [
     grade: '2',
     price: 10000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 436461,
@@ -26,7 +26,7 @@ var gridData = [
     grade: '3',
     price: 20000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 295651,
@@ -40,7 +40,7 @@ var gridData = [
     grade: '2',
     price: 7000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 541713,
@@ -54,7 +54,7 @@ var gridData = [
     grade: '3',
     price: 25000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 265289,
@@ -68,7 +68,7 @@ var gridData = [
     grade: '3',
     price: 15000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 555871,
@@ -82,7 +82,7 @@ var gridData = [
     grade: '2',
     price: 11000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 550571,
@@ -96,7 +96,7 @@ var gridData = [
     grade: '3',
     price: 30000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 544128,
@@ -110,7 +110,7 @@ var gridData = [
     grade: '2',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 366374,
@@ -124,7 +124,7 @@ var gridData = [
     grade: '3',
     price: 9000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 8012747,
@@ -138,7 +138,7 @@ var gridData = [
     grade: '3',
     price: 10000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 502792,
@@ -152,7 +152,7 @@ var gridData = [
     grade: '3',
     price: 18000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 294574,
@@ -166,7 +166,7 @@ var gridData = [
     grade: '3',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 317659,
@@ -180,7 +180,7 @@ var gridData = [
     grade: '2',
     price: 7000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 583551,
@@ -194,7 +194,7 @@ var gridData = [
     grade: '3',
     price: 15000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 490500,
@@ -208,7 +208,7 @@ var gridData = [
     grade: '3',
     price: 6000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 587871,
@@ -222,7 +222,7 @@ var gridData = [
     grade: '3',
     price: 20000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 504288,
@@ -236,7 +236,7 @@ var gridData = [
     grade: '1',
     price: 13000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 450720,
@@ -250,7 +250,7 @@ var gridData = [
     grade: '2',
     price: 8000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 498896,
@@ -264,7 +264,7 @@ var gridData = [
     grade: '3',
     price: 15000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 491379,
@@ -278,6 +278,6 @@ var gridData = [
     grade: '3',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
-  }
+    listenCount: 5000,
+  },
 ];

@@ -14,7 +14,7 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
 
   const { api, hideLoadingBar = false } = dataSource;
   const ajaxConfig = createAjaxConfig(dataSource);
-  Object.keys(api).forEach(key => {
+  Object.keys(api).forEach((key) => {
     api[key as keyof API] = deepMergedCopy(ajaxConfig, api[key as keyof API]!);
   });
 
@@ -35,7 +35,7 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
     setLastRequiredData,
     getLastRequiredData,
     setRequestParams,
-    getRequestParams
+    getRequestParams,
   };
 }
 
@@ -50,7 +50,7 @@ function createFallbackProvider(): DataProvider {
     reloadData: errorFn,
     setRequestParams: errorFn,
     sort: errorFn,
-    unsort: errorFn
+    unsort: errorFn,
   };
 }
 

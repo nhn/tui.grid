@@ -54,5 +54,5 @@ export const FilterButton = connect<StoreProps, OwnProps>((store, { columnName }
   activeColumnAddress: store.filterLayerState.activeColumnAddress,
   filters: store.data.filters,
   columnName,
-  offsetLeft: store.dimension.offsetLeft
+  offsetLeft: store.dimension.offsetLeft,
 }))(FilterButtonComp);

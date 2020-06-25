@@ -34,11 +34,15 @@ export function setLayerPosition(
   const totalHeight = layerHeight + childElHeight;
   const totalWidth = layerWidth || childElWidth;
 
-  layerEl.style.top = `${(layerTop + totalHeight > innerHeight - SCROLL_BAR_WIDTH
-    ? innerHeight - totalHeight - INDENT - SCROLL_BAR_WIDTH
-    : layerTop) - containerRect.top}px`;
+  layerEl.style.top = `${
+    (layerTop + totalHeight > innerHeight - SCROLL_BAR_WIDTH
+      ? innerHeight - totalHeight - INDENT - SCROLL_BAR_WIDTH
+      : layerTop) - containerRect.top
+  }px`;
 
-  layerEl.style.left = `${(left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
-    ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
-    : left) - containerRect.left}px`;
+  layerEl.style.left = `${
+    (left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
+      ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
+      : left) - containerRect.left
+  }px`;
 }

@@ -70,7 +70,7 @@ class PaginationComp extends Component<Props> {
     const {
       pageOptions,
       paginationHolder,
-      grid: { usageStatistics }
+      grid: { usageStatistics },
     } = this.props;
     const { totalCount, perPage, page, visiblePages } = pageOptions;
     const options = {
@@ -78,7 +78,7 @@ class PaginationComp extends Component<Props> {
       itemsPerPage: perPage,
       page,
       visiblePages,
-      usageStatistics
+      usageStatistics,
     };
     this.tuiPagination = new TuiPagination(this.el!, options);
     this.addEventListener();
@@ -129,7 +129,7 @@ class PaginationComp extends Component<Props> {
   public render() {
     return (
       <div
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
         class={`tui-pagination ${cls('pagination')}`}
@@ -142,5 +142,5 @@ export const Pagination = connect<StoreProps>(({ id, data }) => ({
   dataProvider: getDataProvider(id),
   paginationHolder: getPaginationManager(id),
   grid: getInstance(id),
-  eventBus: getEventBus(id)
+  eventBus: getEventBus(id),
 }))(PaginationComp);

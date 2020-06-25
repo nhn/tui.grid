@@ -108,7 +108,7 @@ class HeaderAreaComp extends Component<Props> {
       <div
         class={cls('header-area')}
         style={headerHeightStyle}
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
       >
@@ -143,7 +143,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     dimension: { headerHeight, cellBorderWidth },
     selection: { rangeBySide },
     viewport,
-    id
+    id,
   } = store;
 
   return {
@@ -153,6 +153,6 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
     grid: getInstance(id),
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
-    complexColumnHeaders
+    complexColumnHeaders,
   };
 })(HeaderAreaComp);

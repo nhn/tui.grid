@@ -8,7 +8,7 @@ beforeEach(() => {
   const columns = [{ name: 'id' }, { name: 'name' }];
   const data = [
     { id: 1, name: 'Kim', score: 90, grade: 'A' },
-    { id: 2, name: 'Lee', score: 80, grade: 'B' }
+    { id: 2, name: 'Lee', score: 80, grade: 'B' },
   ];
   cy.createGrid({ data, columns });
 });
@@ -31,7 +31,7 @@ describe('API', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
     const data = [
       { id: 1, name: 'Kim', score: 90, grade: 'A' },
-      { id: 2, name: 'Lee', score: 80, grade: 'B' }
+      { id: 2, name: 'Lee', score: 80, grade: 'B' },
     ];
     cy.createGrid({ data, columns });
   });
@@ -75,13 +75,11 @@ describe('API', () => {
   it('getFocusedCell()', () => {
     cy.gridInstance().invoke('focusAt', 0, 1);
 
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', {
-        rowKey: 0,
-        columnName: 'name',
-        value: 'Kim'
-      });
+    cy.gridInstance().invoke('getFocusedCell').should('eql', {
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim',
+    });
   });
 });
 
@@ -95,25 +93,21 @@ describe('scroll position following focused cell', () => {
     cy.createGrid({ data, columns, bodyHeight: 300 });
   });
 
-  ['focus', 'focusAt'].forEach(api => {
+  ['focus', 'focusAt'].forEach((api) => {
     const targetColumn = api === 'focus' ? 'id' : 0;
 
     it(`${api} - should move the scroll position`, () => {
       cy.gridInstance().invoke(api, 19, targetColumn);
 
       cy.getCell(19, 'id').should('be.visible');
-      cy.getRsideBody()
-        .invoke('scrollTop')
-        .should('be.greaterThan', 0);
+      cy.getRsideBody().invoke('scrollTop').should('be.greaterThan', 0);
     });
 
     it(`${api} - shouldn't move the scroll position`, () => {
       cy.gridInstance().invoke(api, 19, targetColumn, false);
 
       cy.getCell(19, 'id').should('be.not.visible');
-      cy.getRsideBody()
-        .invoke('scrollTop')
-        .should('eq', 0);
+      cy.getRsideBody().invoke('scrollTop').should('eq', 0);
     });
   });
 });
@@ -123,11 +117,11 @@ describe('should not display the focus layer', () => {
     const data = [
       { name: 'Kim', age: 10 },
       { name: 'Lee', age: 20 },
-      { name: 'Ryu', age: 30, _attributes: { height: 0 } }
+      { name: 'Ryu', age: 30, _attributes: { height: 0 } },
     ];
     const columns = [
       { name: 'name', editor: 'text' },
-      { name: 'age', editor: 'text' }
+      { name: 'age', editor: 'text' },
     ];
 
     cy.createGrid({ data, columns });

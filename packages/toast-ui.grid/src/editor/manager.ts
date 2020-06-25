@@ -15,5 +15,5 @@ export const editorMap: EditorMap = {
   checkbox: [CheckboxEditor, { type: 'checkbox' }],
   radio: [CheckboxEditor, { type: 'radio' }],
   select: [SelectEditor],
-  datePicker: [DatePickerEditor]
+  datePicker: [DatePickerEditor],
 };

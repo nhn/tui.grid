@@ -9,16 +9,16 @@ before(() => {
 function createGridWithCallback(beforeCallback: Function, afterCallback: Function) {
   const data = [
     { name: 'Lee', age: 20 },
-    { name: 'Han', age: 28 }
+    { name: 'Han', age: 28 },
   ];
   const columns = [
     {
       name: 'name',
       editor: 'text',
       onBeforeChange: beforeCallback,
-      onAfterChange: afterCallback
+      onAfterChange: afterCallback,
     },
-    { name: 'age' }
+    { name: 'age' },
   ];
   cy.createGrid({ data, columns });
 }
@@ -27,11 +27,11 @@ function createGridWithEditingFinishEvent(stub: Function) {
   const data = [
     { name: 'Lee', age: 20 },
     { name: 'Han', age: 28 },
-    { name: 'Ryu', age: 22 }
+    { name: 'Ryu', age: 22 },
   ];
   const columns = [
     { name: 'name', editor: 'text' },
-    { name: 'age', editor: 'text' }
+    { name: 'age', editor: 'text' },
   ];
 
   cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
@@ -42,22 +42,20 @@ describe('with interaction', () => {
   beforeEach(() => {
     const data = [
       { name: 'Lee', age: 20 },
-      { name: 'Han', age: 28 }
+      { name: 'Han', age: 28 },
     ];
     const columns = [
       {
         name: 'name',
-        editor: 'text'
+        editor: 'text',
       },
-      { name: 'age' }
+      { name: 'age' },
     ];
     cy.createGrid({ data, columns });
   });
 
   it('should render the editing layer', () => {
-    cy.getCell(1, 'name')
-      .click()
-      .trigger('dblclick');
+    cy.getCell(1, 'name').click().trigger('dblclick');
 
     cy.getByCls('layer-editing').should('be.visible');
   });
@@ -125,7 +123,7 @@ describe('onBeforeChange, onAfterChange', () => {
 });
 
 describe('custom editor', () => {
-  ['editor', 'editor type'].forEach(option => {
+  ['editor', 'editor type'].forEach((option) => {
     it(`create custom editor by ${option} property`, () => {
       const stub = cy.stub();
       const CustomLayerEditor = createCustomLayerEditor(stub);
@@ -133,14 +131,14 @@ describe('custom editor', () => {
       const data = [
         { name: 'Lee', age: 20 },
         { name: 'Han', age: 28 },
-        { name: 'Ryu', age: 22 }
+        { name: 'Ryu', age: 22 },
       ];
       const columns = [
         {
           name: 'name',
-          editor: option === 'editor' ? CustomLayerEditor : { type: CustomLayerEditor }
+          editor: option === 'editor' ? CustomLayerEditor : { type: CustomLayerEditor },
         },
-        { name: 'age' }
+        { name: 'age' },
       ];
 
       cy.createGrid({ data, columns });
@@ -163,34 +161,34 @@ describe('API', () => {
       type: 'finishEditing(rowKey, columnName, value)',
       params: [1, 'name', 'Choi'],
       editedValue: 'Kim',
-      result: 'Choi'
+      result: 'Choi',
     },
     {
       type: 'finishEditing(rowKey, columnName)',
       params: [1, 'name'],
       editedValue: 'Kim',
-      result: 'Kim'
+      result: 'Kim',
     },
     {
       type: 'finishEditing()',
       params: [],
       editedValue: 'Kim',
-      result: 'Kim'
-    }
+      result: 'Kim',
+    },
   ];
 
   beforeEach(() => {
     const data = [
       { name: 'Lee', age: 20 },
       { name: 'Han', age: 28 },
-      { name: 'Ryu', age: 22 }
+      { name: 'Ryu', age: 22 },
     ];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
     cy.createGrid({ data, columns });
   });
 
-  ['startEditing', 'startEditingAt'].forEach(api => {
+  ['startEditing', 'startEditingAt'].forEach((api) => {
     it(`${api}()`, () => {
       if (api === 'startEditing') {
         cy.gridInstance().invoke(api, 1, 'name');
@@ -202,7 +200,7 @@ describe('API', () => {
     });
   });
 
-  listForFinishEditingTest.forEach(obj => {
+  listForFinishEditingTest.forEach((obj) => {
     const { type, params, editedValue, result } = obj;
     it(type, () => {
       cy.gridInstance().invoke('startEditing', 0, 'name');
@@ -228,7 +226,7 @@ describe('editable, disable, hidden', () => {
       { name: 'Lee', age: 20 },
       { name: 'Han', age: 28 },
       { name: 'Ryu', age: 22 },
-      { name: 'Kim', age: 30, _attributes: { height: 0 } }
+      { name: 'Kim', age: 30, _attributes: { height: 0 } },
     ];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
@@ -277,9 +275,7 @@ describe('editable, disable, hidden', () => {
 
     cy.gridInstance().invoke('finishEditing', 3, 'age', 11);
 
-    cy.gridInstance()
-      .invoke('getValue', 3, 'age')
-      .should('eq', 30);
+    cy.gridInstance().invoke('getValue', 3, 'age').should('eq', 30);
   });
 });
 
@@ -295,16 +291,14 @@ it('should do synchronous rendering of the editing cell', () => {
 
   cy.gridInstance().invoke('startEditing', 1, 'name');
 
-  cy.getByCls('content-text')
-    .invoke('val')
-    .should('eq', 'Han');
+  cy.getByCls('content-text').invoke('val').should('eq', 'Han');
 
   cy.wrap(stub)
     .should('be.calledOnce')
     .and('be.calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Kim' });
 });
 
-['rowHeader', 'columnHeader'].forEach(type => {
+['rowHeader', 'columnHeader'].forEach((type) => {
   it(`finish editing when ${type} is clicked`, () => {
     const stub = cy.stub();
     createGridWithEditingFinishEvent(stub);
@@ -319,9 +313,7 @@ it('should do synchronous rendering of the editing cell', () => {
 
     cy.get('@targetCell').click();
 
-    cy.wrap(stub)
-      .should('be.calledOnce')
-      .and('calledWithMatch', { rowKey: 1, columnName: 'name' });
+    cy.wrap(stub).should('be.calledOnce').and('calledWithMatch', { rowKey: 1, columnName: 'name' });
   });
 });
 
@@ -338,18 +330,18 @@ describe('select, checkbox, radio editor', () => {
             listItems: [
               { text: 'A', value: '1' },
               { text: 'B', value: '2' },
-              { text: 'C', value: '3' }
-            ]
-          }
-        }
-      }
+              { text: 'C', value: '3' },
+            ],
+          },
+        },
+      },
     ];
 
     cy.createGrid({ data, columns });
   }
 
   context('UI', () => {
-    ['radio', 'select', 'checkbox'].forEach(type => {
+    ['radio', 'select', 'checkbox'].forEach((type) => {
       it(`initial value applied in ${type} editor`, () => {
         createGridWithType(type);
 
@@ -368,16 +360,12 @@ describe('select, checkbox, radio editor', () => {
         cy.gridInstance().invoke('startEditing', 1, 'name');
 
         if (type === 'select') {
-          cy.get('.tui-select-box-dropdown')
-            .eq(0)
-            .click();
+          cy.get('.tui-select-box-dropdown').eq(0).click();
           cy.getCellByIdx(0, 0).click();
 
           cy.getCellByIdx(0, 0).should('have.text', 'A');
         } else {
-          cy.getByCls(`editor-label-icon-${type}`)
-            .eq(0)
-            .click();
+          cy.getByCls(`editor-label-icon-${type}`).eq(0).click();
           cy.getCellByIdx(0, 0).click();
 
           if (type === 'radio') {
@@ -422,9 +410,7 @@ describe('select, checkbox, radio editor', () => {
       createGridWithType('radio');
       cy.gridInstance().invoke('startEditing', 1, 'name');
 
-      cy.getByCls('editor-checkbox')
-        .eq(2)
-        .trigger('mouseover');
+      cy.getByCls('editor-checkbox').eq(2).trigger('mouseover');
 
       assertOptionHighlighted(3);
     });

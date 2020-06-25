@@ -10,7 +10,7 @@ type Options = {
 };
 
 export default {
-  title: 'Column'
+  title: 'Column',
 };
 
 const columns = [
@@ -18,7 +18,7 @@ const columns = [
   { name: 'artist', minWidth: 150 },
   { name: 'type', minWidth: 150 },
   { name: 'release', minWidth: 150 },
-  { name: 'genre', minWidth: 150 }
+  { name: 'genre', minWidth: 150 },
 ];
 
 function createGrid(options: Options) {
@@ -29,8 +29,8 @@ function createGrid(options: Options) {
       artist: 'Birdy',
       release: '2016.03.26',
       type: 'Deluxe',
-      genre: 'Pop'
-    }
+      genre: 'Pop',
+    },
   ];
   el.style.width = '700px';
 
@@ -73,26 +73,26 @@ export const alignAndVerticalAlign = () => {
         name: 'Beautiful Lies',
         artist: 'Birdy',
         release: '2016.03.26',
-        type: 'Deluxe'
+        type: 'Deluxe',
       },
       {
         name: 'X',
         artist: 'Ed Sheeran',
         release: '2014.06.24',
-        type: 'Deluxe'
+        type: 'Deluxe',
       },
       {
         name: 'Moves Like Jagger',
         release: '2011.08.08',
         artist: 'Maroon5',
-        type: 'Single'
-      }
+        type: 'Single',
+      },
     ],
     columns: [
       { name: 'name' },
       { name: 'artist', align: 'center', valign: 'top' },
-      { name: 'type', align: 'right', valign: 'bottom' }
-    ]
+      { name: 'type', align: 'right', valign: 'bottom' },
+    ],
   });
   return el;
 };
@@ -119,12 +119,12 @@ export const ellipsis = () => {
       name: 'Beautiful Lies',
       artist: 'Birdy',
       type:
-        'grid         example\ngrid newline example\n\ngrid newline example\n\ngrid newline example\n\n'
-    }
+        'grid         example\ngrid newline example\n\ngrid newline example\n\ngrid newline example\n\n',
+    },
   ];
   const { el } = createGrid({
     data,
-    columns: [{ name: 'name' }, { name: 'artist' }, { name: 'type', ellipsis: true }]
+    columns: [{ name: 'name' }, { name: 'artist' }, { name: 'type', ellipsis: true }],
   });
   return el;
 };

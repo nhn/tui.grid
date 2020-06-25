@@ -3,13 +3,13 @@ import { OptGrid, OptColumn } from '../types/options';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Sort'
+  title: 'Sort',
 };
 
 const data = [
   { A: 'A', B: 'B', C: 'C' },
   { A: 'B', B: 'A', C: 'C' },
-  { A: 'C', B: 'B', C: 'A' }
+  { A: 'C', B: 'B', C: 'A' },
 ];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
@@ -18,20 +18,20 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
       name: 'A',
       header: 'Default Sort Button',
       minWidth: 150,
-      sortable: true
+      sortable: true,
     },
     {
       name: 'B',
       header: 'ASC Button(Multi First)',
       minWidth: 150,
-      sortable: true
+      sortable: true,
     },
     {
       name: 'C',
       header: 'DESC Button(Multi Second)',
       minWidth: 150,
-      sortable: true
-    }
+      sortable: true,
+    },
   ];
 
   return { data, columns };

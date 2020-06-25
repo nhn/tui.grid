@@ -36,11 +36,11 @@ export function createEventBus(id: GridId) {
       if (listenersMap[eventName]) {
         const instance = getInstance(id);
         gridEvent.setInstance(instance);
-        listenersMap[eventName].forEach(func => {
+        listenersMap[eventName].forEach((func) => {
           func(gridEvent);
         });
       }
-    }
+    },
   };
 
   return eventBusMap[id];

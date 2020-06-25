@@ -57,7 +57,7 @@ export class FilterLayerInnerComp extends Component<Props> {
       renderSecondFilter,
       dispatch,
       currentColumnActive,
-      filterState
+      filterState,
     } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
     const { left } = columnAddress;
@@ -112,7 +112,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>(
     const { allColumnMap } = column;
 
     const currentColumnActive =
-      !!filters && some(item => item.columnName === columnAddress.name, filters);
+      !!filters && some((item) => item.columnName === columnAddress.name, filters);
 
     const renderSecondFilter = !!(
       filterState.type !== 'select' &&
@@ -126,7 +126,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>(
       columnAddress,
       filters,
       renderSecondFilter,
-      currentColumnActive
+      currentColumnActive,
     };
   }
 )(FilterLayerInnerComp);

@@ -10,14 +10,12 @@ const columns: OptColumn[] = [
   { name: 'numberA', minWidth: 150, sortable: true, sortingType: 'desc' },
   { name: 'stringNumberA', minWidth: 150, sortable: true, sortingType: 'asc' },
   { name: 'mixedValue', minWidth: 150, sortable: true },
-  { name: 'nonSortable', minWidth: 150 }
+  { name: 'nonSortable', minWidth: 150 },
 ];
 
 function createSortButtonAlias() {
   ['first', 'second', 'third'].forEach((alias, index) => {
-    cy.getByCls('btn-sorting')
-      .eq(index)
-      .as(alias);
+    cy.getByCls('btn-sorting').eq(index).as(alias);
   });
 }
 
@@ -30,13 +28,13 @@ function assertHaveNotSortingBtnClass(target: string, className: ClassNameType) 
 }
 
 function assertOriginData(columnName: string) {
-  const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
+  const expectValues = (data as Dictionary<any>[]).map((col) => String(col[columnName]));
 
   cy.getColumnCells(columnName).should('have.columnData', expectValues);
 }
 
 function assertSortedData(columnName: string, ascending = true) {
-  const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
+  const expectValues = (data as Dictionary<any>[]).map((col) => String(col[columnName]));
   expectValues.sort((a, b) => (ascending ? compare(a, b) : -compare(a, b)));
 
   cy.getColumnCells(columnName).should('have.columnData', expectValues);
@@ -66,7 +64,7 @@ describe('basic sort', () => {
     createSortButtonAlias();
   });
 
-  ['asc', 'desc'].forEach(sortType => {
+  ['asc', 'desc'].forEach((sortType) => {
     const alias = sortType === 'asc' ? '@first' : '@second';
     const columnName = sortType === 'asc' ? 'alphabetA' : 'alphabetB';
     const ascending = sortType === 'asc';
@@ -162,7 +160,7 @@ describe('basic sort', () => {
   });
 });
 
-['API', 'UI'].forEach(type => {
+['API', 'UI'].forEach((type) => {
   describe(`multiple sort by ${type}`, () => {
     beforeEach(() => {
       cy.createGrid({ data, columns });
@@ -204,7 +202,7 @@ describe('basic sort', () => {
   });
 });
 
-['asc', 'desc'].forEach(sortType => {
+['asc', 'desc'].forEach((sortType) => {
   const ascending = sortType === 'asc';
 
   describe('specific type sort', () => {
@@ -240,7 +238,7 @@ describe('data is unsorted by other API', () => {
     createSortButtonAlias();
   });
 
-  ['setColumns', 'hideColumn', 'resetData'].forEach(api => {
+  ['setColumns', 'hideColumn', 'resetData'].forEach((api) => {
     it(`data is unsorted when call ${api} API`, () => {
       cy.gridInstance().invoke('sort', 'alphabetA', false);
 
@@ -277,9 +275,9 @@ it('should get proper sortState after calling getSortState()', () => {
       columns: [
         {
           ascending: true,
-          columnName: 'sortKey'
-        }
-      ]
+          columnName: 'sortKey',
+        },
+      ],
     });
 
   cy.gridInstance().invoke('sort', 'alphabetA', true);
@@ -291,9 +289,9 @@ it('should get proper sortState after calling getSortState()', () => {
       columns: [
         {
           ascending: true,
-          columnName: 'alphabetA'
-        }
-      ]
+          columnName: 'alphabetA',
+        },
+      ],
     });
 });
 
@@ -301,7 +299,7 @@ it('cannot sort the data on non sortable column', () => {
   const col: OptColumn[] = [
     { name: 'alphabetA', minWidth: 150, sortable: true },
     { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'asc' },
-    { name: 'numberA', minWidth: 150 }
+    { name: 'numberA', minWidth: 150 },
   ];
   cy.createGrid({ data, columns: col });
 
@@ -393,21 +391,21 @@ describe('sort the data with custom comparator', () => {
         minWidth: 150,
         sortable: true,
         sortingType: 'desc',
-        comparator: comparatorA
+        comparator: comparatorA,
       },
       {
         name: 'numberA',
         minWidth: 150,
         sortable: true,
         sortingType: 'desc',
-        comparator: comparatorB
-      }
+        comparator: comparatorB,
+      },
     ];
     cy.createGrid({ data, columns: columnWithCustomComparator });
     createSortButtonAlias();
   });
 
-  ['API', 'UI'].forEach(type => {
+  ['API', 'UI'].forEach((type) => {
     it(`should sort the data in ascending order by ${type}`, () => {
       if (type === 'API') {
         cy.gridInstance().invoke('sort', 'alphabetA', true);

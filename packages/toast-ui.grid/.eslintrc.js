@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: true
+    node: true,
   },
   parser: '@typescript-eslint/parser',
   plugins: ['prettier', 'react', '@typescript-eslint'],
@@ -11,10 +11,10 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
     'plugin:react/recommended',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
   ],
   parserOptions: {
-    parser: 'typescript-eslint-parser'
+    parser: 'typescript-eslint-parser',
   },
   rules: {
     'prefer-destructuring': 0,
@@ -39,12 +39,12 @@ module.exports = {
     'no-new': 0,
     'spaced-comment': 0,
     curly: 2,
-    complexity: 0
+    complexity: 0,
   },
   settings: {
     react: {
       pragma: 'h',
-      version: '16.3'
-    }
-  }
+      version: '16.3',
+    },
+  },
 };

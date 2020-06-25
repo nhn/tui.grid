@@ -18,16 +18,16 @@ Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx, side = 'R') => {
 });
 
 Cypress.Commands.add('getByCls', (...names) =>
-  cy.get(names.map(name => `.${cls(name)}`).join(' '))
+  cy.get(names.map((name) => `.${cls(name)}`).join(' '))
 );
 
-Cypress.Commands.add('getByTestId', testId => cy.get(`[data-testid="${testId}"]`));
+Cypress.Commands.add('getByTestId', (testId) => cy.get(`[data-testid="${testId}"]`));
 
 Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl = null) => {
-  cy.document().then(doc => {
+  cy.document().then((doc) => {
     doc.body.innerHTML = '';
   });
-  return cy.window().then(win => {
+  return cy.window().then((win) => {
     const { document, tui } = win;
     const el = document.createElement('div');
     const styles = { width: '800px', ...containerStyle };
@@ -54,7 +54,7 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl =
 
     win.grid = new tui.Grid({ el, ...gridOptions });
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       requestAnimationFrame(() => {
         resolve(win.grid);
       });
@@ -65,7 +65,7 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl =
 Cypress.Commands.add('gridInstance', () => cy.window().its('grid'));
 
 Cypress.Commands.add('createStyle', (style = '') => {
-  return cy.window().then(win => {
+  return cy.window().then((win) => {
     const { document } = win;
     const styleElement = document.createElement('style');
     styleElement.innerHTML = style;
@@ -73,7 +73,7 @@ Cypress.Commands.add('createStyle', (style = '') => {
   });
 });
 
-Cypress.Commands.add('getHeaderCell', columnName =>
+Cypress.Commands.add('getHeaderCell', (columnName) =>
   cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`)
 );
 
@@ -85,15 +85,17 @@ Cypress.Commands.add('getRowHeaderCell', (rowKey, columnName) =>
   )
 );
 
-Cypress.Commands.add('getRowHeaderCells', columnName => {
+Cypress.Commands.add('getRowHeaderCells', (columnName) => {
   return cy.get(`td[data-column-name=${columnName}]`);
 });
 
-Cypress.Commands.add('getColumnCells', columnName => cy.get(`td[data-column-name=${columnName}]`));
+Cypress.Commands.add('getColumnCells', (columnName) =>
+  cy.get(`td[data-column-name=${columnName}]`)
+);
 
-Cypress.Commands.add('getRow', rowKey => cy.get(`td[data-row-key=${rowKey}]`).parent());
+Cypress.Commands.add('getRow', (rowKey) => cy.get(`td[data-row-key=${rowKey}]`).parent());
 
-Cypress.Commands.add('getCells', rowKey => cy.get(`td[data-row-key=${rowKey}]`));
+Cypress.Commands.add('getCells', (rowKey) => cy.get(`td[data-row-key=${rowKey}]`));
 
 Cypress.Commands.add('getRsideBody', () => cy.getByCls('rside-area', 'body-area'));
 
@@ -101,7 +103,7 @@ Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
   cy.getByCls('column-resize-handle')
     .eq(index)
     .trigger('mousedown')
-    .then($el => {
+    .then(($el) => {
       const { left, top } = $el.offset();
       const pageX = left + distance + CELL_BORDER_WIDTH + RESIZER_HALF_WIDTH;
       const pageY = top;
@@ -119,7 +121,7 @@ Cypress.Commands.add('focusAndWait', (rowKey, columnName) => {
 });
 
 Cypress.Commands.add('destroyGrid', () => {
-  return cy.window().then(win => {
+  return cy.window().then((win) => {
     delete win.grid;
   });
 });

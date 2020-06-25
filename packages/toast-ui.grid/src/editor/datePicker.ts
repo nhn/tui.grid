@@ -53,7 +53,7 @@ export class DatePickerEditor implements CellEditor {
     const {
       grid: { usageStatistics },
       columnInfo,
-      value
+      value,
     } = props;
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
@@ -93,9 +93,9 @@ export class DatePickerEditor implements CellEditor {
       type: 'date',
       input: {
         element: this.inputEl,
-        format: options.format
+        format: options.format,
       },
-      usageStatistics
+      usageStatistics,
     };
 
     this.datePickerEl = new TuiDatePicker(layer, deepMergedCopy(defaultOptions, options));

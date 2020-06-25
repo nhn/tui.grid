@@ -1,5 +1,5 @@
 import { HTMLAttributes, Component } from 'react';
-import TuiGrid,{ GridOptions, GridEventListener } from 'tui-grid';
+import TuiGrid, { GridOptions, GridEventListener } from 'tui-grid';
 
 type EventNameMapping = {
   onClick: 'click';

@@ -25,7 +25,7 @@ function getOwnSideColumnRange(
   side: Side,
   visibleFrozenCount: number
 ): Range | null {
-  const [start, end] = columnRange.map(columnIdx => columnIdx);
+  const [start, end] = columnRange.map((columnIdx) => columnIdx);
 
   if (side === 'L' && start < visibleFrozenCount) {
     return [start, Math.min(end, visibleFrozenCount - 1)];
@@ -88,7 +88,7 @@ export function create({
   columnCoords,
   column: columnInfo,
   dimension,
-  data
+  data,
 }: SelectionOption): Observable<Selection> {
   return observable({
     inputRange: null,
@@ -121,7 +121,7 @@ export function create({
 
       return {
         L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
-        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
+        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) },
       };
     },
 
@@ -141,20 +141,20 @@ export function create({
       if (leftRange.column) {
         leftSideStyles = {
           ...getVerticalStyles(leftRange.row, rowOffsets, rowHeights, cellBorderWidth),
-          ...getHorizontalStyles(leftRange.column, columnWidths, 'L', cellBorderWidth)
+          ...getHorizontalStyles(leftRange.column, columnWidths, 'L', cellBorderWidth),
         };
       }
 
       if (rightRange.column) {
         rightSideStyles = {
           ...getVerticalStyles(rightRange.row, rowOffsets, rowHeights, cellBorderWidth),
-          ...getHorizontalStyles(rightRange.column, columnWidths, 'R', cellBorderWidth)
+          ...getHorizontalStyles(rightRange.column, columnWidths, 'R', cellBorderWidth),
         };
       }
 
       return {
         L: leftSideStyles,
-        R: rightSideStyles
+        R: rightSideStyles,
       };
     },
 
@@ -164,7 +164,7 @@ export function create({
       }
       const { rowHeaderCount } = columnInfo;
       const {
-        range: { row, column }
+        range: { row, column },
       } = this;
 
       const columnStartIndex = Math.max(column[0] - rowHeaderCount, 0);
@@ -172,7 +172,7 @@ export function create({
 
       return {
         row,
-        column: [columnStartIndex, columnEndIndex] as Range
+        column: [columnStartIndex, columnEndIndex] as Range,
       };
     },
 
@@ -188,11 +188,11 @@ export function create({
         const prevPageRowCount = perPage * (page - 1);
         return {
           row: [row[0] + prevPageRowCount, row[1] + prevPageRowCount],
-          column
+          column,
         };
       }
 
       return this.range;
-    }
+    },
   });
 }

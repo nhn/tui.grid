@@ -8,7 +8,7 @@ import {
   BodySize,
   OverflowInfo,
   OverflowType,
-  ElementInfo
+  ElementInfo,
 } from '@t/dispatch';
 import { findOffsetIndex } from '../helper/common';
 
@@ -34,7 +34,7 @@ function getScrolledPosition(
 
   return {
     x: scrolledPositionX,
-    y: scrolledPositionY
+    y: scrolledPositionY,
   };
 }
 
@@ -59,7 +59,7 @@ function judgeOverflow(
 
   return {
     x: overflowX,
-    y: overflowY
+    y: overflowY,
   };
 }
 
@@ -71,7 +71,7 @@ function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimens
     cellBorderWidth,
     headerHeight,
     summaryHeight,
-    summaryPosition
+    summaryPosition,
   } = dimension;
   const adjustedSummaryHeight = summaryPosition === 'top' ? summaryHeight : 0;
 
@@ -79,7 +79,7 @@ function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimens
     x: pageX - offsetLeft,
     y:
       pageY -
-      (offsetTop + headerHeight + adjustedSummaryHeight + cellBorderWidth + tableBorderWidth)
+      (offsetTop + headerHeight + adjustedSummaryHeight + cellBorderWidth + tableBorderWidth),
   };
 }
 
@@ -102,7 +102,7 @@ export function getColumnNameRange(
   elementInfo: ElementInfo
 ) {
   const {
-    column: { allColumns }
+    column: { allColumns },
   } = store;
   const { scrollTop, scrollLeft } = elementInfo;
 

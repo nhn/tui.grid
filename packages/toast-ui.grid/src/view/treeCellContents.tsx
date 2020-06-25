@@ -90,7 +90,7 @@ export const TreeCellContents = connect<StoreProps, OwnProps>(
       indentWidth,
       leaf,
       expanded,
-      useIcon
+      useIcon,
     };
   }
 )(TreeCellContentsComp);

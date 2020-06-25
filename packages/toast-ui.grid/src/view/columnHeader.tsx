@@ -85,12 +85,12 @@ export class ColumnHeader extends Component<Props> {
       name,
       headerAlign: textAlign,
       headerVAlign: verticalAlign,
-      headerRenderer
+      headerRenderer,
     } = columnInfo;
 
     return (
       <th
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
         data-column-name={name}
@@ -104,7 +104,7 @@ export class ColumnHeader extends Component<Props> {
         {...(!!colspan && { colspan })}
         {...(!!rowspan && { rowspan })}
       >
-        {['checkbox', 'sortingBtn', 'sortingOrder', 'filter'].map(type => this.getElement(type))}
+        {['checkbox', 'sortingBtn', 'sortingOrder', 'filter'].map((type) => this.getElement(type))}
       </th>
     );
   }
