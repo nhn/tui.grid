@@ -269,6 +269,21 @@ describe('should API is executed properly on lazy observable data', () => {
     cy.getCellByIdx(0, 1).should('have.text', 'Snoop Dogg');
     cy.getCellByIdx(0, 2).should('have.text', 'EP');
   });
+
+  it('removeRow()', () => {
+    cy.gridInstance().invoke('removeRow', 0);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['X', 'Ed Sheeran', 'Deluxe'],
+      ['Moves Like Jagger', 'Maroon5', 'Single'],
+      ['A Head Full Of Dreams', 'Coldplay', 'Deluxe'],
+      ['21', 'Adele', 'Deluxe'],
+      ['Warm On A Cold Night', 'HONNE', 'EP'],
+      ['Take Me To The Alley', 'Gregory Porter', 'Deluxe'],
+      ['Make Out', 'LANY', 'EP'],
+      ['Get Lucky', 'Daft Punk', 'Single']
+    ]);
+  });
 });
 
 describe('should API is executed properly on lazy observable data(tree)', () => {
