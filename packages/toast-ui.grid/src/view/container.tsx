@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { EditingEvent } from '@t/store/focus';
 import { SummaryPosition } from '@t/store/summary';
-import { ViewRow } from '@t/store/data';
+import { ViewRow, PageOptions } from '@t/store/data';
 import { RenderState } from '@t/store/renderState';
 import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
@@ -37,6 +37,7 @@ interface StoreProps {
   summaryPosition: SummaryPosition;
   showLeftSide: boolean;
   viewData: ViewRow[];
+  pageOptions: PageOptions;
   eventBus: EventBus;
   scrollX: boolean;
   scrollY: boolean;
@@ -324,11 +325,11 @@ export class ContainerComp extends Component<Props> {
       scrollXHeight,
       showLeftSide,
       scrollX,
-      scrollY
+      scrollY,
+      pageOptions
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
-
     return (
       <div
         {...attrs}
@@ -346,6 +347,7 @@ export class ContainerComp extends Component<Props> {
           this.el = el;
         }}
       >
+        {(!!pageOptions.position && pageOptions.position === 'top') && <Pagination />}
         <div
           class={cls(
             'content-area',
@@ -364,7 +366,7 @@ export class ContainerComp extends Component<Props> {
         {heightResizable && <HeightResizeHandle />}
         <StateLayer />
         <Clipboard />
-        <Pagination />
+        {(!pageOptions.position || pageOptions.position === 'bottom') && <Pagination />}
         <FilterLayer />
       </div>
     );
@@ -386,6 +388,7 @@ export const Container = connect<StoreProps, OwnProps>(
     showLeftSide: !!columnCoords.areaWidth.L,
     editingEvent: focus.editingEvent,
     viewData: data.viewData,
+    pageOptions: data.pageOptions,
     eventBus: getEventBus(id),
     scrollX: dimension.scrollX,
     scrollY: dimension.scrollY,
