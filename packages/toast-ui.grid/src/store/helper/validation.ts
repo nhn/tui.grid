@@ -3,7 +3,7 @@ import {
   Validation,
   Column,
   CustomValidator,
-  ValidationResult,
+  ErrorInfo,
   CustomValidatorResultWithMeta
 } from '@t/store/column';
 import { RowKey, CellValue, Row } from '@t/store/data';
@@ -142,10 +142,10 @@ function validateDataUniqueness(
   id: number,
   value: CellValue,
   columnName: string,
-  invalidStates: ValidationResult[]
+  invalidStates: ErrorInfo[]
 ) {
   if (hasDuplicateValue(id, columnName, value)) {
-    invalidStates.push({ errorCode: 'UNIQUE' });
+    invalidStates.push({ code: 'UNIQUE' });
   }
 
   // prevent recursive call of 'validateDataUniqueness' when scrolling or manipulating the data
@@ -178,7 +178,7 @@ function validateCustomValidator(
   value: CellValue,
   columnName: string,
   validatorFn: CustomValidator,
-  invalidStates: ValidationResult[]
+  invalidStates: ErrorInfo[]
 ) {
   const originRow = omit(
     getOriginObject(row as Observable<Row>),
@@ -195,13 +195,13 @@ function validateCustomValidator(
       : result) as CustomValidatorResultWithMeta;
 
     if (!valid) {
-      invalidStates.push({ errorCode: 'VALIDATOR_FN', ...meta });
+      invalidStates.push({ code: 'VALIDATOR_FN', ...meta });
     }
   });
 }
 
 export function getValidationCode({ id, value, row, columnName, validation }: ValidationOption) {
-  const invalidStates: ValidationResult[] = [];
+  const invalidStates: ErrorInfo[] = [];
 
   if (!validation) {
     return invalidStates;
@@ -210,7 +210,7 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
   const { required, dataType, min, max, regExp, unique, validatorFn } = validation;
 
   if (required && isBlank(value)) {
-    invalidStates.push({ errorCode: 'REQUIRED' });
+    invalidStates.push({ code: 'REQUIRED' });
   }
 
   if (unique) {
@@ -222,25 +222,25 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
   }
 
   if (dataType === 'string' && !isString(value)) {
-    invalidStates.push({ errorCode: 'TYPE_STRING' });
+    invalidStates.push({ code: 'TYPE_STRING' });
   }
 
   if (regExp && isString(value) && !regExp.test(value)) {
-    invalidStates.push({ errorCode: 'REGEXP', regExp });
+    invalidStates.push({ code: 'REGEXP', regExp });
   }
 
   const numberValue = convertToNumber(value);
 
   if (dataType === 'number' && !isNumber(numberValue)) {
-    invalidStates.push({ errorCode: 'TYPE_NUMBER' });
+    invalidStates.push({ code: 'TYPE_NUMBER' });
   }
 
   if (isNumber(min) && isNumber(numberValue) && numberValue < min) {
-    invalidStates.push({ errorCode: 'MIN', min });
+    invalidStates.push({ code: 'MIN', min });
   }
 
   if (isNumber(max) && isNumber(numberValue) && numberValue > max) {
-    invalidStates.push({ errorCode: 'MAX', max });
+    invalidStates.push({ code: 'MAX', max });
   }
 
   return invalidStates;

@@ -15,12 +15,15 @@ export function getInvalidRows(store: Store) {
     );
 
     if (invalidColumns.length) {
-      const errors = invalidColumns.map(({ name }) => ({
-        columnName: name,
-        errorInfo: valueMap[name].invalidStates,
-        // @TODO: errorCode will be deprecated. errorInfo can replace this property
-        errorCode: valueMap[name].invalidStates.map(info => info.errorCode)
-      }));
+      const errors = invalidColumns.map(({ name }) => {
+        const { invalidStates } = valueMap[name];
+
+        return {
+          columnName: name,
+          errorInfo: invalidStates,
+          errorCode: invalidStates.map(({ code }) => code)
+        };
+      });
 
       invalidRows.push({ rowKey, errors });
     }

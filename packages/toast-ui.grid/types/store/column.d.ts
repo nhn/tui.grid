@@ -14,7 +14,7 @@ export type AlignType = 'left' | 'center' | 'right';
 export type Formatter = ((props: FormatterProps) => string) | string;
 export type RowHeaderType = 'rowNum' | 'checkbox';
 export type SortingType = 'asc' | 'desc';
-export type ValidationType =
+export type ErrorCode =
   | 'REQUIRED'
   | 'TYPE_STRING'
   | 'TYPE_NUMBER'
@@ -23,8 +23,8 @@ export type ValidationType =
   | 'REGEXP'
   | 'VALIDATOR_FN'
   | 'UNIQUE';
-export type ValidationResult = {
-  errorCode: ValidationType;
+export type ErrorInfo = {
+  code: ErrorCode;
 } & Record<string, any>;
 export type CustomValidatorResultWithMeta = { valid: boolean; meta: Record<string, any> };
 export type CustomValidator = (
@@ -116,8 +116,8 @@ export interface ResizedColumn {
 
 export interface InvalidColumn {
   columnName: string;
-  errorCode: ValidationType[];
-  errorInfo: ValidationResult[];
+  errorCode: ErrorCode[];
+  errorInfo: ErrorInfo[];
 }
 
 export interface CommonColumnInfo {

@@ -1,6 +1,6 @@
 import { Dictionary } from '../options';
 import { Filter } from './filterLayerState';
-import { InvalidColumn, Comparator, ValidationResult } from './column';
+import { InvalidColumn, Comparator, ErrorInfo } from './column';
 import { Range } from './selection';
 
 // Add object type for in case of handling object data in custom renderer
@@ -79,7 +79,7 @@ export interface ViewRow {
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
-  invalidStates: ValidationResult[];
+  invalidStates: ErrorInfo[];
   formattedValue: string;
   value: CellValue;
   className: string;

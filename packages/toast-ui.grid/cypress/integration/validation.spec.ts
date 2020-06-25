@@ -47,7 +47,7 @@ describe('should check the validation of cell - regExp', () => {
             {
               columnName: 'name',
               errorCode: ['REGEXP'],
-              errorInfo: [{ errorCode: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
             }
           ],
           rowKey: 0
@@ -57,7 +57,7 @@ describe('should check the validation of cell - regExp', () => {
             {
               columnName: 'name',
               errorCode: ['REGEXP'],
-              errorInfo: [{ errorCode: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
             }
           ],
           rowKey: 1
@@ -138,7 +138,7 @@ describe('should check the validation of cell - dataType: number', () => {
             {
               columnName: 'price',
               errorCode: ['MAX'],
-              errorInfo: [{ errorCode: 'MAX', max: 4000 }]
+              errorInfo: [{ code: 'MAX', max: 4000 }]
             }
           ],
           rowKey: 0
@@ -160,7 +160,7 @@ describe('should check the validation of cell - dataType: number', () => {
             {
               columnName: 'price',
               errorCode: ['MIN'],
-              errorInfo: [{ errorCode: 'MIN', min: 5000 }]
+              errorInfo: [{ code: 'MIN', min: 5000 }]
             }
           ],
           rowKey: 1
@@ -289,7 +289,7 @@ describe('should check the validation of cell - validatorFn', () => {
             {
               columnName: 'price',
               errorCode: ['VALIDATOR_FN'],
-              errorInfo: [{ errorCode: 'VALIDATOR_FN', customCode: 'CUSTOM' }]
+              errorInfo: [{ code: 'VALIDATOR_FN', customCode: 'CUSTOM' }]
             }
           ],
           rowKey: 0
