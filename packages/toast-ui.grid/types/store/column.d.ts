@@ -23,6 +23,15 @@ export type ValidationType =
   | 'REGEXP'
   | 'VALIDATOR_FN'
   | 'UNIQUE';
+export type ValidationResult = {
+  errorCode: ValidationType;
+} & Record<string, any>;
+export type CustomValidatorResultWithMeta = { valid: boolean; meta: Record<string, any> };
+export type CustomValidator = (
+  value: CellValue,
+  row: Row,
+  columnName: string
+) => boolean | CustomValidatorResultWithMeta;
 
 export type Comparator = (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) => number;
 
@@ -72,7 +81,7 @@ export interface Validation {
   max?: number;
   regExp?: RegExp;
   unique?: boolean;
-  validatorFn?: (value: CellValue, row: Row, columnName: string) => boolean;
+  validatorFn?: CustomValidator;
 }
 
 export interface FormatterProps {
@@ -108,6 +117,7 @@ export interface ResizedColumn {
 export interface InvalidColumn {
   columnName: string;
   errorCode: ValidationType[];
+  errorInfo: ValidationResult[];
 }
 
 export interface CommonColumnInfo {

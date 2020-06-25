@@ -1,5 +1,11 @@
 import { OptRow } from '@t/options';
-import { Validation, ValidationType, Column } from '@t/store/column';
+import {
+  Validation,
+  Column,
+  CustomValidator,
+  ValidationResult,
+  CustomValidatorResultWithMeta
+} from '@t/store/column';
 import { RowKey, CellValue, Row } from '@t/store/data';
 import {
   isString,
@@ -9,7 +15,8 @@ import {
   convertToNumber,
   isNumber,
   includes,
-  some
+  some,
+  isBoolean
 } from '../../helper/common';
 import {
   isObservable,
@@ -135,10 +142,10 @@ function validateDataUniqueness(
   id: number,
   value: CellValue,
   columnName: string,
-  invalidStates: ValidationType[]
+  invalidStates: ValidationResult[]
 ) {
   if (hasDuplicateValue(id, columnName, value)) {
-    invalidStates.push('UNIQUE');
+    invalidStates.push({ errorCode: 'UNIQUE' });
   }
 
   // prevent recursive call of 'validateDataUniqueness' when scrolling or manipulating the data
@@ -166,8 +173,35 @@ function validateDataUniqueness(
   }
 }
 
+function validateCustomValidator(
+  row: Row,
+  value: CellValue,
+  columnName: string,
+  validatorFn: CustomValidator,
+  invalidStates: ValidationResult[]
+) {
+  const originRow = omit(
+    getOriginObject(row as Observable<Row>),
+    'sortKey',
+    'uniqueKey',
+    '_relationListItemMap',
+    '_disabledPriority'
+  ) as Row;
+
+  unobservedInvoke(() => {
+    const result = validatorFn(value, originRow, columnName);
+    const { valid, meta } = (isBoolean(result)
+      ? { valid: result }
+      : result) as CustomValidatorResultWithMeta;
+
+    if (!valid) {
+      invalidStates.push({ errorCode: 'VALIDATOR_FN', ...meta });
+    }
+  });
+}
+
 export function getValidationCode({ id, value, row, columnName, validation }: ValidationOption) {
-  const invalidStates: ValidationType[] = [];
+  const invalidStates: ValidationResult[] = [];
 
   if (!validation) {
     return invalidStates;
@@ -176,7 +210,7 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
   const { required, dataType, min, max, regExp, unique, validatorFn } = validation;
 
   if (required && isBlank(value)) {
-    invalidStates.push('REQUIRED');
+    invalidStates.push({ errorCode: 'REQUIRED' });
   }
 
   if (unique) {
@@ -184,41 +218,29 @@ export function getValidationCode({ id, value, row, columnName, validation }: Va
   }
 
   if (isFunction(validatorFn)) {
-    const originRow = omit(
-      getOriginObject(row as Observable<Row>),
-      'sortKey',
-      'uniqueKey',
-      '_relationListItemMap',
-      '_disabledPriority'
-    ) as Row;
-
-    unobservedInvoke(() => {
-      if (!validatorFn(value, originRow, columnName)) {
-        invalidStates.push('VALIDATOR_FN');
-      }
-    });
+    validateCustomValidator(row, value, columnName, validatorFn, invalidStates);
   }
 
   if (dataType === 'string' && !isString(value)) {
-    invalidStates.push('TYPE_STRING');
+    invalidStates.push({ errorCode: 'TYPE_STRING' });
   }
 
   if (regExp && isString(value) && !regExp.test(value)) {
-    invalidStates.push('REGEXP');
+    invalidStates.push({ errorCode: 'REGEXP', regExp });
   }
 
   const numberValue = convertToNumber(value);
 
   if (dataType === 'number' && !isNumber(numberValue)) {
-    invalidStates.push('TYPE_NUMBER');
+    invalidStates.push({ errorCode: 'TYPE_NUMBER' });
   }
 
   if (isNumber(min) && isNumber(numberValue) && numberValue < min) {
-    invalidStates.push('MIN');
+    invalidStates.push({ errorCode: 'MIN', min });
   }
 
   if (isNumber(max) && isNumber(numberValue) && numberValue > max) {
-    invalidStates.push('MAX');
+    invalidStates.push({ errorCode: 'MAX', max });
   }
 
   return invalidStates;

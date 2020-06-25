@@ -17,7 +17,9 @@ export function getInvalidRows(store: Store) {
     if (invalidColumns.length) {
       const errors = invalidColumns.map(({ name }) => ({
         columnName: name,
-        errorCode: valueMap[name].invalidStates
+        errorInfo: valueMap[name].invalidStates,
+        // @TODO: errorCode will be deprecated. errorInfo can replace this property
+        errorCode: valueMap[name].invalidStates.map(info => info.errorCode)
       }));
 
       invalidRows.push({ rowKey, errors });
