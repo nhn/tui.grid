@@ -1,4 +1,5 @@
 import Grid from '../src/grid';
+import { PageOptions } from '../types/store/data';
 import { data } from '../samples/pagination';
 import '../src/css/grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
@@ -31,7 +32,7 @@ const appendData = {
   deliveryNo: 0
 };
 
-function createGrid() {
+function createGrid(pageOptions?: PageOptions) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
@@ -41,7 +42,8 @@ function createGrid() {
     columns,
     pageOptions: {
       useClient: true,
-      perPage: 10
+      perPage: 10,
+      ...pageOptions
     }
   });
 
@@ -64,6 +66,11 @@ const pageBasicNote = `
 ## Pagination UI
 - UI for basic pagination
 - UI for exceeded range of pagination
+`;
+
+const positionTopNote = `
+## Pagination UI
+- UI for pagination which is rendered on \`position: top\`
 `;
 
 firstPageBasic.story = { parameters: { notes: pageBasicNote } };
@@ -92,3 +99,11 @@ export const lastPageInExceededRange = () => {
 };
 
 lastPageInExceededRange.story = { parameters: { notes: pageBasicNote } };
+
+export const positionTop = () => {
+  const { el } = createGrid({ position: 'top' });
+
+  return el;
+};
+
+positionTop.story = { parameters: { notes: positionTopNote } };
