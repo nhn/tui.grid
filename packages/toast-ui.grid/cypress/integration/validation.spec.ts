@@ -25,17 +25,45 @@ it('should check the validation of cell - required', () => {
   cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
 });
 
-it('should check the validation of cell - regExp', () => {
-  cy.createGrid({
-    data,
-    columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
+describe('should check the validation of cell - regExp', () => {
+  beforeEach(() => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
+    });
   });
 
-  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+  it('should check the validation of cell', () => {
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
+  });
 
-  cy.gridInstance().invoke('setValue', 0, 'name', '9:9');
-
-  cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+  it('get validation result by validate API', () => {
+    cy.gridInstance()
+      .invoke('validate')
+      .should('eql', [
+        {
+          errors: [
+            {
+              columnName: 'name',
+              errorCode: ['REGEXP'],
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
+            }
+          ],
+          rowKey: 0
+        },
+        {
+          errors: [
+            {
+              columnName: 'name',
+              errorCode: ['REGEXP'],
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
+            }
+          ],
+          rowKey: 1
+        }
+      ]);
+  });
 });
 
 describe('should check the validation of cell - dataType: string', () => {
@@ -95,9 +123,59 @@ describe('should check the validation of cell - dataType: number', () => {
 
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
+
+  it('get validation result with max by validate API', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'number', max: 4000 } }]
+    });
+
+    cy.gridInstance()
+      .invoke('validate')
+      .should('eql', [
+        {
+          errors: [
+            {
+              columnName: 'price',
+              errorCode: ['MAX'],
+              errorInfo: [{ code: 'MAX', max: 4000 }]
+            }
+          ],
+          rowKey: 0
+        }
+      ]);
+  });
+
+  it('get validation result with min by validate API', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'number', min: 5000 } }]
+    });
+
+    cy.gridInstance()
+      .invoke('validate')
+      .should('eql', [
+        {
+          errors: [
+            {
+              columnName: 'price',
+              errorCode: ['MIN'],
+              errorInfo: [{ code: 'MIN', min: 5000 }]
+            }
+          ],
+          rowKey: 1
+        }
+      ]);
+  });
 });
 
 describe('should check the validation of cell - validatorFn', () => {
+  let stub = () => {};
+
+  beforeEach(() => {
+    stub = cy.stub().returns(true);
+  });
+
   it('check `validatorFn` validation', () => {
     cy.createGrid({
       data,
@@ -117,8 +195,6 @@ describe('should check the validation of cell - validatorFn', () => {
   });
 
   it('`value`, `row`, `columnName` should be passed as the parameters of validatorFn ', () => {
-    const stub = cy.stub();
-
     cy.createGrid({
       data,
       columns: [
@@ -136,7 +212,6 @@ describe('should check the validation of cell - validatorFn', () => {
   });
 
   it('should execute `validatorFn` as unobserved function', () => {
-    const stub = cy.stub();
     cy.window().then((win: WindowWithGrid) => {
       cy.createGrid({
         data,
@@ -148,6 +223,7 @@ describe('should check the validation of cell - validatorFn', () => {
                 if (win.grid) {
                   stub();
                 }
+                return true;
               }
             }
           }
@@ -161,7 +237,6 @@ describe('should check the validation of cell - validatorFn', () => {
   });
 
   it('should execute `validatorFn` with applying changed data', () => {
-    const stub = cy.stub();
     cy.window().then((win: WindowWithGrid) => {
       cy.createGrid({
         data,
@@ -171,8 +246,10 @@ describe('should check the validation of cell - validatorFn', () => {
             validation: {
               validatorFn: () => {
                 if (win.grid) {
+                  // @ts-ignore
                   stub(win.grid.getColumnValues('name'));
                 }
+                return true;
               }
             }
           }
@@ -187,6 +264,37 @@ describe('should check the validation of cell - validatorFn', () => {
 
       cy.wrap(stub).should('be.calledWithMatch', ['eraser', 'pen', 'pencil']);
     });
+  });
+
+  it('get validation result with meta by validate API', () => {
+    cy.createGrid({
+      data,
+      columns: [
+        {
+          name: 'price',
+          validation: {
+            validatorFn: (value: number) => {
+              return { valid: value > 3000 && value < 10000, meta: { customCode: 'CUSTOM' } };
+            }
+          }
+        }
+      ]
+    });
+
+    cy.gridInstance()
+      .invoke('validate')
+      .should('eql', [
+        {
+          errors: [
+            {
+              columnName: 'price',
+              errorCode: ['VALIDATOR_FN'],
+              errorInfo: [{ code: 'VALIDATOR_FN', customCode: 'CUSTOM' }]
+            }
+          ],
+          rowKey: 0
+        }
+      ]);
   });
 });
 
@@ -223,21 +331,6 @@ it('should check the validation of cell after editing', () => {
   cy.gridInstance().invoke('finishEditing');
 
   cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
-});
-
-it('get failed validation result by validate api', () => {
-  cy.createGrid({
-    data,
-    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
-  });
-
-  cy.gridInstance().invoke('startEditing', 0, 'name');
-  cy.getByCls('content-text').invoke('val', '');
-  cy.gridInstance().invoke('finishEditing');
-
-  cy.gridInstance()
-    .invoke('validate')
-    .should('eql', [{ errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }]);
 });
 
 it('validate changed value after calling resetData API', () => {

@@ -14,7 +14,7 @@ export type AlignType = 'left' | 'center' | 'right';
 export type Formatter = ((props: FormatterProps) => string) | string;
 export type RowHeaderType = 'rowNum' | 'checkbox';
 export type SortingType = 'asc' | 'desc';
-export type ValidationType =
+export type ErrorCode =
   | 'REQUIRED'
   | 'TYPE_STRING'
   | 'TYPE_NUMBER'
@@ -23,6 +23,15 @@ export type ValidationType =
   | 'REGEXP'
   | 'VALIDATOR_FN'
   | 'UNIQUE';
+export type ErrorInfo = {
+  code: ErrorCode;
+} & Record<string, any>;
+export type CustomValidatorResultWithMeta = { valid: boolean; meta: Record<string, any> };
+export type CustomValidator = (
+  value: CellValue,
+  row: Row,
+  columnName: string
+) => boolean | CustomValidatorResultWithMeta;
 
 export type Comparator = (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) => number;
 
@@ -72,7 +81,7 @@ export interface Validation {
   max?: number;
   regExp?: RegExp;
   unique?: boolean;
-  validatorFn?: (value: CellValue, row: Row, columnName: string) => boolean;
+  validatorFn?: CustomValidator;
 }
 
 export interface FormatterProps {
@@ -107,7 +116,8 @@ export interface ResizedColumn {
 
 export interface InvalidColumn {
   columnName: string;
-  errorCode: ValidationType[];
+  errorCode: ErrorCode[];
+  errorInfo: ErrorInfo[];
 }
 
 export interface CommonColumnInfo {
