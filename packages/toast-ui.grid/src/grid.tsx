@@ -996,11 +996,13 @@ export default class Grid implements TuiGrid {
    *         errors: [
    *             {
    *                 columnName: 'c1',
-   *                 errorCode: 'REQUIRED'
+   *                 errorCode: ['REQUIRED'],
+   *                 errorInfo: [{ errorCode: "REQUIRED" }]
    *             },
    *             {
    *                 columnName: 'c2',
-   *                 errorCode: 'REQUIRED'
+   *                 errorCode: ['VALIDATOR_FN'],
+   *                 errorInfo: [{ errorCode: "VALIDATOR_FN", customCode: 'CUSTOM_CODE' }]
    *             }
    *         ]
    *     },
@@ -1009,7 +1011,8 @@ export default class Grid implements TuiGrid {
    *         errors: [
    *             {
    *                 columnName: 'c2',
-   *                 errorCode: 'REQUIRED'
+   *                 errorCode: ['MIN'],
+   *                 errorInfo: [{ errorCode: "MIN", min: 1000 }]
    *             }
    *         ]
    *     }
