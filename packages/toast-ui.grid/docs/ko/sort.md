@@ -100,6 +100,33 @@ const grid = new Grid({
 
 현재 `데이터 소스`에서는 단일 컬럼 정렬 기준으로만 연동이 가능하다. 다중 컬럼 정렬 연동은 이후 추가 지원될 계획이나, 현재는 지원되지 않는 상태이다.
 
+## Custom Comparator
+
+사용자가 직접 comparator를 정의하여 데이터를 정렬하고 싶은 경우 `comparator` 옵션을 사용할 수 있다. Custom Comparator의 구조는 자바스크립트 정렬 함수에서 실행되는 [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)과 동일하지만 정렬 대상인 로우 정보도 매개변수로 사용할 수 있다는 차이점이 있다. 이 매개변수는 다른 컬럼의 데이터를 사용하여 데이터를 정렬하는 경우 유용하게 사용할 수 있다.
+
+```js
+const comparator = (valueA, valueB, rowA, rowB) => {
+  if (valueA.length < valueB.length) {
+    return -1;
+  }
+  if (valueA.length > valueB.length) {
+    return 1;
+  }
+  return 0;
+};
+
+const grid = new Grid({
+  data,
+  columns: [
+    { name: 'alphabetA', header: 'alphabetA', comparator  },
+    // ...
+  ]
+})
+```
+
+### 참조
+
+Custom Comparator 는 `v4.14.0` 이상부터 사용할 수 있는 기능이다.
 
 ## 정렬 API 사용하기
 

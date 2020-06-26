@@ -101,6 +101,35 @@ const grid = new Grid({
 Currently, data synced using the `Data Source` can only be sorted individually. While we plan on implementing the functionality of sorting multiple columns at once, at the moment, it is not yet supported. 
 
 
+## Custom Comparator
+
+If you want to sort the data with your own comparator, the `comparator` option can be useful for it. 
+The structure of the Custom Comparator is same as [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) that runs in the javaScript `sort` function, but there is a difference that row information to be sorted can also be used as parameters. It is possible to sort the data with other column data using these parameters.
+
+```js
+const comparator = (valueA, valueB, rowA, rowB) => {
+  if (valueA.length < valueB.length) {
+    return -1;
+  }
+  if (valueA.length > valueB.length) {
+    return 1;
+  }
+  return 0;
+};
+
+const grid = new Grid({
+  data,
+  columns: [
+    { name: 'alphabetA', header: 'alphabetA', comparator  },
+    // ...
+  ]
+})
+```
+
+### Note
+
+Custom Comparator feature can only be implemented in `v4.14.0` and above. 
+
 ## Using the Sort API
 
 The sort related methods can be called as such. 
