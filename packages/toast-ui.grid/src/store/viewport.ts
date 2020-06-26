@@ -93,7 +93,7 @@ export function create({
     },
 
     // only for right side columns
-    get colRange(this: Observable<Viewport>) {
+    get colRange() {
       const range = calculateRange(
         this.scrollLeft,
         columnCoords.areaWidth.R,
@@ -105,15 +105,15 @@ export function create({
     },
 
     // only for right side columns
-    get columns(this: Viewport) {
+    get columns() {
       return column.visibleColumnsBySideWithRowHeader.R.slice(...this.colRange);
     },
 
-    get offsetLeft(this: Viewport) {
+    get offsetLeft() {
       return columnCoords.offsets.R[this.colRange[0]];
     },
 
-    get rowRange(this: Observable<Viewport>) {
+    get rowRange() {
       const range = calculateRange(
         this.scrollTop,
         dimension.bodyHeight,
@@ -125,11 +125,11 @@ export function create({
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
-    get rows(this: Viewport) {
+    get rows() {
       return data.filteredViewData.slice(...this.rowRange);
     },
 
-    get offsetTop(this: Viewport) {
+    get offsetTop() {
       return rowCoords.offsets[this.rowRange[0] - data.pageRowRange[0]];
     },
 

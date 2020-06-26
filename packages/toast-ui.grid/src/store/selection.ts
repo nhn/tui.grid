@@ -95,11 +95,10 @@ export function create({
     unit: selectionUnit,
     type: 'cell' as SelectionType,
     intervalIdForAutoScroll: null,
-    get range(this: Selection) {
+    get range() {
       if (!this.inputRange) {
         return null;
       }
-
       const { widths: columnWidths } = columnCoords;
       const row = getSortedRange(this.inputRange.row);
       let column = getSortedRange(this.inputRange.column);
@@ -112,7 +111,7 @@ export function create({
       return { row, column };
     },
 
-    get rangeBySide(this: Selection) {
+    get rangeBySide() {
       if (!this.range) {
         return null;
       }
@@ -125,7 +124,7 @@ export function create({
       };
     },
 
-    get rangeAreaInfo(this: Selection) {
+    get rangeAreaInfo() {
       if (!this.rangeBySide) {
         return null;
       }
@@ -158,7 +157,7 @@ export function create({
       };
     },
 
-    get rangeWithRowHeader(this: Selection) {
+    get rangeWithRowHeader() {
       if (!this.range) {
         return null;
       }
@@ -176,7 +175,7 @@ export function create({
       };
     },
 
-    get originalRange(this: Selection): SelectionRange | null {
+    get originalRange(): SelectionRange | null {
       if (!this.range) {
         return null;
       }

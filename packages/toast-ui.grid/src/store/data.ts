@@ -540,7 +540,7 @@ export function create({
     filters: null,
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
-    get filteredRawData(this: Data) {
+    get filteredRawData() {
       if (this.filters) {
         // should filter the sliced data which is displayed in viewport in case of client infinite scrolling
         const targetData = isScrollPagination(this, true)
@@ -552,7 +552,7 @@ export function create({
       return this.rawData;
     },
 
-    get filteredIndex(this: Data) {
+    get filteredIndex() {
       const { filteredRawData, filters } = this;
       return filters
         ? filteredRawData
@@ -561,13 +561,13 @@ export function create({
         : null;
     },
 
-    get filteredViewData(this: Data) {
+    get filteredViewData() {
       return this.filters
         ? this.filteredIndex!.map((index) => this.viewData[index])
         : this.viewData;
     },
 
-    get pageRowRange(this: Data) {
+    get pageRowRange() {
       const { useClient, type, page, perPage } = this.pageOptions;
       let start = 0;
       // should calculate the range through all rawData in case of client infinite scrolling

@@ -72,14 +72,14 @@ export function create({
       return this.scrollX ? this.scrollbarWidth : 0;
     },
 
-    get frozenBorderWidth(this: Dimension) {
+    get frozenBorderWidth() {
       const { visibleColumnsBySide } = column;
       const visibleLeftColumnCount = visibleColumnsBySide.L.length;
 
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
-    get contentsWidth(this: Dimension) {
+    get contentsWidth() {
       const columnLen = column.visibleColumnsWithRowHeader.length;
       const totalBorderWidth = columnLen * this.cellBorderWidth;
 

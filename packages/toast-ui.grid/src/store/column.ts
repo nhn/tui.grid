@@ -454,7 +454,7 @@ export function create({
         .map(({ name, defaultValue }) => ({ name, value: defaultValue }));
     },
 
-    get visibleFrozenCount(this: Column) {
+    get visibleFrozenCount() {
       return this.visibleColumnsBySideWithRowHeader.L.length;
     },
 
