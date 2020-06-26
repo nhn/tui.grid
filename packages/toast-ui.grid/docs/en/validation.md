@@ -144,6 +144,56 @@ const grid = new Grid({
 
 ![image](https://user-images.githubusercontent.com/35371660/63257621-26f57380-c2b5-11e9-9237-ea927cfa014e.png)
 
+### Returns `meta` information
+If the validation result(`valid` property) and meta information are returned as below to the result of the function defined in the `validatorFn` option, the meta information will be included in the result of `validate` API. In case it is inconvenient to handle validation result with the error code `VALIDATOR_FN`, this meta information can be useful to handle the error. This option can be implemented in `v4.14.0` and above.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        validatorFn: (value, row, columnName) => {
+          return { 
+            valid: value + row['anotherColumn'] > 10000,
+            // The meta information will be included in the result of `validate` API
+            meta: { customErrorCode: 'CUSTOM_ERROR_CODE' }
+          };
+        }
+      }
+    }
+  ]
+});
+```
+
+## unique Option
+
+This option can be implemented in `v4.14.0` and above. If you set `unique` option to `true`, you can validate whether the cell data is unique in the column. If the cell data *is not unique* in the column, the data is displayed in red. 
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        unique: true
+      }
+    }
+  ]
+});
+```
+
+![image](https://user-images.githubusercontent.com/37766175/85833184-48c06080-b7cc-11ea-932c-b09c73b2e9dc.png)
+
+### Note
+Although optimized the performance internally, there may be performance issue when using the `unique` option in large data.
+
 ## validate() Method
 
 We can retrieve the column's validation information in row units by configuring the `validation` option and calling the `validate()` method. 
@@ -189,11 +239,11 @@ grid.validate();
     errors: [
       {
         columnName: 'name',
-        errorCode: 'TYPE_STRING'
+        errorCode: ['TYPE_STRING']
       },
       {
         columnName: 'listenCount',
-        errorCode: 'TYPE_NUMBER'
+        errorCode: ['TYPE_NUMBER']
       }
     ]
   },
@@ -202,7 +252,7 @@ grid.validate();
     errors: [
       {
         columnName: 'downloadCount',
-        errorCode: 'TYPE_NUMBER'
+        errorCode: ['TYPE_NUMBER']
        }
     ]
   },
@@ -211,11 +261,49 @@ grid.validate();
     errors: [
       {
         columnName: 'listenCount',
-        errorCode: 'REQUIRED'
+        errorCode: ['REQUIRED']
       }
     ]
   }
 ]
+```
+
+### `errorInfo` property
+
+The `errorInfo` property that allows users to get meta information is added as the result of `validate()` method. This property can be used from `v4.14.0` and up. You can get the more detail error information such as regular expression used on validating the data or the meta information returned as the result of `validatorFn` function.(`errorCode` property **is deprecated**)
+
+```js
+// Result of calling validate()
+[
+  {
+    rowKey: 1,
+    errors: [
+      {
+        columnName: 'name',
+        // `errorCode` property is deprecated
+        errorCode: ['VALIDATOR_FN'],
+        errorInfo: [{ code: "VALIDATOR_FN", customErrorCode: 'CUSTOM_ERROR_CODE' }]
+      },
+      {
+        columnName: 'artist',
+        // `errorCode` property is deprecated
+        errorCode: ['REGEXP'],
+        errorInfo: [{ code: "REGEXP", regExp: /[a-zA-Z]+_[a-zA-Z]/ }]
+      }
+    ]
+  },
+  {
+    rowKey: 2,
+    errors: [
+      {
+        columnName: 'price',
+        // `errorCode` property is deprecated
+        errorCode: ['MIN'],
+        errorInfo: [{ code: "MIN", min: 1000 }]
+      }
+    ]
+  }
+]  
 ```
 
 ## Example

@@ -147,7 +147,6 @@ const grid = new Grid({
   ]
 });
 ```
-
 `v4.10.0` 이상부터는 셀 데이터 외에 로우 데이터, 컬럼 명도 함께 인자로 받기 때문에, 로우의 다른 셀 데이터와 연산하여 데이터 검증이 필요한 경우 활용할 수 있다.
 
 ```js
@@ -167,6 +166,56 @@ const grid = new Grid({
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/63257621-26f57380-c2b5-11e9-9237-ea927cfa014e.png)
+
+### `meta` 정보 반환
+`validatorFn` 옵션으로 지정한 함수에서 아래와 같이 유효성 검증 결과(`valid` 속성)와 meta 정보를 반환할 경우, `validate` API의 결과로 meta 정보가 함께 반환된다. `VALIDATOR_FN` 에러 코드만으로 검증 결과를 다루기 불편한 경우 이 meta 정보를 이용하여 에러 처리를 용이하게 할 수 있다. 이 옵션은 `v4.14.0` 이상부터 사용할 수 있다.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        validatorFn: (value, row, columnName) => {
+          return { 
+            valid: value + row['anotherColumn'] > 10000,
+            // `validate` API의 결과로 meta 정보가 함께 반환된다.
+            meta: { customErrorCode: 'CUSTOM_ERROR_CODE' }
+          };
+        }
+      }
+    }
+  ]
+});
+```
+
+## unique 옵션
+
+`v4.14.0` 이상부터 사용할 수 있는 옵션이다. `unique` 옵션을 `true`로 설정하면 셀 데이터가 컬럼에서 중복되는지 검사할 수 있다. 이 때 셀 데이터가 중복되는 경우에는 빨간색으로 표시된다.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        unique: true
+      }
+    }
+  ]
+});
+```
+
+![image](https://user-images.githubusercontent.com/37766175/85833184-48c06080-b7cc-11ea-932c-b09c73b2e9dc.png)
+
+### 참조
+내부적으로 최적화를 하였지만, 대용량 데이터에서 `unique`옵션을 사용하는 경우에는 성능적인 이슈가 있을 수 있습니다.
 
 ## validate() 메서드
 
@@ -240,6 +289,43 @@ grid.validate();
     ]
   }
 ];
+```
+
+### `errorInfo` 속성
+`v4.14.0`이상부터 `validate()` 메서드의 결과로 meta 정보도 함께 볼 수 있는 `errorInfo` 속성이 추가되었다. 검증에 사용된 정규식 또는 `validatorFn` 함수에서의 meta 정보 등 자세한 에러 정보를 얻을 수 있다.(`errorCode` 속성은 **deprecated** 되었다.)
+
+```js
+// validate() 호출 결과값
+[
+  {
+    rowKey: 1,
+    errors: [
+      {
+        columnName: 'name',
+        // `errorCode` 속성은 deprecated 되었다.
+        errorCode: ['VALIDATOR_FN'],
+        errorInfo: [{ code: "VALIDATOR_FN", customErrorCode: 'CUSTOM_ERROR_CODE' }]
+      },
+      {
+        columnName: 'artist',
+        // `errorCode` 속성은 deprecated 되었다.
+        errorCode: ['REGEXP'],
+        errorInfo: [{ code: "REGEXP", regExp: /[a-zA-Z]+_[a-zA-Z]/ }]
+      }
+    ]
+  },
+  {
+    rowKey: 2,
+    errors: [
+      {
+        columnName: 'price',
+        // `errorCode` 속성은 deprecated 되었다.
+        errorCode: ['MIN'],
+        errorInfo: [{ code: "MIN", min: 1000 }]
+      }
+    ]
+  }
+]  
 ```
 
 ## 예제
