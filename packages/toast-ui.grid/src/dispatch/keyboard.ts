@@ -14,7 +14,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     focus,
     data,
     column: { visibleColumnsWithRowHeader },
-    id
+    id,
   } = store;
   const { filteredViewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
@@ -78,7 +78,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
     focus,
     data,
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
-    id
+    id,
   } = store;
   const { filteredViewData, sortState } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
@@ -91,7 +91,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
   if (!currentInputRange) {
     currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
-      column: [totalFocusColumnIndex, totalFocusColumnIndex]
+      column: [totalFocusColumnIndex, totalFocusColumnIndex],
     };
   }
 
@@ -138,7 +138,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
   if (!isRowHeader(nextColumnName)) {
     const inputRange: SelectionRange = {
       row: [startRowIndex, endRowIndex],
-      column: [columnStartIndex, nextColumnIndex]
+      column: [columnStartIndex, nextColumnIndex],
     };
 
     changeSelectionRange(selection, inputRange, id);
@@ -156,7 +156,7 @@ export function removeContent(store: Store) {
 
   const {
     column: [columnStart, columnEnd],
-    row: [rowStart, rowEnd]
+    row: [rowStart, rowEnd],
   } = removeRange;
   const modifiedRowMap: { [key in RowKey]: Row } = {};
   const manager = getDataManager(id);
@@ -165,7 +165,7 @@ export function removeContent(store: Store) {
     .slice(columnStart, columnEnd + 1)
     .filter(({ editor }) => !!editor)
     .forEach(({ name }) => {
-      rawData.slice(rowStart, rowEnd + 1).forEach(row => {
+      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
         row[name] = '';
         modifiedRowMap[row.rowKey] = row;
       });

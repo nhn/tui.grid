@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import TuiGrid from 'tui-grid';
 
-type FunctionKeys<T extends object> = {[K in keyof T]: T[K] extends Function ? K : never}[keyof T];
+type FunctionKeys<T extends object> = {
+  [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T];
 
 type GridFnKeys = FunctionKeys<TuiGrid>;
 

@@ -124,7 +124,7 @@ function applyConfig(xhr: XMLHttpRequest, options: Options) {
 
   // set user defined request headers
   if (isObject(headers)) {
-    Object.keys(headers).forEach(name => {
+    Object.keys(headers).forEach((name) => {
       if (headers[name]) {
         xhr.setRequestHeader(name, headers[name]);
       }
@@ -147,7 +147,7 @@ function send(xhr: XMLHttpRequest, options: Options) {
     serializer,
     preCallback,
     params = {},
-    contentType = 'application/x-www-form-urlencoded'
+    contentType = 'application/x-www-form-urlencoded',
   } = options;
 
   let body = null;

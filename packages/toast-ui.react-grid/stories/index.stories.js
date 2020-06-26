@@ -14,7 +14,7 @@ const columns = [
   { header: 'Artist', name: 'artist' },
   { header: 'Type', name: 'type', editor: 'text' },
   { header: 'Release', name: 'release', editor: 'text' },
-  { header: 'Genre', name: 'genre', editor: 'text' }
+  { header: 'Genre', name: 'genre', editor: 'text' },
 ];
 
 const stories = storiesOf('Toast UI Grid', module).addDecorator(withKnobs);
@@ -24,7 +24,7 @@ stories.add('Normal', () => <Grid columns={columns} data={data} header={{ height
 stories.add('Set Language', () => {
   const options = {
     ko: 'ko',
-    en: 'en'
+    en: 'en',
   };
   const lang = radios('Language', options, 'ko');
   const Story = () => {
@@ -40,7 +40,7 @@ stories.add('Apply Theme', () => {
   const options = {
     normal: 'normal',
     striped: 'striped',
-    clean: 'clean'
+    clean: 'clean',
   };
   const theme = radios('Theme', options, 'normal');
   const Story = () => {
@@ -127,12 +127,12 @@ stories.add('Reactive Props', () => {
   const bodyHeightValue = number('bodyHeight', 300, {
     range: true,
     min: 100,
-    max: 500
+    max: 500,
   });
   const frozenColumnCountValue = number('frozenColumnCount', 0, {
     range: true,
     min: 0,
-    max: 4
+    max: 4,
   });
   const oneTimeBindingProps = array('oneTimeBindingProps', []);
 
@@ -158,10 +158,10 @@ stories.add('dataSource', () => {
         contents: data.slice(0, 3),
         pagination: {
           page: 1,
-          totalCount: data.length
-        }
-      }
-    })
+          totalCount: data.length,
+        },
+      },
+    }),
   })
     .get('api/readData?perPage=3&page=2', {
       status: 200,
@@ -171,10 +171,10 @@ stories.add('dataSource', () => {
           contents: data.slice(3, 6),
           pagination: {
             page: 2,
-            totalCount: data.length
-          }
-        }
-      })
+            totalCount: data.length,
+          },
+        },
+      }),
     })
     .get('api/readData?perPage=3&page=3', {
       status: 200,
@@ -184,10 +184,10 @@ stories.add('dataSource', () => {
           contents: data.slice(6, 9),
           pagination: {
             page: 3,
-            totalCount: data.length
-          }
-        }
-      })
+            totalCount: data.length,
+          },
+        },
+      }),
     })
     .get('api/readData?perPage=3&page=4', {
       status: 200,
@@ -197,18 +197,18 @@ stories.add('dataSource', () => {
           contents: data.slice(9, 12),
           pagination: {
             page: 4,
-            totalCount: data.length
-          }
-        }
-      })
+            totalCount: data.length,
+          },
+        },
+      }),
     });
 
   const dataSource = {
     withCredentials: false,
     initialRequest: true,
     api: {
-      readData: { url: 'api/readData', method: 'GET' }
-    }
+      readData: { url: 'api/readData', method: 'GET' },
+    },
   };
 
   return (

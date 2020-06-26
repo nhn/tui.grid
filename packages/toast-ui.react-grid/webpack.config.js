@@ -5,17 +5,17 @@ const config = {
   output: {
     filename: 'toastui-react-grid.js',
     path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
   },
   externals: {
     'tui-grid': {
       commonjs: 'tui-grid',
-      commonjs2: 'tui-grid'
+      commonjs2: 'tui-grid',
     },
     react: {
       commonjs: 'react',
-      commonjs2: 'react'
-    }
+      commonjs2: 'react',
+    },
   },
   module: {
     rules: [
@@ -25,12 +25,12 @@ const config = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    ]
-  }
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+    ],
+  },
 };
 
 module.exports = () => config;

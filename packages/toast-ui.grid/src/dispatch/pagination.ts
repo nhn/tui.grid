@@ -59,7 +59,7 @@ export function updatePageWhenRemovingRow(store: Store, deletedCount: number) {
       store,
       {
         totalCount: totalCount - deletedCount,
-        page: (modifiedLastPage < page ? modifiedLastPage : page) || 1
+        page: (modifiedLastPage < page ? modifiedLastPage : page) || 1,
       },
       true
     );

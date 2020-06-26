@@ -7,7 +7,7 @@ import { isParentColumnHeader } from './column';
 function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];
 
-  visibleColumnsWithRowHeader.forEach(column => {
+  visibleColumnsWithRowHeader.forEach((column) => {
     if (includes(childNames, column.name)) {
       result.push(column.name);
     }
@@ -23,7 +23,7 @@ export function getLeafChildColumnNames(complexColumnHeaders: ComplexColumnInfo[
   }
 
   let result: string[] = [];
-  column.childNames.forEach(childName => {
+  column.childNames.forEach((childName) => {
     if (isParentColumnHeader(complexColumnHeaders, childName)) {
       result = [...result, ...getLeafChildColumnNames(complexColumnHeaders, childName)];
     } else {
@@ -77,7 +77,7 @@ export function getSelectionRange(range: SelectionRange, pageOptions: PageOption
 
     return {
       row: [row[0] - prevPageRowCount, row[1] - prevPageRowCount],
-      column
+      column,
     };
   }
 

@@ -21,7 +21,7 @@ export function getInvalidRows(store: Store) {
         return {
           columnName: name,
           errorInfo: invalidStates,
-          errorCode: invalidStates.map(({ code }) => code)
+          errorCode: invalidStates.map(({ code }) => code),
         };
       });
 

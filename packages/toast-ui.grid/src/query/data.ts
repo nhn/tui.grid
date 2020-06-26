@@ -12,7 +12,7 @@ import {
   isNumber,
   removeArrayItem,
   uniqByProp,
-  isEmpty
+  isEmpty,
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -20,7 +20,7 @@ import { isHiddenColumn } from './column';
 import {
   createRawRow,
   generateDataCreationKey,
-  getFormattedValue as formattedValue
+  getFormattedValue as formattedValue,
 } from '../store/data';
 import { makeObservable } from '../dispatch/data';
 
@@ -31,7 +31,7 @@ export function getCellAddressByIndex(
 ) {
   return {
     rowKey: data.filteredViewData[rowIndex].rowKey,
-    columnName: column.visibleColumns[columnIndex].name
+    columnName: column.visibleColumns[columnIndex].name,
   };
 }
 
@@ -44,7 +44,7 @@ export function getCheckedRowInfoList({ data }: Store) {
   const targetRows: RemoveTargetRows = {
     rowIndexes: [],
     rows: [],
-    nextRows: []
+    nextRows: [],
   };
   data.rawData.reduce((acc, row, index) => {
     if (row._attributes.checked) {
@@ -70,8 +70,8 @@ export function getConditionalRows(
 
   let result: Row[] = rawData;
 
-  Object.keys(conditions).forEach(key => {
-    result = result.filter(row => row[key] === conditions[key]);
+  Object.keys(conditions).forEach((key) => {
+    result = result.filter((row) => row[key] === conditions[key]);
   });
 
   return result;
@@ -131,12 +131,12 @@ export function getUniqColumnData(targetData: Row[], column: Column, columnName:
   const columnInfo = column.allColumnMap[columnName];
   const uniqColumnData = uniqByProp(columnName, targetData);
 
-  return uniqColumnData.map(row => {
+  return uniqColumnData.map((row) => {
     const value = row[columnName];
     const formatterProps = {
       row,
       value,
-      column: columnInfo
+      column: columnInfo,
     };
     const relationListItems = row._relationListItemMap[columnName];
 
@@ -178,7 +178,7 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
   const classNames = className.split(' ');
   const removedClassNames = prevClassNames;
 
-  classNames.forEach(clsName => {
+  classNames.forEach((clsName) => {
     removeArrayItem(clsName, removedClassNames);
   });
 

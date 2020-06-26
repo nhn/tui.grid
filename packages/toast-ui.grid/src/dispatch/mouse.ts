@@ -15,7 +15,7 @@ import {
   findColumnIndexByPosition,
   findRowIndexByPosition,
   getColumnNameRange,
-  getOverflowFromMousePosition
+  getOverflowFromMousePosition,
 } from '../query/mouse';
 
 function stopAutoScroll(selection: Selection) {
@@ -119,7 +119,7 @@ function updateSelection(store: Store, dragData: PagePosition) {
 
   const inputRange: SelectionRange = {
     row: [startRowIndex, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
+    column: [startColumnIndex, endColumnIndex],
   };
 
   changeSelectionRange(selection, inputRange, id);
@@ -218,7 +218,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
 
   const inputRange: SelectionRange = {
     row: [0, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
+    column: [startColumnIndex, endColumnIndex],
   };
   const { rowKey } = filteredRawData[0];
 
@@ -261,7 +261,7 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
   if (columnIndex >= 0) {
     const inputRange: SelectionRange = {
       row: [0, rowIndex],
-      column: [startColumnIdx, endColumnIdx]
+      column: [startColumnIdx, endColumnIdx],
     };
 
     changeSelectionRange(selection, inputRange, id);
@@ -286,7 +286,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
 
   const inputRange: SelectionRange = {
     row: [startRowIndex, endRowIndex],
-    column: [rowHeaderCount, endColumnIndex]
+    column: [rowHeaderCount, endColumnIndex],
   };
   const editingRowKey = data.filteredRawData[rowIndex].rowKey;
   const editingColumnName = visibleColumnsWithRowHeader[rowHeaderCount].name;
@@ -322,7 +322,7 @@ export function dragMoveRowHeader(store: Store, dragData: PagePosition) {
 
   const inputRange: SelectionRange = {
     row: [startRowIndex, endRowIndex],
-    column: [rowHeaderCount, columnIndex]
+    column: [rowHeaderCount, columnIndex],
   };
 
   changeSelectionRange(selection, inputRange, id);

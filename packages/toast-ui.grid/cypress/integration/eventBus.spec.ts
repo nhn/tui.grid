@@ -3,11 +3,11 @@ import GridEvent from '@/event/gridEvent';
 
 const data = [
   { name: 'Kim', age: 10 },
-  { name: 'Lee', age: 20 }
+  { name: 'Lee', age: 20 },
 ];
 const columns = [
   { name: 'name', editor: 'text', resizable: true, sortable: true, minWidth: 250 },
-  { name: 'age', filter: 'number', minWidth: 250 }
+  { name: 'age', filter: 'number', minWidth: 250 },
 ];
 
 before(() => {
@@ -20,7 +20,7 @@ beforeEach(() => {
     columns,
     bodyHeight: 150,
     width: 500,
-    rowHeaders: ['rowNum', 'checkbox']
+    rowHeaders: ['rowNum', 'checkbox'],
   });
 });
 
@@ -33,7 +33,7 @@ it('click', () => {
   cy.wrap(callback).should('be.calledWithMatch', {
     rowKey: 1,
     columnName: 'name',
-    targetType: 'cell'
+    targetType: 'cell',
   });
 });
 
@@ -46,7 +46,7 @@ it('mouseover', () => {
   cy.wrap(callback).should('be.calledWithMatch', {
     rowKey: 1,
     columnName: 'name',
-    targetType: 'cell'
+    targetType: 'cell',
   });
 });
 
@@ -59,7 +59,7 @@ it('mousedown', () => {
   cy.wrap(callback).should('be.calledWithMatch', {
     rowKey: 1,
     columnName: 'name',
-    targetType: 'cell'
+    targetType: 'cell',
   });
 });
 
@@ -82,7 +82,7 @@ it('mouseout', () => {
   cy.wrap(callback).should('be.calledWithMatch', {
     rowKey: 1,
     columnName: 'name',
-    targetType: 'cell'
+    targetType: 'cell',
   });
 });
 
@@ -134,7 +134,7 @@ it('onGridMounted', () => {
     data,
     columns,
     rowHeaders: ['rowNum', 'checkbox'],
-    onGridMounted: callback
+    onGridMounted: callback,
   });
 
   cy.wrap(callback).should('be.calledOnce');
@@ -147,7 +147,7 @@ it('onGridUpdated', () => {
   cy.createGrid({
     data,
     columns,
-    onGridUpdated: callback
+    onGridUpdated: callback,
   });
   cy.gridInstance().invoke('resetData', newData);
 
@@ -161,7 +161,7 @@ it('onGridBeforeDestroy', () => {
     data,
     columns,
     rowHeaders: ['rowNum', 'checkbox'],
-    onGridBeforeDestroy: callback
+    onGridBeforeDestroy: callback,
   });
   cy.gridInstance().invoke('destroy');
 
@@ -180,7 +180,7 @@ it('columnResize', () => {
     .trigger('mouseup');
 
   cy.wrap(callback).should('be.calledWithMatch', {
-    resizedColumns: [{ columnName: 'name', width: 311 }]
+    resizedColumns: [{ columnName: 'name', width: 311 }],
   });
 });
 
@@ -188,7 +188,7 @@ describe('scrollEnd', () => {
   beforeEach(() => {
     const newData = Array.from({ length: 20 }).map((_, index) => ({
       name: `name${index}`,
-      age: index
+      age: index,
     }));
 
     cy.gridInstance().invoke('resetData', newData);
@@ -231,7 +231,7 @@ describe('scrollEnd', () => {
 });
 
 describe('focus', () => {
-  ['UI', 'API'].forEach(type => {
+  ['UI', 'API'].forEach((type) => {
     it(`focus change by ${type}`, () => {
       const callback = cy.stub();
       cy.gridInstance().invoke('on', 'focusChange', callback);
@@ -246,7 +246,7 @@ describe('focus', () => {
         rowKey: 0,
         columnName: 'name',
         prevRowKey: null,
-        prevColumnName: null
+        prevColumnName: null,
       });
 
       if (type === 'UI') {
@@ -259,7 +259,7 @@ describe('focus', () => {
         rowKey: 1,
         columnName: 'age',
         prevRowKey: 0,
-        prevColumnName: 'name'
+        prevColumnName: 'name',
       });
     });
 
@@ -280,15 +280,12 @@ describe('focus', () => {
 });
 
 describe('rowHeader: checkbox', () => {
-  ['UI', 'API'].forEach(type => {
+  ['UI', 'API'].forEach((type) => {
     it(`check / uncheck by ${type}`, () => {
       const checkCallback = cy.stub();
       const uncheckCallback = cy.stub();
 
-      cy.getByCls('cell-row-header')
-        .get('input')
-        .eq(1)
-        .as('checkbox');
+      cy.getByCls('cell-row-header').get('input').eq(1).as('checkbox');
 
       cy.gridInstance().invoke('on', 'check', checkCallback);
       cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
@@ -314,10 +311,7 @@ describe('rowHeader: checkbox', () => {
       const checkCallback = cy.stub();
       const uncheckCallback = cy.stub();
 
-      cy.getByCls('cell-row-header')
-        .get('input')
-        .eq(0)
-        .as('checkbox');
+      cy.getByCls('cell-row-header').get('input').eq(0).as('checkbox');
 
       cy.gridInstance().invoke('on', 'checkAll', checkCallback);
       cy.gridInstance().invoke('on', 'uncheckAll', uncheckCallback);
@@ -341,7 +335,7 @@ describe('rowHeader: checkbox', () => {
   });
 });
 
-['UI', 'API'].forEach(type => {
+['UI', 'API'].forEach((type) => {
   it(`beforeSort by ${type}`, () => {
     const callback = cy.stub();
 
@@ -357,7 +351,7 @@ describe('rowHeader: checkbox', () => {
       sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: true },
       columnName: 'name',
       ascending: true,
-      multiple: false
+      multiple: false,
     });
   });
 
@@ -377,11 +371,11 @@ describe('rowHeader: checkbox', () => {
 
     cy.wrap(sortCallback).should('be.calledWithMatch', {
       sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true },
-      columnName: 'name'
+      columnName: 'name',
     });
     cy.wrap(afterSortCallback).should('be.calledWithMatch', {
       sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true },
-      columnName: 'name'
+      columnName: 'name',
     });
   });
 
@@ -399,7 +393,7 @@ describe('rowHeader: checkbox', () => {
 
     cy.wrap(callback).should('be.calledWithMatch', {
       sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true },
-      columnName: 'name'
+      columnName: 'name',
     });
   });
 
@@ -417,13 +411,13 @@ describe('rowHeader: checkbox', () => {
 
     cy.wrap(callback).should('be.calledWithMatch', {
       sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: true },
-      columnName: 'name'
+      columnName: 'name',
     });
   });
 });
 
 describe('editing', () => {
-  ['API', 'UI'].forEach(type => {
+  ['API', 'UI'].forEach((type) => {
     it(`editingStart by ${type}`, () => {
       const callback = cy.stub();
       cy.gridInstance().invoke('on', 'editingStart', callback);
@@ -438,7 +432,7 @@ describe('editing', () => {
       cy.wrap(callback).should('be.calledWithMatch', {
         rowKey: 0,
         columnName: 'name',
-        value: 'Kim'
+        value: 'Kim',
       });
     });
 
@@ -458,7 +452,7 @@ describe('editing', () => {
       cy.wrap(callback).should('be.calledWithMatch', {
         rowKey: 0,
         columnName: 'name',
-        value: 'Kim'
+        value: 'Kim',
       });
     });
   });
@@ -478,7 +472,7 @@ describe('filter', () => {
     inputFilterValue(value);
   }
 
-  ['API', 'UI'].forEach(type => {
+  ['API', 'UI'].forEach((type) => {
     it(`beforeFilter by ${type}`, () => {
       const callback = cy.stub();
       const columnFilterState = [{ code: 'eq', value: '20' }];
@@ -495,7 +489,7 @@ describe('filter', () => {
         columnName: 'age',
         filterState: null,
         type: 'number',
-        columnFilterState
+        columnFilterState,
       });
     });
 
@@ -516,13 +510,17 @@ describe('filter', () => {
       cy.wrap(filterCallback).should(() => {
         expect(filterCallback.args[0][0]).to.contain.subset({
           columnName: 'age',
-          filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
+          filterState: [
+            { columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' },
+          ],
         });
       });
       cy.wrap(afterFilterCallback).should(() => {
         expect(afterFilterCallback.args[0][0]).to.contain.subset({
           columnName: 'age',
-          filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
+          filterState: [
+            { columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' },
+          ],
         });
       });
     });
@@ -542,7 +540,7 @@ describe('filter', () => {
       cy.wrap(callback).should(() => {
         expect(callback.args[0][0]).to.contain.subset({
           columnName: 'age',
-          filterState: null
+          filterState: null,
         });
       });
     });
@@ -563,7 +561,7 @@ describe('filter', () => {
     cy.wrap(callback).should(() => {
       expect(callback.args[0][0]).to.contain.subset({
         columnName: 'age',
-        filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }]
+        filterState: [{ columnName: 'age', state: [{ code: 'eq', value: '20' }], type: 'number' }],
       });
     });
   });

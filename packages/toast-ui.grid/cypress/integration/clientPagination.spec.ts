@@ -12,14 +12,14 @@ const columns = [
   { name: 'deliveryType' },
   { name: 'productOrderNo' },
   { name: 'orderName' },
-  { name: 'orderId' }
+  { name: 'orderId' },
 ];
 
 const appendedData = {
   deliveryType: 'Parcel',
   productOrderNo: 100,
   orderName: 'hanjung',
-  orderId: 'jj'
+  orderId: 'jj',
 };
 
 function createGrid(newData?: OptRow[], pageOptions?: PageOptions) {
@@ -28,10 +28,10 @@ function createGrid(newData?: OptRow[], pageOptions?: PageOptions) {
     pageOptions: {
       useClient: true,
       perPage: PER_PAGE_COUNT,
-      ...pageOptions
+      ...pageOptions,
     },
     rowHeaders: ['checkbox'],
-    columns
+    columns,
   });
 }
 
@@ -42,10 +42,10 @@ function createGridWithScrollType(newData?: OptRow[]) {
     pageOptions: {
       useClient: true,
       perPage: SCROLL_PER_PAGE_COUNT,
-      type: 'scroll'
+      type: 'scroll',
     },
     rowHeaders: ['checkbox', 'rowNum'],
-    columns
+    columns,
   });
 }
 
@@ -55,13 +55,9 @@ function moveToNextPage() {
 
 function assertRowLength(length: number) {
   if (length) {
-    cy.getRsideBody()
-      .find('tr')
-      .should('have.length', length);
+    cy.getRsideBody().find('tr').should('have.length', length);
   } else {
-    cy.getRsideBody()
-      .find('tr')
-      .should('not.exist');
+    cy.getRsideBody().find('tr').should('not.exist');
   }
 }
 
@@ -74,7 +70,7 @@ function assertSelectedPage(page: number) {
 }
 
 function assertCheckedAllRows() {
-  cy.get('td input[type=checkbox]').each($el => {
+  cy.get('td input[type=checkbox]').each(($el) => {
     cy.wrap($el).should('be.checked');
   });
 }
@@ -82,7 +78,7 @@ function assertCheckedAllRows() {
 function assertNotCheckedAllRows(start: number, end: number) {
   for (let i = start; i <= end; i += 1) {
     moveToNextPage();
-    cy.get('td input[type=checkbox]').within($el => {
+    cy.get('td input[type=checkbox]').within(($el) => {
       expect($el).not.to.be.checked;
     });
   }
@@ -214,7 +210,7 @@ describe('type: scroll', () => {
     setTimeout(() => {
       cy.getByCls('body-container')
         .invoke('height')
-        .then(height => {
+        .then((height) => {
           initialHeight.should('eq', height);
         });
     });
@@ -228,9 +224,7 @@ describe('type: scroll', () => {
     // scroll at the bottommost
     cy.focusAndWait(49, 'productOrderNo');
 
-    cy.getHeaderCell('_checked')
-      .find('input')
-      .should('not.be.checked');
+    cy.getHeaderCell('_checked').find('input').should('not.be.checked');
   });
 
   it('should display the appended row after removing all rows', () => {
@@ -258,9 +252,7 @@ describe('API', () => {
   });
 
   it('should get pagination size after getPaginationTotalCount API', () => {
-    cy.gridInstance()
-      .invoke('getPaginationTotalCount')
-      .should('eq', TOTAL_COUNT);
+    cy.gridInstance().invoke('getPaginationTotalCount').should('eq', TOTAL_COUNT);
   });
 });
 
@@ -306,7 +298,5 @@ it('should display the pagination component with visiblePages option', () => {
   createGrid(data.slice(0, 100), { visiblePages: 5 });
 
   cy.get(`.tui-last-child`).should('have.text', '...');
-  cy.get(`.tui-last-child`)
-    .prev()
-    .should('have.text', '5');
+  cy.get(`.tui-last-child`).prev().should('have.text', '5');
 });

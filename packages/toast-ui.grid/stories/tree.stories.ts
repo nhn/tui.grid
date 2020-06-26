@@ -3,7 +3,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Tree'
+  title: 'Tree',
 };
 
 function createGrid() {
@@ -13,19 +13,19 @@ function createGrid() {
       name: 'Beautiful Lies',
       artist: 'Birdy',
       _attributes: {
-        expanded: true
+        expanded: true,
       },
       _children: [
         {
           name: 'Blue Skies',
           artist: 'Lenka',
-          _children: []
+          _children: [],
         },
         {
           name: 'Chaos And The Calm',
           artist: 'James Bay',
           _attributes: {
-            expanded: true
+            expanded: true,
           },
           _children: [
             {
@@ -44,34 +44,34 @@ function createGrid() {
                   grade: '3',
                   price: 20000,
                   downloadCount: 1000,
-                  listenCount: 5000
+                  listenCount: 5000,
                 },
                 {
                   name: 'Following My Intuition',
-                  artist: 'Craig David'
-                }
-              ]
-            }
-          ]
+                  artist: 'Craig David',
+                },
+              ],
+            },
+          ],
         },
         {
           name: 'The Magic Whip',
-          artist: 'Blur'
+          artist: 'Blur',
         },
         {
           name: 'Blurryface',
-          artist: 'Twenty One Pilots'
-        }
-      ]
+          artist: 'Twenty One Pilots',
+        },
+      ],
     },
     {
       name: 'X',
-      artist: 'Ed Sheeran'
+      artist: 'Ed Sheeran',
     },
     {
       name: 'Moves Like Jagger',
-      artist: 'Maroon5'
-    }
+      artist: 'Maroon5',
+    },
   ];
   const el = document.createElement('div');
   el.style.width = '800px';
@@ -82,8 +82,8 @@ function createGrid() {
     columns,
     treeColumnOptions: {
       name: 'name',
-      useCascadingCheckbox: true
-    }
+      useCascadingCheckbox: true,
+    },
   });
 
   return { el, grid };

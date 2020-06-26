@@ -7,7 +7,7 @@ export function createAjaxConfig(target: AjaxConfig) {
     'withCredentials',
     'mimeType',
     'headers',
-    'serializer'
+    'serializer',
   ];
   return pick(target, ...configKeys);
 }

@@ -9,15 +9,15 @@ module.exports = ({ config, mode }) => {
         {
           loader: require.resolve('ts-loader'),
           options: {
-            transpileOnly: true
-          }
-        }
-      ]
+            transpileOnly: true,
+          },
+        },
+      ],
     },
     {
       test: /\.(ts|tsx)$/,
       exclude: /node_modules/,
-      loader: 'eslint-loader'
+      loader: 'eslint-loader',
     }
   );
 

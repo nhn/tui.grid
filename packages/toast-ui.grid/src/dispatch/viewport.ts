@@ -18,7 +18,7 @@ function setScrollPosition(
 export function setScrollToFocus(store: Store) {
   const {
     focus: { cellPosRect, side },
-    viewport
+    viewport,
   } = store;
 
   if (cellPosRect === null || side === null) {
@@ -34,7 +34,7 @@ export function setScrollToSelection(store: Store) {
     columnCoords: { widths, offsets: columnOffsets },
     rowCoords: { heights, offsets: rowOffsets },
     selection: { inputRange },
-    viewport
+    viewport,
   } = store;
   if (!inputRange) {
     return;

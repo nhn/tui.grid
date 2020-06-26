@@ -31,7 +31,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
     nativeEvent,
     targetType,
     rowKey,
-    columnName
+    columnName,
   });
 }
 

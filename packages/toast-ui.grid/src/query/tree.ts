@@ -27,7 +27,7 @@ export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
   if (row) {
     const childRowKeys = getChildRowKeys(row);
 
-    return childRowKeys.map(childRowKey => {
+    return childRowKeys.map((childRowKey) => {
       const childRow = findRowByRowKey(data, column, id, childRowKey)!;
       return plainObj ? getOriginObject(childRow as Observable<Row>) : childRow;
     });

@@ -10,13 +10,13 @@ const sampleData = [
   { name: 'Ryu', price: 2, downloadCount: 2 },
   { name: 'Kim', price: 3, downloadCount: 3 },
   { name: 'Lee', price: 4, downloadCount: 4 },
-  { name: 'Park', price: 5, downloadCount: 5 }
+  { name: 'Park', price: 5, downloadCount: 5 },
 ];
 
 const filterSampleData = [
   { name: 'Han', price: 2, downloadCount: 1 },
   { name: 'Ryu', price: 3, downloadCount: 2 },
-  { name: 'Kim', price: 2, downloadCount: 2 }
+  { name: 'Kim', price: 2, downloadCount: 2 },
 ];
 
 function createSummaryOption(
@@ -30,7 +30,7 @@ function createSummaryOption(
         template(valueMap: SummaryValueMap) {
           const { filtered, max, min } = valueMap;
           return `MAX: ${max} FilteredMax: ${filtered.max}<br>MIN: ${min} FilteredMin: ${filtered.min}`;
-        }
+        },
       },
       downloadCount: {
         template(valueMap: SummaryValueMap) {
@@ -38,9 +38,9 @@ function createSummaryOption(
           return `TOTAL: ${sum} FilteredSum: ${filtered.sum}<br>AVG: ${avg.toFixed(
             2
           )} FilteredAvg: ${filtered.avg.toFixed(2)}`;
-        }
-      }
-    }
+        },
+      },
+    },
   };
   const summaryOptions = needDeepMergedCopy
     ? deepMergedCopy(summary, customOptions)
@@ -54,7 +54,7 @@ function createDefaultOptions(customOptions?: Dictionary<any>): Omit<OptGrid, 'e
   const columns = [
     { name: 'name', minWidth: 150 },
     { name: 'price', minWidth: 150 },
-    { name: 'downloadCount', minWidth: 150 }
+    { name: 'downloadCount', minWidth: 150 },
   ];
   const summary = createSummaryOption();
 
@@ -63,32 +63,23 @@ function createDefaultOptions(customOptions?: Dictionary<any>): Omit<OptGrid, 'e
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
-  contents.forEach(content => {
+  contents.forEach((content) => {
     cy.get('@summaryCell').should('contain.text', content);
   });
 }
 
 function assertSummaryPosition(index: number, prevElClassName: string) {
-  cy.getByCls('summary-area')
-    .eq(index)
-    .prev()
-    .should('have.class', prevElClassName);
+  cy.getByCls('summary-area').eq(index).prev().should('have.class', prevElClassName);
 }
 
 function assertScrollLeft(alias: string, scrollLeft: number) {
-  cy.get(alias)
-    .invoke('scrollLeft')
-    .should('be.eql', scrollLeft);
+  cy.get(alias).invoke('scrollLeft').should('be.eql', scrollLeft);
 }
 
 function assertSyncScrollLeft(index: number) {
-  cy.getByCls('body-area')
-    .eq(index)
-    .as('bodyArea');
+  cy.getByCls('body-area').eq(index).as('bodyArea');
 
-  cy.getByCls('summary-area')
-    .eq(index)
-    .as('summaryArea');
+  cy.getByCls('summary-area').eq(index).as('summaryArea');
 
   cy.get('@summaryArea').scrollTo(50, 0);
   assertScrollLeft('@bodyArea', 50);
@@ -137,8 +128,8 @@ describe('summary', () => {
         defaultContent: {
           template(valueMap: SummaryValueMap) {
             return `total row count: ${valueMap.cnt}`;
-          }
-        }
+          },
+        },
       });
       const defaultOptions = createDefaultOptions();
       cy.createGrid({ ...defaultOptions, summary });
@@ -148,9 +139,9 @@ describe('summary', () => {
 
     it('auto calculate summary when column is editable', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map(column => ({
+      const columns = options.columns.map((column) => ({
         ...column,
-        editor: 'text'
+        editor: 'text',
       }));
       cy.createGrid({ ...options, columns });
 
@@ -164,8 +155,8 @@ describe('summary', () => {
     it('should display static columnContent properly', () => {
       const summary = createSummaryOption({
         columnContent: {
-          price: 'this is static'
-        }
+          price: 'this is static',
+        },
       });
       const defaultOptions = createDefaultOptions();
       cy.createGrid({ ...defaultOptions, summary });
@@ -175,7 +166,7 @@ describe('summary', () => {
 
     it('should display static defaultContent properly', () => {
       const summary = createSummaryOption({
-        defaultContent: 'this is default'
+        defaultContent: 'this is default',
       });
       const defaultOptions = createDefaultOptions();
       cy.createGrid({ ...defaultOptions, summary });
@@ -193,9 +184,9 @@ describe('summary', () => {
               template(valueMap: SummaryValueMap) {
                 return `no auto calculate: ${valueMap.sum}`;
               },
-              useAutoSummary: false
-            }
-          }
+              useAutoSummary: false,
+            },
+          },
         },
         true
       );
@@ -210,7 +201,7 @@ describe('summary', () => {
   context('active scroll-x', () => {
     it('sync scrollLeft with body area', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map(column => ({ ...column, minWidth: 300 }));
+      const columns = options.columns.map((column) => ({ ...column, minWidth: 300 }));
       cy.createGrid({ ...options, columns });
 
       assertSyncScrollLeft(1);
@@ -218,7 +209,7 @@ describe('summary', () => {
 
     it('sync scrollLeft with body area if column resizable: true', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map(column => ({ ...column, resizable: true }));
+      const columns = options.columns.map((column) => ({ ...column, resizable: true }));
       cy.createGrid({ ...options, columns });
 
       cy.getByCls('column-resize-handle')
@@ -241,7 +232,7 @@ describe('summary', () => {
       cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
         template(valueMap: SummaryValueMap) {
           return `auto calculate: ${valueMap.max}`;
-        }
+        },
       });
       assertSummaryContent('price', 'auto calculate: 5');
 
@@ -249,7 +240,7 @@ describe('summary', () => {
         template(valueMap: SummaryValueMap) {
           return `no auto calculate: ${valueMap.max}`;
         },
-        useAutoSummary: false
+        useAutoSummary: false,
       });
       assertSummaryContent('price', 'no auto calculate: 0');
     });
@@ -261,7 +252,7 @@ describe('summary', () => {
       cy.gridInstance().invoke('setSummaryColumnContent', 'name', {
         template(valueMap: SummaryValueMap) {
           return `auto calculate: ${valueMap.sum}`;
-        }
+        },
       });
       assertSummaryContent('name', 'auto calculate: 0');
     });
@@ -272,15 +263,15 @@ describe('summary', () => {
         defaultContent: {
           template(valueMap: SummaryValueMap) {
             return `DEFAULT_MAX: ${valueMap.max}<br>DEFAULT_MIN: ${valueMap.min}`;
-          }
-        }
+          },
+        },
       };
       const defaultOptions = createDefaultOptions();
       cy.createGrid({ ...defaultOptions, summary });
       cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
         template(valueMap: SummaryValueMap) {
           return `auto calculate: ${valueMap.max}`;
-        }
+        },
       });
 
       assertSummaryContent('price', 'auto calculate: 5');
@@ -291,7 +282,7 @@ describe('summary', () => {
       const columns = [
         { name: 'name', minWidth: 150 },
         { name: 'price', minWidth: 150 },
-        { name: 'downloadCount', minWidth: 150 }
+        { name: 'downloadCount', minWidth: 150 },
       ];
       cy.createGrid({ ...defaultOptions, columns: [] });
 
@@ -306,7 +297,7 @@ describe('summary', () => {
       const columns = [
         { name: 'name', minWidth: 150 },
         { name: 'price', minWidth: 150 },
-        { name: 'downloadCount', minWidth: 150 }
+        { name: 'downloadCount', minWidth: 150 },
       ];
       cy.createGrid({ ...defaultOptions, columns: [] });
 
@@ -322,35 +313,31 @@ describe('summary', () => {
     const defaultOptions = createDefaultOptions();
     cy.createGrid(defaultOptions);
 
-    cy.gridInstance()
-      .invoke('getSummaryValues', 'price')
-      .should('have.subset', {
-        avg: 3,
-        cnt: 5,
-        max: 5,
-        min: 1,
-        sum: 15
-      });
+    cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+      avg: 3,
+      cnt: 5,
+      max: 5,
+      min: 1,
+      sum: 15,
+    });
   });
 
   it('should change summary value by resetData API', () => {
     const data = [
       { name: 100, price: 2, downloadCount: 10 },
-      { name: 200, price: 5, downloadCount: 20 }
+      { name: 200, price: 5, downloadCount: 20 },
     ];
     const defaultOptions = createDefaultOptions();
     cy.createGrid(defaultOptions);
     cy.gridInstance().invoke('resetData', data);
 
-    cy.gridInstance()
-      .invoke('getSummaryValues', 'price')
-      .should('have.subset', {
-        avg: 3.5,
-        cnt: 2,
-        max: 5,
-        min: 2,
-        sum: 7
-      });
+    cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+      avg: 3.5,
+      cnt: 2,
+      max: 5,
+      min: 2,
+      sum: 7,
+    });
   });
 
   context('should change summary value by appendRow / removeRow API', () => {
@@ -360,25 +347,21 @@ describe('summary', () => {
       cy.createGrid(defaultOptions);
       cy.gridInstance().invoke('appendRow', row);
 
-      cy.gridInstance()
-        .invoke('getSummaryValues', 'price')
-        .should('have.subset', {
-          avg: 3.5,
-          cnt: 6,
-          max: 6,
-          min: 1,
-          sum: 21
-        });
+      cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+        avg: 3.5,
+        cnt: 6,
+        max: 6,
+        min: 1,
+        sum: 21,
+      });
 
-      cy.gridInstance()
-        .invoke('getSummaryValues', 'downloadCount')
-        .should('have.subset', {
-          avg: 3,
-          cnt: 6,
-          max: 5,
-          min: 1,
-          sum: 18
-        });
+      cy.gridInstance().invoke('getSummaryValues', 'downloadCount').should('have.subset', {
+        avg: 3,
+        cnt: 6,
+        max: 5,
+        min: 1,
+        sum: 18,
+      });
     });
 
     it('removeRow API', () => {
@@ -386,25 +369,21 @@ describe('summary', () => {
       cy.createGrid(defaultOptions);
       cy.gridInstance().invoke('removeRow', 19);
 
-      cy.gridInstance()
-        .invoke('getSummaryValues', 'price')
-        .should('have.subset', {
-          avg: 3,
-          cnt: 5,
-          max: 5,
-          min: 1,
-          sum: 15
-        });
+      cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+        avg: 3,
+        cnt: 5,
+        max: 5,
+        min: 1,
+        sum: 15,
+      });
 
-      cy.gridInstance()
-        .invoke('getSummaryValues', 'downloadCount')
-        .should('have.subset', {
-          avg: 3,
-          cnt: 5,
-          max: 5,
-          min: 1,
-          sum: 15
-        });
+      cy.gridInstance().invoke('getSummaryValues', 'downloadCount').should('have.subset', {
+        avg: 3,
+        cnt: 5,
+        max: 5,
+        min: 1,
+        sum: 15,
+      });
     });
   });
 
@@ -413,15 +392,13 @@ describe('summary', () => {
     cy.createGrid(defaultOptions);
     cy.gridInstance().invoke('setColumnValues', 'price', 10);
 
-    cy.gridInstance()
-      .invoke('getSummaryValues', 'price')
-      .should('have.subset', {
-        avg: 10,
-        cnt: 5,
-        max: 10,
-        min: 10,
-        sum: 50
-      });
+    cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+      avg: 10,
+      cnt: 5,
+      max: 10,
+      min: 10,
+      sum: 50,
+    });
   });
 
   it('should change summary value by clear API', () => {
@@ -429,15 +406,13 @@ describe('summary', () => {
     cy.createGrid(defaultOptions);
     cy.gridInstance().invoke('clear');
 
-    cy.gridInstance()
-      .invoke('getSummaryValues', 'price')
-      .should('have.subset', {
-        avg: 0,
-        cnt: 0,
-        max: 0,
-        min: 0,
-        sum: 0
-      });
+    cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+      avg: 0,
+      cnt: 0,
+      max: 0,
+      min: 0,
+      sum: 0,
+    });
   });
 
   it(`should apply summary option on columns that doesn't exist`, () => {
@@ -445,18 +420,16 @@ describe('summary', () => {
     const columns = [
       { name: 'name', minWidth: 150 },
       { name: 'artist', minWidth: 150 },
-      { name: 'type', minWidth: 150 }
+      { name: 'type', minWidth: 150 },
     ];
     cy.createGrid({ ...defaultOptions, columns });
-    cy.gridInstance()
-      .invoke('getSummaryValues', 'price')
-      .should('have.subset', {
-        avg: 3,
-        cnt: 5,
-        max: 5,
-        min: 1,
-        sum: 15
-      });
+    cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+      avg: 3,
+      cnt: 5,
+      max: 5,
+      min: 1,
+      sum: 15,
+    });
   });
 });
 
@@ -466,8 +439,8 @@ describe('summary with filter', () => {
       columns: [
         { name: 'name', minWidth: 150, editor: 'text' },
         { name: 'price', minWidth: 150, sortable: true, editor: 'text' },
-        { name: 'downloadCount', minWidth: 150, filter: 'number', editor: 'text' }
-      ]
+        { name: 'downloadCount', minWidth: 150, filter: 'number', editor: 'text' },
+      ],
     });
     cy.createGrid({ ...defaultOptions, data: filterSampleData });
     cy.gridInstance().invoke('filter', 'downloadCount', [{ code: 'eq', value: 2 }]);
@@ -573,8 +546,8 @@ describe('summary with pagination', () => {
       columns: [
         { name: 'name', minWidth: 150 },
         { name: 'price', minWidth: 150, sortable: true },
-        { name: 'downloadCount', minWidth: 150, filter: 'number' }
-      ]
+        { name: 'downloadCount', minWidth: 150, filter: 'number' },
+      ],
     });
     cy.createGrid({ ...defaultOptions, pageOptions: { useClient: true, perPage: 10 } });
   });

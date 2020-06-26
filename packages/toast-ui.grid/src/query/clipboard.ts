@@ -37,8 +37,8 @@ function getTextWithCopyOptionsApplied(
         valueList = value.split(',');
       }
 
-      valueList.forEach(val => {
-        const listItem = find(item => item.value === val, listItems);
+      valueList.forEach((val) => {
+        const listItem = find((item) => item.value === val, listItems);
 
         result.push(listItem ? listItem.text : val);
       });
@@ -60,7 +60,7 @@ function getValueToString(store: Store) {
   const {
     column: { visibleColumnsWithRowHeader },
     focus: { rowIndex, columnName, totalColumnIndex },
-    data: { filteredViewData, filteredRawData }
+    data: { filteredViewData, filteredRawData },
   } = store;
 
   if (rowIndex === null || columnName === null || totalColumnIndex === null) {
@@ -79,7 +79,7 @@ function getValuesToString(store: Store) {
   const {
     selection: { originalRange },
     column: { visibleColumnsWithRowHeader },
-    data: { filteredViewData, filteredRawData }
+    data: { filteredViewData, filteredRawData },
   } = store;
 
   if (!originalRange) {
@@ -111,7 +111,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     selection: { originalRange },
     focus: { totalColumnIndex, originalRowIndex },
     column: { visibleColumnsWithRowHeader },
-    data: { viewData }
+    data: { viewData },
   } = store;
   let startRowIndex, startColumnIndex;
 
@@ -129,7 +129,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
 
   return {
     row: [startRowIndex, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
+    column: [startColumnIndex, endColumnIndex],
   };
 }
 
@@ -143,12 +143,12 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
   const result = [...pasteData];
 
   for (let i = 0; i < rowDupCount; i += 1) {
-    pasteData.forEach(row => {
+    pasteData.forEach((row) => {
       result.push(row.slice(0));
     });
   }
 
-  result.forEach(row => {
+  result.forEach((row) => {
     const rowData = row.slice(0);
 
     for (let i = 0; i < colDupCount; i += 1) {
@@ -162,7 +162,7 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
 export function getText(store: Store) {
   const {
     selection,
-    focus: { rowIndex, columnName }
+    focus: { rowIndex, columnName },
   } = store;
 
   if (selection.range) {

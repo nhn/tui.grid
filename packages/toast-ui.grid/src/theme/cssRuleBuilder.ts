@@ -141,7 +141,7 @@ export function createNestedClassRule(
   selector: string,
   classNames: ClassNameType[]
 ): CSSRuleBuilder {
-  return create(`.${classNames.map(className => cls(className)).join(selector)}`);
+  return create(`.${classNames.map((className) => cls(className)).join(selector)}`);
 }
 
 /**
@@ -151,7 +151,7 @@ export function createWebkitScrollbarRules(selector: string, options: OptScrollb
   return [
     create(`${selector} ::-webkit-scrollbar`).bg(options.background),
     create(`${selector} ::-webkit-scrollbar-thumb`).bg(options.thumb),
-    create(`${selector} ::-webkit-scrollbar-thumb:hover`).bg(options.active)
+    create(`${selector} ::-webkit-scrollbar-thumb:hover`).bg(options.active),
   ];
 }
 
@@ -163,15 +163,15 @@ export function createIEScrollbarRule(selector: string, options: OptScrollbarSty
     'scrollbar-3dlight-color',
     'scrollbar-darkshadow-color',
     'scrollbar-track-color',
-    'scrollbar-shadow-color'
+    'scrollbar-shadow-color',
   ];
   const thumbProps = ['scrollbar-face-color', 'scrollbar-highlight-color'];
   const ieScrollbarRule = create(selector);
 
-  bgProps.forEach(function(prop) {
+  bgProps.forEach(function (prop) {
     ieScrollbarRule.add(prop, options.background);
   });
-  thumbProps.forEach(function(prop) {
+  thumbProps.forEach(function (prop) {
     ieScrollbarRule.add(prop, options.thumb);
   });
   ieScrollbarRule.add('scrollbar-arrow-color', options.active);
@@ -183,7 +183,7 @@ export function createIEScrollbarRule(selector: string, options: OptScrollbarSty
  */
 export function buildAll(rules: CSSRuleBuilder[]) {
   return rules
-    .map(function(rule) {
+    .map(function (rule) {
       return rule.build();
     })
     .join('');

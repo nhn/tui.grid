@@ -6,7 +6,7 @@ import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 
 export default {
-  title: 'Editor'
+  title: 'Editor',
 };
 
 class ColorPickerEditor implements CellEditor {
@@ -46,7 +46,7 @@ const data = [
     genreCode: '1',
     grade: '4',
     release: '2016.03.26',
-    albumColor: '#F294A4'
+    albumColor: '#F294A4',
   },
   {
     artist: 'Ed Sheeran',
@@ -54,7 +54,7 @@ const data = [
     genreCode: '1',
     grade: '5',
     release: '2014.06.24',
-    albumColor: '#ED6510'
+    albumColor: '#ED6510',
   },
   {
     artist: 'Maroon5',
@@ -62,7 +62,7 @@ const data = [
     genreCode: '1,2',
     grade: '2',
     release: '2011.08.08',
-    albumColor: '#1286DB'
+    albumColor: '#1286DB',
   },
   {
     artist: 'Adele',
@@ -70,7 +70,7 @@ const data = [
     typeCode: '1',
     genreCode: '2,3',
     grade: '3',
-    albumColor: '#1286DB'
+    albumColor: '#1286DB',
   },
   {
     artist: 'HONNE',
@@ -78,7 +78,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '2',
-    albumColor: '#ED6510'
+    albumColor: '#ED6510',
   },
   {
     artist: 'Gregory Porter',
@@ -86,7 +86,7 @@ const data = [
     typeCode: '1',
     genreCode: '1,2',
     grade: '3',
-    albumColor: '#1286DB'
+    albumColor: '#1286DB',
   },
   {
     artist: 'LANY',
@@ -94,7 +94,7 @@ const data = [
     typeCode: '2',
     genreCode: '3',
     grade: '2',
-    albumColor: '#ED6510'
+    albumColor: '#ED6510',
   },
   {
     artist: 'Daft Punk',
@@ -102,7 +102,7 @@ const data = [
     typeCode: '2',
     genreCode: '1,3',
     grade: '3',
-    albumColor: '#F294A4'
+    albumColor: '#F294A4',
   },
   {
     artist: 'Sigur Rós',
@@ -110,7 +110,7 @@ const data = [
     typeCode: '1',
     genreCode: '2',
     grade: '3',
-    albumColor: '#1286DB'
+    albumColor: '#1286DB',
   },
   {
     artist: 'Snoop Dogg',
@@ -118,7 +118,7 @@ const data = [
     typeCode: '2',
     genreCode: '1',
     grade: '3',
-    albumColor: '#F294A4'
+    albumColor: '#F294A4',
   },
   {
     artist: 'Beyoncé',
@@ -126,8 +126,8 @@ const data = [
     typeCode: '1',
     genreCode: '3',
     grade: '3',
-    albumColor: '#1286DB'
-  }
+    albumColor: '#1286DB',
+  },
 ];
 
 const columns: OptColumn[] = [
@@ -136,9 +136,9 @@ const columns: OptColumn[] = [
     editor: {
       type: 'text',
       options: {
-        dataType: 'number'
-      }
-    }
+        dataType: 'number',
+      },
+    },
   },
   {
     header: 'Genre',
@@ -150,10 +150,10 @@ const columns: OptColumn[] = [
         listItems: [
           { text: 'Pop', value: '1' },
           { text: 'Rock', value: '2' },
-          { text: 'R&B', value: '3' }
-        ]
-      }
-    }
+          { text: 'R&B', value: '3' },
+        ],
+      },
+    },
   },
   {
     header: 'Type',
@@ -164,10 +164,10 @@ const columns: OptColumn[] = [
       options: {
         listItems: [
           { text: 'Delux', value: '1' },
-          { text: 'Single', value: '2' }
-        ]
-      }
-    }
+          { text: 'Single', value: '2' },
+        ],
+      },
+    },
   },
   {
     header: 'Grade',
@@ -181,23 +181,23 @@ const columns: OptColumn[] = [
           { text: '**', value: '2' },
           { text: '***', value: '3' },
           { text: '****', value: '4' },
-          { text: '*****', value: '5' }
-        ]
-      }
-    }
+          { text: '*****', value: '5' },
+        ],
+      },
+    },
   },
   {
     header: 'Release',
     name: 'release',
-    editor: 'datePicker'
+    editor: 'datePicker',
   },
   {
     header: 'Album Color',
     name: 'albumColor',
     editor: {
-      type: ColorPickerEditor
-    }
-  }
+      type: ColorPickerEditor,
+    },
+  },
 ];
 
 function createGrid() {
@@ -211,8 +211,8 @@ function createGrid() {
     bodyHeight: 300,
     columnOptions: {
       frozenCount: 1,
-      minWidth: 200
-    }
+      minWidth: 200,
+    },
   });
 
   return { el, grid };

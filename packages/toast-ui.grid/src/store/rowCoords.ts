@@ -16,8 +16,8 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
 
   return observable({
     heights: pageOptions.useClient
-      ? data.filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
-      : data.filteredRawData.map(row => getRowHeight(row, rowHeight)),
+      ? data.filteredRawData.slice(...pageRowRange).map((row) => getRowHeight(row, rowHeight))
+      : data.filteredRawData.map((row) => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];
@@ -32,6 +32,6 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
 
     get totalRowHeight() {
       return this.heights.length ? last(this.offsets) + last(this.heights) : 0;
-    }
+    },
   });
 }

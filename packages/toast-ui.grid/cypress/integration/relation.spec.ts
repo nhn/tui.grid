@@ -3,7 +3,7 @@ import {
   data,
   orderedRelationColumns,
   unorderedRelationColumns1,
-  unorderedRelationColumns2
+  unorderedRelationColumns2,
 } from '../../samples/relations';
 import Grid from '@/grid';
 import { deepCopyArray } from '@/helper/common';
@@ -37,7 +37,7 @@ describe('ordered relation column', () => {
     cy.getRsideBody().should('have.cellData', [
       ['', '', '', 'Select'],
       ['Overseas', 'R&B', 'Marry You', 'no'],
-      ['Etc', 'OST', 'City Of Stars', 'relation']
+      ['Etc', 'OST', 'City Of Stars', 'relation'],
     ]);
   });
 
@@ -61,13 +61,13 @@ describe('ordered relation column', () => {
   });
 
   it('relation columns could be set through setColumns()', () => {
-    const filteredColumns = orderedRelationColumns.filter(column => column.name !== 'category4');
+    const filteredColumns = orderedRelationColumns.filter((column) => column.name !== 'category4');
     cy.gridInstance().invoke('setColumns', filteredColumns);
 
     cy.getRsideBody().should('have.cellData', [
       ['', '', ''],
       ['Overseas', 'R&B', 'Marry You'],
-      ['Etc', 'OST', 'City Of Stars']
+      ['Etc', 'OST', 'City Of Stars'],
     ]);
 
     changeCellValues(0);
@@ -82,7 +82,7 @@ describe('ordered relation column', () => {
       category1: '02',
       category2: '02_03',
       category3: '02_03_0001',
-      category4: '01'
+      category4: '01',
     });
 
     cy.getCells(3).each(($cell, index) => {
@@ -99,7 +99,7 @@ describe('ordered relation column', () => {
 
     cy.getRsideBody().should('have.cellData', [
       ['Overseas', 'R&B', 'Marry You', 'no'],
-      ['Etc', 'OST', 'City Of Stars', 'relation']
+      ['Etc', 'OST', 'City Of Stars', 'relation'],
     ]);
 
     changeCellValues(0);
@@ -118,7 +118,7 @@ describe('unordered relation column', () => {
       cy.getRsideBody().should('have.cellData', [
         ['', '', 'Select', ''],
         ['R&B', 'Overseas', 'no', 'Marry You'],
-        ['OST', 'Etc', 'relation', 'City Of Stars']
+        ['OST', 'Etc', 'relation', 'City Of Stars'],
       ]);
     });
 
@@ -143,14 +143,14 @@ describe('unordered relation column', () => {
 
     it('relation columns could be set through setColumns()', () => {
       const filteredColumns = unorderedRelationColumns1.filter(
-        column => column.name !== 'category4'
+        (column) => column.name !== 'category4'
       );
       cy.gridInstance().invoke('setColumns', filteredColumns);
 
       cy.getRsideBody().should('have.cellData', [
         ['', '', ''],
         ['R&B', 'Overseas', 'Marry You'],
-        ['OST', 'Etc', 'City Of Stars']
+        ['OST', 'Etc', 'City Of Stars'],
       ]);
 
       changeCellValues(0);
@@ -165,7 +165,7 @@ describe('unordered relation column', () => {
         category1: '02',
         category2: '02_03',
         category3: '02_03_0001',
-        category4: '01'
+        category4: '01',
       });
 
       cy.getCells(3).each(($cell, index) => {
@@ -182,7 +182,7 @@ describe('unordered relation column', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['R&B', 'Overseas', 'no', 'Marry You'],
-        ['OST', 'Etc', 'relation', 'City Of Stars']
+        ['OST', 'Etc', 'relation', 'City Of Stars'],
       ]);
 
       changeCellValues(0);
@@ -200,7 +200,7 @@ describe('unordered relation column', () => {
       cy.getRsideBody().should('have.cellData', [
         ['', 'Select', '', ''],
         ['R&B', 'no', 'Marry You', 'Overseas'],
-        ['OST', 'relation', 'City Of Stars', 'Etc']
+        ['OST', 'relation', 'City Of Stars', 'Etc'],
       ]);
     });
 
@@ -225,14 +225,14 @@ describe('unordered relation column', () => {
 
     it('relation columns could be set through setColumns()', () => {
       const filteredColumns = unorderedRelationColumns2.filter(
-        column => column.name !== 'category4'
+        (column) => column.name !== 'category4'
       );
       cy.gridInstance().invoke('setColumns', filteredColumns);
 
       cy.getRsideBody().should('have.cellData', [
         ['', '', ''],
         ['R&B', 'Marry You', 'Overseas'],
-        ['OST', 'City Of Stars', 'Etc']
+        ['OST', 'City Of Stars', 'Etc'],
       ]);
 
       changeCellValues(0);
@@ -247,7 +247,7 @@ describe('unordered relation column', () => {
         category1: '02',
         category2: '02_03',
         category3: '02_03_0001',
-        category4: '01'
+        category4: '01',
       });
 
       cy.getCells(3).each(($cell, index) => {
@@ -264,7 +264,7 @@ describe('unordered relation column', () => {
 
       cy.getRsideBody().should('have.cellData', [
         ['R&B', 'no', 'Marry You', 'Overseas'],
-        ['OST', 'relation', 'City Of Stars', 'Etc']
+        ['OST', 'relation', 'City Of Stars', 'Etc'],
       ]);
 
       changeCellValues(0);
@@ -275,39 +275,39 @@ describe('unordered relation column', () => {
 });
 
 describe(`throw error`, () => {
-  ['self circular', 'circular'].forEach(type => {
+  ['self circular', 'circular'].forEach((type) => {
     const columns =
       type === 'circular'
         ? [
             {
               header: 'Category1',
               name: 'category1',
-              relations: [{ targetNames: ['category2'] }]
+              relations: [{ targetNames: ['category2'] }],
             },
             {
               header: 'Category2',
               name: 'category2',
-              relations: [{ targetNames: ['category3'] }]
+              relations: [{ targetNames: ['category3'] }],
             },
             {
               header: 'Category3',
               name: 'category3',
-              relations: [{ targetNames: ['category1'] }]
-            }
+              relations: [{ targetNames: ['category1'] }],
+            },
           ]
         : [
             {
               header: 'Category1',
               name: 'category1',
-              relations: [{ targetNames: ['category1'] }]
+              relations: [{ targetNames: ['category1'] }],
             },
             {
               header: 'Category2',
-              name: 'category2'
-            }
+              name: 'category2',
+            },
           ];
     it(`should throw error when creates ${type} reference on configuring relation column`, () => {
-      cy.window().then(win => {
+      cy.window().then((win) => {
         const { document, tui } = win as Window & { tui: { Grid: typeof Grid } };
         const el = document.createElement('div');
 

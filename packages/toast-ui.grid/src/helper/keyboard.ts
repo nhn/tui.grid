@@ -19,7 +19,7 @@ export const keyNameMap = {
   34: 'pageDown',
   36: 'home',
   35: 'end',
-  46: 'del'
+  46: 'del',
 } as const;
 
 export const keyboardEventTypeMap = {
@@ -27,7 +27,7 @@ export const keyboardEventTypeMap = {
   edit: 'edit',
   remove: 'remove',
   select: 'select',
-  clipboard: 'clipboard'
+  clipboard: 'clipboard',
 };
 
 export const keyboardEventCommandMap = {
@@ -46,7 +46,7 @@ export const keyboardEventCommandMap = {
   lastCell: 'lastCell',
   all: 'all',
   copy: 'copy',
-  paste: 'paste'
+  paste: 'paste',
 };
 
 /**
@@ -87,7 +87,7 @@ export const keyStrokeCommandMap: {
   'ctrl-home': ['move', 'firstCell'],
   'ctrl-end': ['move', 'lastCell'],
   'ctrl-shift-home': ['select', 'firstCell'],
-  'ctrl-shift-end': ['select', 'lastCell']
+  'ctrl-shift-end': ['select', 'lastCell'],
 };
 export type KeyNameMapType = typeof keyNameMap;
 export type KeyNameMap = KeyNameMapType & {
@@ -131,7 +131,7 @@ export function keyEventGenerate(ev: KeyboardEvent) {
   return commandInfo
     ? {
         type: commandInfo[0],
-        command: commandInfo[1]
+        command: commandInfo[1],
       }
     : {};
 }
@@ -148,7 +148,7 @@ export function isNonPrintableKey(keyCode: number) {
     'pageUp',
     'pageDown',
     'end',
-    'home'
+    'home',
   ];
   const key = (keyNameMap as KeyNameMap)[keyCode];
 

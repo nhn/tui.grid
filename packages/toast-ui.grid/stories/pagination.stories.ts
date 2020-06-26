@@ -5,7 +5,7 @@ import '../src/css/grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
 
 export default {
-  title: 'Pagination'
+  title: 'Pagination',
 };
 
 const columns = [
@@ -13,7 +13,7 @@ const columns = [
   { name: 'productOrderNo' },
   { name: 'orderName' },
   { name: 'orderId' },
-  { name: 'addressee' }
+  { name: 'addressee' },
 ];
 
 const appendData = {
@@ -29,7 +29,7 @@ const appendData = {
   deliveryState: '-',
   deliveryCompany: '-',
   deliveryPeeType: '-',
-  deliveryNo: 0
+  deliveryNo: 0,
 };
 
 function createGrid(pageOptions?: PageOptions) {
@@ -43,8 +43,8 @@ function createGrid(pageOptions?: PageOptions) {
     pageOptions: {
       useClient: true,
       perPage: 10,
-      ...pageOptions
-    }
+      ...pageOptions,
+    },
   });
 
   return { el, grid };

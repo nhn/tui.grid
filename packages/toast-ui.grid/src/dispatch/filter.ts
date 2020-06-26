@@ -3,7 +3,7 @@ import {
   FilterOptionType,
   FilterState,
   ActiveColumnAddress,
-  Filter
+  Filter,
 } from '@t/store/filterLayerState';
 import { OptFilter, FilterStateResetOption } from '@t/options';
 import { Store } from '@t/store';
@@ -55,7 +55,7 @@ export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
 
   if (checked) {
     const columnData = getUniqColumnData(data.rawData, column, columnName);
-    activeFilterState!.state = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
+    activeFilterState!.state = columnData.map((value) => ({ code: 'eq', value })) as FilterState[];
   } else {
     activeFilterState!.state = [];
   }
@@ -109,14 +109,14 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
 
   if (type === 'select' && !initialState.length) {
     const columnData = getUniqColumnData(filteredRawData, column, columnName);
-    initialState = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
+    initialState = columnData.map((value) => ({ code: 'eq', value })) as FilterState[];
   }
 
   filterLayerState.activeFilterState = {
     columnName,
     type,
     operator,
-    state: initialState
+    state: initialState,
   };
 }
 
@@ -124,7 +124,7 @@ export function applyActiveFilterState(store: Store) {
   const { filterLayerState, data, column } = store;
   const columnName = filterLayerState.activeColumnAddress!.name;
   const { state, type, operator } = filterLayerState.activeFilterState!;
-  const validState = state.filter(item => String(item.value).length);
+  const validState = state.filter((item) => String(item.value).length);
 
   if (type !== 'select' && !validState.length) {
     unfilter(store, columnName);
@@ -303,7 +303,7 @@ export function emitAfterFilter(store: Store, eventType: EventType, columnName: 
     ? ['afterFilter', 'filter']
     : ['afterUnfilter']) as EventType[];
 
-  eventTypes.forEach(type => {
+  eventTypes.forEach((type) => {
     const gridEvent = createFilterEvent(store, type, { columnName });
     eventBus.trigger(type, gridEvent);
   });
@@ -321,7 +321,7 @@ export function resetFilterState(store: Store, filterState?: FilterStateResetOpt
           type: columnFilterOption.type,
           state: columnFilterState,
           columnName,
-          operator: columnFilterOption.operator
+          operator: columnFilterOption.operator,
         };
         updateFilters(store, columnName, nextState);
       } else {

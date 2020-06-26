@@ -54,7 +54,7 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
         conditionFn,
         type,
         columnName,
-        operator
+        operator,
       };
       break;
     /**
@@ -93,7 +93,7 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
     case 'afterUnfilter':
       props = {
         filterState,
-        columnName
+        columnName,
       };
       break;
     default: // do nothing

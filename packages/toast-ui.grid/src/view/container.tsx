@@ -68,8 +68,8 @@ export class ContainerComp extends Component<Props> {
     eventInfo: {
       pageX: -1,
       pageY: -1,
-      timestamp: 0
-    }
+      timestamp: 0,
+    },
   };
 
   private handleTouchStart = () => {
@@ -326,7 +326,7 @@ export class ContainerComp extends Component<Props> {
       showLeftSide,
       scrollX,
       scrollY,
-      pageOptions
+      pageOptions,
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
@@ -344,7 +344,7 @@ export class ContainerComp extends Component<Props> {
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
       >
@@ -393,6 +393,6 @@ export const Container = connect<StoreProps, OwnProps>(
     eventBus: getEventBus(id),
     scrollX: dimension.scrollX,
     scrollY: dimension.scrollY,
-    renderState
+    renderState,
   })
 )(ContainerComp);

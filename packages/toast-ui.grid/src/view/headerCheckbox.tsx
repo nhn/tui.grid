@@ -47,7 +47,7 @@ class HeaderCheckboxComp extends Component<Props> {
   public render() {
     return (
       <span
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
         dangerouslySetInnerHTML={{ __html: this.props.header }}
@@ -57,15 +57,15 @@ class HeaderCheckboxComp extends Component<Props> {
   }
 }
 
-export const HeaderCheckbox = connect<StoreProps>(store => {
+export const HeaderCheckbox = connect<StoreProps>((store) => {
   const {
     data: { checkedAllRows, disabledAllCheckbox },
-    column: { allColumnMap }
+    column: { allColumnMap },
   } = store;
 
   return {
     header: allColumnMap._checked.header,
     checkedAllRows,
-    disabled: disabledAllCheckbox
+    disabled: disabledAllCheckbox,
   };
 })(HeaderCheckboxComp);

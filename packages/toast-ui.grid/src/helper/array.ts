@@ -7,7 +7,7 @@ type Methods = ArrayProtoProps[];
 const methods: Methods = ['splice', 'push', 'pop', 'shift', 'unshift'];
 
 export function patchArrayMethods<T>(arr: any[], obj: T, key: string) {
-  methods.forEach(method => {
+  methods.forEach((method) => {
     const patchedMethod = hasOwnProp(arr, method) ? arr[method] : Array.prototype[method];
     const derivedPatchedMethod = !patchedMethod.registered && hasOwnProp(arr, method);
 

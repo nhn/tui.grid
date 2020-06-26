@@ -7,26 +7,26 @@ function createDataWithRowSpanAttr(): OptRow[] {
   optRows[0]._attributes = {
     rowSpan: {
       name: 2,
-      artist: 3
-    }
+      artist: 3,
+    },
   };
 
   optRows[3]._attributes = {
     rowSpan: {
-      name: 3
-    }
+      name: 3,
+    },
   };
 
   optRows[4]._attributes = {
     rowSpan: {
-      artist: 3
-    }
+      artist: 3,
+    },
   };
 
   optRows[10]._attributes = {
     rowSpan: {
-      type: 2
-    }
+      type: 2,
+    },
   };
 
   return optRows;
@@ -35,7 +35,7 @@ function createDataWithRowSpanAttr(): OptRow[] {
 function assertRowSpanData(rowKey: RowKey, columnName: string, rowSpan: RowSpan) {
   cy.gridInstance()
     .invoke('getRowSpanData', rowKey, columnName)
-    .should(rowSpanData => {
+    .should((rowSpanData) => {
       expect(rowSpanData).to.contain(rowSpan);
     });
 }
@@ -48,7 +48,7 @@ const data = createDataWithRowSpanAttr();
 const columns = [
   { name: 'name', editor: 'text', sortable: true },
   { name: 'artist', editor: 'text' },
-  { name: 'type', editor: 'text' }
+  { name: 'type', editor: 'text' },
 ];
 
 it('render rowSpan cell properly', () => {
@@ -202,7 +202,7 @@ describe('removeRow()', () => {
 
   it('removeRow at 0', () => {
     cy.gridInstance().invoke('removeRow', 0, {
-      keepRowSpanData: true
+      keepRowSpanData: true,
     });
 
     cy.getCell(1, 'artist').should('have.attr', 'rowSpan', '2');
@@ -211,19 +211,19 @@ describe('removeRow()', () => {
       mainRow: true,
       mainRowKey: 1,
       count: 2,
-      spanCount: 2
+      spanCount: 2,
     });
     assertRowSpanData(2, 'artist', {
       mainRow: false,
       mainRowKey: 1,
       count: -1,
-      spanCount: 2
+      spanCount: 2,
     });
   });
 
   it('removeRow at 1', () => {
     cy.gridInstance().invoke('removeRow', 1, {
-      keepRowSpanData: true
+      keepRowSpanData: true,
     });
 
     cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '2');
@@ -232,19 +232,19 @@ describe('removeRow()', () => {
       mainRow: true,
       mainRowKey: 0,
       count: 2,
-      spanCount: 2
+      spanCount: 2,
     });
     assertRowSpanData(2, 'artist', {
       mainRow: false,
       mainRowKey: 0,
       count: -1,
-      spanCount: 2
+      spanCount: 2,
     });
   });
 
   it('removeRow at 2', () => {
     cy.gridInstance().invoke('removeRow', 2, {
-      keepRowSpanData: true
+      keepRowSpanData: true,
     });
 
     cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
@@ -254,32 +254,32 @@ describe('removeRow()', () => {
       mainRow: true,
       mainRowKey: 0,
       count: 2,
-      spanCount: 2
+      spanCount: 2,
     });
     assertRowSpanData(1, 'name', {
       mainRow: false,
       mainRowKey: 0,
       count: -1,
-      spanCount: 2
+      spanCount: 2,
     });
 
     assertRowSpanData(0, 'artist', {
       mainRow: true,
       mainRowKey: 0,
       count: 2,
-      spanCount: 2
+      spanCount: 2,
     });
     assertRowSpanData(1, 'artist', {
       mainRow: false,
       mainRowKey: 0,
       count: -1,
-      spanCount: 2
+      spanCount: 2,
     });
   });
 
   it('removeRow at 3', () => {
     cy.gridInstance().invoke('removeRow', 3, {
-      keepRowSpanData: true
+      keepRowSpanData: true,
     });
 
     cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
@@ -290,13 +290,13 @@ describe('removeRow()', () => {
       mainRow: true,
       mainRowKey: 4,
       count: 2,
-      spanCount: 2
+      spanCount: 2,
     });
     assertRowSpanData(5, 'name', {
       mainRow: false,
       mainRowKey: 4,
       count: -1,
-      spanCount: 2
+      spanCount: 2,
     });
   });
 });

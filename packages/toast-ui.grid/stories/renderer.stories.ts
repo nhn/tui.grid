@@ -4,7 +4,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Renderer'
+  title: 'Renderer',
 };
 
 class SliderRenderer implements CellRenderer {
@@ -20,7 +20,7 @@ class SliderRenderer implements CellRenderer {
     el.min = String(min);
     el.max = String(max);
 
-    el.addEventListener('mousedown', ev => {
+    el.addEventListener('mousedown', (ev) => {
       ev.stopPropagation();
     });
 
@@ -45,23 +45,23 @@ const data = [
   {
     name: 'John',
     score: 10,
-    vip: 'N'
+    vip: 'N',
   },
   {
     name: 'Emily',
     score: 7,
-    vip: 'Y'
+    vip: 'Y',
   },
   {
     name: 'Steve',
     score: 8,
-    vip: 'Y'
+    vip: 'Y',
   },
   {
     name: 'Scarlet',
     score: 6,
-    vip: 'N'
-  }
+    vip: 'N',
+  },
 ];
 function createGrid(columns: OptColumn[]) {
   const el = document.createElement('div');
@@ -91,9 +91,9 @@ export const customRenderer = () => {
       name: 'score',
       renderer: {
         type: SliderRenderer,
-        options: { min: 10, max: 30 }
-      }
-    }
+        options: { min: 10, max: 30 },
+      },
+    },
   ];
   const { el } = createGrid(columns);
 

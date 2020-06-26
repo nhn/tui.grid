@@ -21,9 +21,9 @@ function sortData(store: Store) {
   const { data, column } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
-  const sortedColumns = columns.map(sortedColumn => ({
+  const sortedColumns = columns.map((sortedColumn) => ({
     ...sortedColumn,
-    comparator: column.allColumnMap[sortedColumn.columnName]?.comparator
+    comparator: column.allColumnMap[sortedColumn.columnName]?.comparator,
   }));
 
   if (isScrollPagination(data, true)) {
@@ -217,7 +217,7 @@ export function emitAfterSort(store: Store, cancelSort: boolean, columnName: str
   // @TODO: `sort` event will be deprecated. This event is replaced with `afterSort` event
   const eventTypes = (cancelSort ? ['afterUnsort'] : ['afterSort', 'sort']) as EventType[];
 
-  eventTypes.forEach(eventType => {
+  eventTypes.forEach((eventType) => {
     const gridEvent = createSortEvent(eventType, { columnName, sortState: data.sortState });
     eventBus.trigger(eventType, gridEvent);
   });

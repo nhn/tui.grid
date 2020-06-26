@@ -5,7 +5,7 @@ export const data = [
     artist: 'Birdy',
     release: '2016.03.26',
     type: 'Deluxe',
-    genre: 'Pop'
+    genre: 'Pop',
   },
   {
     id: 436461,
@@ -13,7 +13,7 @@ export const data = [
     artist: 'Ed Sheeran',
     release: '2014.06.24',
     type: 'Deluxe',
-    genre: 'Pop'
+    genre: 'Pop',
   },
   {
     id: 295651,
@@ -21,7 +21,7 @@ export const data = [
     release: '2011.08.08',
     artist: 'Maroon5',
     type: 'Single',
-    genre: 'Pop,Rock'
+    genre: 'Pop,Rock',
   },
   {
     id: 541713,
@@ -29,7 +29,7 @@ export const data = [
     artist: 'Coldplay',
     release: '2015.12.04',
     type: 'Deluxe',
-    genre: 'Rock'
+    genre: 'Rock',
   },
   {
     id: 265289,
@@ -37,7 +37,7 @@ export const data = [
     artist: 'Adele',
     release: '2011.01.21',
     type: 'Deluxe',
-    genre: 'Pop,R&B'
+    genre: 'Pop,R&B',
   },
   {
     id: 555871,
@@ -45,7 +45,7 @@ export const data = [
     artist: 'HONNE',
     release: '2016.07.22',
     type: 'EP',
-    genre: 'R&B,Electronic'
+    genre: 'R&B,Electronic',
   },
   {
     id: 550571,
@@ -53,7 +53,7 @@ export const data = [
     artist: 'Gregory Porter',
     release: '2016.09.02',
     type: 'Deluxe',
-    genre: 'Jazz'
+    genre: 'Jazz',
   },
   {
     id: 544128,
@@ -61,7 +61,7 @@ export const data = [
     artist: 'LANY',
     release: '2015.12.11',
     type: 'EP',
-    genre: 'Electronic'
+    genre: 'Electronic',
   },
   {
     id: 366374,
@@ -69,7 +69,7 @@ export const data = [
     artist: 'Daft Punk',
     release: '2013.04.23',
     type: 'Single',
-    genre: 'Pop,Funk'
+    genre: 'Pop,Funk',
   },
   {
     id: 8012747,
@@ -77,7 +77,7 @@ export const data = [
     artist: 'Sigur Rós',
     release: '2012.05.31',
     type: 'EP',
-    genre: 'Rock'
+    genre: 'Rock',
   },
   {
     id: 502792,
@@ -85,7 +85,7 @@ export const data = [
     artist: 'Snoop Dogg',
     release: '2015.05.12',
     type: 'EP',
-    genre: 'Hiphop'
+    genre: 'Hiphop',
   },
   {
     id: 294574,
@@ -93,6 +93,6 @@ export const data = [
     artist: 'Beyoncé',
     release: '2011.07.26',
     type: 'Deluxe',
-    genre: 'Pop'
-  }
+    genre: 'Pop',
+  },
 ];

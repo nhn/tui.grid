@@ -136,7 +136,7 @@ export const dataAttr = {
   ROW_KEY: 'data-row-key',
   COLUMN_NAME: 'data-column-name',
   COLUMN_INDEX: 'data-column-index',
-  GRID_ID: 'data-grid-id'
+  GRID_ID: 'data-grid-id',
 };
 
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
@@ -205,7 +205,7 @@ export function getCellAddress(el: HTMLElement) {
 
   return {
     rowKey: Number(rowKey),
-    columnName
+    columnName,
   };
 }
 
@@ -262,7 +262,7 @@ export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) 
   fromArray(rows).forEach((tr, rowIndex) => {
     let columnIndex = 0;
 
-    fromArray(tr.cells).forEach(td => {
+    fromArray(tr.cells).forEach((td) => {
       const text = td.textContent || td.innerText;
 
       while (data[rowIndex][columnIndex]) {

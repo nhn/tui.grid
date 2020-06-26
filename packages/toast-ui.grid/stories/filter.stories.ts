@@ -32,22 +32,22 @@ function clickLayerInputAsync(el: HTMLElement) {
 
 export default {
   title: 'Filter',
-  parameters: { options: { panelPosition: 'right' } }
+  parameters: { options: { panelPosition: 'right' } },
 };
 
 export const buttons = () => {
   const columns: OptColumn[] = [
     { name: 'name', filter: 'text' },
     { name: 'age', filter: 'number' },
-    { name: 'score' }
+    { name: 'score' },
   ];
 
   const { grid, el } = createGrid(columns, []);
   grid.filter('name', [
     {
       code: 'eq',
-      value: 'Kim'
-    }
+      value: 'Kim',
+    },
   ]);
 
   return el;
@@ -84,7 +84,7 @@ layerBasic.story = { parameters: { notes: layerBasicNote } };
 
 export const layerWithButtons = () => {
   const columns: OptColumn[] = [
-    { name: 'age', filter: { type: 'number', showApplyBtn: true, showClearBtn: true } }
+    { name: 'age', filter: { type: 'number', showApplyBtn: true, showClearBtn: true } },
   ];
 
   const { el } = createGrid(columns);
@@ -106,8 +106,8 @@ export const layerWithOperator = () => {
   grid.filter('age', [
     {
       code: 'eq',
-      value: '30'
-    }
+      value: '30',
+    },
   ]);
   clickFilterBtnAsync(el);
 
@@ -132,23 +132,23 @@ export const layerSelect = () => {
     { type: '1006' },
     { type: '1007' },
     { type: '1008' },
-    { type: '1009' }
+    { type: '1009' },
   ];
 
   const { el, grid } = createGrid(columns, data);
   grid.filter('type', [
     {
       code: 'eq',
-      value: '1001'
+      value: '1001',
     },
     {
       code: 'eq',
-      value: '1003'
+      value: '1003',
     },
     {
       code: 'eq',
-      value: '1004'
-    }
+      value: '1004',
+    },
   ]);
 
   clickFilterBtnAsync(el);

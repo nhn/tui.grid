@@ -50,7 +50,7 @@ function handleSuccessReadTreeData(config: Config, response: Response) {
   const { parentRowKey } = getLastRequiredData();
   const { column, id, data } = store;
 
-  responseData.contents.forEach(row => dispatch('appendTreeRow', row, { parentRowKey }));
+  responseData.contents.forEach((row) => dispatch('appendTreeRow', row, { parentRowKey }));
 
   const row = findRowByRowKey(data, column, id, parentRowKey);
 
@@ -92,7 +92,7 @@ export function sort(
   const gridEvent = emitBeforeSort(store, cancelSort, {
     columnName: sortColumn,
     ascending: sortAscending,
-    multiple: false
+    multiple: false,
   });
 
   if (gridEvent.isStopped()) {
@@ -117,7 +117,7 @@ export function unsort(config: Config, sortColumn = 'sortKey') {
 
   const gridEvent = emitBeforeSort(store, true, {
     columnName: sortColumn,
-    multiple: false
+    multiple: false,
   });
 
   if (gridEvent.isStopped()) {
@@ -159,6 +159,6 @@ function sendRequest(
     preCallback: callback,
     postCallback: callback,
     eventBus: getEventBus(store.id),
-    ...ajaxConfig
+    ...ajaxConfig,
   });
 }

@@ -53,5 +53,5 @@ class HeightResizeHandleComp extends Component<Props> {
 }
 
 export const HeightResizeHandle = connect(({ dimension }) => ({
-  bodyHeight: dimension.bodyHeight
+  bodyHeight: dimension.bodyHeight,
 }))(HeightResizeHandleComp);

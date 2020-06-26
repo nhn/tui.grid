@@ -39,7 +39,7 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
         getDataToBeObservable(acc, row, viewData[index], index + start, treeColumnName),
       {
         rows: [],
-        targetIndexes: []
+        targetIndexes: [],
       }
     );
 }
@@ -64,7 +64,7 @@ function changeToObservableData(id: number, column: Column, data: Data, originDa
   fillMissingColumnData(column, rows);
 
   // prevRows is needed to create rowSpan
-  const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
+  const prevRows = targetIndexes.map((targetIndex) => data.rawData[targetIndex - 1]);
 
   for (let index = 0, end = rows.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
@@ -72,7 +72,7 @@ function changeToObservableData(id: number, column: Column, data: Data, originDa
     const rawRow = createRawRow(id, rows[index], index, column, {
       lazyObservable: false,
       prevRow: prevRows[index],
-      keyColumnName: column.keyColumnName
+      keyColumnName: column.keyColumnName,
     });
     const viewRow = createViewRow(id, rawRow, rawData, column);
 
@@ -96,7 +96,7 @@ function changeToObservableTreeData(
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
     const rawRow = createTreeRawRow(id, row, parentRow || null, column);
     const viewRow = createViewRow(id, rawRow, rawData, column);

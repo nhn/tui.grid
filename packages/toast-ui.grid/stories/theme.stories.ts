@@ -5,7 +5,7 @@ import { cls } from '../src/helper/dom';
 import { Side } from '../types/store/focus';
 
 export default {
-  title: 'Theme'
+  title: 'Theme',
 };
 
 function getBody(el, side: Side) {
@@ -20,43 +20,43 @@ function createGridWithTheme(options) {
     {
       c1: '100013',
       c2: 'Mustafa Cosme',
-      c3: 291232
+      c3: 291232,
     },
     {
       c1: '201212',
       c2: 'Gunnar Fausto',
-      c3: 32123
+      c3: 32123,
     },
     {
       c1: '241221',
       c2: 'Junior Morgan',
-      c3: 88823
+      c3: 88823,
     },
     {
       c1: '991232',
       c2: 'Tódor Ingo',
-      c3: 9981
+      c3: 9981,
     },
     {
       c1: '828723',
       c2: 'Njord Thoko',
-      c3: 89123
-    }
+      c3: 89123,
+    },
   ];
   const columns: OptColumn[] = [
     {
       header: 'ID',
-      name: 'c1'
+      name: 'c1',
     },
     {
       header: 'Name',
       defaultValue: 2,
-      name: 'c2'
+      name: 'c2',
     },
     {
       header: 'Score',
-      name: 'c3'
-    }
+      name: 'c3',
+    },
   ];
 
   const el = document.createElement('div');
@@ -67,7 +67,7 @@ function createGridWithTheme(options) {
     data,
     columns,
     rowHeight: 35,
-    rowHeaders: ['rowNum']
+    rowHeaders: ['rowNum'],
   });
 
   Grid.applyTheme(preset, extOptions);
@@ -112,19 +112,19 @@ export const rowHoverWithCustomTheme = () => {
         oddRow: { background: '#fefff3' },
         normal: {
           border: '#ccc',
-          showVerticalBorder: true
+          showVerticalBorder: true,
         },
         rowHeader: {
           showVerticalBorder: true,
-          border: '#ccc'
-        }
-      }
-    }
+          border: '#ccc',
+        },
+      },
+    },
   });
   grid.setSelectionRange({ start: [1, 1], end: [3, 2] });
 
   setTimeout(() => {
-    (['L', 'R'] as const).forEach(side => {
+    (['L', 'R'] as const).forEach((side) => {
       const row = getBody(el, side).querySelector(`.${cls('row-even')}`);
       row.className = `${cls('row-even')} ${cls('row-hover')}`;
     });

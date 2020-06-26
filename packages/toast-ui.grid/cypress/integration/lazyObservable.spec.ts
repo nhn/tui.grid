@@ -16,7 +16,7 @@ function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
 }
 
 function assertCheckedState(checked: boolean) {
-  cy.get('input').should($el => {
+  cy.get('input').should(($el) => {
     $el.each((_, elem) => {
       expect(elem.checked).eq(checked);
     });
@@ -24,7 +24,7 @@ function assertCheckedState(checked: boolean) {
 }
 
 function assertDisabledState(disabled: boolean) {
-  cy.get('input').should($el => {
+  cy.get('input').should(($el) => {
     $el.each((_, elem) => {
       expect(elem.disabled).eq(disabled);
     });
@@ -48,14 +48,14 @@ describe('should API is executed properly on lazy observable data', () => {
     const columns = [
       { name: 'name', editor: 'text' },
       { name: 'artist', editor: 'text' },
-      { name: 'type', editor: 'text' }
+      { name: 'type', editor: 'text' },
     ];
 
     cy.createGrid({
       data,
       columns,
       rowHeaders: ['checkbox'],
-      bodyHeight: 300
+      bodyHeight: 300,
     });
   });
 
@@ -69,18 +69,14 @@ describe('should API is executed properly on lazy observable data', () => {
     cy.gridInstance().invoke('startEditing', 18, 'name');
     cy.gridInstance().invoke('finishEditing', 18, 'name', 'Kim');
 
-    cy.gridInstance()
-      .invoke('getValue', 18, 'name')
-      .should('eq', 'Kim');
+    cy.gridInstance().invoke('getValue', 18, 'name').should('eq', 'Kim');
     cy.getCell(18, 'name').should('have.text', 'Kim');
   });
 
   it('checkAll() / uncheckAll()', () => {
     cy.gridInstance().invoke('checkAll');
 
-    cy.gridInstance()
-      .invoke('getCheckedRowKeys')
-      .should('have.length', 20);
+    cy.gridInstance().invoke('getCheckedRowKeys').should('have.length', 20);
 
     scrollToBottom();
 
@@ -88,9 +84,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     cy.gridInstance().invoke('uncheckAll');
 
-    cy.gridInstance()
-      .invoke('getCheckedRowKeys')
-      .should('have.length', 0);
+    cy.gridInstance().invoke('getCheckedRowKeys').should('have.length', 0);
 
     assertCheckedState(false);
   });
@@ -101,9 +95,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getRowHeaderCell(18, '_checked')
-      .find('input')
-      .should('be.not.checked');
+    cy.getRowHeaderCell(18, '_checked').find('input').should('be.not.checked');
 
     cy.gridInstance().invoke('check', 18);
 
@@ -111,23 +103,21 @@ describe('should API is executed properly on lazy observable data', () => {
   });
 
   it('findRow()', () => {
-    cy.gridInstance()
-      .invoke('findRows', { name: '21' })
-      .should('have.length', 1);
+    cy.gridInstance().invoke('findRows', { name: '21' }).should('have.length', 1);
   });
 
   it('disable()', () => {
     cy.gridInstance().invoke('disable');
 
     assertDisabledState(true);
-    cy.getBodyCells().each($el => {
+    cy.getBodyCells().each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     scrollToBottom();
 
     assertDisabledState(true);
-    cy.getBodyCells().each($el => {
+    cy.getBodyCells().each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
@@ -137,7 +127,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCells(17).each($el => {
+    cy.getCells(17).each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
@@ -175,10 +165,10 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCells(17).each($el => {
+    cy.getCells(17).each(($el) => {
       cy.wrap($el).should('not.have.class', 'tui-grid-cell-test');
     });
-    cy.getCells(18).each($el => {
+    cy.getCells(18).each(($el) => {
       cy.wrap($el).should('have.class', 'tui-grid-cell-test');
     });
   });
@@ -213,9 +203,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', artist: 'Lee', type: 'test' }]);
 
-    cy.getRsideBody()
-      .invoke('scrollTop')
-      .should('eq', 0);
+    cy.getRsideBody().invoke('scrollTop').should('eq', 0);
     cy.getRsideBody().should('have.cellData', [['Lee', 'Lee', 'test']]);
   });
 
@@ -224,9 +212,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     cy.gridInstance().invoke('clear');
 
-    cy.getRsideBody()
-      .invoke('scrollTop')
-      .should('eq', 0);
+    cy.getRsideBody().invoke('scrollTop').should('eq', 0);
     cy.getBodyCells().should('not.exist');
   });
 
@@ -236,26 +222,20 @@ describe('should API is executed properly on lazy observable data', () => {
     cy.gridInstance().invoke('setColumns', [
       { name: 'name' },
       { name: 'artist' },
-      { name: 'type' }
+      { name: 'type' },
     ]);
 
-    cy.getRsideBody()
-      .invoke('scrollTop')
-      .should('eq', 0);
+    cy.getRsideBody().invoke('scrollTop').should('eq', 0);
   });
 
   it('setColumnValues()', () => {
     cy.gridInstance().invoke('setColumnValues', 'name', 'anonymous');
 
-    cy.gridInstance()
-      .invoke('getColumnValues', 'name')
-      .should('eql', Array(20).fill('anonymous'));
+    cy.gridInstance().invoke('getColumnValues', 'name').should('eql', Array(20).fill('anonymous'));
   });
 
   it('getFormattedValue()', () => {
-    cy.gridInstance()
-      .invoke('getFormattedValue', 19, 'name')
-      .should('eq', 'Chaos And The Calm');
+    cy.gridInstance().invoke('getFormattedValue', 19, 'name').should('eq', 'Chaos And The Calm');
   });
 
   it('removeCheckedRows()', () => {
@@ -281,7 +261,7 @@ describe('should API is executed properly on lazy observable data', () => {
       ['Warm On A Cold Night', 'HONNE', 'EP'],
       ['Take Me To The Alley', 'Gregory Porter', 'Deluxe'],
       ['Make Out', 'LANY', 'EP'],
-      ['Get Lucky', 'Daft Punk', 'Single']
+      ['Get Lucky', 'Daft Punk', 'Single'],
     ]);
   });
 });
@@ -296,8 +276,8 @@ describe('should API is executed properly on lazy observable data(tree)', () => 
       bodyHeight: 400,
       treeColumnOptions: {
         name: 'name',
-        useIcon: false
-      }
+        useIcon: false,
+      },
     });
   });
 
@@ -341,13 +321,13 @@ it('columns are observable even if not specify value', () => {
   const columns = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
   const smallData = [
     { A: 10, B: 20 },
-    { A: 20, B: 30 }
+    { A: 20, B: 30 },
   ];
 
   cy.createGrid({
     data: smallData,
     columns,
-    bodyHeight: 400
+    bodyHeight: 400,
   });
 
   cy.gridInstance().invoke('setValue', 0, 'C', 100);

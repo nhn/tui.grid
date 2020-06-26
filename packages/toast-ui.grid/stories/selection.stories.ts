@@ -23,11 +23,11 @@ const columns = [
   { name: 'artist' },
   { name: 'type' },
   { name: 'release' },
-  { name: 'genre' }
+  { name: 'genre' },
 ];
 
 export default {
-  title: 'Selection'
+  title: 'Selection',
 };
 
 export const normal = () => {
@@ -38,8 +38,8 @@ export const normal = () => {
     bodyHeight: 300,
     columnOptions: {
       frozenCount: 2,
-      minWidth: 150
-    }
+      minWidth: 150,
+    },
   });
   grid.setSelectionRange({ start: [1, 1], end: [5, 3] });
 
@@ -64,8 +64,8 @@ export const scrolled = () => {
     bodyHeight: 300,
     columnOptions: {
       frozenCount: 2,
-      minWidth: 150
-    }
+      minWidth: 150,
+    },
   });
 
   grid.setSelectionRange({ start: [1, 1], end: [5, 3] });

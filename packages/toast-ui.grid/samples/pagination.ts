@@ -12,7 +12,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 10065226
+    deliveryNo: 10065226,
   },
   {
     deliveryType: 'Visit',
@@ -27,7 +27,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 32051782
+    deliveryNo: 32051782,
   },
   {
     deliveryType: 'Parcel',
@@ -42,7 +42,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 16447796
+    deliveryNo: 16447796,
   },
   {
     deliveryType: 'Visit',
@@ -57,7 +57,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 83172258
+    deliveryNo: 83172258,
   },
   {
     deliveryType: 'Visit',
@@ -72,7 +72,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 45875847
+    deliveryNo: 45875847,
   },
   {
     deliveryType: 'Visit',
@@ -87,7 +87,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 72465706
+    deliveryNo: 72465706,
   },
   {
     deliveryType: 'Parcel',
@@ -102,7 +102,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 51443526
+    deliveryNo: 51443526,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -117,7 +117,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 57169126
+    deliveryNo: 57169126,
   },
   {
     deliveryType: 'Visit',
@@ -132,7 +132,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 90462480
+    deliveryNo: 90462480,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -147,7 +147,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 26132973
+    deliveryNo: 26132973,
   },
   {
     deliveryType: 'Parcel',
@@ -162,7 +162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 26075359
+    deliveryNo: 26075359,
   },
   {
     deliveryType: 'Visit',
@@ -177,7 +177,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 75497781
+    deliveryNo: 75497781,
   },
   {
     deliveryType: 'Parcel',
@@ -192,7 +192,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 70647909
+    deliveryNo: 70647909,
   },
   {
     deliveryType: 'Parcel',
@@ -207,7 +207,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 29079060
+    deliveryNo: 29079060,
   },
   {
     deliveryType: 'Parcel',
@@ -222,7 +222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 8049001
+    deliveryNo: 8049001,
   },
   {
     deliveryType: 'Visit',
@@ -237,7 +237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 3069796
+    deliveryNo: 3069796,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -252,7 +252,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 56927970
+    deliveryNo: 56927970,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -267,7 +267,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 39669964
+    deliveryNo: 39669964,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -282,7 +282,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 62098639
+    deliveryNo: 62098639,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -297,7 +297,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 59252425
+    deliveryNo: 59252425,
   },
   {
     deliveryType: 'Parcel',
@@ -312,7 +312,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 26139416
+    deliveryNo: 26139416,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -327,7 +327,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 5674562
+    deliveryNo: 5674562,
   },
   {
     deliveryType: 'Parcel',
@@ -342,7 +342,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 18318830
+    deliveryNo: 18318830,
   },
   {
     deliveryType: 'Parcel',
@@ -357,7 +357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 84345051
+    deliveryNo: 84345051,
   },
   {
     deliveryType: 'Visit',
@@ -372,7 +372,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 22955877
+    deliveryNo: 22955877,
   },
   {
     deliveryType: 'Visit',
@@ -387,7 +387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 17655130
+    deliveryNo: 17655130,
   },
   {
     deliveryType: 'Visit',
@@ -402,7 +402,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 14324552
+    deliveryNo: 14324552,
   },
   {
     deliveryType: 'Visit',
@@ -417,7 +417,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 67383748
+    deliveryNo: 67383748,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -432,7 +432,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 70211959
+    deliveryNo: 70211959,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -447,7 +447,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 98685966
+    deliveryNo: 98685966,
   },
   {
     deliveryType: 'Parcel',
@@ -462,7 +462,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 61239349
+    deliveryNo: 61239349,
   },
   {
     deliveryType: 'Parcel',
@@ -477,7 +477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 85273976
+    deliveryNo: 85273976,
   },
   {
     deliveryType: 'Parcel',
@@ -492,7 +492,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 78055470
+    deliveryNo: 78055470,
   },
   {
     deliveryType: 'Visit',
@@ -507,7 +507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 80400138
+    deliveryNo: 80400138,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -522,7 +522,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 83511624
+    deliveryNo: 83511624,
   },
   {
     deliveryType: 'Parcel',
@@ -537,7 +537,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 3251382
+    deliveryNo: 3251382,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -552,7 +552,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 1927764
+    deliveryNo: 1927764,
   },
   {
     deliveryType: 'Parcel',
@@ -567,7 +567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 15364367
+    deliveryNo: 15364367,
   },
   {
     deliveryType: 'Visit',
@@ -582,7 +582,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 82559048
+    deliveryNo: 82559048,
   },
   {
     deliveryType: 'Visit',
@@ -597,7 +597,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 86670760
+    deliveryNo: 86670760,
   },
   {
     deliveryType: 'Parcel',
@@ -612,7 +612,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 99372207
+    deliveryNo: 99372207,
   },
   {
     deliveryType: 'Visit',
@@ -627,7 +627,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 75782031
+    deliveryNo: 75782031,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -642,7 +642,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 74241090
+    deliveryNo: 74241090,
   },
   {
     deliveryType: 'Parcel',
@@ -657,7 +657,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 74123105
+    deliveryNo: 74123105,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -672,7 +672,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 35670786
+    deliveryNo: 35670786,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -687,7 +687,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 88524290
+    deliveryNo: 88524290,
   },
   {
     deliveryType: 'Parcel',
@@ -702,7 +702,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 50159679
+    deliveryNo: 50159679,
   },
   {
     deliveryType: 'Visit',
@@ -717,7 +717,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 61880804
+    deliveryNo: 61880804,
   },
   {
     deliveryType: 'Visit',
@@ -732,7 +732,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 88308823
+    deliveryNo: 88308823,
   },
   {
     deliveryType: 'Visit',
@@ -747,7 +747,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 56489338
+    deliveryNo: 56489338,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -762,7 +762,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 12787988
+    deliveryNo: 12787988,
   },
   {
     deliveryType: 'Parcel',
@@ -777,7 +777,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 49670956
+    deliveryNo: 49670956,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -792,7 +792,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 267812
+    deliveryNo: 267812,
   },
   {
     deliveryType: 'Parcel',
@@ -807,7 +807,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 16289784
+    deliveryNo: 16289784,
   },
   {
     deliveryType: 'Parcel',
@@ -822,7 +822,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 34427342
+    deliveryNo: 34427342,
   },
   {
     deliveryType: 'Parcel',
@@ -837,7 +837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 97776805
+    deliveryNo: 97776805,
   },
   {
     deliveryType: 'Parcel',
@@ -852,7 +852,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 32146418
+    deliveryNo: 32146418,
   },
   {
     deliveryType: 'Visit',
@@ -867,7 +867,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 82268155
+    deliveryNo: 82268155,
   },
   {
     deliveryType: 'Visit',
@@ -882,7 +882,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 89992253
+    deliveryNo: 89992253,
   },
   {
     deliveryType: 'Visit',
@@ -897,7 +897,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 45467313
+    deliveryNo: 45467313,
   },
   {
     deliveryType: 'Visit',
@@ -912,7 +912,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 63109546
+    deliveryNo: 63109546,
   },
   {
     deliveryType: 'Visit',
@@ -927,7 +927,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 26840519
+    deliveryNo: 26840519,
   },
   {
     deliveryType: 'Parcel',
@@ -942,7 +942,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 13623576
+    deliveryNo: 13623576,
   },
   {
     deliveryType: 'Parcel',
@@ -957,7 +957,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 40754847
+    deliveryNo: 40754847,
   },
   {
     deliveryType: 'Parcel',
@@ -972,7 +972,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 90665573
+    deliveryNo: 90665573,
   },
   {
     deliveryType: 'Visit',
@@ -987,7 +987,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 47168245
+    deliveryNo: 47168245,
   },
   {
     deliveryType: 'Parcel',
@@ -1002,7 +1002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 29129802
+    deliveryNo: 29129802,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1017,7 +1017,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 31480992
+    deliveryNo: 31480992,
   },
   {
     deliveryType: 'Visit',
@@ -1032,7 +1032,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 79271700
+    deliveryNo: 79271700,
   },
   {
     deliveryType: 'Visit',
@@ -1047,7 +1047,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 68157874
+    deliveryNo: 68157874,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1062,7 +1062,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 4256457
+    deliveryNo: 4256457,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1077,7 +1077,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 67730502
+    deliveryNo: 67730502,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1092,7 +1092,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 7767415
+    deliveryNo: 7767415,
   },
   {
     deliveryType: 'Parcel',
@@ -1107,7 +1107,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 31789128
+    deliveryNo: 31789128,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1122,7 +1122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 78783645
+    deliveryNo: 78783645,
   },
   {
     deliveryType: 'Parcel',
@@ -1137,7 +1137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 65573347
+    deliveryNo: 65573347,
   },
   {
     deliveryType: 'Parcel',
@@ -1152,7 +1152,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 65636097
+    deliveryNo: 65636097,
   },
   {
     deliveryType: 'Visit',
@@ -1167,7 +1167,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 22771033
+    deliveryNo: 22771033,
   },
   {
     deliveryType: 'Visit',
@@ -1182,7 +1182,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 16451696
+    deliveryNo: 16451696,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1197,7 +1197,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 82134923
+    deliveryNo: 82134923,
   },
   {
     deliveryType: 'Parcel',
@@ -1212,7 +1212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 48094732
+    deliveryNo: 48094732,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1227,7 +1227,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 80526178
+    deliveryNo: 80526178,
   },
   {
     deliveryType: 'Parcel',
@@ -1242,7 +1242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 30714961
+    deliveryNo: 30714961,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1257,7 +1257,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 51994353
+    deliveryNo: 51994353,
   },
   {
     deliveryType: 'Visit',
@@ -1272,7 +1272,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 11761
+    deliveryNo: 11761,
   },
   {
     deliveryType: 'Visit',
@@ -1287,7 +1287,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 47503084
+    deliveryNo: 47503084,
   },
   {
     deliveryType: 'Parcel',
@@ -1302,7 +1302,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 34323719
+    deliveryNo: 34323719,
   },
   {
     deliveryType: 'Parcel',
@@ -1317,7 +1317,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 34910934
+    deliveryNo: 34910934,
   },
   {
     deliveryType: 'Parcel',
@@ -1332,7 +1332,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 58653054
+    deliveryNo: 58653054,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1347,7 +1347,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 3816715
+    deliveryNo: 3816715,
   },
   {
     deliveryType: 'Parcel',
@@ -1362,7 +1362,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 62734206
+    deliveryNo: 62734206,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1377,7 +1377,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 24878705
+    deliveryNo: 24878705,
   },
   {
     deliveryType: 'Parcel',
@@ -1392,7 +1392,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 45256005
+    deliveryNo: 45256005,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1407,7 +1407,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 38217103
+    deliveryNo: 38217103,
   },
   {
     deliveryType: 'Parcel',
@@ -1422,7 +1422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 21346777
+    deliveryNo: 21346777,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1437,7 +1437,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 70509129
+    deliveryNo: 70509129,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1452,7 +1452,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 55431757
+    deliveryNo: 55431757,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1467,7 +1467,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 5386099
+    deliveryNo: 5386099,
   },
   {
     deliveryType: 'Parcel',
@@ -1482,7 +1482,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 6572195
+    deliveryNo: 6572195,
   },
   {
     deliveryType: 'Visit',
@@ -1497,7 +1497,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 56741915
+    deliveryNo: 56741915,
   },
   {
     deliveryType: 'Visit',
@@ -1512,7 +1512,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 98395536
+    deliveryNo: 98395536,
   },
   {
     deliveryType: 'Parcel',
@@ -1527,7 +1527,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 19562256
+    deliveryNo: 19562256,
   },
   {
     deliveryType: 'Parcel',
@@ -1542,7 +1542,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 50726031
+    deliveryNo: 50726031,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1557,7 +1557,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 97883956
+    deliveryNo: 97883956,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1572,7 +1572,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 35025147
+    deliveryNo: 35025147,
   },
   {
     deliveryType: 'Parcel',
@@ -1587,7 +1587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 34493826
+    deliveryNo: 34493826,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1602,7 +1602,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 40751204
+    deliveryNo: 40751204,
   },
   {
     deliveryType: 'Visit',
@@ -1617,7 +1617,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 91976398
+    deliveryNo: 91976398,
   },
   {
     deliveryType: 'Visit',
@@ -1632,7 +1632,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 64747542
+    deliveryNo: 64747542,
   },
   {
     deliveryType: 'Parcel',
@@ -1647,7 +1647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 59719893
+    deliveryNo: 59719893,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1662,7 +1662,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 60768642
+    deliveryNo: 60768642,
   },
   {
     deliveryType: 'Visit',
@@ -1677,7 +1677,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 86489826
+    deliveryNo: 86489826,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1692,7 +1692,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 11253562
+    deliveryNo: 11253562,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1707,7 +1707,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 63179619
+    deliveryNo: 63179619,
   },
   {
     deliveryType: 'Visit',
@@ -1722,7 +1722,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 8456061
+    deliveryNo: 8456061,
   },
   {
     deliveryType: 'Visit',
@@ -1737,7 +1737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 5347577
+    deliveryNo: 5347577,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1752,7 +1752,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 57040779
+    deliveryNo: 57040779,
   },
   {
     deliveryType: 'Parcel',
@@ -1767,7 +1767,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 10149629
+    deliveryNo: 10149629,
   },
   {
     deliveryType: 'Parcel',
@@ -1782,7 +1782,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 35254875
+    deliveryNo: 35254875,
   },
   {
     deliveryType: 'Visit',
@@ -1797,7 +1797,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 87277189
+    deliveryNo: 87277189,
   },
   {
     deliveryType: 'Visit',
@@ -1812,7 +1812,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 76784462
+    deliveryNo: 76784462,
   },
   {
     deliveryType: 'Parcel',
@@ -1827,7 +1827,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 88509517
+    deliveryNo: 88509517,
   },
   {
     deliveryType: 'Visit',
@@ -1842,7 +1842,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 60405237
+    deliveryNo: 60405237,
   },
   {
     deliveryType: 'Visit',
@@ -1857,7 +1857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 85489961
+    deliveryNo: 85489961,
   },
   {
     deliveryType: 'Parcel',
@@ -1872,7 +1872,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 19536680
+    deliveryNo: 19536680,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1887,7 +1887,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 70335458
+    deliveryNo: 70335458,
   },
   {
     deliveryType: 'Visit',
@@ -1902,7 +1902,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 8809189
+    deliveryNo: 8809189,
   },
   {
     deliveryType: 'Visit',
@@ -1917,7 +1917,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 78688642
+    deliveryNo: 78688642,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1932,7 +1932,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 89753520
+    deliveryNo: 89753520,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1947,7 +1947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 59821980
+    deliveryNo: 59821980,
   },
   {
     deliveryType: 'Visit',
@@ -1962,7 +1962,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 22721947
+    deliveryNo: 22721947,
   },
   {
     deliveryType: 'Visit',
@@ -1977,7 +1977,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 43403253
+    deliveryNo: 43403253,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -1992,7 +1992,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 77150437
+    deliveryNo: 77150437,
   },
   {
     deliveryType: 'Visit',
@@ -2007,7 +2007,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 77531828
+    deliveryNo: 77531828,
   },
   {
     deliveryType: 'Visit',
@@ -2022,7 +2022,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 97271321
+    deliveryNo: 97271321,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2037,7 +2037,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 37655019
+    deliveryNo: 37655019,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2052,7 +2052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 85385724
+    deliveryNo: 85385724,
   },
   {
     deliveryType: 'Parcel',
@@ -2067,7 +2067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 30973976
+    deliveryNo: 30973976,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2082,7 +2082,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 89805234
+    deliveryNo: 89805234,
   },
   {
     deliveryType: 'Visit',
@@ -2097,7 +2097,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 45948438
+    deliveryNo: 45948438,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2112,7 +2112,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 9572103
+    deliveryNo: 9572103,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2127,7 +2127,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 21509747
+    deliveryNo: 21509747,
   },
   {
     deliveryType: 'Parcel',
@@ -2142,7 +2142,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 53067393
+    deliveryNo: 53067393,
   },
   {
     deliveryType: 'Parcel',
@@ -2157,7 +2157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 35591478
+    deliveryNo: 35591478,
   },
   {
     deliveryType: 'Parcel',
@@ -2172,7 +2172,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 12616458
+    deliveryNo: 12616458,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2187,7 +2187,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 37587075
+    deliveryNo: 37587075,
   },
   {
     deliveryType: 'Visit',
@@ -2202,7 +2202,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 42201071
+    deliveryNo: 42201071,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2217,7 +2217,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 74343878
+    deliveryNo: 74343878,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2232,7 +2232,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 50387672
+    deliveryNo: 50387672,
   },
   {
     deliveryType: 'Visit',
@@ -2247,7 +2247,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 84302873
+    deliveryNo: 84302873,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2262,7 +2262,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 45581007
+    deliveryNo: 45581007,
   },
   {
     deliveryType: 'Parcel',
@@ -2277,7 +2277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 59393603
+    deliveryNo: 59393603,
   },
   {
     deliveryType: 'Parcel',
@@ -2292,7 +2292,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 95712607
+    deliveryNo: 95712607,
   },
   {
     deliveryType: 'Visit',
@@ -2307,7 +2307,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 99293544
+    deliveryNo: 99293544,
   },
   {
     deliveryType: 'Visit',
@@ -2322,7 +2322,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 89473451
+    deliveryNo: 89473451,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2337,7 +2337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 7661399
+    deliveryNo: 7661399,
   },
   {
     deliveryType: 'Visit',
@@ -2352,7 +2352,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 11200193
+    deliveryNo: 11200193,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2367,7 +2367,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 4953606
+    deliveryNo: 4953606,
   },
   {
     deliveryType: 'Visit',
@@ -2382,7 +2382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 66524321
+    deliveryNo: 66524321,
   },
   {
     deliveryType: 'Visit',
@@ -2397,7 +2397,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 57433493
+    deliveryNo: 57433493,
   },
   {
     deliveryType: 'Parcel',
@@ -2412,7 +2412,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 20893650
+    deliveryNo: 20893650,
   },
   {
     deliveryType: 'Visit',
@@ -2427,7 +2427,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 46982441
+    deliveryNo: 46982441,
   },
   {
     deliveryType: 'Parcel',
@@ -2442,7 +2442,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 38075483
+    deliveryNo: 38075483,
   },
   {
     deliveryType: 'Parcel',
@@ -2457,7 +2457,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 31322399
+    deliveryNo: 31322399,
   },
   {
     deliveryType: 'Visit',
@@ -2472,7 +2472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 30750844
+    deliveryNo: 30750844,
   },
   {
     deliveryType: 'Visit',
@@ -2487,7 +2487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 69259179
+    deliveryNo: 69259179,
   },
   {
     deliveryType: 'Visit',
@@ -2502,7 +2502,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 60309162
+    deliveryNo: 60309162,
   },
   {
     deliveryType: 'Visit',
@@ -2517,7 +2517,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 10555862
+    deliveryNo: 10555862,
   },
   {
     deliveryType: 'Parcel',
@@ -2532,7 +2532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 47952747
+    deliveryNo: 47952747,
   },
   {
     deliveryType: 'Visit',
@@ -2547,7 +2547,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 75045702
+    deliveryNo: 75045702,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2562,7 +2562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 84220480
+    deliveryNo: 84220480,
   },
   {
     deliveryType: 'Parcel',
@@ -2577,7 +2577,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 70593925
+    deliveryNo: 70593925,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2592,7 +2592,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 49040041
+    deliveryNo: 49040041,
   },
   {
     deliveryType: 'Parcel',
@@ -2607,7 +2607,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 24517765
+    deliveryNo: 24517765,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2622,7 +2622,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 79418108
+    deliveryNo: 79418108,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2637,7 +2637,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 28074121
+    deliveryNo: 28074121,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2652,7 +2652,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 46877837
+    deliveryNo: 46877837,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2667,7 +2667,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 18624250
+    deliveryNo: 18624250,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2682,7 +2682,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 31753060
+    deliveryNo: 31753060,
   },
   {
     deliveryType: 'Visit',
@@ -2697,7 +2697,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 49084782
+    deliveryNo: 49084782,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2712,7 +2712,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 6448523
+    deliveryNo: 6448523,
   },
   {
     deliveryType: 'Visit',
@@ -2727,7 +2727,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 19274551
+    deliveryNo: 19274551,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2742,7 +2742,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 64775590
+    deliveryNo: 64775590,
   },
   {
     deliveryType: 'Visit',
@@ -2757,7 +2757,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 68766487
+    deliveryNo: 68766487,
   },
   {
     deliveryType: 'Visit',
@@ -2772,7 +2772,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 59472732
+    deliveryNo: 59472732,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2787,7 +2787,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 55854070
+    deliveryNo: 55854070,
   },
   {
     deliveryType: 'Parcel',
@@ -2802,7 +2802,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 35020236
+    deliveryNo: 35020236,
   },
   {
     deliveryType: 'Visit',
@@ -2817,7 +2817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 72241618
+    deliveryNo: 72241618,
   },
   {
     deliveryType: 'Visit',
@@ -2832,7 +2832,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 67858445
+    deliveryNo: 67858445,
   },
   {
     deliveryType: 'Parcel',
@@ -2847,7 +2847,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 68067850
+    deliveryNo: 68067850,
   },
   {
     deliveryType: 'Visit',
@@ -2862,7 +2862,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 51118976
+    deliveryNo: 51118976,
   },
   {
     deliveryType: 'Parcel',
@@ -2877,7 +2877,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 86872062
+    deliveryNo: 86872062,
   },
   {
     deliveryType: 'Parcel',
@@ -2892,7 +2892,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 85978208
+    deliveryNo: 85978208,
   },
   {
     deliveryType: 'Visit',
@@ -2907,7 +2907,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 35112321
+    deliveryNo: 35112321,
   },
   {
     deliveryType: 'Parcel',
@@ -2922,7 +2922,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 66742510
+    deliveryNo: 66742510,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2937,7 +2937,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 35845017
+    deliveryNo: 35845017,
   },
   {
     deliveryType: 'Visit',
@@ -2952,7 +2952,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 71774481
+    deliveryNo: 71774481,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -2967,7 +2967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 41175185
+    deliveryNo: 41175185,
   },
   {
     deliveryType: 'Parcel',
@@ -2982,7 +2982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 97369674
+    deliveryNo: 97369674,
   },
   {
     deliveryType: 'Parcel',
@@ -2997,7 +2997,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 3086939
+    deliveryNo: 3086939,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3012,7 +3012,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 96693105
+    deliveryNo: 96693105,
   },
   {
     deliveryType: 'Visit',
@@ -3027,7 +3027,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 27263415
+    deliveryNo: 27263415,
   },
   {
     deliveryType: 'Visit',
@@ -3042,7 +3042,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 10884969
+    deliveryNo: 10884969,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3057,7 +3057,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 59505598
+    deliveryNo: 59505598,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3072,7 +3072,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 4444906
+    deliveryNo: 4444906,
   },
   {
     deliveryType: 'Parcel',
@@ -3087,7 +3087,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 79359383
+    deliveryNo: 79359383,
   },
   {
     deliveryType: 'Parcel',
@@ -3102,7 +3102,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 42004221
+    deliveryNo: 42004221,
   },
   {
     deliveryType: 'Visit',
@@ -3117,7 +3117,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 560282
+    deliveryNo: 560282,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3132,7 +3132,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 68595411
+    deliveryNo: 68595411,
   },
   {
     deliveryType: 'Parcel',
@@ -3147,7 +3147,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 2905117
+    deliveryNo: 2905117,
   },
   {
     deliveryType: 'Visit',
@@ -3162,7 +3162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 80528373
+    deliveryNo: 80528373,
   },
   {
     deliveryType: 'Visit',
@@ -3177,7 +3177,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 45160103
+    deliveryNo: 45160103,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3192,7 +3192,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 98982699
+    deliveryNo: 98982699,
   },
   {
     deliveryType: 'Visit',
@@ -3207,7 +3207,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 33614673
+    deliveryNo: 33614673,
   },
   {
     deliveryType: 'Visit',
@@ -3222,7 +3222,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 83425380
+    deliveryNo: 83425380,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3237,7 +3237,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 45890439
+    deliveryNo: 45890439,
   },
   {
     deliveryType: 'Visit',
@@ -3252,7 +3252,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 46963364
+    deliveryNo: 46963364,
   },
   {
     deliveryType: 'Parcel',
@@ -3267,7 +3267,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 34614641
+    deliveryNo: 34614641,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3282,7 +3282,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 60740256
+    deliveryNo: 60740256,
   },
   {
     deliveryType: 'Visit',
@@ -3297,7 +3297,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 60567499
+    deliveryNo: 60567499,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3312,7 +3312,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 59486626
+    deliveryNo: 59486626,
   },
   {
     deliveryType: 'Visit',
@@ -3327,7 +3327,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 29912776
+    deliveryNo: 29912776,
   },
   {
     deliveryType: 'Visit',
@@ -3342,7 +3342,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 85333228
+    deliveryNo: 85333228,
   },
   {
     deliveryType: 'Parcel',
@@ -3357,7 +3357,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 35121015
+    deliveryNo: 35121015,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3372,7 +3372,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 31996543
+    deliveryNo: 31996543,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3387,7 +3387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 24194741
+    deliveryNo: 24194741,
   },
   {
     deliveryType: 'Visit',
@@ -3402,7 +3402,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 76446018
+    deliveryNo: 76446018,
   },
   {
     deliveryType: 'Parcel',
@@ -3417,7 +3417,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 47805060
+    deliveryNo: 47805060,
   },
   {
     deliveryType: 'Parcel',
@@ -3432,7 +3432,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 10162354
+    deliveryNo: 10162354,
   },
   {
     deliveryType: 'Visit',
@@ -3447,7 +3447,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 58948999
+    deliveryNo: 58948999,
   },
   {
     deliveryType: 'Visit',
@@ -3462,7 +3462,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 7096253
+    deliveryNo: 7096253,
   },
   {
     deliveryType: 'Visit',
@@ -3477,7 +3477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 64736983
+    deliveryNo: 64736983,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3492,7 +3492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 90436961
+    deliveryNo: 90436961,
   },
   {
     deliveryType: 'Visit',
@@ -3507,7 +3507,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 54919803
+    deliveryNo: 54919803,
   },
   {
     deliveryType: 'Parcel',
@@ -3522,7 +3522,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 85300009
+    deliveryNo: 85300009,
   },
   {
     deliveryType: 'Visit',
@@ -3537,7 +3537,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 56764475
+    deliveryNo: 56764475,
   },
   {
     deliveryType: 'Visit',
@@ -3552,7 +3552,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 69443520
+    deliveryNo: 69443520,
   },
   {
     deliveryType: 'Parcel',
@@ -3567,7 +3567,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 90888333
+    deliveryNo: 90888333,
   },
   {
     deliveryType: 'Parcel',
@@ -3582,7 +3582,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 59122454
+    deliveryNo: 59122454,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3597,7 +3597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 27660763
+    deliveryNo: 27660763,
   },
   {
     deliveryType: 'Parcel',
@@ -3612,7 +3612,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 92190162
+    deliveryNo: 92190162,
   },
   {
     deliveryType: 'Visit',
@@ -3627,7 +3627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 68781940
+    deliveryNo: 68781940,
   },
   {
     deliveryType: 'Parcel',
@@ -3642,7 +3642,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 95556641
+    deliveryNo: 95556641,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3657,7 +3657,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 3647926
+    deliveryNo: 3647926,
   },
   {
     deliveryType: 'Parcel',
@@ -3672,7 +3672,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 49112840
+    deliveryNo: 49112840,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3687,7 +3687,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 15111539
+    deliveryNo: 15111539,
   },
   {
     deliveryType: 'Visit',
@@ -3702,7 +3702,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 83230420
+    deliveryNo: 83230420,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3717,7 +3717,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 34248332
+    deliveryNo: 34248332,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3732,7 +3732,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 71946307
+    deliveryNo: 71946307,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3747,7 +3747,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 68737091
+    deliveryNo: 68737091,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3762,7 +3762,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 8941465
+    deliveryNo: 8941465,
   },
   {
     deliveryType: 'Visit',
@@ -3777,7 +3777,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 54464198
+    deliveryNo: 54464198,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3792,7 +3792,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 78423203
+    deliveryNo: 78423203,
   },
   {
     deliveryType: 'Parcel',
@@ -3807,7 +3807,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 4961250
+    deliveryNo: 4961250,
   },
   {
     deliveryType: 'Parcel',
@@ -3822,7 +3822,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 58020438
+    deliveryNo: 58020438,
   },
   {
     deliveryType: 'Visit',
@@ -3837,7 +3837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 58285297
+    deliveryNo: 58285297,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3852,7 +3852,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 15801279
+    deliveryNo: 15801279,
   },
   {
     deliveryType: 'Parcel',
@@ -3867,7 +3867,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 45951104
+    deliveryNo: 45951104,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3882,7 +3882,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 88522273
+    deliveryNo: 88522273,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3897,7 +3897,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 33524758
+    deliveryNo: 33524758,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3912,7 +3912,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 53218751
+    deliveryNo: 53218751,
   },
   {
     deliveryType: 'Parcel',
@@ -3927,7 +3927,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 7488058
+    deliveryNo: 7488058,
   },
   {
     deliveryType: 'Parcel',
@@ -3942,7 +3942,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 29245582
+    deliveryNo: 29245582,
   },
   {
     deliveryType: 'Parcel',
@@ -3957,7 +3957,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 7983013
+    deliveryNo: 7983013,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3972,7 +3972,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 72877764
+    deliveryNo: 72877764,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -3987,7 +3987,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 32045840
+    deliveryNo: 32045840,
   },
   {
     deliveryType: 'Parcel',
@@ -4002,7 +4002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 51580191
+    deliveryNo: 51580191,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4017,7 +4017,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 56939858
+    deliveryNo: 56939858,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4032,7 +4032,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 10055993
+    deliveryNo: 10055993,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4047,7 +4047,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 58196618
+    deliveryNo: 58196618,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4062,7 +4062,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 65182802
+    deliveryNo: 65182802,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4077,7 +4077,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 21974655
+    deliveryNo: 21974655,
   },
   {
     deliveryType: 'Visit',
@@ -4092,7 +4092,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 91946357
+    deliveryNo: 91946357,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4107,7 +4107,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 76345263
+    deliveryNo: 76345263,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4122,7 +4122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 87480774
+    deliveryNo: 87480774,
   },
   {
     deliveryType: 'Visit',
@@ -4137,7 +4137,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 91114626
+    deliveryNo: 91114626,
   },
   {
     deliveryType: 'Visit',
@@ -4152,7 +4152,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 25324881
+    deliveryNo: 25324881,
   },
   {
     deliveryType: 'Parcel',
@@ -4167,7 +4167,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 20791724
+    deliveryNo: 20791724,
   },
   {
     deliveryType: 'Visit',
@@ -4182,7 +4182,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 37004026
+    deliveryNo: 37004026,
   },
   {
     deliveryType: 'Visit',
@@ -4197,7 +4197,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 90311324
+    deliveryNo: 90311324,
   },
   {
     deliveryType: 'Parcel',
@@ -4212,7 +4212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 83046652
+    deliveryNo: 83046652,
   },
   {
     deliveryType: 'Visit',
@@ -4227,7 +4227,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 48121528
+    deliveryNo: 48121528,
   },
   {
     deliveryType: 'Parcel',
@@ -4242,7 +4242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 545089
+    deliveryNo: 545089,
   },
   {
     deliveryType: 'Parcel',
@@ -4257,7 +4257,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 36245164
+    deliveryNo: 36245164,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4272,7 +4272,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 39369917
+    deliveryNo: 39369917,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4287,7 +4287,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 51924418
+    deliveryNo: 51924418,
   },
   {
     deliveryType: 'Parcel',
@@ -4302,7 +4302,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 24147247
+    deliveryNo: 24147247,
   },
   {
     deliveryType: 'Parcel',
@@ -4317,7 +4317,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 458138
+    deliveryNo: 458138,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4332,7 +4332,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 4108323
+    deliveryNo: 4108323,
   },
   {
     deliveryType: 'Parcel',
@@ -4347,7 +4347,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 63841090
+    deliveryNo: 63841090,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4362,7 +4362,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 77920829
+    deliveryNo: 77920829,
   },
   {
     deliveryType: 'Visit',
@@ -4377,7 +4377,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 34814625
+    deliveryNo: 34814625,
   },
   {
     deliveryType: 'Parcel',
@@ -4392,7 +4392,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 5611238
+    deliveryNo: 5611238,
   },
   {
     deliveryType: 'Parcel',
@@ -4407,7 +4407,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 90938082
+    deliveryNo: 90938082,
   },
   {
     deliveryType: 'Visit',
@@ -4422,7 +4422,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 44687619
+    deliveryNo: 44687619,
   },
   {
     deliveryType: 'Visit',
@@ -4437,7 +4437,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 8290326
+    deliveryNo: 8290326,
   },
   {
     deliveryType: 'Visit',
@@ -4452,7 +4452,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 72572240
+    deliveryNo: 72572240,
   },
   {
     deliveryType: 'Parcel',
@@ -4467,7 +4467,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 39410778
+    deliveryNo: 39410778,
   },
   {
     deliveryType: 'Visit',
@@ -4482,7 +4482,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 82453387
+    deliveryNo: 82453387,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4497,7 +4497,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 5089335
+    deliveryNo: 5089335,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4512,7 +4512,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 64665710
+    deliveryNo: 64665710,
   },
   {
     deliveryType: 'Parcel',
@@ -4527,7 +4527,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 74614527
+    deliveryNo: 74614527,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4542,7 +4542,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 10708550
+    deliveryNo: 10708550,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4557,7 +4557,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 34089322
+    deliveryNo: 34089322,
   },
   {
     deliveryType: 'Parcel',
@@ -4572,7 +4572,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 2011549
+    deliveryNo: 2011549,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4587,7 +4587,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 67423904
+    deliveryNo: 67423904,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4602,7 +4602,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 70556960
+    deliveryNo: 70556960,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4617,7 +4617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 99614857
+    deliveryNo: 99614857,
   },
   {
     deliveryType: 'Visit',
@@ -4632,7 +4632,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 43468029
+    deliveryNo: 43468029,
   },
   {
     deliveryType: 'Parcel',
@@ -4647,7 +4647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 76920085
+    deliveryNo: 76920085,
   },
   {
     deliveryType: 'Parcel',
@@ -4662,7 +4662,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 8672803
+    deliveryNo: 8672803,
   },
   {
     deliveryType: 'Parcel',
@@ -4677,7 +4677,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 83538853
+    deliveryNo: 83538853,
   },
   {
     deliveryType: 'Visit',
@@ -4692,7 +4692,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 63752763
+    deliveryNo: 63752763,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4707,7 +4707,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 19406350
+    deliveryNo: 19406350,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4722,7 +4722,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 35085641
+    deliveryNo: 35085641,
   },
   {
     deliveryType: 'Parcel',
@@ -4737,7 +4737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 88712113
+    deliveryNo: 88712113,
   },
   {
     deliveryType: 'Visit',
@@ -4752,7 +4752,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 79391804
+    deliveryNo: 79391804,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4767,7 +4767,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 73751710
+    deliveryNo: 73751710,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4782,7 +4782,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 4793575
+    deliveryNo: 4793575,
   },
   {
     deliveryType: 'Parcel',
@@ -4797,7 +4797,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 93721042
+    deliveryNo: 93721042,
   },
   {
     deliveryType: 'Parcel',
@@ -4812,7 +4812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 73496867
+    deliveryNo: 73496867,
   },
   {
     deliveryType: 'Visit',
@@ -4827,7 +4827,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 73062663
+    deliveryNo: 73062663,
   },
   {
     deliveryType: 'Visit',
@@ -4842,7 +4842,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 73204515
+    deliveryNo: 73204515,
   },
   {
     deliveryType: 'Visit',
@@ -4857,7 +4857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 68973453
+    deliveryNo: 68973453,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4872,7 +4872,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 69370666
+    deliveryNo: 69370666,
   },
   {
     deliveryType: 'Visit',
@@ -4887,7 +4887,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 32683067
+    deliveryNo: 32683067,
   },
   {
     deliveryType: 'Visit',
@@ -4902,7 +4902,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 75405604
+    deliveryNo: 75405604,
   },
   {
     deliveryType: 'Parcel',
@@ -4917,7 +4917,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 4112501
+    deliveryNo: 4112501,
   },
   {
     deliveryType: 'Visit',
@@ -4932,7 +4932,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 2940402
+    deliveryNo: 2940402,
   },
   {
     deliveryType: 'Visit',
@@ -4947,7 +4947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 64522150
+    deliveryNo: 64522150,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4962,7 +4962,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 79260745
+    deliveryNo: 79260745,
   },
   {
     deliveryType: 'Visit',
@@ -4977,7 +4977,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 96758763
+    deliveryNo: 96758763,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -4992,7 +4992,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 44019343
+    deliveryNo: 44019343,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5007,7 +5007,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 27710628
+    deliveryNo: 27710628,
   },
   {
     deliveryType: 'Visit',
@@ -5022,7 +5022,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 62336259
+    deliveryNo: 62336259,
   },
   {
     deliveryType: 'Parcel',
@@ -5037,7 +5037,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 52580413
+    deliveryNo: 52580413,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5052,7 +5052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 16396562
+    deliveryNo: 16396562,
   },
   {
     deliveryType: 'Parcel',
@@ -5067,7 +5067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 65584970
+    deliveryNo: 65584970,
   },
   {
     deliveryType: 'Visit',
@@ -5082,7 +5082,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 62654675
+    deliveryNo: 62654675,
   },
   {
     deliveryType: 'Visit',
@@ -5097,7 +5097,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 46691551
+    deliveryNo: 46691551,
   },
   {
     deliveryType: 'Visit',
@@ -5112,7 +5112,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 66754771
+    deliveryNo: 66754771,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5127,7 +5127,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 78999764
+    deliveryNo: 78999764,
   },
   {
     deliveryType: 'Visit',
@@ -5142,7 +5142,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 53276630
+    deliveryNo: 53276630,
   },
   {
     deliveryType: 'Visit',
@@ -5157,7 +5157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 96378638
+    deliveryNo: 96378638,
   },
   {
     deliveryType: 'Visit',
@@ -5172,7 +5172,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 32416294
+    deliveryNo: 32416294,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5187,7 +5187,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 85968227
+    deliveryNo: 85968227,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5202,7 +5202,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 90710916
+    deliveryNo: 90710916,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5217,7 +5217,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 95155056
+    deliveryNo: 95155056,
   },
   {
     deliveryType: 'Visit',
@@ -5232,7 +5232,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 57917174
+    deliveryNo: 57917174,
   },
   {
     deliveryType: 'Visit',
@@ -5247,7 +5247,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 17630835
+    deliveryNo: 17630835,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5262,7 +5262,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 87152625
+    deliveryNo: 87152625,
   },
   {
     deliveryType: 'Parcel',
@@ -5277,7 +5277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 58143806
+    deliveryNo: 58143806,
   },
   {
     deliveryType: 'Visit',
@@ -5292,7 +5292,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 10409379
+    deliveryNo: 10409379,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5307,7 +5307,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 552069
+    deliveryNo: 552069,
   },
   {
     deliveryType: 'Parcel',
@@ -5322,7 +5322,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 56549446
+    deliveryNo: 56549446,
   },
   {
     deliveryType: 'Parcel',
@@ -5337,7 +5337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 28788318
+    deliveryNo: 28788318,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5352,7 +5352,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 43891167
+    deliveryNo: 43891167,
   },
   {
     deliveryType: 'Parcel',
@@ -5367,7 +5367,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 75345296
+    deliveryNo: 75345296,
   },
   {
     deliveryType: 'Parcel',
@@ -5382,7 +5382,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 84496065
+    deliveryNo: 84496065,
   },
   {
     deliveryType: 'Visit',
@@ -5397,7 +5397,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 96891399
+    deliveryNo: 96891399,
   },
   {
     deliveryType: 'Parcel',
@@ -5412,7 +5412,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 62265536
+    deliveryNo: 62265536,
   },
   {
     deliveryType: 'Visit',
@@ -5427,7 +5427,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 1625772
+    deliveryNo: 1625772,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5442,7 +5442,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 71956702
+    deliveryNo: 71956702,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5457,7 +5457,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 77982290
+    deliveryNo: 77982290,
   },
   {
     deliveryType: 'Visit',
@@ -5472,7 +5472,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 31226844
+    deliveryNo: 31226844,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5487,7 +5487,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 99291775
+    deliveryNo: 99291775,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5502,7 +5502,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 2815773
+    deliveryNo: 2815773,
   },
   {
     deliveryType: 'Parcel',
@@ -5517,7 +5517,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 4011860
+    deliveryNo: 4011860,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5532,7 +5532,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 88975511
+    deliveryNo: 88975511,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5547,7 +5547,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 76133846
+    deliveryNo: 76133846,
   },
   {
     deliveryType: 'Parcel',
@@ -5562,7 +5562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 85256670
+    deliveryNo: 85256670,
   },
   {
     deliveryType: 'Parcel',
@@ -5577,7 +5577,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 75375927
+    deliveryNo: 75375927,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5592,7 +5592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 5760880
+    deliveryNo: 5760880,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5607,7 +5607,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 91772180
+    deliveryNo: 91772180,
   },
   {
     deliveryType: 'Parcel',
@@ -5622,7 +5622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 16968674
+    deliveryNo: 16968674,
   },
   {
     deliveryType: 'Visit',
@@ -5637,7 +5637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 24266682
+    deliveryNo: 24266682,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5652,7 +5652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 42252175
+    deliveryNo: 42252175,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5667,7 +5667,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 7922119
+    deliveryNo: 7922119,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5682,7 +5682,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 24181985
+    deliveryNo: 24181985,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5697,7 +5697,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 39352276
+    deliveryNo: 39352276,
   },
   {
     deliveryType: 'Visit',
@@ -5712,7 +5712,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 56737613
+    deliveryNo: 56737613,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5727,7 +5727,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 74987786
+    deliveryNo: 74987786,
   },
   {
     deliveryType: 'Visit',
@@ -5742,7 +5742,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 24530884
+    deliveryNo: 24530884,
   },
   {
     deliveryType: 'Parcel',
@@ -5757,7 +5757,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 1784493
+    deliveryNo: 1784493,
   },
   {
     deliveryType: 'Parcel',
@@ -5772,7 +5772,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 11151614
+    deliveryNo: 11151614,
   },
   {
     deliveryType: 'Visit',
@@ -5787,7 +5787,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 4983833
+    deliveryNo: 4983833,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5802,7 +5802,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 63745017
+    deliveryNo: 63745017,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5817,7 +5817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 82534575
+    deliveryNo: 82534575,
   },
   {
     deliveryType: 'Parcel',
@@ -5832,7 +5832,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 25930149
+    deliveryNo: 25930149,
   },
   {
     deliveryType: 'Visit',
@@ -5847,7 +5847,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 80785327
+    deliveryNo: 80785327,
   },
   {
     deliveryType: 'Parcel',
@@ -5862,7 +5862,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 76168804
+    deliveryNo: 76168804,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5877,7 +5877,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 51057159
+    deliveryNo: 51057159,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5892,7 +5892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 33694219
+    deliveryNo: 33694219,
   },
   {
     deliveryType: 'Parcel',
@@ -5907,7 +5907,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 51705741
+    deliveryNo: 51705741,
   },
   {
     deliveryType: 'Visit',
@@ -5922,7 +5922,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 19108972
+    deliveryNo: 19108972,
   },
   {
     deliveryType: 'Visit',
@@ -5937,7 +5937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 45282343
+    deliveryNo: 45282343,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5952,7 +5952,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 81761443
+    deliveryNo: 81761443,
   },
   {
     deliveryType: 'Visit',
@@ -5967,7 +5967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 65403097
+    deliveryNo: 65403097,
   },
   {
     deliveryType: 'Parcel',
@@ -5982,7 +5982,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 31010217
+    deliveryNo: 31010217,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -5997,7 +5997,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 52935878
+    deliveryNo: 52935878,
   },
   {
     deliveryType: 'Visit',
@@ -6012,7 +6012,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 33485789
+    deliveryNo: 33485789,
   },
   {
     deliveryType: 'Visit',
@@ -6027,7 +6027,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 86114200
+    deliveryNo: 86114200,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6042,7 +6042,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 63458985
+    deliveryNo: 63458985,
   },
   {
     deliveryType: 'Visit',
@@ -6057,7 +6057,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 54187476
+    deliveryNo: 54187476,
   },
   {
     deliveryType: 'Parcel',
@@ -6072,7 +6072,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 18425410
+    deliveryNo: 18425410,
   },
   {
     deliveryType: 'Visit',
@@ -6087,7 +6087,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 49217036
+    deliveryNo: 49217036,
   },
   {
     deliveryType: 'Visit',
@@ -6102,7 +6102,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 37015378
+    deliveryNo: 37015378,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6117,7 +6117,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 75627267
+    deliveryNo: 75627267,
   },
   {
     deliveryType: 'Parcel',
@@ -6132,7 +6132,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 81338623
+    deliveryNo: 81338623,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6147,7 +6147,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 2121261
+    deliveryNo: 2121261,
   },
   {
     deliveryType: 'Visit',
@@ -6162,7 +6162,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 70873205
+    deliveryNo: 70873205,
   },
   {
     deliveryType: 'Parcel',
@@ -6177,7 +6177,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 5570340
+    deliveryNo: 5570340,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6192,7 +6192,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 80008001
+    deliveryNo: 80008001,
   },
   {
     deliveryType: 'Parcel',
@@ -6207,7 +6207,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 81486831
+    deliveryNo: 81486831,
   },
   {
     deliveryType: 'Visit',
@@ -6222,7 +6222,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 36348113
+    deliveryNo: 36348113,
   },
   {
     deliveryType: 'Parcel',
@@ -6237,7 +6237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 20689461
+    deliveryNo: 20689461,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6252,7 +6252,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 81892602
+    deliveryNo: 81892602,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6267,7 +6267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 76770763
+    deliveryNo: 76770763,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6282,7 +6282,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 84193900
+    deliveryNo: 84193900,
   },
   {
     deliveryType: 'Visit',
@@ -6297,7 +6297,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 73975863
+    deliveryNo: 73975863,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6312,7 +6312,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 9608308
+    deliveryNo: 9608308,
   },
   {
     deliveryType: 'Visit',
@@ -6327,7 +6327,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 30102005
+    deliveryNo: 30102005,
   },
   {
     deliveryType: 'Parcel',
@@ -6342,7 +6342,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 95746907
+    deliveryNo: 95746907,
   },
   {
     deliveryType: 'Parcel',
@@ -6357,7 +6357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 94028206
+    deliveryNo: 94028206,
   },
   {
     deliveryType: 'Visit',
@@ -6372,7 +6372,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 85236300
+    deliveryNo: 85236300,
   },
   {
     deliveryType: 'Parcel',
@@ -6387,7 +6387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 22484436
+    deliveryNo: 22484436,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6402,7 +6402,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 7898550
+    deliveryNo: 7898550,
   },
   {
     deliveryType: 'Parcel',
@@ -6417,7 +6417,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 45669632
+    deliveryNo: 45669632,
   },
   {
     deliveryType: 'Parcel',
@@ -6432,7 +6432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 23459657
+    deliveryNo: 23459657,
   },
   {
     deliveryType: 'Visit',
@@ -6447,7 +6447,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 96328005
+    deliveryNo: 96328005,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6462,7 +6462,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 61895995
+    deliveryNo: 61895995,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6477,7 +6477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 1892955
+    deliveryNo: 1892955,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6492,7 +6492,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 23528069
+    deliveryNo: 23528069,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6507,7 +6507,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 64307979
+    deliveryNo: 64307979,
   },
   {
     deliveryType: 'Visit',
@@ -6522,7 +6522,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 25970928
+    deliveryNo: 25970928,
   },
   {
     deliveryType: 'Parcel',
@@ -6537,7 +6537,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 77133982
+    deliveryNo: 77133982,
   },
   {
     deliveryType: 'Visit',
@@ -6552,7 +6552,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 10050693
+    deliveryNo: 10050693,
   },
   {
     deliveryType: 'Parcel',
@@ -6567,7 +6567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 54552316
+    deliveryNo: 54552316,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6582,7 +6582,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 41796471
+    deliveryNo: 41796471,
   },
   {
     deliveryType: 'Parcel',
@@ -6597,7 +6597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 71872953
+    deliveryNo: 71872953,
   },
   {
     deliveryType: 'Visit',
@@ -6612,7 +6612,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 72617125
+    deliveryNo: 72617125,
   },
   {
     deliveryType: 'Parcel',
@@ -6627,7 +6627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 42157171
+    deliveryNo: 42157171,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6642,7 +6642,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 44772210
+    deliveryNo: 44772210,
   },
   {
     deliveryType: 'Parcel',
@@ -6657,7 +6657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 78564098
+    deliveryNo: 78564098,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6672,7 +6672,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 54246487
+    deliveryNo: 54246487,
   },
   {
     deliveryType: 'Parcel',
@@ -6687,7 +6687,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 17030529
+    deliveryNo: 17030529,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6702,7 +6702,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 8137364
+    deliveryNo: 8137364,
   },
   {
     deliveryType: 'Visit',
@@ -6717,7 +6717,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 98893340
+    deliveryNo: 98893340,
   },
   {
     deliveryType: 'Visit',
@@ -6732,7 +6732,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 38664658
+    deliveryNo: 38664658,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6747,7 +6747,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 38063948
+    deliveryNo: 38063948,
   },
   {
     deliveryType: 'Parcel',
@@ -6762,7 +6762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 60912057
+    deliveryNo: 60912057,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6777,7 +6777,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 22364102
+    deliveryNo: 22364102,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6792,7 +6792,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 86409620
+    deliveryNo: 86409620,
   },
   {
     deliveryType: 'Parcel',
@@ -6807,7 +6807,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 23632450
+    deliveryNo: 23632450,
   },
   {
     deliveryType: 'Parcel',
@@ -6822,7 +6822,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 29666740
+    deliveryNo: 29666740,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6837,7 +6837,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 16211245
+    deliveryNo: 16211245,
   },
   {
     deliveryType: 'Visit',
@@ -6852,7 +6852,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 69764918
+    deliveryNo: 69764918,
   },
   {
     deliveryType: 'Visit',
@@ -6867,7 +6867,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 28422512
+    deliveryNo: 28422512,
   },
   {
     deliveryType: 'Visit',
@@ -6882,7 +6882,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 54119713
+    deliveryNo: 54119713,
   },
   {
     deliveryType: 'Parcel',
@@ -6897,7 +6897,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 76643142
+    deliveryNo: 76643142,
   },
   {
     deliveryType: 'Parcel',
@@ -6912,7 +6912,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 56521276
+    deliveryNo: 56521276,
   },
   {
     deliveryType: 'Parcel',
@@ -6927,7 +6927,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 56588199
+    deliveryNo: 56588199,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6942,7 +6942,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 26562798
+    deliveryNo: 26562798,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6957,7 +6957,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 91411866
+    deliveryNo: 91411866,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6972,7 +6972,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 92566302
+    deliveryNo: 92566302,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -6987,7 +6987,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 61235414
+    deliveryNo: 61235414,
   },
   {
     deliveryType: 'Parcel',
@@ -7002,7 +7002,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 5115106
+    deliveryNo: 5115106,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7017,7 +7017,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 63711503
+    deliveryNo: 63711503,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7032,7 +7032,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 33302346
+    deliveryNo: 33302346,
   },
   {
     deliveryType: 'Parcel',
@@ -7047,7 +7047,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 80234282
+    deliveryNo: 80234282,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7062,7 +7062,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 50804958
+    deliveryNo: 50804958,
   },
   {
     deliveryType: 'Parcel',
@@ -7077,7 +7077,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 47404587
+    deliveryNo: 47404587,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7092,7 +7092,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 73892461
+    deliveryNo: 73892461,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7107,7 +7107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 58359650
+    deliveryNo: 58359650,
   },
   {
     deliveryType: 'Parcel',
@@ -7122,7 +7122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 38479922
+    deliveryNo: 38479922,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7137,7 +7137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 43576681
+    deliveryNo: 43576681,
   },
   {
     deliveryType: 'Parcel',
@@ -7152,7 +7152,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 28334508
+    deliveryNo: 28334508,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7167,7 +7167,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 5759708
+    deliveryNo: 5759708,
   },
   {
     deliveryType: 'Parcel',
@@ -7182,7 +7182,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 91544961
+    deliveryNo: 91544961,
   },
   {
     deliveryType: 'Parcel',
@@ -7197,7 +7197,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 8419049
+    deliveryNo: 8419049,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7212,7 +7212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 7363381
+    deliveryNo: 7363381,
   },
   {
     deliveryType: 'Parcel',
@@ -7227,7 +7227,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 42752760
+    deliveryNo: 42752760,
   },
   {
     deliveryType: 'Visit',
@@ -7242,7 +7242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 90528723
+    deliveryNo: 90528723,
   },
   {
     deliveryType: 'Visit',
@@ -7257,7 +7257,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 22439487
+    deliveryNo: 22439487,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7272,7 +7272,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 45181337
+    deliveryNo: 45181337,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7287,7 +7287,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 80952074
+    deliveryNo: 80952074,
   },
   {
     deliveryType: 'Parcel',
@@ -7302,7 +7302,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 5477953
+    deliveryNo: 5477953,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7317,7 +7317,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 71001258
+    deliveryNo: 71001258,
   },
   {
     deliveryType: 'Visit',
@@ -7332,7 +7332,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 25016485
+    deliveryNo: 25016485,
   },
   {
     deliveryType: 'Visit',
@@ -7347,7 +7347,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 90718913
+    deliveryNo: 90718913,
   },
   {
     deliveryType: 'Visit',
@@ -7362,7 +7362,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 2180024
+    deliveryNo: 2180024,
   },
   {
     deliveryType: 'Parcel',
@@ -7377,7 +7377,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 86190147
+    deliveryNo: 86190147,
   },
   {
     deliveryType: 'Parcel',
@@ -7392,7 +7392,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 53509379
+    deliveryNo: 53509379,
   },
   {
     deliveryType: 'Visit',
@@ -7407,7 +7407,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 4943648
+    deliveryNo: 4943648,
   },
   {
     deliveryType: 'Parcel',
@@ -7422,7 +7422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 72213592
+    deliveryNo: 72213592,
   },
   {
     deliveryType: 'Visit',
@@ -7437,7 +7437,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 9670
+    deliveryNo: 9670,
   },
   {
     deliveryType: 'Visit',
@@ -7452,7 +7452,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 33927731
+    deliveryNo: 33927731,
   },
   {
     deliveryType: 'Visit',
@@ -7467,7 +7467,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 9155012
+    deliveryNo: 9155012,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7482,7 +7482,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 36827390
+    deliveryNo: 36827390,
   },
   {
     deliveryType: 'Visit',
@@ -7497,7 +7497,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 58904377
+    deliveryNo: 58904377,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7512,7 +7512,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 88209262
+    deliveryNo: 88209262,
   },
   {
     deliveryType: 'Parcel',
@@ -7527,7 +7527,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 67957481
+    deliveryNo: 67957481,
   },
   {
     deliveryType: 'Visit',
@@ -7542,7 +7542,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 74647131
+    deliveryNo: 74647131,
   },
   {
     deliveryType: 'Parcel',
@@ -7557,7 +7557,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 49611296
+    deliveryNo: 49611296,
   },
   {
     deliveryType: 'Visit',
@@ -7572,7 +7572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 77832686
+    deliveryNo: 77832686,
   },
   {
     deliveryType: 'Visit',
@@ -7587,7 +7587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 37796778
+    deliveryNo: 37796778,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7602,7 +7602,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 23210537
+    deliveryNo: 23210537,
   },
   {
     deliveryType: 'Visit',
@@ -7617,7 +7617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 86339494
+    deliveryNo: 86339494,
   },
   {
     deliveryType: 'Visit',
@@ -7632,7 +7632,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 73516784
+    deliveryNo: 73516784,
   },
   {
     deliveryType: 'Parcel',
@@ -7647,7 +7647,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 16053492
+    deliveryNo: 16053492,
   },
   {
     deliveryType: 'Parcel',
@@ -7662,7 +7662,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 4330513
+    deliveryNo: 4330513,
   },
   {
     deliveryType: 'Parcel',
@@ -7677,7 +7677,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 9277780
+    deliveryNo: 9277780,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7692,7 +7692,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 23747642
+    deliveryNo: 23747642,
   },
   {
     deliveryType: 'Parcel',
@@ -7707,7 +7707,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 76464844
+    deliveryNo: 76464844,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7722,7 +7722,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 23286418
+    deliveryNo: 23286418,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7737,7 +7737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 44430506
+    deliveryNo: 44430506,
   },
   {
     deliveryType: 'Parcel',
@@ -7752,7 +7752,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 72133997
+    deliveryNo: 72133997,
   },
   {
     deliveryType: 'Visit',
@@ -7767,7 +7767,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 40874557
+    deliveryNo: 40874557,
   },
   {
     deliveryType: 'Visit',
@@ -7782,7 +7782,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 91843476
+    deliveryNo: 91843476,
   },
   {
     deliveryType: 'Visit',
@@ -7797,7 +7797,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 74781511
+    deliveryNo: 74781511,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7812,7 +7812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 73590702
+    deliveryNo: 73590702,
   },
   {
     deliveryType: 'Parcel',
@@ -7827,7 +7827,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 37310860
+    deliveryNo: 37310860,
   },
   {
     deliveryType: 'Parcel',
@@ -7842,7 +7842,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 25100314
+    deliveryNo: 25100314,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7857,7 +7857,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 72786196
+    deliveryNo: 72786196,
   },
   {
     deliveryType: 'Parcel',
@@ -7872,7 +7872,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 59350323
+    deliveryNo: 59350323,
   },
   {
     deliveryType: 'Parcel',
@@ -7887,7 +7887,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 94392613
+    deliveryNo: 94392613,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7902,7 +7902,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 62164627
+    deliveryNo: 62164627,
   },
   {
     deliveryType: 'Visit',
@@ -7917,7 +7917,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 44191701
+    deliveryNo: 44191701,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -7932,7 +7932,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 802867
+    deliveryNo: 802867,
   },
   {
     deliveryType: 'Visit',
@@ -7947,7 +7947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 22063568
+    deliveryNo: 22063568,
   },
   {
     deliveryType: 'Parcel',
@@ -7962,7 +7962,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 60656944
+    deliveryNo: 60656944,
   },
   {
     deliveryType: 'Visit',
@@ -7977,7 +7977,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 33185230
+    deliveryNo: 33185230,
   },
   {
     deliveryType: 'Parcel',
@@ -7992,7 +7992,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 22163623
+    deliveryNo: 22163623,
   },
   {
     deliveryType: 'Parcel',
@@ -8007,7 +8007,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 28654742
+    deliveryNo: 28654742,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8022,7 +8022,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 15042555
+    deliveryNo: 15042555,
   },
   {
     deliveryType: 'Parcel',
@@ -8037,7 +8037,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 38870483
+    deliveryNo: 38870483,
   },
   {
     deliveryType: 'Parcel',
@@ -8052,7 +8052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 11969136
+    deliveryNo: 11969136,
   },
   {
     deliveryType: 'Visit',
@@ -8067,7 +8067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 24274918
+    deliveryNo: 24274918,
   },
   {
     deliveryType: 'Parcel',
@@ -8082,7 +8082,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 48791537
+    deliveryNo: 48791537,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8097,7 +8097,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 93072238
+    deliveryNo: 93072238,
   },
   {
     deliveryType: 'Parcel',
@@ -8112,7 +8112,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 83401306
+    deliveryNo: 83401306,
   },
   {
     deliveryType: 'Visit',
@@ -8127,7 +8127,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 60529273
+    deliveryNo: 60529273,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8142,7 +8142,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 30366914
+    deliveryNo: 30366914,
   },
   {
     deliveryType: 'Parcel',
@@ -8157,7 +8157,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 49469015
+    deliveryNo: 49469015,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8172,7 +8172,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 33439604
+    deliveryNo: 33439604,
   },
   {
     deliveryType: 'Visit',
@@ -8187,7 +8187,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 56566139
+    deliveryNo: 56566139,
   },
   {
     deliveryType: 'Parcel',
@@ -8202,7 +8202,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 63040941
+    deliveryNo: 63040941,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8217,7 +8217,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 34053918
+    deliveryNo: 34053918,
   },
   {
     deliveryType: 'Visit',
@@ -8232,7 +8232,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 50841421
+    deliveryNo: 50841421,
   },
   {
     deliveryType: 'Visit',
@@ -8247,7 +8247,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 61451871
+    deliveryNo: 61451871,
   },
   {
     deliveryType: 'Visit',
@@ -8262,7 +8262,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 98539517
+    deliveryNo: 98539517,
   },
   {
     deliveryType: 'Visit',
@@ -8277,7 +8277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 6923557
+    deliveryNo: 6923557,
   },
   {
     deliveryType: 'Parcel',
@@ -8292,7 +8292,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 22950544
+    deliveryNo: 22950544,
   },
   {
     deliveryType: 'Parcel',
@@ -8307,7 +8307,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 2873852
+    deliveryNo: 2873852,
   },
   {
     deliveryType: 'Parcel',
@@ -8322,7 +8322,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 24514713
+    deliveryNo: 24514713,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8337,7 +8337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 85395124
+    deliveryNo: 85395124,
   },
   {
     deliveryType: 'Parcel',
@@ -8352,7 +8352,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 91333746
+    deliveryNo: 91333746,
   },
   {
     deliveryType: 'Visit',
@@ -8367,7 +8367,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 72171630
+    deliveryNo: 72171630,
   },
   {
     deliveryType: 'Parcel',
@@ -8382,7 +8382,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 75845436
+    deliveryNo: 75845436,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8397,7 +8397,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 78451576
+    deliveryNo: 78451576,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8412,7 +8412,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 6245513
+    deliveryNo: 6245513,
   },
   {
     deliveryType: 'Parcel',
@@ -8427,7 +8427,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 95696154
+    deliveryNo: 95696154,
   },
   {
     deliveryType: 'Parcel',
@@ -8442,7 +8442,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 19766208
+    deliveryNo: 19766208,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8457,7 +8457,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 82514959
+    deliveryNo: 82514959,
   },
   {
     deliveryType: 'Visit',
@@ -8472,7 +8472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 29920884
+    deliveryNo: 29920884,
   },
   {
     deliveryType: 'Visit',
@@ -8487,7 +8487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 42497170
+    deliveryNo: 42497170,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8502,7 +8502,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 64824086
+    deliveryNo: 64824086,
   },
   {
     deliveryType: 'Visit',
@@ -8517,7 +8517,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 88547840
+    deliveryNo: 88547840,
   },
   {
     deliveryType: 'Parcel',
@@ -8532,7 +8532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 38696434
+    deliveryNo: 38696434,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8547,7 +8547,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 18338711
+    deliveryNo: 18338711,
   },
   {
     deliveryType: 'Visit',
@@ -8562,7 +8562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 43663682
+    deliveryNo: 43663682,
   },
   {
     deliveryType: 'Visit',
@@ -8577,7 +8577,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 50482879
+    deliveryNo: 50482879,
   },
   {
     deliveryType: 'Visit',
@@ -8592,7 +8592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 73959359
+    deliveryNo: 73959359,
   },
   {
     deliveryType: 'Parcel',
@@ -8607,7 +8607,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 96042731
+    deliveryNo: 96042731,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8622,7 +8622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 19640332
+    deliveryNo: 19640332,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8637,7 +8637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 64980509
+    deliveryNo: 64980509,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8652,7 +8652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 91924703
+    deliveryNo: 91924703,
   },
   {
     deliveryType: 'Parcel',
@@ -8667,7 +8667,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 32160855
+    deliveryNo: 32160855,
   },
   {
     deliveryType: 'Visit',
@@ -8682,7 +8682,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 67261378
+    deliveryNo: 67261378,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8697,7 +8697,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 12514765
+    deliveryNo: 12514765,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8712,7 +8712,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 62240706
+    deliveryNo: 62240706,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8727,7 +8727,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 19974261
+    deliveryNo: 19974261,
   },
   {
     deliveryType: 'Parcel',
@@ -8742,7 +8742,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 76455571
+    deliveryNo: 76455571,
   },
   {
     deliveryType: 'Parcel',
@@ -8757,7 +8757,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 9787221
+    deliveryNo: 9787221,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8772,7 +8772,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 65422271
+    deliveryNo: 65422271,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8787,7 +8787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 28821679
+    deliveryNo: 28821679,
   },
   {
     deliveryType: 'Visit',
@@ -8802,7 +8802,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 30670616
+    deliveryNo: 30670616,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8817,7 +8817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 23469043
+    deliveryNo: 23469043,
   },
   {
     deliveryType: 'Parcel',
@@ -8832,7 +8832,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 39112569
+    deliveryNo: 39112569,
   },
   {
     deliveryType: 'Parcel',
@@ -8847,7 +8847,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 79755518
+    deliveryNo: 79755518,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8862,7 +8862,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 8798827
+    deliveryNo: 8798827,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8877,7 +8877,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 95271197
+    deliveryNo: 95271197,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8892,7 +8892,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 23172746
+    deliveryNo: 23172746,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8907,7 +8907,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 7526125
+    deliveryNo: 7526125,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8922,7 +8922,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 60930907
+    deliveryNo: 60930907,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8937,7 +8937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 28342756
+    deliveryNo: 28342756,
   },
   {
     deliveryType: 'Visit',
@@ -8952,7 +8952,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 53599787
+    deliveryNo: 53599787,
   },
   {
     deliveryType: 'Visit',
@@ -8967,7 +8967,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 58894158
+    deliveryNo: 58894158,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -8982,7 +8982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 7937857
+    deliveryNo: 7937857,
   },
   {
     deliveryType: 'Visit',
@@ -8997,7 +8997,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 84997339
+    deliveryNo: 84997339,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9012,7 +9012,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 55272476
+    deliveryNo: 55272476,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9027,7 +9027,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 77271085
+    deliveryNo: 77271085,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9042,7 +9042,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 14881016
+    deliveryNo: 14881016,
   },
   {
     deliveryType: 'Parcel',
@@ -9057,7 +9057,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 45767674
+    deliveryNo: 45767674,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9072,7 +9072,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 83525500
+    deliveryNo: 83525500,
   },
   {
     deliveryType: 'Visit',
@@ -9087,7 +9087,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 23687827
+    deliveryNo: 23687827,
   },
   {
     deliveryType: 'Visit',
@@ -9102,7 +9102,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 88250223
+    deliveryNo: 88250223,
   },
   {
     deliveryType: 'Visit',
@@ -9117,7 +9117,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 79788303
+    deliveryNo: 79788303,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9132,7 +9132,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 64551660
+    deliveryNo: 64551660,
   },
   {
     deliveryType: 'Visit',
@@ -9147,7 +9147,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 84091489
+    deliveryNo: 84091489,
   },
   {
     deliveryType: 'Visit',
@@ -9162,7 +9162,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 47030087
+    deliveryNo: 47030087,
   },
   {
     deliveryType: 'Visit',
@@ -9177,7 +9177,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 76506375
+    deliveryNo: 76506375,
   },
   {
     deliveryType: 'Visit',
@@ -9192,7 +9192,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 84632233
+    deliveryNo: 84632233,
   },
   {
     deliveryType: 'Visit',
@@ -9207,7 +9207,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 12970262
+    deliveryNo: 12970262,
   },
   {
     deliveryType: 'Parcel',
@@ -9222,7 +9222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 17594409
+    deliveryNo: 17594409,
   },
   {
     deliveryType: 'Visit',
@@ -9237,7 +9237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 88720611
+    deliveryNo: 88720611,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9252,7 +9252,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 78195426
+    deliveryNo: 78195426,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9267,7 +9267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 63306401
+    deliveryNo: 63306401,
   },
   {
     deliveryType: 'Parcel',
@@ -9282,7 +9282,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 2428713
+    deliveryNo: 2428713,
   },
   {
     deliveryType: 'Parcel',
@@ -9297,7 +9297,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 36948349
+    deliveryNo: 36948349,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9312,7 +9312,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 64702990
+    deliveryNo: 64702990,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9327,7 +9327,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 52857380
+    deliveryNo: 52857380,
   },
   {
     deliveryType: 'Visit',
@@ -9342,7 +9342,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 72680900
+    deliveryNo: 72680900,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9357,7 +9357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 25120745
+    deliveryNo: 25120745,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9372,7 +9372,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 84364928
+    deliveryNo: 84364928,
   },
   {
     deliveryType: 'Visit',
@@ -9387,7 +9387,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 16765117
+    deliveryNo: 16765117,
   },
   {
     deliveryType: 'Parcel',
@@ -9402,7 +9402,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 34540040
+    deliveryNo: 34540040,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9417,7 +9417,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 17606083
+    deliveryNo: 17606083,
   },
   {
     deliveryType: 'Visit',
@@ -9432,7 +9432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 82682354
+    deliveryNo: 82682354,
   },
   {
     deliveryType: 'Parcel',
@@ -9447,7 +9447,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 96493373
+    deliveryNo: 96493373,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9462,7 +9462,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 19443276
+    deliveryNo: 19443276,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9477,7 +9477,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 27561223
+    deliveryNo: 27561223,
   },
   {
     deliveryType: 'Visit',
@@ -9492,7 +9492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 93818449
+    deliveryNo: 93818449,
   },
   {
     deliveryType: 'Visit',
@@ -9507,7 +9507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 15093245
+    deliveryNo: 15093245,
   },
   {
     deliveryType: 'Visit',
@@ -9522,7 +9522,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 48110864
+    deliveryNo: 48110864,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9537,7 +9537,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 66611160
+    deliveryNo: 66611160,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9552,7 +9552,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 72797572
+    deliveryNo: 72797572,
   },
   {
     deliveryType: 'Visit',
@@ -9567,7 +9567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 88796799
+    deliveryNo: 88796799,
   },
   {
     deliveryType: 'Visit',
@@ -9582,7 +9582,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 18409320
+    deliveryNo: 18409320,
   },
   {
     deliveryType: 'Visit',
@@ -9597,7 +9597,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 5856715
+    deliveryNo: 5856715,
   },
   {
     deliveryType: 'Visit',
@@ -9612,7 +9612,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 26532480
+    deliveryNo: 26532480,
   },
   {
     deliveryType: 'Visit',
@@ -9627,7 +9627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 24938816
+    deliveryNo: 24938816,
   },
   {
     deliveryType: 'Visit',
@@ -9642,7 +9642,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 67042716
+    deliveryNo: 67042716,
   },
   {
     deliveryType: 'Parcel',
@@ -9657,7 +9657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 98210355
+    deliveryNo: 98210355,
   },
   {
     deliveryType: 'Visit',
@@ -9672,7 +9672,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 93679663
+    deliveryNo: 93679663,
   },
   {
     deliveryType: 'Visit',
@@ -9687,7 +9687,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 56206680
+    deliveryNo: 56206680,
   },
   {
     deliveryType: 'Visit',
@@ -9702,7 +9702,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 55072088
+    deliveryNo: 55072088,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9717,7 +9717,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 12060124
+    deliveryNo: 12060124,
   },
   {
     deliveryType: 'Visit',
@@ -9732,7 +9732,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 23322829
+    deliveryNo: 23322829,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9747,7 +9747,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 61218370
+    deliveryNo: 61218370,
   },
   {
     deliveryType: 'Visit',
@@ -9762,7 +9762,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 27262963
+    deliveryNo: 27262963,
   },
   {
     deliveryType: 'Parcel',
@@ -9777,7 +9777,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 26261718
+    deliveryNo: 26261718,
   },
   {
     deliveryType: 'Visit',
@@ -9792,7 +9792,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 2484493
+    deliveryNo: 2484493,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9807,7 +9807,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 21428594
+    deliveryNo: 21428594,
   },
   {
     deliveryType: 'Parcel',
@@ -9822,7 +9822,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 95261025
+    deliveryNo: 95261025,
   },
   {
     deliveryType: 'Visit',
@@ -9837,7 +9837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 36458677
+    deliveryNo: 36458677,
   },
   {
     deliveryType: 'Parcel',
@@ -9852,7 +9852,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 82465704
+    deliveryNo: 82465704,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9867,7 +9867,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 64363045
+    deliveryNo: 64363045,
   },
   {
     deliveryType: 'Parcel',
@@ -9882,7 +9882,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 94595895
+    deliveryNo: 94595895,
   },
   {
     deliveryType: 'Parcel',
@@ -9897,7 +9897,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 22730686
+    deliveryNo: 22730686,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9912,7 +9912,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 54013885
+    deliveryNo: 54013885,
   },
   {
     deliveryType: 'Parcel',
@@ -9927,7 +9927,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 43180769
+    deliveryNo: 43180769,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -9942,7 +9942,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 65513046
+    deliveryNo: 65513046,
   },
   {
     deliveryType: 'Parcel',
@@ -9957,7 +9957,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 28570030
+    deliveryNo: 28570030,
   },
   {
     deliveryType: 'Parcel',
@@ -9972,7 +9972,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 21318810
+    deliveryNo: 21318810,
   },
   {
     deliveryType: 'Visit',
@@ -9987,7 +9987,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 2564676
+    deliveryNo: 2564676,
   },
   {
     deliveryType: 'Visit',
@@ -10002,7 +10002,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 7633828
+    deliveryNo: 7633828,
   },
   {
     deliveryType: 'Visit',
@@ -10017,7 +10017,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 1186153
+    deliveryNo: 1186153,
   },
   {
     deliveryType: 'Visit',
@@ -10032,7 +10032,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 24836700
+    deliveryNo: 24836700,
   },
   {
     deliveryType: 'Visit',
@@ -10047,7 +10047,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 80940170
+    deliveryNo: 80940170,
   },
   {
     deliveryType: 'Parcel',
@@ -10062,7 +10062,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 58443636
+    deliveryNo: 58443636,
   },
   {
     deliveryType: 'Parcel',
@@ -10077,7 +10077,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 43138353
+    deliveryNo: 43138353,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10092,7 +10092,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 62942442
+    deliveryNo: 62942442,
   },
   {
     deliveryType: 'Visit',
@@ -10107,7 +10107,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 99021893
+    deliveryNo: 99021893,
   },
   {
     deliveryType: 'Visit',
@@ -10122,7 +10122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 45608189
+    deliveryNo: 45608189,
   },
   {
     deliveryType: 'Visit',
@@ -10137,7 +10137,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 25296588
+    deliveryNo: 25296588,
   },
   {
     deliveryType: 'Visit',
@@ -10152,7 +10152,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 62409943
+    deliveryNo: 62409943,
   },
   {
     deliveryType: 'Visit',
@@ -10167,7 +10167,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 84688611
+    deliveryNo: 84688611,
   },
   {
     deliveryType: 'Visit',
@@ -10182,7 +10182,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 63117941
+    deliveryNo: 63117941,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10197,7 +10197,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 11130429
+    deliveryNo: 11130429,
   },
   {
     deliveryType: 'Visit',
@@ -10212,7 +10212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 47720585
+    deliveryNo: 47720585,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10227,7 +10227,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 84186208
+    deliveryNo: 84186208,
   },
   {
     deliveryType: 'Visit',
@@ -10242,7 +10242,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 21260613
+    deliveryNo: 21260613,
   },
   {
     deliveryType: 'Parcel',
@@ -10257,7 +10257,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 42326111
+    deliveryNo: 42326111,
   },
   {
     deliveryType: 'Visit',
@@ -10272,7 +10272,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 59199842
+    deliveryNo: 59199842,
   },
   {
     deliveryType: 'Parcel',
@@ -10287,7 +10287,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 9658826
+    deliveryNo: 9658826,
   },
   {
     deliveryType: 'Visit',
@@ -10302,7 +10302,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 20421859
+    deliveryNo: 20421859,
   },
   {
     deliveryType: 'Parcel',
@@ -10317,7 +10317,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 35731739
+    deliveryNo: 35731739,
   },
   {
     deliveryType: 'Parcel',
@@ -10332,7 +10332,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 69981995
+    deliveryNo: 69981995,
   },
   {
     deliveryType: 'Visit',
@@ -10347,7 +10347,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 73008107
+    deliveryNo: 73008107,
   },
   {
     deliveryType: 'Parcel',
@@ -10362,7 +10362,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 98714037
+    deliveryNo: 98714037,
   },
   {
     deliveryType: 'Visit',
@@ -10377,7 +10377,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 41630593
+    deliveryNo: 41630593,
   },
   {
     deliveryType: 'Parcel',
@@ -10392,7 +10392,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 51802965
+    deliveryNo: 51802965,
   },
   {
     deliveryType: 'Visit',
@@ -10407,7 +10407,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 56080577
+    deliveryNo: 56080577,
   },
   {
     deliveryType: 'Parcel',
@@ -10422,7 +10422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 3433139
+    deliveryNo: 3433139,
   },
   {
     deliveryType: 'Visit',
@@ -10437,7 +10437,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 13342572
+    deliveryNo: 13342572,
   },
   {
     deliveryType: 'Parcel',
@@ -10452,7 +10452,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 39621306
+    deliveryNo: 39621306,
   },
   {
     deliveryType: 'Visit',
@@ -10467,7 +10467,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 67183150
+    deliveryNo: 67183150,
   },
   {
     deliveryType: 'Parcel',
@@ -10482,7 +10482,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 36343796
+    deliveryNo: 36343796,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10497,7 +10497,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 38153754
+    deliveryNo: 38153754,
   },
   {
     deliveryType: 'Visit',
@@ -10512,7 +10512,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 45067284
+    deliveryNo: 45067284,
   },
   {
     deliveryType: 'Visit',
@@ -10527,7 +10527,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 33926748
+    deliveryNo: 33926748,
   },
   {
     deliveryType: 'Parcel',
@@ -10542,7 +10542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 22792472
+    deliveryNo: 22792472,
   },
   {
     deliveryType: 'Visit',
@@ -10557,7 +10557,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 79574099
+    deliveryNo: 79574099,
   },
   {
     deliveryType: 'Visit',
@@ -10572,7 +10572,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 68720113
+    deliveryNo: 68720113,
   },
   {
     deliveryType: 'Parcel',
@@ -10587,7 +10587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 82398061
+    deliveryNo: 82398061,
   },
   {
     deliveryType: 'Parcel',
@@ -10602,7 +10602,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 54648714
+    deliveryNo: 54648714,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10617,7 +10617,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 80923248
+    deliveryNo: 80923248,
   },
   {
     deliveryType: 'Visit',
@@ -10632,7 +10632,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 61213291
+    deliveryNo: 61213291,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10647,7 +10647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 52659429
+    deliveryNo: 52659429,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10662,7 +10662,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 57074585
+    deliveryNo: 57074585,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10677,7 +10677,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 80244480
+    deliveryNo: 80244480,
   },
   {
     deliveryType: 'Parcel',
@@ -10692,7 +10692,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 83168076
+    deliveryNo: 83168076,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10707,7 +10707,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 576828
+    deliveryNo: 576828,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10722,7 +10722,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 29122191
+    deliveryNo: 29122191,
   },
   {
     deliveryType: 'Parcel',
@@ -10737,7 +10737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 86546765
+    deliveryNo: 86546765,
   },
   {
     deliveryType: 'Visit',
@@ -10752,7 +10752,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 13955084
+    deliveryNo: 13955084,
   },
   {
     deliveryType: 'Parcel',
@@ -10767,7 +10767,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 35976019
+    deliveryNo: 35976019,
   },
   {
     deliveryType: 'Parcel',
@@ -10782,7 +10782,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 8159340
+    deliveryNo: 8159340,
   },
   {
     deliveryType: 'Parcel',
@@ -10797,7 +10797,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 67374957
+    deliveryNo: 67374957,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10812,7 +10812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 59284007
+    deliveryNo: 59284007,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10827,7 +10827,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 47126784
+    deliveryNo: 47126784,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10842,7 +10842,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 8123316
+    deliveryNo: 8123316,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10857,7 +10857,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 97708117
+    deliveryNo: 97708117,
   },
   {
     deliveryType: 'Parcel',
@@ -10872,7 +10872,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 7621459
+    deliveryNo: 7621459,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10887,7 +10887,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 61555316
+    deliveryNo: 61555316,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10902,7 +10902,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 81602811
+    deliveryNo: 81602811,
   },
   {
     deliveryType: 'Parcel',
@@ -10917,7 +10917,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 20185941
+    deliveryNo: 20185941,
   },
   {
     deliveryType: 'Parcel',
@@ -10932,7 +10932,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 85436959
+    deliveryNo: 85436959,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10947,7 +10947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 93184713
+    deliveryNo: 93184713,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10962,7 +10962,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 55747939
+    deliveryNo: 55747939,
   },
   {
     deliveryType: 'Visit',
@@ -10977,7 +10977,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 66663340
+    deliveryNo: 66663340,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -10992,7 +10992,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 61277012
+    deliveryNo: 61277012,
   },
   {
     deliveryType: 'Parcel',
@@ -11007,7 +11007,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 25803612
+    deliveryNo: 25803612,
   },
   {
     deliveryType: 'Visit',
@@ -11022,7 +11022,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 92008403
+    deliveryNo: 92008403,
   },
   {
     deliveryType: 'Parcel',
@@ -11037,7 +11037,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 91093114
+    deliveryNo: 91093114,
   },
   {
     deliveryType: 'Visit',
@@ -11052,7 +11052,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 48667337
+    deliveryNo: 48667337,
   },
   {
     deliveryType: 'Parcel',
@@ -11067,7 +11067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 82862939
+    deliveryNo: 82862939,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11082,7 +11082,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 19699778
+    deliveryNo: 19699778,
   },
   {
     deliveryType: 'Parcel',
@@ -11097,7 +11097,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 63736781
+    deliveryNo: 63736781,
   },
   {
     deliveryType: 'Visit',
@@ -11112,7 +11112,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 57843219
+    deliveryNo: 57843219,
   },
   {
     deliveryType: 'Parcel',
@@ -11127,7 +11127,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 33600786
+    deliveryNo: 33600786,
   },
   {
     deliveryType: 'Parcel',
@@ -11142,7 +11142,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 93397922
+    deliveryNo: 93397922,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11157,7 +11157,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 76703514
+    deliveryNo: 76703514,
   },
   {
     deliveryType: 'Parcel',
@@ -11172,7 +11172,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 46307972
+    deliveryNo: 46307972,
   },
   {
     deliveryType: 'Parcel',
@@ -11187,7 +11187,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 85495418
+    deliveryNo: 85495418,
   },
   {
     deliveryType: 'Parcel',
@@ -11202,7 +11202,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 24161509
+    deliveryNo: 24161509,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11217,7 +11217,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 10817198
+    deliveryNo: 10817198,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11232,7 +11232,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 18219541
+    deliveryNo: 18219541,
   },
   {
     deliveryType: 'Visit',
@@ -11247,7 +11247,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 13046397
+    deliveryNo: 13046397,
   },
   {
     deliveryType: 'Parcel',
@@ -11262,7 +11262,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 34582685
+    deliveryNo: 34582685,
   },
   {
     deliveryType: 'Parcel',
@@ -11277,7 +11277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 13811635
+    deliveryNo: 13811635,
   },
   {
     deliveryType: 'Visit',
@@ -11292,7 +11292,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 22605224
+    deliveryNo: 22605224,
   },
   {
     deliveryType: 'Visit',
@@ -11307,7 +11307,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 72883836
+    deliveryNo: 72883836,
   },
   {
     deliveryType: 'Parcel',
@@ -11322,7 +11322,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 87665859
+    deliveryNo: 87665859,
   },
   {
     deliveryType: 'Visit',
@@ -11337,7 +11337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 39853844
+    deliveryNo: 39853844,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11352,7 +11352,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 404517
+    deliveryNo: 404517,
   },
   {
     deliveryType: 'Parcel',
@@ -11367,7 +11367,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 55205777
+    deliveryNo: 55205777,
   },
   {
     deliveryType: 'Visit',
@@ -11382,7 +11382,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 39534606
+    deliveryNo: 39534606,
   },
   {
     deliveryType: 'Visit',
@@ -11397,7 +11397,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 395518
+    deliveryNo: 395518,
   },
   {
     deliveryType: 'Visit',
@@ -11412,7 +11412,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 30340081
+    deliveryNo: 30340081,
   },
   {
     deliveryType: 'Parcel',
@@ -11427,7 +11427,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 21543698
+    deliveryNo: 21543698,
   },
   {
     deliveryType: 'Parcel',
@@ -11442,7 +11442,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 65966704
+    deliveryNo: 65966704,
   },
   {
     deliveryType: 'Parcel',
@@ -11457,7 +11457,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 76352573
+    deliveryNo: 76352573,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11472,7 +11472,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 23616850
+    deliveryNo: 23616850,
   },
   {
     deliveryType: 'Visit',
@@ -11487,7 +11487,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 78856132
+    deliveryNo: 78856132,
   },
   {
     deliveryType: 'Visit',
@@ -11502,7 +11502,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 12757289
+    deliveryNo: 12757289,
   },
   {
     deliveryType: 'Visit',
@@ -11517,7 +11517,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 41612849
+    deliveryNo: 41612849,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11532,7 +11532,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 17449242
+    deliveryNo: 17449242,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11547,7 +11547,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 39950426
+    deliveryNo: 39950426,
   },
   {
     deliveryType: 'Parcel',
@@ -11562,7 +11562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 19910152
+    deliveryNo: 19910152,
   },
   {
     deliveryType: 'Visit',
@@ -11577,7 +11577,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 47871922
+    deliveryNo: 47871922,
   },
   {
     deliveryType: 'Visit',
@@ -11592,7 +11592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 17416510
+    deliveryNo: 17416510,
   },
   {
     deliveryType: 'Parcel',
@@ -11607,7 +11607,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 20232623
+    deliveryNo: 20232623,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11622,7 +11622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 69657129
+    deliveryNo: 69657129,
   },
   {
     deliveryType: 'Parcel',
@@ -11637,7 +11637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 20797046
+    deliveryNo: 20797046,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11652,7 +11652,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 38646216
+    deliveryNo: 38646216,
   },
   {
     deliveryType: 'Parcel',
@@ -11667,7 +11667,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 20785451
+    deliveryNo: 20785451,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11682,7 +11682,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 8305651
+    deliveryNo: 8305651,
   },
   {
     deliveryType: 'Visit',
@@ -11697,7 +11697,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 17519215
+    deliveryNo: 17519215,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11712,7 +11712,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 95825823
+    deliveryNo: 95825823,
   },
   {
     deliveryType: 'Visit',
@@ -11727,7 +11727,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 47774468
+    deliveryNo: 47774468,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11742,7 +11742,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 91914397
+    deliveryNo: 91914397,
   },
   {
     deliveryType: 'Visit',
@@ -11757,7 +11757,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 95453358
+    deliveryNo: 95453358,
   },
   {
     deliveryType: 'Visit',
@@ -11772,7 +11772,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 92042419
+    deliveryNo: 92042419,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11787,7 +11787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 18182305
+    deliveryNo: 18182305,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11802,7 +11802,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 5797076
+    deliveryNo: 5797076,
   },
   {
     deliveryType: 'Parcel',
@@ -11817,7 +11817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 42446649
+    deliveryNo: 42446649,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11832,7 +11832,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 56450561
+    deliveryNo: 56450561,
   },
   {
     deliveryType: 'Visit',
@@ -11847,7 +11847,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 1871042
+    deliveryNo: 1871042,
   },
   {
     deliveryType: 'Visit',
@@ -11862,7 +11862,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 7854339
+    deliveryNo: 7854339,
   },
   {
     deliveryType: 'Visit',
@@ -11877,7 +11877,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 18254955
+    deliveryNo: 18254955,
   },
   {
     deliveryType: 'Parcel',
@@ -11892,7 +11892,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 80768256
+    deliveryNo: 80768256,
   },
   {
     deliveryType: 'Visit',
@@ -11907,7 +11907,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 49972718
+    deliveryNo: 49972718,
   },
   {
     deliveryType: 'Parcel',
@@ -11922,7 +11922,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 45733817
+    deliveryNo: 45733817,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11937,7 +11937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 57347394
+    deliveryNo: 57347394,
   },
   {
     deliveryType: 'Parcel',
@@ -11952,7 +11952,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 4601047
+    deliveryNo: 4601047,
   },
   {
     deliveryType: 'Visit',
@@ -11967,7 +11967,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 59607952
+    deliveryNo: 59607952,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11982,7 +11982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 97818272
+    deliveryNo: 97818272,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -11997,7 +11997,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 83039029
+    deliveryNo: 83039029,
   },
   {
     deliveryType: 'Parcel',
@@ -12012,7 +12012,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 99594234
+    deliveryNo: 99594234,
   },
   {
     deliveryType: 'Visit',
@@ -12027,7 +12027,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 24932708
+    deliveryNo: 24932708,
   },
   {
     deliveryType: 'Visit',
@@ -12042,7 +12042,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 88041884
+    deliveryNo: 88041884,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12057,7 +12057,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 82951681
+    deliveryNo: 82951681,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12072,7 +12072,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 2413234
+    deliveryNo: 2413234,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12087,7 +12087,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 24513153
+    deliveryNo: 24513153,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12102,7 +12102,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 24534667
+    deliveryNo: 24534667,
   },
   {
     deliveryType: 'Visit',
@@ -12117,7 +12117,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 95802874
+    deliveryNo: 95802874,
   },
   {
     deliveryType: 'Visit',
@@ -12132,7 +12132,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 46552038
+    deliveryNo: 46552038,
   },
   {
     deliveryType: 'Parcel',
@@ -12147,7 +12147,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 95028680
+    deliveryNo: 95028680,
   },
   {
     deliveryType: 'Visit',
@@ -12162,7 +12162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 12094991
+    deliveryNo: 12094991,
   },
   {
     deliveryType: 'Parcel',
@@ -12177,7 +12177,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 59522897
+    deliveryNo: 59522897,
   },
   {
     deliveryType: 'Visit',
@@ -12192,7 +12192,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 42969816
+    deliveryNo: 42969816,
   },
   {
     deliveryType: 'Parcel',
@@ -12207,7 +12207,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 41303020
+    deliveryNo: 41303020,
   },
   {
     deliveryType: 'Visit',
@@ -12222,7 +12222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 88490255
+    deliveryNo: 88490255,
   },
   {
     deliveryType: 'Visit',
@@ -12237,7 +12237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 70699996
+    deliveryNo: 70699996,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12252,7 +12252,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 59555632
+    deliveryNo: 59555632,
   },
   {
     deliveryType: 'Visit',
@@ -12267,7 +12267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 32663514
+    deliveryNo: 32663514,
   },
   {
     deliveryType: 'Visit',
@@ -12282,7 +12282,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 34585658
+    deliveryNo: 34585658,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12297,7 +12297,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 5353686
+    deliveryNo: 5353686,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12312,7 +12312,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 49421303
+    deliveryNo: 49421303,
   },
   {
     deliveryType: 'Visit',
@@ -12327,7 +12327,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 35628464
+    deliveryNo: 35628464,
   },
   {
     deliveryType: 'Visit',
@@ -12342,7 +12342,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 8301117
+    deliveryNo: 8301117,
   },
   {
     deliveryType: 'Visit',
@@ -12357,7 +12357,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 51036195
+    deliveryNo: 51036195,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12372,7 +12372,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 78022354
+    deliveryNo: 78022354,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12387,7 +12387,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 32922663
+    deliveryNo: 32922663,
   },
   {
     deliveryType: 'Parcel',
@@ -12402,7 +12402,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 52396296
+    deliveryNo: 52396296,
   },
   {
     deliveryType: 'Parcel',
@@ -12417,7 +12417,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 262029
+    deliveryNo: 262029,
   },
   {
     deliveryType: 'Visit',
@@ -12432,7 +12432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 99107128
+    deliveryNo: 99107128,
   },
   {
     deliveryType: 'Visit',
@@ -12447,7 +12447,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 78821004
+    deliveryNo: 78821004,
   },
   {
     deliveryType: 'Parcel',
@@ -12462,7 +12462,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 26083771
+    deliveryNo: 26083771,
   },
   {
     deliveryType: 'Parcel',
@@ -12477,7 +12477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 55265663
+    deliveryNo: 55265663,
   },
   {
     deliveryType: 'Parcel',
@@ -12492,7 +12492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 29494006
+    deliveryNo: 29494006,
   },
   {
     deliveryType: 'Parcel',
@@ -12507,7 +12507,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 40820246
+    deliveryNo: 40820246,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12522,7 +12522,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 10470309
+    deliveryNo: 10470309,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12537,7 +12537,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 94087353
+    deliveryNo: 94087353,
   },
   {
     deliveryType: 'Parcel',
@@ -12552,7 +12552,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 72676740
+    deliveryNo: 72676740,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12567,7 +12567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 77638878
+    deliveryNo: 77638878,
   },
   {
     deliveryType: 'Visit',
@@ -12582,7 +12582,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 37826278
+    deliveryNo: 37826278,
   },
   {
     deliveryType: 'Parcel',
@@ -12597,7 +12597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 47987078
+    deliveryNo: 47987078,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12612,7 +12612,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 41257949
+    deliveryNo: 41257949,
   },
   {
     deliveryType: 'Parcel',
@@ -12627,7 +12627,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 3545137
+    deliveryNo: 3545137,
   },
   {
     deliveryType: 'Visit',
@@ -12642,7 +12642,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 94683180
+    deliveryNo: 94683180,
   },
   {
     deliveryType: 'Visit',
@@ -12657,7 +12657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 40186610
+    deliveryNo: 40186610,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12672,7 +12672,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 28210690
+    deliveryNo: 28210690,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12687,7 +12687,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 89013125
+    deliveryNo: 89013125,
   },
   {
     deliveryType: 'Parcel',
@@ -12702,7 +12702,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 48759322
+    deliveryNo: 48759322,
   },
   {
     deliveryType: 'Parcel',
@@ -12717,7 +12717,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 35939698
+    deliveryNo: 35939698,
   },
   {
     deliveryType: 'Visit',
@@ -12732,7 +12732,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 76968201
+    deliveryNo: 76968201,
   },
   {
     deliveryType: 'Parcel',
@@ -12747,7 +12747,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 47707066
+    deliveryNo: 47707066,
   },
   {
     deliveryType: 'Visit',
@@ -12762,7 +12762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 49713578
+    deliveryNo: 49713578,
   },
   {
     deliveryType: 'Parcel',
@@ -12777,7 +12777,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 53930385
+    deliveryNo: 53930385,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12792,7 +12792,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 341732
+    deliveryNo: 341732,
   },
   {
     deliveryType: 'Visit',
@@ -12807,7 +12807,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 59793685
+    deliveryNo: 59793685,
   },
   {
     deliveryType: 'Visit',
@@ -12822,7 +12822,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 53727317
+    deliveryNo: 53727317,
   },
   {
     deliveryType: 'Visit',
@@ -12837,7 +12837,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 88999453
+    deliveryNo: 88999453,
   },
   {
     deliveryType: 'Visit',
@@ -12852,7 +12852,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 98266524
+    deliveryNo: 98266524,
   },
   {
     deliveryType: 'Visit',
@@ -12867,7 +12867,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 81582711
+    deliveryNo: 81582711,
   },
   {
     deliveryType: 'Parcel',
@@ -12882,7 +12882,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 21914430
+    deliveryNo: 21914430,
   },
   {
     deliveryType: 'Parcel',
@@ -12897,7 +12897,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 96198981
+    deliveryNo: 96198981,
   },
   {
     deliveryType: 'Parcel',
@@ -12912,7 +12912,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 24375910
+    deliveryNo: 24375910,
   },
   {
     deliveryType: 'Visit',
@@ -12927,7 +12927,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 91495497
+    deliveryNo: 91495497,
   },
   {
     deliveryType: 'Parcel',
@@ -12942,7 +12942,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 42559491
+    deliveryNo: 42559491,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -12957,7 +12957,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 86175040
+    deliveryNo: 86175040,
   },
   {
     deliveryType: 'Visit',
@@ -12972,7 +12972,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 51403524
+    deliveryNo: 51403524,
   },
   {
     deliveryType: 'Parcel',
@@ -12987,7 +12987,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 22361785
+    deliveryNo: 22361785,
   },
   {
     deliveryType: 'Visit',
@@ -13002,7 +13002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 27184039
+    deliveryNo: 27184039,
   },
   {
     deliveryType: 'Visit',
@@ -13017,7 +13017,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 81878510
+    deliveryNo: 81878510,
   },
   {
     deliveryType: 'Parcel',
@@ -13032,7 +13032,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 85413661
+    deliveryNo: 85413661,
   },
   {
     deliveryType: 'Visit',
@@ -13047,7 +13047,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 30044577
+    deliveryNo: 30044577,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13062,7 +13062,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 30440983
+    deliveryNo: 30440983,
   },
   {
     deliveryType: 'Parcel',
@@ -13077,7 +13077,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 86604018
+    deliveryNo: 86604018,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13092,7 +13092,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 78859738
+    deliveryNo: 78859738,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13107,7 +13107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 48393138
+    deliveryNo: 48393138,
   },
   {
     deliveryType: 'Visit',
@@ -13122,7 +13122,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 43837154
+    deliveryNo: 43837154,
   },
   {
     deliveryType: 'Parcel',
@@ -13137,7 +13137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 13356997
+    deliveryNo: 13356997,
   },
   {
     deliveryType: 'Visit',
@@ -13152,7 +13152,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 92470900
+    deliveryNo: 92470900,
   },
   {
     deliveryType: 'Visit',
@@ -13167,7 +13167,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 80524129
+    deliveryNo: 80524129,
   },
   {
     deliveryType: 'Visit',
@@ -13182,7 +13182,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 13283941
+    deliveryNo: 13283941,
   },
   {
     deliveryType: 'Parcel',
@@ -13197,7 +13197,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 25548895
+    deliveryNo: 25548895,
   },
   {
     deliveryType: 'Parcel',
@@ -13212,7 +13212,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 55966734
+    deliveryNo: 55966734,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13227,7 +13227,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 76430851
+    deliveryNo: 76430851,
   },
   {
     deliveryType: 'Parcel',
@@ -13242,7 +13242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 30476089
+    deliveryNo: 30476089,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13257,7 +13257,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 39020466
+    deliveryNo: 39020466,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13272,7 +13272,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 77600119
+    deliveryNo: 77600119,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13287,7 +13287,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 46920628
+    deliveryNo: 46920628,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13302,7 +13302,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 48098606
+    deliveryNo: 48098606,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13317,7 +13317,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 35393233
+    deliveryNo: 35393233,
   },
   {
     deliveryType: 'Parcel',
@@ -13332,7 +13332,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 52528200
+    deliveryNo: 52528200,
   },
   {
     deliveryType: 'Parcel',
@@ -13347,7 +13347,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 63880316
+    deliveryNo: 63880316,
   },
   {
     deliveryType: 'Parcel',
@@ -13362,7 +13362,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 68861795
+    deliveryNo: 68861795,
   },
   {
     deliveryType: 'Visit',
@@ -13377,7 +13377,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 36749035
+    deliveryNo: 36749035,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13392,7 +13392,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 20011479
+    deliveryNo: 20011479,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13407,7 +13407,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 96869921
+    deliveryNo: 96869921,
   },
   {
     deliveryType: 'Visit',
@@ -13422,7 +13422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 58364415
+    deliveryNo: 58364415,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13437,7 +13437,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 91637734
+    deliveryNo: 91637734,
   },
   {
     deliveryType: 'Visit',
@@ -13452,7 +13452,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 19441042
+    deliveryNo: 19441042,
   },
   {
     deliveryType: 'Visit',
@@ -13467,7 +13467,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 36044352
+    deliveryNo: 36044352,
   },
   {
     deliveryType: 'Parcel',
@@ -13482,7 +13482,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 31784965
+    deliveryNo: 31784965,
   },
   {
     deliveryType: 'Parcel',
@@ -13497,7 +13497,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 22413012
+    deliveryNo: 22413012,
   },
   {
     deliveryType: 'Visit',
@@ -13512,7 +13512,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 95193903
+    deliveryNo: 95193903,
   },
   {
     deliveryType: 'Parcel',
@@ -13527,7 +13527,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 51403311
+    deliveryNo: 51403311,
   },
   {
     deliveryType: 'Visit',
@@ -13542,7 +13542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 64401091
+    deliveryNo: 64401091,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13557,7 +13557,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 83896333
+    deliveryNo: 83896333,
   },
   {
     deliveryType: 'Parcel',
@@ -13572,7 +13572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 316477
+    deliveryNo: 316477,
   },
   {
     deliveryType: 'Parcel',
@@ -13587,7 +13587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 38369282
+    deliveryNo: 38369282,
   },
   {
     deliveryType: 'Parcel',
@@ -13602,7 +13602,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 75937125
+    deliveryNo: 75937125,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13617,7 +13617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 83368987
+    deliveryNo: 83368987,
   },
   {
     deliveryType: 'Parcel',
@@ -13632,7 +13632,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 49036173
+    deliveryNo: 49036173,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13647,7 +13647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 99693664
+    deliveryNo: 99693664,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13662,7 +13662,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 38739736
+    deliveryNo: 38739736,
   },
   {
     deliveryType: 'Parcel',
@@ -13677,7 +13677,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 11892297
+    deliveryNo: 11892297,
   },
   {
     deliveryType: 'Parcel',
@@ -13692,7 +13692,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 68101122
+    deliveryNo: 68101122,
   },
   {
     deliveryType: 'Parcel',
@@ -13707,7 +13707,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 13691029
+    deliveryNo: 13691029,
   },
   {
     deliveryType: 'Visit',
@@ -13722,7 +13722,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 59781727
+    deliveryNo: 59781727,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13737,7 +13737,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 36955924
+    deliveryNo: 36955924,
   },
   {
     deliveryType: 'Visit',
@@ -13752,7 +13752,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 96948017
+    deliveryNo: 96948017,
   },
   {
     deliveryType: 'Parcel',
@@ -13767,7 +13767,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 38801491
+    deliveryNo: 38801491,
   },
   {
     deliveryType: 'Parcel',
@@ -13782,7 +13782,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 86493929
+    deliveryNo: 86493929,
   },
   {
     deliveryType: 'Visit',
@@ -13797,7 +13797,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 6454315
+    deliveryNo: 6454315,
   },
   {
     deliveryType: 'Parcel',
@@ -13812,7 +13812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 86698092
+    deliveryNo: 86698092,
   },
   {
     deliveryType: 'Parcel',
@@ -13827,7 +13827,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 4481215
+    deliveryNo: 4481215,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13842,7 +13842,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 86425245
+    deliveryNo: 86425245,
   },
   {
     deliveryType: 'Parcel',
@@ -13857,7 +13857,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 13991261
+    deliveryNo: 13991261,
   },
   {
     deliveryType: 'Parcel',
@@ -13872,7 +13872,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 47981210
+    deliveryNo: 47981210,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13887,7 +13887,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 38421047
+    deliveryNo: 38421047,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13902,7 +13902,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 50730810
+    deliveryNo: 50730810,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13917,7 +13917,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 75512594
+    deliveryNo: 75512594,
   },
   {
     deliveryType: 'Visit',
@@ -13932,7 +13932,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 97588095
+    deliveryNo: 97588095,
   },
   {
     deliveryType: 'Parcel',
@@ -13947,7 +13947,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 80093256
+    deliveryNo: 80093256,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -13962,7 +13962,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 71488267
+    deliveryNo: 71488267,
   },
   {
     deliveryType: 'Parcel',
@@ -13977,7 +13977,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 67266996
+    deliveryNo: 67266996,
   },
   {
     deliveryType: 'Parcel',
@@ -13992,7 +13992,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 53950667
+    deliveryNo: 53950667,
   },
   {
     deliveryType: 'Visit',
@@ -14007,7 +14007,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 30626424
+    deliveryNo: 30626424,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14022,7 +14022,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 42842186
+    deliveryNo: 42842186,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14037,7 +14037,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 75094948
+    deliveryNo: 75094948,
   },
   {
     deliveryType: 'Parcel',
@@ -14052,7 +14052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 31450520
+    deliveryNo: 31450520,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14067,7 +14067,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 89008444
+    deliveryNo: 89008444,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14082,7 +14082,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 35976589
+    deliveryNo: 35976589,
   },
   {
     deliveryType: 'Parcel',
@@ -14097,7 +14097,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 5045787
+    deliveryNo: 5045787,
   },
   {
     deliveryType: 'Parcel',
@@ -14112,7 +14112,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 83555526
+    deliveryNo: 83555526,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14127,7 +14127,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 24617645
+    deliveryNo: 24617645,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14142,7 +14142,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 97915617
+    deliveryNo: 97915617,
   },
   {
     deliveryType: 'Parcel',
@@ -14157,7 +14157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 5322899
+    deliveryNo: 5322899,
   },
   {
     deliveryType: 'Parcel',
@@ -14172,7 +14172,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 44784539
+    deliveryNo: 44784539,
   },
   {
     deliveryType: 'Visit',
@@ -14187,7 +14187,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 36082053
+    deliveryNo: 36082053,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14202,7 +14202,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 24152307
+    deliveryNo: 24152307,
   },
   {
     deliveryType: 'Visit',
@@ -14217,7 +14217,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 49557038
+    deliveryNo: 49557038,
   },
   {
     deliveryType: 'Visit',
@@ -14232,7 +14232,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 21500261
+    deliveryNo: 21500261,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14247,7 +14247,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 46466759
+    deliveryNo: 46466759,
   },
   {
     deliveryType: 'Visit',
@@ -14262,7 +14262,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 55105512
+    deliveryNo: 55105512,
   },
   {
     deliveryType: 'Visit',
@@ -14277,7 +14277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 31407765
+    deliveryNo: 31407765,
   },
   {
     deliveryType: 'Visit',
@@ -14292,7 +14292,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 81530196
+    deliveryNo: 81530196,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14307,7 +14307,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 84789430
+    deliveryNo: 84789430,
   },
   {
     deliveryType: 'Parcel',
@@ -14322,7 +14322,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 46404918
+    deliveryNo: 46404918,
   },
   {
     deliveryType: 'Visit',
@@ -14337,7 +14337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 20493005
+    deliveryNo: 20493005,
   },
   {
     deliveryType: 'Parcel',
@@ -14352,7 +14352,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 92615758
+    deliveryNo: 92615758,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14367,7 +14367,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 3863931
+    deliveryNo: 3863931,
   },
   {
     deliveryType: 'Parcel',
@@ -14382,7 +14382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 63004222
+    deliveryNo: 63004222,
   },
   {
     deliveryType: 'Parcel',
@@ -14397,7 +14397,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 29646755
+    deliveryNo: 29646755,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14412,7 +14412,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 59689493
+    deliveryNo: 59689493,
   },
   {
     deliveryType: 'Visit',
@@ -14427,7 +14427,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 84472083
+    deliveryNo: 84472083,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14442,7 +14442,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 47122401
+    deliveryNo: 47122401,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14457,7 +14457,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 43504881
+    deliveryNo: 43504881,
   },
   {
     deliveryType: 'Visit',
@@ -14472,7 +14472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 10980419
+    deliveryNo: 10980419,
   },
   {
     deliveryType: 'Visit',
@@ -14487,7 +14487,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 75863539
+    deliveryNo: 75863539,
   },
   {
     deliveryType: 'Visit',
@@ -14502,7 +14502,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 10013134
+    deliveryNo: 10013134,
   },
   {
     deliveryType: 'Visit',
@@ -14517,7 +14517,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 58419066
+    deliveryNo: 58419066,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14532,7 +14532,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 82947503
+    deliveryNo: 82947503,
   },
   {
     deliveryType: 'Parcel',
@@ -14547,7 +14547,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 22583782
+    deliveryNo: 22583782,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14562,7 +14562,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 97562324
+    deliveryNo: 97562324,
   },
   {
     deliveryType: 'Visit',
@@ -14577,7 +14577,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 83698883
+    deliveryNo: 83698883,
   },
   {
     deliveryType: 'Parcel',
@@ -14592,7 +14592,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 54041253
+    deliveryNo: 54041253,
   },
   {
     deliveryType: 'Parcel',
@@ -14607,7 +14607,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 27630265
+    deliveryNo: 27630265,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14622,7 +14622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 79713766
+    deliveryNo: 79713766,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14637,7 +14637,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 54181974
+    deliveryNo: 54181974,
   },
   {
     deliveryType: 'Visit',
@@ -14652,7 +14652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 77293443
+    deliveryNo: 77293443,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14667,7 +14667,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 1936650
+    deliveryNo: 1936650,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14682,7 +14682,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 13722929
+    deliveryNo: 13722929,
   },
   {
     deliveryType: 'Parcel',
@@ -14697,7 +14697,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 4132366
+    deliveryNo: 4132366,
   },
   {
     deliveryType: 'Parcel',
@@ -14712,7 +14712,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 61734965
+    deliveryNo: 61734965,
   },
   {
     deliveryType: 'Visit',
@@ -14727,7 +14727,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 50185197
+    deliveryNo: 50185197,
   },
   {
     deliveryType: 'Visit',
@@ -14742,7 +14742,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 31238861
+    deliveryNo: 31238861,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14757,7 +14757,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 52466925
+    deliveryNo: 52466925,
   },
   {
     deliveryType: 'Visit',
@@ -14772,7 +14772,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 52641786
+    deliveryNo: 52641786,
   },
   {
     deliveryType: 'Visit',
@@ -14787,7 +14787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 42947255
+    deliveryNo: 42947255,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14802,7 +14802,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 99214231
+    deliveryNo: 99214231,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14817,7 +14817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 49309899
+    deliveryNo: 49309899,
   },
   {
     deliveryType: 'Visit',
@@ -14832,7 +14832,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 60609057
+    deliveryNo: 60609057,
   },
   {
     deliveryType: 'Visit',
@@ -14847,7 +14847,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 25151907
+    deliveryNo: 25151907,
   },
   {
     deliveryType: 'Parcel',
@@ -14862,7 +14862,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 4643477
+    deliveryNo: 4643477,
   },
   {
     deliveryType: 'Visit',
@@ -14877,7 +14877,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 33875632
+    deliveryNo: 33875632,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14892,7 +14892,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 89453337
+    deliveryNo: 89453337,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14907,7 +14907,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 10882704
+    deliveryNo: 10882704,
   },
   {
     deliveryType: 'Parcel',
@@ -14922,7 +14922,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 13129105
+    deliveryNo: 13129105,
   },
   {
     deliveryType: 'Visit',
@@ -14937,7 +14937,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 53679363
+    deliveryNo: 53679363,
   },
   {
     deliveryType: 'Parcel',
@@ -14952,7 +14952,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 12942922
+    deliveryNo: 12942922,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14967,7 +14967,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 14502560
+    deliveryNo: 14502560,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -14982,7 +14982,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 51276083
+    deliveryNo: 51276083,
   },
   {
     deliveryType: 'Visit',
@@ -14997,7 +14997,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 95076174
+    deliveryNo: 95076174,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15012,7 +15012,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 50356340
+    deliveryNo: 50356340,
   },
   {
     deliveryType: 'Parcel',
@@ -15027,7 +15027,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 68106740
+    deliveryNo: 68106740,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15042,7 +15042,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 62914387
+    deliveryNo: 62914387,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15057,7 +15057,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 75128050
+    deliveryNo: 75128050,
   },
   {
     deliveryType: 'Visit',
@@ -15072,7 +15072,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 90868929
+    deliveryNo: 90868929,
   },
   {
     deliveryType: 'Parcel',
@@ -15087,7 +15087,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 75304001
+    deliveryNo: 75304001,
   },
   {
     deliveryType: 'Visit',
@@ -15102,7 +15102,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 89149655
+    deliveryNo: 89149655,
   },
   {
     deliveryType: 'Parcel',
@@ -15117,7 +15117,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 44799077
+    deliveryNo: 44799077,
   },
   {
     deliveryType: 'Parcel',
@@ -15132,7 +15132,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 16767569
+    deliveryNo: 16767569,
   },
   {
     deliveryType: 'Parcel',
@@ -15147,7 +15147,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 51325833
+    deliveryNo: 51325833,
   },
   {
     deliveryType: 'Parcel',
@@ -15162,7 +15162,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 22241970
+    deliveryNo: 22241970,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15177,7 +15177,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 53478750
+    deliveryNo: 53478750,
   },
   {
     deliveryType: 'Parcel',
@@ -15192,7 +15192,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 75493525
+    deliveryNo: 75493525,
   },
   {
     deliveryType: 'Visit',
@@ -15207,7 +15207,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 99463848
+    deliveryNo: 99463848,
   },
   {
     deliveryType: 'Visit',
@@ -15222,7 +15222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 83312767
+    deliveryNo: 83312767,
   },
   {
     deliveryType: 'Parcel',
@@ -15237,7 +15237,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 24833420
+    deliveryNo: 24833420,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15252,7 +15252,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 50513418
+    deliveryNo: 50513418,
   },
   {
     deliveryType: 'Parcel',
@@ -15267,7 +15267,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 73835274
+    deliveryNo: 73835274,
   },
   {
     deliveryType: 'Visit',
@@ -15282,7 +15282,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 73879882
+    deliveryNo: 73879882,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15297,7 +15297,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 93985852
+    deliveryNo: 93985852,
   },
   {
     deliveryType: 'Parcel',
@@ -15312,7 +15312,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 81018325
+    deliveryNo: 81018325,
   },
   {
     deliveryType: 'Parcel',
@@ -15327,7 +15327,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 78476590
+    deliveryNo: 78476590,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15342,7 +15342,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 51220687
+    deliveryNo: 51220687,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15357,7 +15357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 56022921
+    deliveryNo: 56022921,
   },
   {
     deliveryType: 'Visit',
@@ -15372,7 +15372,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 80450999
+    deliveryNo: 80450999,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15387,7 +15387,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 52765271
+    deliveryNo: 52765271,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15402,7 +15402,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 77563398
+    deliveryNo: 77563398,
   },
   {
     deliveryType: 'Parcel',
@@ -15417,7 +15417,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 75831428
+    deliveryNo: 75831428,
   },
   {
     deliveryType: 'Visit',
@@ -15432,7 +15432,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 3861209
+    deliveryNo: 3861209,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15447,7 +15447,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 93169674
+    deliveryNo: 93169674,
   },
   {
     deliveryType: 'Visit',
@@ -15462,7 +15462,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 93106466
+    deliveryNo: 93106466,
   },
   {
     deliveryType: 'Parcel',
@@ -15477,7 +15477,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 9262036
+    deliveryNo: 9262036,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15492,7 +15492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 14089228
+    deliveryNo: 14089228,
   },
   {
     deliveryType: 'Visit',
@@ -15507,7 +15507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 61327037
+    deliveryNo: 61327037,
   },
   {
     deliveryType: 'Visit',
@@ -15522,7 +15522,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 62866122
+    deliveryNo: 62866122,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15537,7 +15537,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 85621338
+    deliveryNo: 85621338,
   },
   {
     deliveryType: 'Parcel',
@@ -15552,7 +15552,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 96777413
+    deliveryNo: 96777413,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15567,7 +15567,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 28449607
+    deliveryNo: 28449607,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15582,7 +15582,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 47352034
+    deliveryNo: 47352034,
   },
   {
     deliveryType: 'Visit',
@@ -15597,7 +15597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 1492047
+    deliveryNo: 1492047,
   },
   {
     deliveryType: 'Visit',
@@ -15612,7 +15612,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 74209933
+    deliveryNo: 74209933,
   },
   {
     deliveryType: 'Parcel',
@@ -15627,7 +15627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 6058893
+    deliveryNo: 6058893,
   },
   {
     deliveryType: 'Parcel',
@@ -15642,7 +15642,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 47071090
+    deliveryNo: 47071090,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15657,7 +15657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 75881313
+    deliveryNo: 75881313,
   },
   {
     deliveryType: 'Visit',
@@ -15672,7 +15672,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 67980618
+    deliveryNo: 67980618,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15687,7 +15687,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 13048044
+    deliveryNo: 13048044,
   },
   {
     deliveryType: 'Visit',
@@ -15702,7 +15702,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 70859302
+    deliveryNo: 70859302,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15717,7 +15717,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 16697161
+    deliveryNo: 16697161,
   },
   {
     deliveryType: 'Parcel',
@@ -15732,7 +15732,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 60488932
+    deliveryNo: 60488932,
   },
   {
     deliveryType: 'Visit',
@@ -15747,7 +15747,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 29072350
+    deliveryNo: 29072350,
   },
   {
     deliveryType: 'Visit',
@@ -15762,7 +15762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 78041852
+    deliveryNo: 78041852,
   },
   {
     deliveryType: 'Parcel',
@@ -15777,7 +15777,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 48553058
+    deliveryNo: 48553058,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15792,7 +15792,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 5264059
+    deliveryNo: 5264059,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15807,7 +15807,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 84267881
+    deliveryNo: 84267881,
   },
   {
     deliveryType: 'Parcel',
@@ -15822,7 +15822,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 44421243
+    deliveryNo: 44421243,
   },
   {
     deliveryType: 'Visit',
@@ -15837,7 +15837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 51900602
+    deliveryNo: 51900602,
   },
   {
     deliveryType: 'Visit',
@@ -15852,7 +15852,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 36117138
+    deliveryNo: 36117138,
   },
   {
     deliveryType: 'Parcel',
@@ -15867,7 +15867,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 35298217
+    deliveryNo: 35298217,
   },
   {
     deliveryType: 'Visit',
@@ -15882,7 +15882,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 2093579
+    deliveryNo: 2093579,
   },
   {
     deliveryType: 'Visit',
@@ -15897,7 +15897,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 63490337
+    deliveryNo: 63490337,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15912,7 +15912,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 25121600
+    deliveryNo: 25121600,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15927,7 +15927,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 77729351
+    deliveryNo: 77729351,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15942,7 +15942,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 3092988
+    deliveryNo: 3092988,
   },
   {
     deliveryType: 'Parcel',
@@ -15957,7 +15957,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 88160701
+    deliveryNo: 88160701,
   },
   {
     deliveryType: 'Visit',
@@ -15972,7 +15972,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 39421647
+    deliveryNo: 39421647,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -15987,7 +15987,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 44732679
+    deliveryNo: 44732679,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16002,7 +16002,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 56864145
+    deliveryNo: 56864145,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16017,7 +16017,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 71955078
+    deliveryNo: 71955078,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16032,7 +16032,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 46868842
+    deliveryNo: 46868842,
   },
   {
     deliveryType: 'Parcel',
@@ -16047,7 +16047,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 42116124
+    deliveryNo: 42116124,
   },
   {
     deliveryType: 'Visit',
@@ -16062,7 +16062,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 91562933
+    deliveryNo: 91562933,
   },
   {
     deliveryType: 'Parcel',
@@ -16077,7 +16077,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 86567000
+    deliveryNo: 86567000,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16092,7 +16092,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 20486834
+    deliveryNo: 20486834,
   },
   {
     deliveryType: 'Parcel',
@@ -16107,7 +16107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 69683402
+    deliveryNo: 69683402,
   },
   {
     deliveryType: 'Parcel',
@@ -16122,7 +16122,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 89185229
+    deliveryNo: 89185229,
   },
   {
     deliveryType: 'Parcel',
@@ -16137,7 +16137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 75113454
+    deliveryNo: 75113454,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16152,7 +16152,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 91764206
+    deliveryNo: 91764206,
   },
   {
     deliveryType: 'Parcel',
@@ -16167,7 +16167,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 78921389
+    deliveryNo: 78921389,
   },
   {
     deliveryType: 'Visit',
@@ -16182,7 +16182,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 44523814
+    deliveryNo: 44523814,
   },
   {
     deliveryType: 'Visit',
@@ -16197,7 +16197,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 9236333
+    deliveryNo: 9236333,
   },
   {
     deliveryType: 'Parcel',
@@ -16212,7 +16212,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 2775445
+    deliveryNo: 2775445,
   },
   {
     deliveryType: 'Parcel',
@@ -16227,7 +16227,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 17015626
+    deliveryNo: 17015626,
   },
   {
     deliveryType: 'Visit',
@@ -16242,7 +16242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 97953404
+    deliveryNo: 97953404,
   },
   {
     deliveryType: 'Parcel',
@@ -16257,7 +16257,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 7531987
+    deliveryNo: 7531987,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16272,7 +16272,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 7130038
+    deliveryNo: 7130038,
   },
   {
     deliveryType: 'Parcel',
@@ -16287,7 +16287,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 7193953
+    deliveryNo: 7193953,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16302,7 +16302,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 92043812
+    deliveryNo: 92043812,
   },
   {
     deliveryType: 'Parcel',
@@ -16317,7 +16317,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 65308929
+    deliveryNo: 65308929,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16332,7 +16332,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 69749695
+    deliveryNo: 69749695,
   },
   {
     deliveryType: 'Parcel',
@@ -16347,7 +16347,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 15398253
+    deliveryNo: 15398253,
   },
   {
     deliveryType: 'Visit',
@@ -16362,7 +16362,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 2001232
+    deliveryNo: 2001232,
   },
   {
     deliveryType: 'Visit',
@@ -16377,7 +16377,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 45673635
+    deliveryNo: 45673635,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16392,7 +16392,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 15473695
+    deliveryNo: 15473695,
   },
   {
     deliveryType: 'Parcel',
@@ -16407,7 +16407,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 53284337
+    deliveryNo: 53284337,
   },
   {
     deliveryType: 'Visit',
@@ -16422,7 +16422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 89937647
+    deliveryNo: 89937647,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16437,7 +16437,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 81944499
+    deliveryNo: 81944499,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16452,7 +16452,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 76492354
+    deliveryNo: 76492354,
   },
   {
     deliveryType: 'Parcel',
@@ -16467,7 +16467,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 67549944
+    deliveryNo: 67549944,
   },
   {
     deliveryType: 'Visit',
@@ -16482,7 +16482,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 32968360
+    deliveryNo: 32968360,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16497,7 +16497,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 41393887
+    deliveryNo: 41393887,
   },
   {
     deliveryType: 'Parcel',
@@ -16512,7 +16512,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 88608635
+    deliveryNo: 88608635,
   },
   {
     deliveryType: 'Visit',
@@ -16527,7 +16527,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 65590869
+    deliveryNo: 65590869,
   },
   {
     deliveryType: 'Parcel',
@@ -16542,7 +16542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 75137664
+    deliveryNo: 75137664,
   },
   {
     deliveryType: 'Parcel',
@@ -16557,7 +16557,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 318337
+    deliveryNo: 318337,
   },
   {
     deliveryType: 'Parcel',
@@ -16572,7 +16572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 86327851
+    deliveryNo: 86327851,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16587,7 +16587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 27485215
+    deliveryNo: 27485215,
   },
   {
     deliveryType: 'Visit',
@@ -16602,7 +16602,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 53172612
+    deliveryNo: 53172612,
   },
   {
     deliveryType: 'Visit',
@@ -16617,7 +16617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 80436864
+    deliveryNo: 80436864,
   },
   {
     deliveryType: 'Visit',
@@ -16632,7 +16632,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 46775525
+    deliveryNo: 46775525,
   },
   {
     deliveryType: 'Visit',
@@ -16647,7 +16647,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 54305772
+    deliveryNo: 54305772,
   },
   {
     deliveryType: 'Visit',
@@ -16662,7 +16662,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 46064936
+    deliveryNo: 46064936,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16677,7 +16677,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 96617406
+    deliveryNo: 96617406,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16692,7 +16692,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 32443358
+    deliveryNo: 32443358,
   },
   {
     deliveryType: 'Parcel',
@@ -16707,7 +16707,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 2760525
+    deliveryNo: 2760525,
   },
   {
     deliveryType: 'Parcel',
@@ -16722,7 +16722,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 98481079
+    deliveryNo: 98481079,
   },
   {
     deliveryType: 'Visit',
@@ -16737,7 +16737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 65931397
+    deliveryNo: 65931397,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16752,7 +16752,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 82763324
+    deliveryNo: 82763324,
   },
   {
     deliveryType: 'Parcel',
@@ -16767,7 +16767,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 56161269
+    deliveryNo: 56161269,
   },
   {
     deliveryType: 'Visit',
@@ -16782,7 +16782,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 68000353
+    deliveryNo: 68000353,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16797,7 +16797,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 28036443
+    deliveryNo: 28036443,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16812,7 +16812,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 4509889
+    deliveryNo: 4509889,
   },
   {
     deliveryType: 'Parcel',
@@ -16827,7 +16827,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 81720376
+    deliveryNo: 81720376,
   },
   {
     deliveryType: 'Visit',
@@ -16842,7 +16842,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 46181221
+    deliveryNo: 46181221,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16857,7 +16857,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 26887145
+    deliveryNo: 26887145,
   },
   {
     deliveryType: 'Visit',
@@ -16872,7 +16872,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 11030370
+    deliveryNo: 11030370,
   },
   {
     deliveryType: 'Parcel',
@@ -16887,7 +16887,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 24175664
+    deliveryNo: 24175664,
   },
   {
     deliveryType: 'Visit',
@@ -16902,7 +16902,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 3455711
+    deliveryNo: 3455711,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16917,7 +16917,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 3774037
+    deliveryNo: 3774037,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -16932,7 +16932,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 60303393
+    deliveryNo: 60303393,
   },
   {
     deliveryType: 'Parcel',
@@ -16947,7 +16947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 85743402
+    deliveryNo: 85743402,
   },
   {
     deliveryType: 'Parcel',
@@ -16962,7 +16962,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 7851953
+    deliveryNo: 7851953,
   },
   {
     deliveryType: 'Parcel',
@@ -16977,7 +16977,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 51690659
+    deliveryNo: 51690659,
   },
   {
     deliveryType: 'Parcel',
@@ -16992,7 +16992,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 41825496
+    deliveryNo: 41825496,
   },
   {
     deliveryType: 'Parcel',
@@ -17007,7 +17007,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 42399443
+    deliveryNo: 42399443,
   },
   {
     deliveryType: 'Visit',
@@ -17022,7 +17022,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 67544821
+    deliveryNo: 67544821,
   },
   {
     deliveryType: 'Parcel',
@@ -17037,7 +17037,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 81028735
+    deliveryNo: 81028735,
   },
   {
     deliveryType: 'Parcel',
@@ -17052,7 +17052,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 62325848
+    deliveryNo: 62325848,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17067,7 +17067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 46488467
+    deliveryNo: 46488467,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17082,7 +17082,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 47234741
+    deliveryNo: 47234741,
   },
   {
     deliveryType: 'Parcel',
@@ -17097,7 +17097,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 46601502
+    deliveryNo: 46601502,
   },
   {
     deliveryType: 'Parcel',
@@ -17112,7 +17112,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 80309101
+    deliveryNo: 80309101,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17127,7 +17127,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 65661369
+    deliveryNo: 65661369,
   },
   {
     deliveryType: 'Visit',
@@ -17142,7 +17142,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 8354584
+    deliveryNo: 8354584,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17157,7 +17157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 85995134
+    deliveryNo: 85995134,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17172,7 +17172,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 39426353
+    deliveryNo: 39426353,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17187,7 +17187,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 8140753
+    deliveryNo: 8140753,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17202,7 +17202,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 23104703
+    deliveryNo: 23104703,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17217,7 +17217,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 19248325
+    deliveryNo: 19248325,
   },
   {
     deliveryType: 'Visit',
@@ -17232,7 +17232,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 50674255
+    deliveryNo: 50674255,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17247,7 +17247,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 84314571
+    deliveryNo: 84314571,
   },
   {
     deliveryType: 'Parcel',
@@ -17262,7 +17262,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 12316096
+    deliveryNo: 12316096,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17277,7 +17277,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 59859967
+    deliveryNo: 59859967,
   },
   {
     deliveryType: 'Visit',
@@ -17292,7 +17292,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 73422224
+    deliveryNo: 73422224,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17307,7 +17307,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 54657862
+    deliveryNo: 54657862,
   },
   {
     deliveryType: 'Visit',
@@ -17322,7 +17322,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 57141687
+    deliveryNo: 57141687,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17337,7 +17337,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 87124973
+    deliveryNo: 87124973,
   },
   {
     deliveryType: 'Parcel',
@@ -17352,7 +17352,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 45267792
+    deliveryNo: 45267792,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17367,7 +17367,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 13982642
+    deliveryNo: 13982642,
   },
   {
     deliveryType: 'Parcel',
@@ -17382,7 +17382,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 34575739
+    deliveryNo: 34575739,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17397,7 +17397,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 29798210
+    deliveryNo: 29798210,
   },
   {
     deliveryType: 'Visit',
@@ -17412,7 +17412,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 10720085
+    deliveryNo: 10720085,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17427,7 +17427,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 62015899
+    deliveryNo: 62015899,
   },
   {
     deliveryType: 'Parcel',
@@ -17442,7 +17442,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 26801384
+    deliveryNo: 26801384,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17457,7 +17457,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 11086570
+    deliveryNo: 11086570,
   },
   {
     deliveryType: 'Visit',
@@ -17472,7 +17472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 98711405
+    deliveryNo: 98711405,
   },
   {
     deliveryType: 'Parcel',
@@ -17487,7 +17487,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 10305728
+    deliveryNo: 10305728,
   },
   {
     deliveryType: 'Visit',
@@ -17502,7 +17502,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 54366279
+    deliveryNo: 54366279,
   },
   {
     deliveryType: 'Visit',
@@ -17517,7 +17517,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 4969160
+    deliveryNo: 4969160,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17532,7 +17532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 98936965
+    deliveryNo: 98936965,
   },
   {
     deliveryType: 'Visit',
@@ -17547,7 +17547,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 75455577
+    deliveryNo: 75455577,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17562,7 +17562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 83186402
+    deliveryNo: 83186402,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17577,7 +17577,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 53845618
+    deliveryNo: 53845618,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17592,7 +17592,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 87022731
+    deliveryNo: 87022731,
   },
   {
     deliveryType: 'Parcel',
@@ -17607,7 +17607,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 8686626
+    deliveryNo: 8686626,
   },
   {
     deliveryType: 'Visit',
@@ -17622,7 +17622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 55377949
+    deliveryNo: 55377949,
   },
   {
     deliveryType: 'Parcel',
@@ -17637,7 +17637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 97512546
+    deliveryNo: 97512546,
   },
   {
     deliveryType: 'Parcel',
@@ -17652,7 +17652,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 48521391
+    deliveryNo: 48521391,
   },
   {
     deliveryType: 'Parcel',
@@ -17667,7 +17667,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 11728301
+    deliveryNo: 11728301,
   },
   {
     deliveryType: 'Visit',
@@ -17682,7 +17682,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 93917379
+    deliveryNo: 93917379,
   },
   {
     deliveryType: 'Parcel',
@@ -17697,7 +17697,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 63468086
+    deliveryNo: 63468086,
   },
   {
     deliveryType: 'Visit',
@@ -17712,7 +17712,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 51736457
+    deliveryNo: 51736457,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17727,7 +17727,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 89036878
+    deliveryNo: 89036878,
   },
   {
     deliveryType: 'Parcel',
@@ -17742,7 +17742,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 31129557
+    deliveryNo: 31129557,
   },
   {
     deliveryType: 'Visit',
@@ -17757,7 +17757,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 68544604
+    deliveryNo: 68544604,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17772,7 +17772,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 19374480
+    deliveryNo: 19374480,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17787,7 +17787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 86342268
+    deliveryNo: 86342268,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17802,7 +17802,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 11004060
+    deliveryNo: 11004060,
   },
   {
     deliveryType: 'Visit',
@@ -17817,7 +17817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 81869508
+    deliveryNo: 81869508,
   },
   {
     deliveryType: 'Visit',
@@ -17832,7 +17832,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 49025403
+    deliveryNo: 49025403,
   },
   {
     deliveryType: 'Visit',
@@ -17847,7 +17847,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 65522864
+    deliveryNo: 65522864,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17862,7 +17862,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 15339565
+    deliveryNo: 15339565,
   },
   {
     deliveryType: 'Parcel',
@@ -17877,7 +17877,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 99154187
+    deliveryNo: 99154187,
   },
   {
     deliveryType: 'Visit',
@@ -17892,7 +17892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 32471031
+    deliveryNo: 32471031,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17907,7 +17907,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 65808562
+    deliveryNo: 65808562,
   },
   {
     deliveryType: 'Visit',
@@ -17922,7 +17922,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 63716402
+    deliveryNo: 63716402,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17937,7 +17937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 78311078
+    deliveryNo: 78311078,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17952,7 +17952,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 23821626
+    deliveryNo: 23821626,
   },
   {
     deliveryType: 'Visit',
@@ -17967,7 +17967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 1311886
+    deliveryNo: 1311886,
   },
   {
     deliveryType: 'Parcel',
@@ -17982,7 +17982,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 37297194
+    deliveryNo: 37297194,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -17997,7 +17997,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 86398853
+    deliveryNo: 86398853,
   },
   {
     deliveryType: 'Parcel',
@@ -18012,7 +18012,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 6480627
+    deliveryNo: 6480627,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18027,7 +18027,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 44887239
+    deliveryNo: 44887239,
   },
   {
     deliveryType: 'Visit',
@@ -18042,7 +18042,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 76455661
+    deliveryNo: 76455661,
   },
   {
     deliveryType: 'Parcel',
@@ -18057,7 +18057,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 7895738
+    deliveryNo: 7895738,
   },
   {
     deliveryType: 'Visit',
@@ -18072,7 +18072,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 8937503
+    deliveryNo: 8937503,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18087,7 +18087,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 48318281
+    deliveryNo: 48318281,
   },
   {
     deliveryType: 'Parcel',
@@ -18102,7 +18102,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 2233513
+    deliveryNo: 2233513,
   },
   {
     deliveryType: 'Visit',
@@ -18117,7 +18117,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 64300953
+    deliveryNo: 64300953,
   },
   {
     deliveryType: 'Parcel',
@@ -18132,7 +18132,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 19388718
+    deliveryNo: 19388718,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18147,7 +18147,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 48833432
+    deliveryNo: 48833432,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18162,7 +18162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 11625495
+    deliveryNo: 11625495,
   },
   {
     deliveryType: 'Parcel',
@@ -18177,7 +18177,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 95064277
+    deliveryNo: 95064277,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18192,7 +18192,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 49186833
+    deliveryNo: 49186833,
   },
   {
     deliveryType: 'Parcel',
@@ -18207,7 +18207,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 11949500
+    deliveryNo: 11949500,
   },
   {
     deliveryType: 'Parcel',
@@ -18222,7 +18222,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 96692535
+    deliveryNo: 96692535,
   },
   {
     deliveryType: 'Visit',
@@ -18237,7 +18237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 49843735
+    deliveryNo: 49843735,
   },
   {
     deliveryType: 'Visit',
@@ -18252,7 +18252,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 95117723
+    deliveryNo: 95117723,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18267,7 +18267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 60643434
+    deliveryNo: 60643434,
   },
   {
     deliveryType: 'Parcel',
@@ -18282,7 +18282,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 37503042
+    deliveryNo: 37503042,
   },
   {
     deliveryType: 'Parcel',
@@ -18297,7 +18297,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 42091418
+    deliveryNo: 42091418,
   },
   {
     deliveryType: 'Parcel',
@@ -18312,7 +18312,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 50505927
+    deliveryNo: 50505927,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18327,7 +18327,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 40852203
+    deliveryNo: 40852203,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18342,7 +18342,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 18902304
+    deliveryNo: 18902304,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18357,7 +18357,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 13967426
+    deliveryNo: 13967426,
   },
   {
     deliveryType: 'Visit',
@@ -18372,7 +18372,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 15148118
+    deliveryNo: 15148118,
   },
   {
     deliveryType: 'Parcel',
@@ -18387,7 +18387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 73300799
+    deliveryNo: 73300799,
   },
   {
     deliveryType: 'Visit',
@@ -18402,7 +18402,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 21110031
+    deliveryNo: 21110031,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18417,7 +18417,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 62581924
+    deliveryNo: 62581924,
   },
   {
     deliveryType: 'Parcel',
@@ -18432,7 +18432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 54074703
+    deliveryNo: 54074703,
   },
   {
     deliveryType: 'Parcel',
@@ -18447,7 +18447,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 41658363
+    deliveryNo: 41658363,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18462,7 +18462,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 34146004
+    deliveryNo: 34146004,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18477,7 +18477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 77565340
+    deliveryNo: 77565340,
   },
   {
     deliveryType: 'Visit',
@@ -18492,7 +18492,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 55139537
+    deliveryNo: 55139537,
   },
   {
     deliveryType: 'Visit',
@@ -18507,7 +18507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 67022435
+    deliveryNo: 67022435,
   },
   {
     deliveryType: 'Visit',
@@ -18522,7 +18522,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 46083864
+    deliveryNo: 46083864,
   },
   {
     deliveryType: 'Visit',
@@ -18537,7 +18537,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 39966675
+    deliveryNo: 39966675,
   },
   {
     deliveryType: 'Visit',
@@ -18552,7 +18552,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 35437779
+    deliveryNo: 35437779,
   },
   {
     deliveryType: 'Visit',
@@ -18567,7 +18567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 18731346
+    deliveryNo: 18731346,
   },
   {
     deliveryType: 'Visit',
@@ -18582,7 +18582,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 55133030
+    deliveryNo: 55133030,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18597,7 +18597,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 32479956
+    deliveryNo: 32479956,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18612,7 +18612,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 46551859
+    deliveryNo: 46551859,
   },
   {
     deliveryType: 'Parcel',
@@ -18627,7 +18627,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 11504698
+    deliveryNo: 11504698,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18642,7 +18642,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 55548718
+    deliveryNo: 55548718,
   },
   {
     deliveryType: 'Visit',
@@ -18657,7 +18657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 10998780
+    deliveryNo: 10998780,
   },
   {
     deliveryType: 'Parcel',
@@ -18672,7 +18672,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 28625568
+    deliveryNo: 28625568,
   },
   {
     deliveryType: 'Visit',
@@ -18687,7 +18687,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 38912014
+    deliveryNo: 38912014,
   },
   {
     deliveryType: 'Parcel',
@@ -18702,7 +18702,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 47370106
+    deliveryNo: 47370106,
   },
   {
     deliveryType: 'Visit',
@@ -18717,7 +18717,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 87499026
+    deliveryNo: 87499026,
   },
   {
     deliveryType: 'Parcel',
@@ -18732,7 +18732,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 63266299
+    deliveryNo: 63266299,
   },
   {
     deliveryType: 'Parcel',
@@ -18747,7 +18747,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 93169479
+    deliveryNo: 93169479,
   },
   {
     deliveryType: 'Parcel',
@@ -18762,7 +18762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 19986625
+    deliveryNo: 19986625,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18777,7 +18777,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 74249655
+    deliveryNo: 74249655,
   },
   {
     deliveryType: 'Visit',
@@ -18792,7 +18792,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 75275369
+    deliveryNo: 75275369,
   },
   {
     deliveryType: 'Visit',
@@ -18807,7 +18807,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 21264816
+    deliveryNo: 21264816,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18822,7 +18822,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 59532359
+    deliveryNo: 59532359,
   },
   {
     deliveryType: 'Parcel',
@@ -18837,7 +18837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 39351660
+    deliveryNo: 39351660,
   },
   {
     deliveryType: 'Parcel',
@@ -18852,7 +18852,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 33206514
+    deliveryNo: 33206514,
   },
   {
     deliveryType: 'Visit',
@@ -18867,7 +18867,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 67410302
+    deliveryNo: 67410302,
   },
   {
     deliveryType: 'Visit',
@@ -18882,7 +18882,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 30108584
+    deliveryNo: 30108584,
   },
   {
     deliveryType: 'Parcel',
@@ -18897,7 +18897,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 23605124
+    deliveryNo: 23605124,
   },
   {
     deliveryType: 'Parcel',
@@ -18912,7 +18912,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 98752465
+    deliveryNo: 98752465,
   },
   {
     deliveryType: 'Visit',
@@ -18927,7 +18927,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 51823881
+    deliveryNo: 51823881,
   },
   {
     deliveryType: 'Parcel',
@@ -18942,7 +18942,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 78834426
+    deliveryNo: 78834426,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18957,7 +18957,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 68704423
+    deliveryNo: 68704423,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18972,7 +18972,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 74959686
+    deliveryNo: 74959686,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -18987,7 +18987,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 35838427
+    deliveryNo: 35838427,
   },
   {
     deliveryType: 'Visit',
@@ -19002,7 +19002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 14725643
+    deliveryNo: 14725643,
   },
   {
     deliveryType: 'Visit',
@@ -19017,7 +19017,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 6761519
+    deliveryNo: 6761519,
   },
   {
     deliveryType: 'Parcel',
@@ -19032,7 +19032,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 3271209
+    deliveryNo: 3271209,
   },
   {
     deliveryType: 'Visit',
@@ -19047,7 +19047,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 23339116
+    deliveryNo: 23339116,
   },
   {
     deliveryType: 'Visit',
@@ -19062,7 +19062,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 11401540
+    deliveryNo: 11401540,
   },
   {
     deliveryType: 'Visit',
@@ -19077,7 +19077,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 61157425
+    deliveryNo: 61157425,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19092,7 +19092,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 59397617
+    deliveryNo: 59397617,
   },
   {
     deliveryType: 'Visit',
@@ -19107,7 +19107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 48528930
+    deliveryNo: 48528930,
   },
   {
     deliveryType: 'Parcel',
@@ -19122,7 +19122,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 83619997
+    deliveryNo: 83619997,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19137,7 +19137,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 8721755
+    deliveryNo: 8721755,
   },
   {
     deliveryType: 'Visit',
@@ -19152,7 +19152,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 98016131
+    deliveryNo: 98016131,
   },
   {
     deliveryType: 'Visit',
@@ -19167,7 +19167,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 22289
+    deliveryNo: 22289,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19182,7 +19182,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 87640629
+    deliveryNo: 87640629,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19197,7 +19197,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 53240423
+    deliveryNo: 53240423,
   },
   {
     deliveryType: 'Parcel',
@@ -19212,7 +19212,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 96297833
+    deliveryNo: 96297833,
   },
   {
     deliveryType: 'Parcel',
@@ -19227,7 +19227,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 31266802
+    deliveryNo: 31266802,
   },
   {
     deliveryType: 'Parcel',
@@ -19242,7 +19242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 95416077
+    deliveryNo: 95416077,
   },
   {
     deliveryType: 'Parcel',
@@ -19257,7 +19257,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 60291447
+    deliveryNo: 60291447,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19272,7 +19272,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 46263018
+    deliveryNo: 46263018,
   },
   {
     deliveryType: 'Parcel',
@@ -19287,7 +19287,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 7293138
+    deliveryNo: 7293138,
   },
   {
     deliveryType: 'Parcel',
@@ -19302,7 +19302,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 92611405
+    deliveryNo: 92611405,
   },
   {
     deliveryType: 'Visit',
@@ -19317,7 +19317,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 3408905
+    deliveryNo: 3408905,
   },
   {
     deliveryType: 'Parcel',
@@ -19332,7 +19332,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 45964660
+    deliveryNo: 45964660,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19347,7 +19347,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 37793042
+    deliveryNo: 37793042,
   },
   {
     deliveryType: 'Parcel',
@@ -19362,7 +19362,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 50451648
+    deliveryNo: 50451648,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19377,7 +19377,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 71574987
+    deliveryNo: 71574987,
   },
   {
     deliveryType: 'Visit',
@@ -19392,7 +19392,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 39500014
+    deliveryNo: 39500014,
   },
   {
     deliveryType: 'Parcel',
@@ -19407,7 +19407,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 46525451
+    deliveryNo: 46525451,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19422,7 +19422,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 21397462
+    deliveryNo: 21397462,
   },
   {
     deliveryType: 'Parcel',
@@ -19437,7 +19437,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 88040189
+    deliveryNo: 88040189,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19452,7 +19452,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 55850335
+    deliveryNo: 55850335,
   },
   {
     deliveryType: 'Parcel',
@@ -19467,7 +19467,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 27050755
+    deliveryNo: 27050755,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19482,7 +19482,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 8648907
+    deliveryNo: 8648907,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19497,7 +19497,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 90471639
+    deliveryNo: 90471639,
   },
   {
     deliveryType: 'Visit',
@@ -19512,7 +19512,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 96548718
+    deliveryNo: 96548718,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19527,7 +19527,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 34793169
+    deliveryNo: 34793169,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19542,7 +19542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 59477363
+    deliveryNo: 59477363,
   },
   {
     deliveryType: 'Visit',
@@ -19557,7 +19557,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 22429519
+    deliveryNo: 22429519,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19572,7 +19572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 22176086
+    deliveryNo: 22176086,
   },
   {
     deliveryType: 'Visit',
@@ -19587,7 +19587,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 65431241
+    deliveryNo: 65431241,
   },
   {
     deliveryType: 'Parcel',
@@ -19602,7 +19602,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 32385565
+    deliveryNo: 32385565,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19617,7 +19617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 86171647
+    deliveryNo: 86171647,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19632,7 +19632,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 87685268
+    deliveryNo: 87685268,
   },
   {
     deliveryType: 'Visit',
@@ -19647,7 +19647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 69616474
+    deliveryNo: 69616474,
   },
   {
     deliveryType: 'Parcel',
@@ -19662,7 +19662,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 88095746
+    deliveryNo: 88095746,
   },
   {
     deliveryType: 'Visit',
@@ -19677,7 +19677,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 6786154
+    deliveryNo: 6786154,
   },
   {
     deliveryType: 'Parcel',
@@ -19692,7 +19692,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 76553234
+    deliveryNo: 76553234,
   },
   {
     deliveryType: 'Visit',
@@ -19707,7 +19707,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 54020087
+    deliveryNo: 54020087,
   },
   {
     deliveryType: 'Parcel',
@@ -19722,7 +19722,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 54365948
+    deliveryNo: 54365948,
   },
   {
     deliveryType: 'Parcel',
@@ -19737,7 +19737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 57652310
+    deliveryNo: 57652310,
   },
   {
     deliveryType: 'Visit',
@@ -19752,7 +19752,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 83761441
+    deliveryNo: 83761441,
   },
   {
     deliveryType: 'Visit',
@@ -19767,7 +19767,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 18707887
+    deliveryNo: 18707887,
   },
   {
     deliveryType: 'Parcel',
@@ -19782,7 +19782,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 14634405
+    deliveryNo: 14634405,
   },
   {
     deliveryType: 'Visit',
@@ -19797,7 +19797,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 97229460
+    deliveryNo: 97229460,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19812,7 +19812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 97604289
+    deliveryNo: 97604289,
   },
   {
     deliveryType: 'Parcel',
@@ -19827,7 +19827,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 80843272
+    deliveryNo: 80843272,
   },
   {
     deliveryType: 'Parcel',
@@ -19842,7 +19842,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 70492095
+    deliveryNo: 70492095,
   },
   {
     deliveryType: 'Visit',
@@ -19857,7 +19857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 67174088
+    deliveryNo: 67174088,
   },
   {
     deliveryType: 'Parcel',
@@ -19872,7 +19872,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 30325746
+    deliveryNo: 30325746,
   },
   {
     deliveryType: 'Parcel',
@@ -19887,7 +19887,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 34718359
+    deliveryNo: 34718359,
   },
   {
     deliveryType: 'Visit',
@@ -19902,7 +19902,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 27983390
+    deliveryNo: 27983390,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19917,7 +19917,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 1785011
+    deliveryNo: 1785011,
   },
   {
     deliveryType: 'Parcel',
@@ -19932,7 +19932,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 47584037
+    deliveryNo: 47584037,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19947,7 +19947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 98113242
+    deliveryNo: 98113242,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19962,7 +19962,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 57734845
+    deliveryNo: 57734845,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -19977,7 +19977,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 98776690
+    deliveryNo: 98776690,
   },
   {
     deliveryType: 'Visit',
@@ -19992,7 +19992,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 46744516
+    deliveryNo: 46744516,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20007,7 +20007,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 94983364
+    deliveryNo: 94983364,
   },
   {
     deliveryType: 'Parcel',
@@ -20022,7 +20022,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 78912101
+    deliveryNo: 78912101,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20037,7 +20037,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 1380679
+    deliveryNo: 1380679,
   },
   {
     deliveryType: 'Parcel',
@@ -20052,7 +20052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 34000629
+    deliveryNo: 34000629,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20067,7 +20067,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 24475022
+    deliveryNo: 24475022,
   },
   {
     deliveryType: 'Visit',
@@ -20082,7 +20082,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 17004928
+    deliveryNo: 17004928,
   },
   {
     deliveryType: 'Parcel',
@@ -20097,7 +20097,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 41775176
+    deliveryNo: 41775176,
   },
   {
     deliveryType: 'Parcel',
@@ -20112,7 +20112,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 50323008
+    deliveryNo: 50323008,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20127,7 +20127,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 66268998
+    deliveryNo: 66268998,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20142,7 +20142,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 85440378
+    deliveryNo: 85440378,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20157,7 +20157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 95842727
+    deliveryNo: 95842727,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20172,7 +20172,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 96236694
+    deliveryNo: 96236694,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20187,7 +20187,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 72252300
+    deliveryNo: 72252300,
   },
   {
     deliveryType: 'Visit',
@@ -20202,7 +20202,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 41024072
+    deliveryNo: 41024072,
   },
   {
     deliveryType: 'Visit',
@@ -20217,7 +20217,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 99256034
+    deliveryNo: 99256034,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20232,7 +20232,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 5426486
+    deliveryNo: 5426486,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20247,7 +20247,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 94518062
+    deliveryNo: 94518062,
   },
   {
     deliveryType: 'Visit',
@@ -20262,7 +20262,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 63209601
+    deliveryNo: 63209601,
   },
   {
     deliveryType: 'Visit',
@@ -20277,7 +20277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 74891903
+    deliveryNo: 74891903,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20292,7 +20292,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 17170411
+    deliveryNo: 17170411,
   },
   {
     deliveryType: 'Visit',
@@ -20307,7 +20307,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 99693526
+    deliveryNo: 99693526,
   },
   {
     deliveryType: 'Parcel',
@@ -20322,7 +20322,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 7196077
+    deliveryNo: 7196077,
   },
   {
     deliveryType: 'Visit',
@@ -20337,7 +20337,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 21573296
+    deliveryNo: 21573296,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20352,7 +20352,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 97601323
+    deliveryNo: 97601323,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20367,7 +20367,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 19596172
+    deliveryNo: 19596172,
   },
   {
     deliveryType: 'Parcel',
@@ -20382,7 +20382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 80853776
+    deliveryNo: 80853776,
   },
   {
     deliveryType: 'Visit',
@@ -20397,7 +20397,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 14139533
+    deliveryNo: 14139533,
   },
   {
     deliveryType: 'Parcel',
@@ -20412,7 +20412,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 59796618
+    deliveryNo: 59796618,
   },
   {
     deliveryType: 'Parcel',
@@ -20427,7 +20427,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 88217992
+    deliveryNo: 88217992,
   },
   {
     deliveryType: 'Visit',
@@ -20442,7 +20442,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 95477931
+    deliveryNo: 95477931,
   },
   {
     deliveryType: 'Visit',
@@ -20457,7 +20457,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 64844608
+    deliveryNo: 64844608,
   },
   {
     deliveryType: 'Parcel',
@@ -20472,7 +20472,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 32696092
+    deliveryNo: 32696092,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20487,7 +20487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 15037840
+    deliveryNo: 15037840,
   },
   {
     deliveryType: 'Visit',
@@ -20502,7 +20502,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 40370636
+    deliveryNo: 40370636,
   },
   {
     deliveryType: 'Visit',
@@ -20517,7 +20517,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 96083623
+    deliveryNo: 96083623,
   },
   {
     deliveryType: 'Visit',
@@ -20532,7 +20532,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 28847901
+    deliveryNo: 28847901,
   },
   {
     deliveryType: 'Parcel',
@@ -20547,7 +20547,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 44661952
+    deliveryNo: 44661952,
   },
   {
     deliveryType: 'Visit',
@@ -20562,7 +20562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 31250886
+    deliveryNo: 31250886,
   },
   {
     deliveryType: 'Visit',
@@ -20577,7 +20577,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 74447347
+    deliveryNo: 74447347,
   },
   {
     deliveryType: 'Parcel',
@@ -20592,7 +20592,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 60982661
+    deliveryNo: 60982661,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20607,7 +20607,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 52792566
+    deliveryNo: 52792566,
   },
   {
     deliveryType: 'Visit',
@@ -20622,7 +20622,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 82492728
+    deliveryNo: 82492728,
   },
   {
     deliveryType: 'Visit',
@@ -20637,7 +20637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 56104931
+    deliveryNo: 56104931,
   },
   {
     deliveryType: 'Visit',
@@ -20652,7 +20652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 57415679
+    deliveryNo: 57415679,
   },
   {
     deliveryType: 'Visit',
@@ -20667,7 +20667,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 28524685
+    deliveryNo: 28524685,
   },
   {
     deliveryType: 'Visit',
@@ -20682,7 +20682,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 53191558
+    deliveryNo: 53191558,
   },
   {
     deliveryType: 'Parcel',
@@ -20697,7 +20697,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 93514699
+    deliveryNo: 93514699,
   },
   {
     deliveryType: 'Visit',
@@ -20712,7 +20712,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 26277285
+    deliveryNo: 26277285,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20727,7 +20727,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 92970944
+    deliveryNo: 92970944,
   },
   {
     deliveryType: 'Visit',
@@ -20742,7 +20742,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 17058516
+    deliveryNo: 17058516,
   },
   {
     deliveryType: 'Parcel',
@@ -20757,7 +20757,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 53463095
+    deliveryNo: 53463095,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20772,7 +20772,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 18571314
+    deliveryNo: 18571314,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20787,7 +20787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 4214616
+    deliveryNo: 4214616,
   },
   {
     deliveryType: 'Visit',
@@ -20802,7 +20802,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 6143027
+    deliveryNo: 6143027,
   },
   {
     deliveryType: 'Parcel',
@@ -20817,7 +20817,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 96431753
+    deliveryNo: 96431753,
   },
   {
     deliveryType: 'Visit',
@@ -20832,7 +20832,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 40061701
+    deliveryNo: 40061701,
   },
   {
     deliveryType: 'Parcel',
@@ -20847,7 +20847,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 98590745
+    deliveryNo: 98590745,
   },
   {
     deliveryType: 'Visit',
@@ -20862,7 +20862,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 78383460
+    deliveryNo: 78383460,
   },
   {
     deliveryType: 'Parcel',
@@ -20877,7 +20877,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 67292689
+    deliveryNo: 67292689,
   },
   {
     deliveryType: 'Parcel',
@@ -20892,7 +20892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 61987195
+    deliveryNo: 61987195,
   },
   {
     deliveryType: 'Visit',
@@ -20907,7 +20907,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 18295393
+    deliveryNo: 18295393,
   },
   {
     deliveryType: 'Parcel',
@@ -20922,7 +20922,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 58985917
+    deliveryNo: 58985917,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20937,7 +20937,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 47331608
+    deliveryNo: 47331608,
   },
   {
     deliveryType: 'Visit',
@@ -20952,7 +20952,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 80604218
+    deliveryNo: 80604218,
   },
   {
     deliveryType: 'Parcel',
@@ -20967,7 +20967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 75323018
+    deliveryNo: 75323018,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -20982,7 +20982,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 5631132
+    deliveryNo: 5631132,
   },
   {
     deliveryType: 'Visit',
@@ -20997,7 +20997,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 17599348
+    deliveryNo: 17599348,
   },
   {
     deliveryType: 'Visit',
@@ -21012,7 +21012,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 75557829
+    deliveryNo: 75557829,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21027,7 +21027,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 1731981
+    deliveryNo: 1731981,
   },
   {
     deliveryType: 'Visit',
@@ -21042,7 +21042,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 47509507
+    deliveryNo: 47509507,
   },
   {
     deliveryType: 'Visit',
@@ -21057,7 +21057,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 83591450
+    deliveryNo: 83591450,
   },
   {
     deliveryType: 'Visit',
@@ -21072,7 +21072,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 17080819
+    deliveryNo: 17080819,
   },
   {
     deliveryType: 'Visit',
@@ -21087,7 +21087,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 36238174
+    deliveryNo: 36238174,
   },
   {
     deliveryType: 'Visit',
@@ -21102,7 +21102,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 48184280
+    deliveryNo: 48184280,
   },
   {
     deliveryType: 'Visit',
@@ -21117,7 +21117,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 11255841
+    deliveryNo: 11255841,
   },
   {
     deliveryType: 'Parcel',
@@ -21132,7 +21132,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 72020943
+    deliveryNo: 72020943,
   },
   {
     deliveryType: 'Visit',
@@ -21147,7 +21147,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 97136768
+    deliveryNo: 97136768,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21162,7 +21162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 42282804
+    deliveryNo: 42282804,
   },
   {
     deliveryType: 'Visit',
@@ -21177,7 +21177,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 24328657
+    deliveryNo: 24328657,
   },
   {
     deliveryType: 'Parcel',
@@ -21192,7 +21192,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 58696250
+    deliveryNo: 58696250,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21207,7 +21207,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 91552092
+    deliveryNo: 91552092,
   },
   {
     deliveryType: 'Parcel',
@@ -21222,7 +21222,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 96015952
+    deliveryNo: 96015952,
   },
   {
     deliveryType: 'Parcel',
@@ -21237,7 +21237,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 12998176
+    deliveryNo: 12998176,
   },
   {
     deliveryType: 'Parcel',
@@ -21252,7 +21252,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 578572
+    deliveryNo: 578572,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21267,7 +21267,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 11015645
+    deliveryNo: 11015645,
   },
   {
     deliveryType: 'Parcel',
@@ -21282,7 +21282,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 41525659
+    deliveryNo: 41525659,
   },
   {
     deliveryType: 'Visit',
@@ -21297,7 +21297,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 3896889
+    deliveryNo: 3896889,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21312,7 +21312,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 28805108
+    deliveryNo: 28805108,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21327,7 +21327,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 63372208
+    deliveryNo: 63372208,
   },
   {
     deliveryType: 'Parcel',
@@ -21342,7 +21342,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 35060572
+    deliveryNo: 35060572,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21357,7 +21357,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 41421689
+    deliveryNo: 41421689,
   },
   {
     deliveryType: 'Parcel',
@@ -21372,7 +21372,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 83518156
+    deliveryNo: 83518156,
   },
   {
     deliveryType: 'Parcel',
@@ -21387,7 +21387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 91014109
+    deliveryNo: 91014109,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21402,7 +21402,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 88979842
+    deliveryNo: 88979842,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21417,7 +21417,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 30382183
+    deliveryNo: 30382183,
   },
   {
     deliveryType: 'Parcel',
@@ -21432,7 +21432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 64032947
+    deliveryNo: 64032947,
   },
   {
     deliveryType: 'Parcel',
@@ -21447,7 +21447,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 25443598
+    deliveryNo: 25443598,
   },
   {
     deliveryType: 'Visit',
@@ -21462,7 +21462,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 27585032
+    deliveryNo: 27585032,
   },
   {
     deliveryType: 'Visit',
@@ -21477,7 +21477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 89977140
+    deliveryNo: 89977140,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21492,7 +21492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 77833630
+    deliveryNo: 77833630,
   },
   {
     deliveryType: 'Parcel',
@@ -21507,7 +21507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 28163350
+    deliveryNo: 28163350,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21522,7 +21522,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 16780149
+    deliveryNo: 16780149,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21537,7 +21537,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 69099047
+    deliveryNo: 69099047,
   },
   {
     deliveryType: 'Parcel',
@@ -21552,7 +21552,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 38397358
+    deliveryNo: 38397358,
   },
   {
     deliveryType: 'Parcel',
@@ -21567,7 +21567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 67895093
+    deliveryNo: 67895093,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21582,7 +21582,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 17559799
+    deliveryNo: 17559799,
   },
   {
     deliveryType: 'Parcel',
@@ -21597,7 +21597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 72966804
+    deliveryNo: 72966804,
   },
   {
     deliveryType: 'Parcel',
@@ -21612,7 +21612,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 61846518
+    deliveryNo: 61846518,
   },
   {
     deliveryType: 'Parcel',
@@ -21627,7 +21627,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 84126354
+    deliveryNo: 84126354,
   },
   {
     deliveryType: 'Visit',
@@ -21642,7 +21642,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 13325485
+    deliveryNo: 13325485,
   },
   {
     deliveryType: 'Visit',
@@ -21657,7 +21657,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 51086545
+    deliveryNo: 51086545,
   },
   {
     deliveryType: 'Visit',
@@ -21672,7 +21672,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 12429075
+    deliveryNo: 12429075,
   },
   {
     deliveryType: 'Parcel',
@@ -21687,7 +21687,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 86985351
+    deliveryNo: 86985351,
   },
   {
     deliveryType: 'Visit',
@@ -21702,7 +21702,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 61029999
+    deliveryNo: 61029999,
   },
   {
     deliveryType: 'Visit',
@@ -21717,7 +21717,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 96540569
+    deliveryNo: 96540569,
   },
   {
     deliveryType: 'Parcel',
@@ -21732,7 +21732,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 46827038
+    deliveryNo: 46827038,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21747,7 +21747,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 43443986
+    deliveryNo: 43443986,
   },
   {
     deliveryType: 'Parcel',
@@ -21762,7 +21762,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 16149969
+    deliveryNo: 16149969,
   },
   {
     deliveryType: 'Visit',
@@ -21777,7 +21777,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 6604410
+    deliveryNo: 6604410,
   },
   {
     deliveryType: 'Parcel',
@@ -21792,7 +21792,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 7293064
+    deliveryNo: 7293064,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21807,7 +21807,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 99848970
+    deliveryNo: 99848970,
   },
   {
     deliveryType: 'Visit',
@@ -21822,7 +21822,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 81486512
+    deliveryNo: 81486512,
   },
   {
     deliveryType: 'Visit',
@@ -21837,7 +21837,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 54692025
+    deliveryNo: 54692025,
   },
   {
     deliveryType: 'Visit',
@@ -21852,7 +21852,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 13615177
+    deliveryNo: 13615177,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21867,7 +21867,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 90781088
+    deliveryNo: 90781088,
   },
   {
     deliveryType: 'Visit',
@@ -21882,7 +21882,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 29794020
+    deliveryNo: 29794020,
   },
   {
     deliveryType: 'Visit',
@@ -21897,7 +21897,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 23629116
+    deliveryNo: 23629116,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21912,7 +21912,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 3909612
+    deliveryNo: 3909612,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21927,7 +21927,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 84242566
+    deliveryNo: 84242566,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21942,7 +21942,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 50237066
+    deliveryNo: 50237066,
   },
   {
     deliveryType: 'Parcel',
@@ -21957,7 +21957,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 50254561
+    deliveryNo: 50254561,
   },
   {
     deliveryType: 'Parcel',
@@ -21972,7 +21972,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 74241794
+    deliveryNo: 74241794,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -21987,7 +21987,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 13172578
+    deliveryNo: 13172578,
   },
   {
     deliveryType: 'Visit',
@@ -22002,7 +22002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 68675447
+    deliveryNo: 68675447,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22017,7 +22017,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 31349988
+    deliveryNo: 31349988,
   },
   {
     deliveryType: 'Parcel',
@@ -22032,7 +22032,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 67075428
+    deliveryNo: 67075428,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22047,7 +22047,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 43290875
+    deliveryNo: 43290875,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22062,7 +22062,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 91777334
+    deliveryNo: 91777334,
   },
   {
     deliveryType: 'Parcel',
@@ -22077,7 +22077,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 40897457
+    deliveryNo: 40897457,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22092,7 +22092,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 58549722
+    deliveryNo: 58549722,
   },
   {
     deliveryType: 'Parcel',
@@ -22107,7 +22107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 27269535
+    deliveryNo: 27269535,
   },
   {
     deliveryType: 'Parcel',
@@ -22122,7 +22122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 24960558
+    deliveryNo: 24960558,
   },
   {
     deliveryType: 'Parcel',
@@ -22137,7 +22137,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 8665286
+    deliveryNo: 8665286,
   },
   {
     deliveryType: 'Parcel',
@@ -22152,7 +22152,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 94584734
+    deliveryNo: 94584734,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22167,7 +22167,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 95232844
+    deliveryNo: 95232844,
   },
   {
     deliveryType: 'Parcel',
@@ -22182,7 +22182,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 14162022
+    deliveryNo: 14162022,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22197,7 +22197,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 10121981
+    deliveryNo: 10121981,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22212,7 +22212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 25814846
+    deliveryNo: 25814846,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22227,7 +22227,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 31585299
+    deliveryNo: 31585299,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22242,7 +22242,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 61435236
+    deliveryNo: 61435236,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22257,7 +22257,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 17678306
+    deliveryNo: 17678306,
   },
   {
     deliveryType: 'Visit',
@@ -22272,7 +22272,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 91350358
+    deliveryNo: 91350358,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22287,7 +22287,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 88167731
+    deliveryNo: 88167731,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22302,7 +22302,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 64375971
+    deliveryNo: 64375971,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22317,7 +22317,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 63257474
+    deliveryNo: 63257474,
   },
   {
     deliveryType: 'Parcel',
@@ -22332,7 +22332,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 1367211
+    deliveryNo: 1367211,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22347,7 +22347,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 83741561
+    deliveryNo: 83741561,
   },
   {
     deliveryType: 'Visit',
@@ -22362,7 +22362,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 29376047
+    deliveryNo: 29376047,
   },
   {
     deliveryType: 'Parcel',
@@ -22377,7 +22377,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 62193464
+    deliveryNo: 62193464,
   },
   {
     deliveryType: 'Visit',
@@ -22392,7 +22392,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 68524827
+    deliveryNo: 68524827,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22407,7 +22407,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 39801185
+    deliveryNo: 39801185,
   },
   {
     deliveryType: 'Visit',
@@ -22422,7 +22422,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 8705241
+    deliveryNo: 8705241,
   },
   {
     deliveryType: 'Visit',
@@ -22437,7 +22437,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 48457457
+    deliveryNo: 48457457,
   },
   {
     deliveryType: 'Parcel',
@@ -22452,7 +22452,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 38212100
+    deliveryNo: 38212100,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22467,7 +22467,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 2714461
+    deliveryNo: 2714461,
   },
   {
     deliveryType: 'Visit',
@@ -22482,7 +22482,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 11421321
+    deliveryNo: 11421321,
   },
   {
     deliveryType: 'Parcel',
@@ -22497,7 +22497,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 71212404
+    deliveryNo: 71212404,
   },
   {
     deliveryType: 'Visit',
@@ -22512,7 +22512,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 67621465
+    deliveryNo: 67621465,
   },
   {
     deliveryType: 'Parcel',
@@ -22527,7 +22527,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 2191357
+    deliveryNo: 2191357,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22542,7 +22542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 38108210
+    deliveryNo: 38108210,
   },
   {
     deliveryType: 'Visit',
@@ -22557,7 +22557,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 2695716
+    deliveryNo: 2695716,
   },
   {
     deliveryType: 'Parcel',
@@ -22572,7 +22572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 3651145
+    deliveryNo: 3651145,
   },
   {
     deliveryType: 'Parcel',
@@ -22587,7 +22587,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 96080679
+    deliveryNo: 96080679,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22602,7 +22602,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 89442260
+    deliveryNo: 89442260,
   },
   {
     deliveryType: 'Parcel',
@@ -22617,7 +22617,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 7430077
+    deliveryNo: 7430077,
   },
   {
     deliveryType: 'Visit',
@@ -22632,7 +22632,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 9635481
+    deliveryNo: 9635481,
   },
   {
     deliveryType: 'Visit',
@@ -22647,7 +22647,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 51494975
+    deliveryNo: 51494975,
   },
   {
     deliveryType: 'Visit',
@@ -22662,7 +22662,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 98586670
+    deliveryNo: 98586670,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22677,7 +22677,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 22762392
+    deliveryNo: 22762392,
   },
   {
     deliveryType: 'Visit',
@@ -22692,7 +22692,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 90903413
+    deliveryNo: 90903413,
   },
   {
     deliveryType: 'Visit',
@@ -22707,7 +22707,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 12263525
+    deliveryNo: 12263525,
   },
   {
     deliveryType: 'Parcel',
@@ -22722,7 +22722,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 37414017
+    deliveryNo: 37414017,
   },
   {
     deliveryType: 'Visit',
@@ -22737,7 +22737,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 730845
+    deliveryNo: 730845,
   },
   {
     deliveryType: 'Visit',
@@ -22752,7 +22752,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 69165069
+    deliveryNo: 69165069,
   },
   {
     deliveryType: 'Parcel',
@@ -22767,7 +22767,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 2713462
+    deliveryNo: 2713462,
   },
   {
     deliveryType: 'Parcel',
@@ -22782,7 +22782,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 46556917
+    deliveryNo: 46556917,
   },
   {
     deliveryType: 'Parcel',
@@ -22797,7 +22797,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 61260089
+    deliveryNo: 61260089,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22812,7 +22812,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 55726492
+    deliveryNo: 55726492,
   },
   {
     deliveryType: 'Visit',
@@ -22827,7 +22827,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 17779040
+    deliveryNo: 17779040,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22842,7 +22842,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 39286803
+    deliveryNo: 39286803,
   },
   {
     deliveryType: 'Visit',
@@ -22857,7 +22857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 6684568
+    deliveryNo: 6684568,
   },
   {
     deliveryType: 'Visit',
@@ -22872,7 +22872,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 73532491
+    deliveryNo: 73532491,
   },
   {
     deliveryType: 'Parcel',
@@ -22887,7 +22887,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 49439001
+    deliveryNo: 49439001,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22902,7 +22902,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 29220843
+    deliveryNo: 29220843,
   },
   {
     deliveryType: 'Parcel',
@@ -22917,7 +22917,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 47599954
+    deliveryNo: 47599954,
   },
   {
     deliveryType: 'Visit',
@@ -22932,7 +22932,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 78037601
+    deliveryNo: 78037601,
   },
   {
     deliveryType: 'Visit',
@@ -22947,7 +22947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 99482085
+    deliveryNo: 99482085,
   },
   {
     deliveryType: 'Visit',
@@ -22962,7 +22962,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 31856970
+    deliveryNo: 31856970,
   },
   {
     deliveryType: 'Parcel',
@@ -22977,7 +22977,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 90042706
+    deliveryNo: 90042706,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -22992,7 +22992,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 26905188
+    deliveryNo: 26905188,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23007,7 +23007,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 28600652
+    deliveryNo: 28600652,
   },
   {
     deliveryType: 'Parcel',
@@ -23022,7 +23022,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 89937037
+    deliveryNo: 89937037,
   },
   {
     deliveryType: 'Parcel',
@@ -23037,7 +23037,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 33997772
+    deliveryNo: 33997772,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23052,7 +23052,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 48534669
+    deliveryNo: 48534669,
   },
   {
     deliveryType: 'Visit',
@@ -23067,7 +23067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 91812438
+    deliveryNo: 91812438,
   },
   {
     deliveryType: 'Visit',
@@ -23082,7 +23082,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 72638111
+    deliveryNo: 72638111,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23097,7 +23097,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 33234401
+    deliveryNo: 33234401,
   },
   {
     deliveryType: 'Parcel',
@@ -23112,7 +23112,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 59416856
+    deliveryNo: 59416856,
   },
   {
     deliveryType: 'Parcel',
@@ -23127,7 +23127,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 10210434
+    deliveryNo: 10210434,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23142,7 +23142,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 98591872
+    deliveryNo: 98591872,
   },
   {
     deliveryType: 'Parcel',
@@ -23157,7 +23157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 66470073
+    deliveryNo: 66470073,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23172,7 +23172,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 80317434
+    deliveryNo: 80317434,
   },
   {
     deliveryType: 'Visit',
@@ -23187,7 +23187,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 29040883
+    deliveryNo: 29040883,
   },
   {
     deliveryType: 'Visit',
@@ -23202,7 +23202,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 32732154
+    deliveryNo: 32732154,
   },
   {
     deliveryType: 'Visit',
@@ -23217,7 +23217,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 69862582
+    deliveryNo: 69862582,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23232,7 +23232,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 1288552
+    deliveryNo: 1288552,
   },
   {
     deliveryType: 'Visit',
@@ -23247,7 +23247,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 12109422
+    deliveryNo: 12109422,
   },
   {
     deliveryType: 'Visit',
@@ -23262,7 +23262,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 6970600
+    deliveryNo: 6970600,
   },
   {
     deliveryType: 'Parcel',
@@ -23277,7 +23277,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 80830209
+    deliveryNo: 80830209,
   },
   {
     deliveryType: 'Visit',
@@ -23292,7 +23292,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 45508545
+    deliveryNo: 45508545,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23307,7 +23307,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 22515312
+    deliveryNo: 22515312,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23322,7 +23322,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 14700449
+    deliveryNo: 14700449,
   },
   {
     deliveryType: 'Visit',
@@ -23337,7 +23337,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 43200053
+    deliveryNo: 43200053,
   },
   {
     deliveryType: 'Visit',
@@ -23352,7 +23352,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 81949781
+    deliveryNo: 81949781,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23367,7 +23367,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 39713840
+    deliveryNo: 39713840,
   },
   {
     deliveryType: 'Visit',
@@ -23382,7 +23382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 29128447
+    deliveryNo: 29128447,
   },
   {
     deliveryType: 'Visit',
@@ -23397,7 +23397,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 23684455
+    deliveryNo: 23684455,
   },
   {
     deliveryType: 'Visit',
@@ -23412,7 +23412,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 36874637
+    deliveryNo: 36874637,
   },
   {
     deliveryType: 'Parcel',
@@ -23427,7 +23427,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 62906807
+    deliveryNo: 62906807,
   },
   {
     deliveryType: 'Parcel',
@@ -23442,7 +23442,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 95434873
+    deliveryNo: 95434873,
   },
   {
     deliveryType: 'Visit',
@@ -23457,7 +23457,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 89685585
+    deliveryNo: 89685585,
   },
   {
     deliveryType: 'Parcel',
@@ -23472,7 +23472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 54159593
+    deliveryNo: 54159593,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23487,7 +23487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 50761161
+    deliveryNo: 50761161,
   },
   {
     deliveryType: 'Visit',
@@ -23502,7 +23502,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 46761708
+    deliveryNo: 46761708,
   },
   {
     deliveryType: 'Visit',
@@ -23517,7 +23517,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 98428108
+    deliveryNo: 98428108,
   },
   {
     deliveryType: 'Parcel',
@@ -23532,7 +23532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 54447448
+    deliveryNo: 54447448,
   },
   {
     deliveryType: 'Parcel',
@@ -23547,7 +23547,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 47455745
+    deliveryNo: 47455745,
   },
   {
     deliveryType: 'Visit',
@@ -23562,7 +23562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 94028913
+    deliveryNo: 94028913,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23577,7 +23577,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 47420019
+    deliveryNo: 47420019,
   },
   {
     deliveryType: 'Visit',
@@ -23592,7 +23592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 43127675
+    deliveryNo: 43127675,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23607,7 +23607,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 45056184
+    deliveryNo: 45056184,
   },
   {
     deliveryType: 'Parcel',
@@ -23622,7 +23622,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 39578840
+    deliveryNo: 39578840,
   },
   {
     deliveryType: 'Visit',
@@ -23637,7 +23637,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 36241571
+    deliveryNo: 36241571,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23652,7 +23652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 17144891
+    deliveryNo: 17144891,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23667,7 +23667,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 32217882
+    deliveryNo: 32217882,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23682,7 +23682,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 64648764
+    deliveryNo: 64648764,
   },
   {
     deliveryType: 'Parcel',
@@ -23697,7 +23697,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 89662348
+    deliveryNo: 89662348,
   },
   {
     deliveryType: 'Visit',
@@ -23712,7 +23712,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 20635448
+    deliveryNo: 20635448,
   },
   {
     deliveryType: 'Visit',
@@ -23727,7 +23727,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 79217148
+    deliveryNo: 79217148,
   },
   {
     deliveryType: 'Visit',
@@ -23742,7 +23742,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 40671550
+    deliveryNo: 40671550,
   },
   {
     deliveryType: 'Visit',
@@ -23757,7 +23757,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 92086450
+    deliveryNo: 92086450,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23772,7 +23772,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 99392161
+    deliveryNo: 99392161,
   },
   {
     deliveryType: 'Visit',
@@ -23787,7 +23787,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 9310456
+    deliveryNo: 9310456,
   },
   {
     deliveryType: 'Visit',
@@ -23802,7 +23802,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 14404426
+    deliveryNo: 14404426,
   },
   {
     deliveryType: 'Visit',
@@ -23817,7 +23817,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 83325816
+    deliveryNo: 83325816,
   },
   {
     deliveryType: 'Visit',
@@ -23832,7 +23832,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 4157155
+    deliveryNo: 4157155,
   },
   {
     deliveryType: 'Visit',
@@ -23847,7 +23847,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 6421814
+    deliveryNo: 6421814,
   },
   {
     deliveryType: 'Parcel',
@@ -23862,7 +23862,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 16885900
+    deliveryNo: 16885900,
   },
   {
     deliveryType: 'Visit',
@@ -23877,7 +23877,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 65701655
+    deliveryNo: 65701655,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23892,7 +23892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 92742828
+    deliveryNo: 92742828,
   },
   {
     deliveryType: 'Visit',
@@ -23907,7 +23907,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 9158274
+    deliveryNo: 9158274,
   },
   {
     deliveryType: 'Parcel',
@@ -23922,7 +23922,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 46220792
+    deliveryNo: 46220792,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -23937,7 +23937,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 72474015
+    deliveryNo: 72474015,
   },
   {
     deliveryType: 'Visit',
@@ -23952,7 +23952,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 80980960
+    deliveryNo: 80980960,
   },
   {
     deliveryType: 'Parcel',
@@ -23967,7 +23967,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 41153560
+    deliveryNo: 41153560,
   },
   {
     deliveryType: 'Parcel',
@@ -23982,7 +23982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 74193392
+    deliveryNo: 74193392,
   },
   {
     deliveryType: 'Visit',
@@ -23997,7 +23997,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 47599479
+    deliveryNo: 47599479,
   },
   {
     deliveryType: 'Visit',
@@ -24012,7 +24012,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 92499923
+    deliveryNo: 92499923,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24027,7 +24027,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 27739812
+    deliveryNo: 27739812,
   },
   {
     deliveryType: 'Parcel',
@@ -24042,7 +24042,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 26708744
+    deliveryNo: 26708744,
   },
   {
     deliveryType: 'Parcel',
@@ -24057,7 +24057,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 86816975
+    deliveryNo: 86816975,
   },
   {
     deliveryType: 'Visit',
@@ -24072,7 +24072,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 57330037
+    deliveryNo: 57330037,
   },
   {
     deliveryType: 'Visit',
@@ -24087,7 +24087,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 48947475
+    deliveryNo: 48947475,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24102,7 +24102,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 88062062
+    deliveryNo: 88062062,
   },
   {
     deliveryType: 'Parcel',
@@ -24117,7 +24117,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 90061712
+    deliveryNo: 90061712,
   },
   {
     deliveryType: 'Parcel',
@@ -24132,7 +24132,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 9337040
+    deliveryNo: 9337040,
   },
   {
     deliveryType: 'Parcel',
@@ -24147,7 +24147,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 78833299
+    deliveryNo: 78833299,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24162,7 +24162,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 79036251
+    deliveryNo: 79036251,
   },
   {
     deliveryType: 'Visit',
@@ -24177,7 +24177,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 75207256
+    deliveryNo: 75207256,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24192,7 +24192,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 32483674
+    deliveryNo: 32483674,
   },
   {
     deliveryType: 'Parcel',
@@ -24207,7 +24207,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 61136460
+    deliveryNo: 61136460,
   },
   {
     deliveryType: 'Visit',
@@ -24222,7 +24222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 58827579
+    deliveryNo: 58827579,
   },
   {
     deliveryType: 'Parcel',
@@ -24237,7 +24237,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 3135712
+    deliveryNo: 3135712,
   },
   {
     deliveryType: 'Visit',
@@ -24252,7 +24252,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 5919426
+    deliveryNo: 5919426,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24267,7 +24267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 71262821
+    deliveryNo: 71262821,
   },
   {
     deliveryType: 'Visit',
@@ -24282,7 +24282,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 799454
+    deliveryNo: 799454,
   },
   {
     deliveryType: 'Parcel',
@@ -24297,7 +24297,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 64136046
+    deliveryNo: 64136046,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24312,7 +24312,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 97898352
+    deliveryNo: 97898352,
   },
   {
     deliveryType: 'Visit',
@@ -24327,7 +24327,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 14597307
+    deliveryNo: 14597307,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24342,7 +24342,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 92064337
+    deliveryNo: 92064337,
   },
   {
     deliveryType: 'Visit',
@@ -24357,7 +24357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 75630518
+    deliveryNo: 75630518,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24372,7 +24372,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 58525072
+    deliveryNo: 58525072,
   },
   {
     deliveryType: 'Parcel',
@@ -24387,7 +24387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 11144408
+    deliveryNo: 11144408,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24402,7 +24402,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 6893769
+    deliveryNo: 6893769,
   },
   {
     deliveryType: 'Visit',
@@ -24417,7 +24417,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 41229251
+    deliveryNo: 41229251,
   },
   {
     deliveryType: 'Parcel',
@@ -24432,7 +24432,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 61328848
+    deliveryNo: 61328848,
   },
   {
     deliveryType: 'Visit',
@@ -24447,7 +24447,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 16496809
+    deliveryNo: 16496809,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24462,7 +24462,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 3956541
+    deliveryNo: 3956541,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24477,7 +24477,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 21112929
+    deliveryNo: 21112929,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24492,7 +24492,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 43665814
+    deliveryNo: 43665814,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24507,7 +24507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 29132135
+    deliveryNo: 29132135,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24522,7 +24522,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 97384972
+    deliveryNo: 97384972,
   },
   {
     deliveryType: 'Visit',
@@ -24537,7 +24537,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 63743594
+    deliveryNo: 63743594,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24552,7 +24552,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 95949326
+    deliveryNo: 95949326,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24567,7 +24567,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 34037839
+    deliveryNo: 34037839,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24582,7 +24582,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 51669315
+    deliveryNo: 51669315,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24597,7 +24597,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 48903609
+    deliveryNo: 48903609,
   },
   {
     deliveryType: 'Visit',
@@ -24612,7 +24612,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 49708423
+    deliveryNo: 49708423,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24627,7 +24627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 32664202
+    deliveryNo: 32664202,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24642,7 +24642,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 50380298
+    deliveryNo: 50380298,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24657,7 +24657,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 92062702
+    deliveryNo: 92062702,
   },
   {
     deliveryType: 'Visit',
@@ -24672,7 +24672,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 14474434
+    deliveryNo: 14474434,
   },
   {
     deliveryType: 'Visit',
@@ -24687,7 +24687,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 9205458
+    deliveryNo: 9205458,
   },
   {
     deliveryType: 'Parcel',
@@ -24702,7 +24702,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 88719782
+    deliveryNo: 88719782,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24717,7 +24717,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 60073176
+    deliveryNo: 60073176,
   },
   {
     deliveryType: 'Parcel',
@@ -24732,7 +24732,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 13495696
+    deliveryNo: 13495696,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24747,7 +24747,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 83209046
+    deliveryNo: 83209046,
   },
   {
     deliveryType: 'Visit',
@@ -24762,7 +24762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 39899541
+    deliveryNo: 39899541,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24777,7 +24777,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 48193207
+    deliveryNo: 48193207,
   },
   {
     deliveryType: 'Visit',
@@ -24792,7 +24792,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 68280395
+    deliveryNo: 68280395,
   },
   {
     deliveryType: 'Parcel',
@@ -24807,7 +24807,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 98512993
+    deliveryNo: 98512993,
   },
   {
     deliveryType: 'Visit',
@@ -24822,7 +24822,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 45348171
+    deliveryNo: 45348171,
   },
   {
     deliveryType: 'Visit',
@@ -24837,7 +24837,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 68438296
+    deliveryNo: 68438296,
   },
   {
     deliveryType: 'Parcel',
@@ -24852,7 +24852,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 81967550
+    deliveryNo: 81967550,
   },
   {
     deliveryType: 'Visit',
@@ -24867,7 +24867,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 98511418
+    deliveryNo: 98511418,
   },
   {
     deliveryType: 'Visit',
@@ -24882,7 +24882,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 78746128
+    deliveryNo: 78746128,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24897,7 +24897,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 99260830
+    deliveryNo: 99260830,
   },
   {
     deliveryType: 'Parcel',
@@ -24912,7 +24912,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 71526100
+    deliveryNo: 71526100,
   },
   {
     deliveryType: 'Visit',
@@ -24927,7 +24927,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 37748151
+    deliveryNo: 37748151,
   },
   {
     deliveryType: 'Visit',
@@ -24942,7 +24942,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 33888892
+    deliveryNo: 33888892,
   },
   {
     deliveryType: 'Visit',
@@ -24957,7 +24957,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 46557773
+    deliveryNo: 46557773,
   },
   {
     deliveryType: 'Parcel',
@@ -24972,7 +24972,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 98782125
+    deliveryNo: 98782125,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -24987,7 +24987,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 79838491
+    deliveryNo: 79838491,
   },
   {
     deliveryType: 'Visit',
@@ -25002,7 +25002,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 86378237
+    deliveryNo: 86378237,
   },
   {
     deliveryType: 'Parcel',
@@ -25017,7 +25017,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 66006485
+    deliveryNo: 66006485,
   },
   {
     deliveryType: 'Visit',
@@ -25032,7 +25032,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 50274201
+    deliveryNo: 50274201,
   },
   {
     deliveryType: 'Visit',
@@ -25047,7 +25047,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 31719087
+    deliveryNo: 31719087,
   },
   {
     deliveryType: 'Parcel',
@@ -25062,7 +25062,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 79141652
+    deliveryNo: 79141652,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25077,7 +25077,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 96728653
+    deliveryNo: 96728653,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25092,7 +25092,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 15936864
+    deliveryNo: 15936864,
   },
   {
     deliveryType: 'Parcel',
@@ -25107,7 +25107,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 64225940
+    deliveryNo: 64225940,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25122,7 +25122,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 81779873
+    deliveryNo: 81779873,
   },
   {
     deliveryType: 'Visit',
@@ -25137,7 +25137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 56282367
+    deliveryNo: 56282367,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25152,7 +25152,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 16612210
+    deliveryNo: 16612210,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25167,7 +25167,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 69000523
+    deliveryNo: 69000523,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25182,7 +25182,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 73742536
+    deliveryNo: 73742536,
   },
   {
     deliveryType: 'Parcel',
@@ -25197,7 +25197,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 46982303
+    deliveryNo: 46982303,
   },
   {
     deliveryType: 'Parcel',
@@ -25212,7 +25212,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 30389616
+    deliveryNo: 30389616,
   },
   {
     deliveryType: 'Parcel',
@@ -25227,7 +25227,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 1724046
+    deliveryNo: 1724046,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25242,7 +25242,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 1331968
+    deliveryNo: 1331968,
   },
   {
     deliveryType: 'Parcel',
@@ -25257,7 +25257,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 23548047
+    deliveryNo: 23548047,
   },
   {
     deliveryType: 'Parcel',
@@ -25272,7 +25272,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 67773586
+    deliveryNo: 67773586,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25287,7 +25287,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 61679826
+    deliveryNo: 61679826,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25302,7 +25302,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 58535097
+    deliveryNo: 58535097,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25317,7 +25317,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 72080523
+    deliveryNo: 72080523,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25332,7 +25332,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 45679728
+    deliveryNo: 45679728,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25347,7 +25347,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 57643789
+    deliveryNo: 57643789,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25362,7 +25362,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 41683478
+    deliveryNo: 41683478,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25377,7 +25377,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 50366568
+    deliveryNo: 50366568,
   },
   {
     deliveryType: 'Parcel',
@@ -25392,7 +25392,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 10258838
+    deliveryNo: 10258838,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25407,7 +25407,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 10103105
+    deliveryNo: 10103105,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25422,7 +25422,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 27941460
+    deliveryNo: 27941460,
   },
   {
     deliveryType: 'Parcel',
@@ -25437,7 +25437,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 39511618
+    deliveryNo: 39511618,
   },
   {
     deliveryType: 'Visit',
@@ -25452,7 +25452,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 58549137
+    deliveryNo: 58549137,
   },
   {
     deliveryType: 'Parcel',
@@ -25467,7 +25467,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 39802937
+    deliveryNo: 39802937,
   },
   {
     deliveryType: 'Parcel',
@@ -25482,7 +25482,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 27622467
+    deliveryNo: 27622467,
   },
   {
     deliveryType: 'Visit',
@@ -25497,7 +25497,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 56900531
+    deliveryNo: 56900531,
   },
   {
     deliveryType: 'Parcel',
@@ -25512,7 +25512,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 8956604
+    deliveryNo: 8956604,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25527,7 +25527,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 92621310
+    deliveryNo: 92621310,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25542,7 +25542,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 60333411
+    deliveryNo: 60333411,
   },
   {
     deliveryType: 'Visit',
@@ -25557,7 +25557,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 80486515
+    deliveryNo: 80486515,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25572,7 +25572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 70563462
+    deliveryNo: 70563462,
   },
   {
     deliveryType: 'Visit',
@@ -25587,7 +25587,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 50772137
+    deliveryNo: 50772137,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25602,7 +25602,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 4947217
+    deliveryNo: 4947217,
   },
   {
     deliveryType: 'Visit',
@@ -25617,7 +25617,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 34408202
+    deliveryNo: 34408202,
   },
   {
     deliveryType: 'Parcel',
@@ -25632,7 +25632,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 61264763
+    deliveryNo: 61264763,
   },
   {
     deliveryType: 'Parcel',
@@ -25647,7 +25647,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 80336319
+    deliveryNo: 80336319,
   },
   {
     deliveryType: 'Parcel',
@@ -25662,7 +25662,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 73403493
+    deliveryNo: 73403493,
   },
   {
     deliveryType: 'Parcel',
@@ -25677,7 +25677,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 85934837
+    deliveryNo: 85934837,
   },
   {
     deliveryType: 'Parcel',
@@ -25692,7 +25692,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 24733109
+    deliveryNo: 24733109,
   },
   {
     deliveryType: 'Visit',
@@ -25707,7 +25707,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 65121021
+    deliveryNo: 65121021,
   },
   {
     deliveryType: 'Visit',
@@ -25722,7 +25722,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 58337304
+    deliveryNo: 58337304,
   },
   {
     deliveryType: 'Visit',
@@ -25737,7 +25737,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 3739592
+    deliveryNo: 3739592,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25752,7 +25752,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 96211510
+    deliveryNo: 96211510,
   },
   {
     deliveryType: 'Visit',
@@ -25767,7 +25767,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 76847036
+    deliveryNo: 76847036,
   },
   {
     deliveryType: 'Parcel',
@@ -25782,7 +25782,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 4536091
+    deliveryNo: 4536091,
   },
   {
     deliveryType: 'Visit',
@@ -25797,7 +25797,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 27501010
+    deliveryNo: 27501010,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25812,7 +25812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 67134346
+    deliveryNo: 67134346,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25827,7 +25827,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 31664290
+    deliveryNo: 31664290,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25842,7 +25842,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 54224700
+    deliveryNo: 54224700,
   },
   {
     deliveryType: 'Parcel',
@@ -25857,7 +25857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 98832561
+    deliveryNo: 98832561,
   },
   {
     deliveryType: 'Visit',
@@ -25872,7 +25872,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 98576467
+    deliveryNo: 98576467,
   },
   {
     deliveryType: 'Parcel',
@@ -25887,7 +25887,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 82995480
+    deliveryNo: 82995480,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -25902,7 +25902,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 16178539
+    deliveryNo: 16178539,
   },
   {
     deliveryType: 'Visit',
@@ -25917,7 +25917,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 3540348
+    deliveryNo: 3540348,
   },
   {
     deliveryType: 'Visit',
@@ -25932,7 +25932,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 33530413
+    deliveryNo: 33530413,
   },
   {
     deliveryType: 'Parcel',
@@ -25947,7 +25947,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 707810
+    deliveryNo: 707810,
   },
   {
     deliveryType: 'Parcel',
@@ -25962,7 +25962,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 8664870
+    deliveryNo: 8664870,
   },
   {
     deliveryType: 'Parcel',
@@ -25977,7 +25977,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 75208904
+    deliveryNo: 75208904,
   },
   {
     deliveryType: 'Parcel',
@@ -25992,7 +25992,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 58011762
+    deliveryNo: 58011762,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26007,7 +26007,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 86612885
+    deliveryNo: 86612885,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26022,7 +26022,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 26212208
+    deliveryNo: 26212208,
   },
   {
     deliveryType: 'Parcel',
@@ -26037,7 +26037,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 10115152
+    deliveryNo: 10115152,
   },
   {
     deliveryType: 'Visit',
@@ -26052,7 +26052,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 60992606
+    deliveryNo: 60992606,
   },
   {
     deliveryType: 'Visit',
@@ -26067,7 +26067,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 76294702
+    deliveryNo: 76294702,
   },
   {
     deliveryType: 'Visit',
@@ -26082,7 +26082,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 80207861
+    deliveryNo: 80207861,
   },
   {
     deliveryType: 'Visit',
@@ -26097,7 +26097,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 43470452
+    deliveryNo: 43470452,
   },
   {
     deliveryType: 'Visit',
@@ -26112,7 +26112,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 43163139
+    deliveryNo: 43163139,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26127,7 +26127,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 77265791
+    deliveryNo: 77265791,
   },
   {
     deliveryType: 'Parcel',
@@ -26142,7 +26142,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 63323591
+    deliveryNo: 63323591,
   },
   {
     deliveryType: 'Parcel',
@@ -26157,7 +26157,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 36990803
+    deliveryNo: 36990803,
   },
   {
     deliveryType: 'Parcel',
@@ -26172,7 +26172,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 24521382
+    deliveryNo: 24521382,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26187,7 +26187,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 93451450
+    deliveryNo: 93451450,
   },
   {
     deliveryType: 'Parcel',
@@ -26202,7 +26202,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 87769395
+    deliveryNo: 87769395,
   },
   {
     deliveryType: 'Visit',
@@ -26217,7 +26217,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 27795156
+    deliveryNo: 27795156,
   },
   {
     deliveryType: 'Visit',
@@ -26232,7 +26232,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 791030
+    deliveryNo: 791030,
   },
   {
     deliveryType: 'Visit',
@@ -26247,7 +26247,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 86002137
+    deliveryNo: 86002137,
   },
   {
     deliveryType: 'Visit',
@@ -26262,7 +26262,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 47375412
+    deliveryNo: 47375412,
   },
   {
     deliveryType: 'Visit',
@@ -26277,7 +26277,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 88631852
+    deliveryNo: 88631852,
   },
   {
     deliveryType: 'Parcel',
@@ -26292,7 +26292,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 98667431
+    deliveryNo: 98667431,
   },
   {
     deliveryType: 'Visit',
@@ -26307,7 +26307,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 20433971
+    deliveryNo: 20433971,
   },
   {
     deliveryType: 'Parcel',
@@ -26322,7 +26322,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 53501965
+    deliveryNo: 53501965,
   },
   {
     deliveryType: 'Visit',
@@ -26337,7 +26337,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 49433193
+    deliveryNo: 49433193,
   },
   {
     deliveryType: 'Visit',
@@ -26352,7 +26352,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 79891672
+    deliveryNo: 79891672,
   },
   {
     deliveryType: 'Parcel',
@@ -26367,7 +26367,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 50097354
+    deliveryNo: 50097354,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26382,7 +26382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 94777713
+    deliveryNo: 94777713,
   },
   {
     deliveryType: 'Visit',
@@ -26397,7 +26397,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 30198125
+    deliveryNo: 30198125,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26412,7 +26412,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 44152801
+    deliveryNo: 44152801,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26427,7 +26427,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 85973731
+    deliveryNo: 85973731,
   },
   {
     deliveryType: 'Visit',
@@ -26442,7 +26442,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 70665932
+    deliveryNo: 70665932,
   },
   {
     deliveryType: 'Parcel',
@@ -26457,7 +26457,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 35203053
+    deliveryNo: 35203053,
   },
   {
     deliveryType: 'Visit',
@@ -26472,7 +26472,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 80818183
+    deliveryNo: 80818183,
   },
   {
     deliveryType: 'Parcel',
@@ -26487,7 +26487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 2800462
+    deliveryNo: 2800462,
   },
   {
     deliveryType: 'Visit',
@@ -26502,7 +26502,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 48858939
+    deliveryNo: 48858939,
   },
   {
     deliveryType: 'Visit',
@@ -26517,7 +26517,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 58540797
+    deliveryNo: 58540797,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26532,7 +26532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 19491963
+    deliveryNo: 19491963,
   },
   {
     deliveryType: 'Visit',
@@ -26547,7 +26547,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 31523830
+    deliveryNo: 31523830,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26562,7 +26562,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 96500612
+    deliveryNo: 96500612,
   },
   {
     deliveryType: 'Visit',
@@ -26577,7 +26577,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 50987631
+    deliveryNo: 50987631,
   },
   {
     deliveryType: 'Parcel',
@@ -26592,7 +26592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 29401664
+    deliveryNo: 29401664,
   },
   {
     deliveryType: 'Visit',
@@ -26607,7 +26607,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 88080162
+    deliveryNo: 88080162,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26622,7 +26622,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 35237051
+    deliveryNo: 35237051,
   },
   {
     deliveryType: 'Visit',
@@ -26637,7 +26637,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 98198502
+    deliveryNo: 98198502,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26652,7 +26652,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 17612917
+    deliveryNo: 17612917,
   },
   {
     deliveryType: 'Visit',
@@ -26667,7 +26667,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 88505091
+    deliveryNo: 88505091,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26682,7 +26682,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 70095369
+    deliveryNo: 70095369,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26697,7 +26697,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 60230324
+    deliveryNo: 60230324,
   },
   {
     deliveryType: 'Parcel',
@@ -26712,7 +26712,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 76072293
+    deliveryNo: 76072293,
   },
   {
     deliveryType: 'Parcel',
@@ -26727,7 +26727,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 370926
+    deliveryNo: 370926,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26742,7 +26742,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 42190599
+    deliveryNo: 42190599,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26757,7 +26757,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 22393428
+    deliveryNo: 22393428,
   },
   {
     deliveryType: 'Visit',
@@ -26772,7 +26772,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 27478291
+    deliveryNo: 27478291,
   },
   {
     deliveryType: 'Parcel',
@@ -26787,7 +26787,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 80552162
+    deliveryNo: 80552162,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26802,7 +26802,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 55260723
+    deliveryNo: 55260723,
   },
   {
     deliveryType: 'Visit',
@@ -26817,7 +26817,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 7431124
+    deliveryNo: 7431124,
   },
   {
     deliveryType: 'Parcel',
@@ -26832,7 +26832,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 19980420
+    deliveryNo: 19980420,
   },
   {
     deliveryType: 'Visit',
@@ -26847,7 +26847,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 49319097
+    deliveryNo: 49319097,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26862,7 +26862,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 26029835
+    deliveryNo: 26029835,
   },
   {
     deliveryType: 'Parcel',
@@ -26877,7 +26877,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 99027396
+    deliveryNo: 99027396,
   },
   {
     deliveryType: 'Parcel',
@@ -26892,7 +26892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 20706426
+    deliveryNo: 20706426,
   },
   {
     deliveryType: 'Visit',
@@ -26907,7 +26907,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 50759604
+    deliveryNo: 50759604,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26922,7 +26922,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 8399423
+    deliveryNo: 8399423,
   },
   {
     deliveryType: 'Parcel',
@@ -26937,7 +26937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 26642711
+    deliveryNo: 26642711,
   },
   {
     deliveryType: 'Parcel',
@@ -26952,7 +26952,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 58117648
+    deliveryNo: 58117648,
   },
   {
     deliveryType: 'Visit',
@@ -26967,7 +26967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 49528982
+    deliveryNo: 49528982,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26982,7 +26982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 41467787
+    deliveryNo: 41467787,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -26997,7 +26997,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 61677964
+    deliveryNo: 61677964,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27012,7 +27012,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 63192472
+    deliveryNo: 63192472,
   },
   {
     deliveryType: 'Parcel',
@@ -27027,7 +27027,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 13927988
+    deliveryNo: 13927988,
   },
   {
     deliveryType: 'Visit',
@@ -27042,7 +27042,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 71377557
+    deliveryNo: 71377557,
   },
   {
     deliveryType: 'Parcel',
@@ -27057,7 +27057,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 74966548
+    deliveryNo: 74966548,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27072,7 +27072,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 59437946
+    deliveryNo: 59437946,
   },
   {
     deliveryType: 'Parcel',
@@ -27087,7 +27087,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 35308940
+    deliveryNo: 35308940,
   },
   {
     deliveryType: 'Visit',
@@ -27102,7 +27102,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 96991370
+    deliveryNo: 96991370,
   },
   {
     deliveryType: 'Visit',
@@ -27117,7 +27117,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 5594527
+    deliveryNo: 5594527,
   },
   {
     deliveryType: 'Parcel',
@@ -27132,7 +27132,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 51729485
+    deliveryNo: 51729485,
   },
   {
     deliveryType: 'Parcel',
@@ -27147,7 +27147,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 33809986
+    deliveryNo: 33809986,
   },
   {
     deliveryType: 'Parcel',
@@ -27162,7 +27162,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 89395639
+    deliveryNo: 89395639,
   },
   {
     deliveryType: 'Visit',
@@ -27177,7 +27177,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 91048972
+    deliveryNo: 91048972,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27192,7 +27192,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 63978729
+    deliveryNo: 63978729,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27207,7 +27207,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 417480
+    deliveryNo: 417480,
   },
   {
     deliveryType: 'Parcel',
@@ -27222,7 +27222,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 35232473
+    deliveryNo: 35232473,
   },
   {
     deliveryType: 'Visit',
@@ -27237,7 +27237,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 8694392
+    deliveryNo: 8694392,
   },
   {
     deliveryType: 'Parcel',
@@ -27252,7 +27252,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 75629512
+    deliveryNo: 75629512,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27267,7 +27267,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 25356474
+    deliveryNo: 25356474,
   },
   {
     deliveryType: 'Visit',
@@ -27282,7 +27282,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 53859702
+    deliveryNo: 53859702,
   },
   {
     deliveryType: 'Visit',
@@ -27297,7 +27297,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 78577294
+    deliveryNo: 78577294,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27312,7 +27312,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 6981957
+    deliveryNo: 6981957,
   },
   {
     deliveryType: 'Visit',
@@ -27327,7 +27327,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 62809358
+    deliveryNo: 62809358,
   },
   {
     deliveryType: 'Parcel',
@@ -27342,7 +27342,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 38339048
+    deliveryNo: 38339048,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27357,7 +27357,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 77558887
+    deliveryNo: 77558887,
   },
   {
     deliveryType: 'Visit',
@@ -27372,7 +27372,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 3344699
+    deliveryNo: 3344699,
   },
   {
     deliveryType: 'Parcel',
@@ -27387,7 +27387,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 81962606
+    deliveryNo: 81962606,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27402,7 +27402,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 70252393
+    deliveryNo: 70252393,
   },
   {
     deliveryType: 'Visit',
@@ -27417,7 +27417,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 14775888
+    deliveryNo: 14775888,
   },
   {
     deliveryType: 'Visit',
@@ -27432,7 +27432,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 68015228
+    deliveryNo: 68015228,
   },
   {
     deliveryType: 'Visit',
@@ -27447,7 +27447,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 54381661
+    deliveryNo: 54381661,
   },
   {
     deliveryType: 'Visit',
@@ -27462,7 +27462,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 58346210
+    deliveryNo: 58346210,
   },
   {
     deliveryType: 'Visit',
@@ -27477,7 +27477,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 18429456
+    deliveryNo: 18429456,
   },
   {
     deliveryType: 'Visit',
@@ -27492,7 +27492,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 94088370
+    deliveryNo: 94088370,
   },
   {
     deliveryType: 'Parcel',
@@ -27507,7 +27507,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 27713930
+    deliveryNo: 27713930,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27522,7 +27522,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 51004072
+    deliveryNo: 51004072,
   },
   {
     deliveryType: 'Visit',
@@ -27537,7 +27537,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 83902279
+    deliveryNo: 83902279,
   },
   {
     deliveryType: 'Parcel',
@@ -27552,7 +27552,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 45092872
+    deliveryNo: 45092872,
   },
   {
     deliveryType: 'Parcel',
@@ -27567,7 +27567,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 35719913
+    deliveryNo: 35719913,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27582,7 +27582,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 72547331
+    deliveryNo: 72547331,
   },
   {
     deliveryType: 'Parcel',
@@ -27597,7 +27597,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 33203741
+    deliveryNo: 33203741,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27612,7 +27612,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 34456133
+    deliveryNo: 34456133,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27627,7 +27627,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 94632463
+    deliveryNo: 94632463,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27642,7 +27642,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 33363894
+    deliveryNo: 33363894,
   },
   {
     deliveryType: 'Visit',
@@ -27657,7 +27657,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 35743250
+    deliveryNo: 35743250,
   },
   {
     deliveryType: 'Visit',
@@ -27672,7 +27672,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 53797042
+    deliveryNo: 53797042,
   },
   {
     deliveryType: 'Visit',
@@ -27687,7 +27687,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 35844158
+    deliveryNo: 35844158,
   },
   {
     deliveryType: 'Visit',
@@ -27702,7 +27702,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 63865131
+    deliveryNo: 63865131,
   },
   {
     deliveryType: 'Parcel',
@@ -27717,7 +27717,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 40431681
+    deliveryNo: 40431681,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27732,7 +27732,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 46962
+    deliveryNo: 46962,
   },
   {
     deliveryType: 'Parcel',
@@ -27747,7 +27747,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 24922803
+    deliveryNo: 24922803,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27762,7 +27762,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 22270915
+    deliveryNo: 22270915,
   },
   {
     deliveryType: 'Parcel',
@@ -27777,7 +27777,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 69110929
+    deliveryNo: 69110929,
   },
   {
     deliveryType: 'Parcel',
@@ -27792,7 +27792,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 51398816
+    deliveryNo: 51398816,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27807,7 +27807,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 16955061
+    deliveryNo: 16955061,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27822,7 +27822,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 26222772
+    deliveryNo: 26222772,
   },
   {
     deliveryType: 'Parcel',
@@ -27837,7 +27837,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 21311612
+    deliveryNo: 21311612,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27852,7 +27852,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 42084306
+    deliveryNo: 42084306,
   },
   {
     deliveryType: 'Visit',
@@ -27867,7 +27867,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 98218205
+    deliveryNo: 98218205,
   },
   {
     deliveryType: 'Visit',
@@ -27882,7 +27882,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 58225176
+    deliveryNo: 58225176,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27897,7 +27897,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 40338877
+    deliveryNo: 40338877,
   },
   {
     deliveryType: 'Visit',
@@ -27912,7 +27912,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 85979274
+    deliveryNo: 85979274,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27927,7 +27927,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 64179998
+    deliveryNo: 64179998,
   },
   {
     deliveryType: 'Parcel',
@@ -27942,7 +27942,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 94914951
+    deliveryNo: 94914951,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -27957,7 +27957,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 90686350
+    deliveryNo: 90686350,
   },
   {
     deliveryType: 'Parcel',
@@ -27972,7 +27972,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 99037163
+    deliveryNo: 99037163,
   },
   {
     deliveryType: 'Visit',
@@ -27987,7 +27987,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 83826689
+    deliveryNo: 83826689,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28002,7 +28002,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 10158806
+    deliveryNo: 10158806,
   },
   {
     deliveryType: 'Visit',
@@ -28017,7 +28017,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 96778192
+    deliveryNo: 96778192,
   },
   {
     deliveryType: 'Parcel',
@@ -28032,7 +28032,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 70550613
+    deliveryNo: 70550613,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28047,7 +28047,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 319150
+    deliveryNo: 319150,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28062,7 +28062,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 1978997
+    deliveryNo: 1978997,
   },
   {
     deliveryType: 'Parcel',
@@ -28077,7 +28077,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 93039296
+    deliveryNo: 93039296,
   },
   {
     deliveryType: 'Visit',
@@ -28092,7 +28092,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 33241192
+    deliveryNo: 33241192,
   },
   {
     deliveryType: 'Parcel',
@@ -28107,7 +28107,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 17977123
+    deliveryNo: 17977123,
   },
   {
     deliveryType: 'Parcel',
@@ -28122,7 +28122,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 93307106
+    deliveryNo: 93307106,
   },
   {
     deliveryType: 'Parcel',
@@ -28137,7 +28137,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 35293595
+    deliveryNo: 35293595,
   },
   {
     deliveryType: 'Visit',
@@ -28152,7 +28152,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 82177229
+    deliveryNo: 82177229,
   },
   {
     deliveryType: 'Parcel',
@@ -28167,7 +28167,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 25591599
+    deliveryNo: 25591599,
   },
   {
     deliveryType: 'Parcel',
@@ -28182,7 +28182,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 56565960
+    deliveryNo: 56565960,
   },
   {
     deliveryType: 'Parcel',
@@ -28197,7 +28197,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 23490517
+    deliveryNo: 23490517,
   },
   {
     deliveryType: 'Visit',
@@ -28212,7 +28212,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 92519795
+    deliveryNo: 92519795,
   },
   {
     deliveryType: 'Visit',
@@ -28227,7 +28227,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 6065323
+    deliveryNo: 6065323,
   },
   {
     deliveryType: 'Visit',
@@ -28242,7 +28242,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 12079654
+    deliveryNo: 12079654,
   },
   {
     deliveryType: 'Parcel',
@@ -28257,7 +28257,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 85759532
+    deliveryNo: 85759532,
   },
   {
     deliveryType: 'Parcel',
@@ -28272,7 +28272,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 86096802
+    deliveryNo: 86096802,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28287,7 +28287,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 82381418
+    deliveryNo: 82381418,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28302,7 +28302,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 50311713
+    deliveryNo: 50311713,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28317,7 +28317,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 73792855
+    deliveryNo: 73792855,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28332,7 +28332,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 96805218
+    deliveryNo: 96805218,
   },
   {
     deliveryType: 'Visit',
@@ -28347,7 +28347,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 49900145
+    deliveryNo: 49900145,
   },
   {
     deliveryType: 'Visit',
@@ -28362,7 +28362,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 27931383
+    deliveryNo: 27931383,
   },
   {
     deliveryType: 'Parcel',
@@ -28377,7 +28377,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 19556256
+    deliveryNo: 19556256,
   },
   {
     deliveryType: 'Visit',
@@ -28392,7 +28392,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 84841415
+    deliveryNo: 84841415,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28407,7 +28407,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 44983774
+    deliveryNo: 44983774,
   },
   {
     deliveryType: 'Visit',
@@ -28422,7 +28422,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 87708034
+    deliveryNo: 87708034,
   },
   {
     deliveryType: 'Parcel',
@@ -28437,7 +28437,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 3328004
+    deliveryNo: 3328004,
   },
   {
     deliveryType: 'Visit',
@@ -28452,7 +28452,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 49759642
+    deliveryNo: 49759642,
   },
   {
     deliveryType: 'Visit',
@@ -28467,7 +28467,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 99949582
+    deliveryNo: 99949582,
   },
   {
     deliveryType: 'Parcel',
@@ -28482,7 +28482,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 52233694
+    deliveryNo: 52233694,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28497,7 +28497,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 83065932
+    deliveryNo: 83065932,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28512,7 +28512,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 92358621
+    deliveryNo: 92358621,
   },
   {
     deliveryType: 'Visit',
@@ -28527,7 +28527,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 34351001
+    deliveryNo: 34351001,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28542,7 +28542,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 41473709
+    deliveryNo: 41473709,
   },
   {
     deliveryType: 'Parcel',
@@ -28557,7 +28557,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 35102619
+    deliveryNo: 35102619,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28572,7 +28572,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 75396271
+    deliveryNo: 75396271,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28587,7 +28587,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 32586850
+    deliveryNo: 32586850,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28602,7 +28602,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 64145532
+    deliveryNo: 64145532,
   },
   {
     deliveryType: 'Parcel',
@@ -28617,7 +28617,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 56168723
+    deliveryNo: 56168723,
   },
   {
     deliveryType: 'Parcel',
@@ -28632,7 +28632,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 33132553
+    deliveryNo: 33132553,
   },
   {
     deliveryType: 'Parcel',
@@ -28647,7 +28647,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 57838723
+    deliveryNo: 57838723,
   },
   {
     deliveryType: 'Parcel',
@@ -28662,7 +28662,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 32925622
+    deliveryNo: 32925622,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28677,7 +28677,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 76744402
+    deliveryNo: 76744402,
   },
   {
     deliveryType: 'Parcel',
@@ -28692,7 +28692,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 79700439
+    deliveryNo: 79700439,
   },
   {
     deliveryType: 'Visit',
@@ -28707,7 +28707,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 52336489
+    deliveryNo: 52336489,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28722,7 +28722,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 53484492
+    deliveryNo: 53484492,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28737,7 +28737,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 35738889
+    deliveryNo: 35738889,
   },
   {
     deliveryType: 'Visit',
@@ -28752,7 +28752,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 66305014
+    deliveryNo: 66305014,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28767,7 +28767,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 73951923
+    deliveryNo: 73951923,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28782,7 +28782,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 37349853
+    deliveryNo: 37349853,
   },
   {
     deliveryType: 'Parcel',
@@ -28797,7 +28797,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 66498188
+    deliveryNo: 66498188,
   },
   {
     deliveryType: 'Visit',
@@ -28812,7 +28812,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 37250690
+    deliveryNo: 37250690,
   },
   {
     deliveryType: 'Visit',
@@ -28827,7 +28827,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 19120454
+    deliveryNo: 19120454,
   },
   {
     deliveryType: 'Parcel',
@@ -28842,7 +28842,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 88597909
+    deliveryNo: 88597909,
   },
   {
     deliveryType: 'Parcel',
@@ -28857,7 +28857,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 44140881
+    deliveryNo: 44140881,
   },
   {
     deliveryType: 'Visit',
@@ -28872,7 +28872,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 34796563
+    deliveryNo: 34796563,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28887,7 +28887,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 82091047
+    deliveryNo: 82091047,
   },
   {
     deliveryType: 'Visit',
@@ -28902,7 +28902,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 14372762
+    deliveryNo: 14372762,
   },
   {
     deliveryType: 'Visit',
@@ -28917,7 +28917,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 44222063
+    deliveryNo: 44222063,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -28932,7 +28932,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 2839878
+    deliveryNo: 2839878,
   },
   {
     deliveryType: 'Visit',
@@ -28947,7 +28947,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 504206
+    deliveryNo: 504206,
   },
   {
     deliveryType: 'Visit',
@@ -28962,7 +28962,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '01',
-    deliveryNo: 9233948
+    deliveryNo: 9233948,
   },
   {
     deliveryType: 'Visit',
@@ -28977,7 +28977,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 62725425
+    deliveryNo: 62725425,
   },
   {
     deliveryType: 'Visit',
@@ -28992,7 +28992,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 39427627
+    deliveryNo: 39427627,
   },
   {
     deliveryType: 'Parcel',
@@ -29007,7 +29007,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 37298098
+    deliveryNo: 37298098,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29022,7 +29022,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 63332094
+    deliveryNo: 63332094,
   },
   {
     deliveryType: 'Visit',
@@ -29037,7 +29037,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 47383428
+    deliveryNo: 47383428,
   },
   {
     deliveryType: 'Parcel',
@@ -29052,7 +29052,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 48096267
+    deliveryNo: 48096267,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29067,7 +29067,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 48942813
+    deliveryNo: 48942813,
   },
   {
     deliveryType: 'Visit',
@@ -29082,7 +29082,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 44412702
+    deliveryNo: 44412702,
   },
   {
     deliveryType: 'Parcel',
@@ -29097,7 +29097,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 90325629
+    deliveryNo: 90325629,
   },
   {
     deliveryType: 'Visit',
@@ -29112,7 +29112,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 38039573
+    deliveryNo: 38039573,
   },
   {
     deliveryType: 'Parcel',
@@ -29127,7 +29127,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 90002733
+    deliveryNo: 90002733,
   },
   {
     deliveryType: 'Parcel',
@@ -29142,7 +29142,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 3648063
+    deliveryNo: 3648063,
   },
   {
     deliveryType: 'Visit',
@@ -29157,7 +29157,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 32055115
+    deliveryNo: 32055115,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29172,7 +29172,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 23104608
+    deliveryNo: 23104608,
   },
   {
     deliveryType: 'Parcel',
@@ -29187,7 +29187,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '02',
-    deliveryNo: 4027039
+    deliveryNo: 4027039,
   },
   {
     deliveryType: 'Visit',
@@ -29202,7 +29202,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '03',
-    deliveryNo: 55297286
+    deliveryNo: 55297286,
   },
   {
     deliveryType: 'Visit',
@@ -29217,7 +29217,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 26753069
+    deliveryNo: 26753069,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29232,7 +29232,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 69615817
+    deliveryNo: 69615817,
   },
   {
     deliveryType: 'Visit',
@@ -29247,7 +29247,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 50768343
+    deliveryNo: 50768343,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29262,7 +29262,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 80194459
+    deliveryNo: 80194459,
   },
   {
     deliveryType: 'Parcel',
@@ -29277,7 +29277,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 18911467
+    deliveryNo: 18911467,
   },
   {
     deliveryType: 'Visit',
@@ -29292,7 +29292,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 43027251
+    deliveryNo: 43027251,
   },
   {
     deliveryType: 'Parcel',
@@ -29307,7 +29307,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 19729434
+    deliveryNo: 19729434,
   },
   {
     deliveryType: 'Visit',
@@ -29322,7 +29322,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 3064928
+    deliveryNo: 3064928,
   },
   {
     deliveryType: 'Parcel',
@@ -29337,7 +29337,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 81293887
+    deliveryNo: 81293887,
   },
   {
     deliveryType: 'Visit',
@@ -29352,7 +29352,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 3402912
+    deliveryNo: 3402912,
   },
   {
     deliveryType: 'Visit',
@@ -29367,7 +29367,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 80038162
+    deliveryNo: 80038162,
   },
   {
     deliveryType: 'Parcel',
@@ -29382,7 +29382,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '03',
-    deliveryNo: 93669724
+    deliveryNo: 93669724,
   },
   {
     deliveryType: 'Visit',
@@ -29397,7 +29397,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '06',
     deliveryPeeType: '01',
-    deliveryNo: 64224448
+    deliveryNo: 64224448,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29412,7 +29412,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 99725227
+    deliveryNo: 99725227,
   },
   {
     deliveryType: 'Parcel',
@@ -29427,7 +29427,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 16650437
+    deliveryNo: 16650437,
   },
   {
     deliveryType: 'Parcel',
@@ -29442,7 +29442,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 41778068
+    deliveryNo: 41778068,
   },
   {
     deliveryType: 'Parcel',
@@ -29457,7 +29457,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 6204879
+    deliveryNo: 6204879,
   },
   {
     deliveryType: 'Visit',
@@ -29472,7 +29472,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 13031644
+    deliveryNo: 13031644,
   },
   {
     deliveryType: 'Visit',
@@ -29487,7 +29487,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 2881356
+    deliveryNo: 2881356,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29502,7 +29502,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '02',
-    deliveryNo: 55968057
+    deliveryNo: 55968057,
   },
   {
     deliveryType: 'Parcel',
@@ -29517,7 +29517,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '03',
     deliveryPeeType: '01',
-    deliveryNo: 55859710
+    deliveryNo: 55859710,
   },
   {
     deliveryType: 'Visit',
@@ -29532,7 +29532,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '02',
-    deliveryNo: 98379348
+    deliveryNo: 98379348,
   },
   {
     deliveryType: 'Parcel',
@@ -29547,7 +29547,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '04',
-    deliveryNo: 59264460
+    deliveryNo: 59264460,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29562,7 +29562,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 36255437
+    deliveryNo: 36255437,
   },
   {
     deliveryType: 'Visit',
@@ -29577,7 +29577,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '03',
-    deliveryNo: 55209591
+    deliveryNo: 55209591,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29592,7 +29592,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 75638121
+    deliveryNo: 75638121,
   },
   {
     deliveryType: 'Parcel',
@@ -29607,7 +29607,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '08',
     deliveryPeeType: '01',
-    deliveryNo: 48739111
+    deliveryNo: 48739111,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29622,7 +29622,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '01',
-    deliveryNo: 70550510
+    deliveryNo: 70550510,
   },
   {
     deliveryType: 'Parcel',
@@ -29637,7 +29637,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '07',
     deliveryPeeType: '01',
-    deliveryNo: 34272720
+    deliveryNo: 34272720,
   },
   {
     deliveryType: 'Parcel',
@@ -29652,7 +29652,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '04',
-    deliveryNo: 19111295
+    deliveryNo: 19111295,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29667,7 +29667,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '05',
     deliveryPeeType: '04',
-    deliveryNo: 58165990
+    deliveryNo: 58165990,
   },
   {
     deliveryType: 'Parcel',
@@ -29682,7 +29682,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '03',
-    deliveryNo: 4943174
+    deliveryNo: 4943174,
   },
   {
     deliveryType: 'Parcel',
@@ -29697,7 +29697,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 66994419
+    deliveryNo: 66994419,
   },
   {
     deliveryType: 'Visit',
@@ -29712,7 +29712,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 95984871
+    deliveryNo: 95984871,
   },
   {
     deliveryType: 'Parcel',
@@ -29727,7 +29727,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '04',
     deliveryPeeType: '04',
-    deliveryNo: 16170735
+    deliveryNo: 16170735,
   },
   {
     deliveryType: 'Parcel',
@@ -29742,7 +29742,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '04',
-    deliveryNo: 37816077
+    deliveryNo: 37816077,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29757,7 +29757,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '04',
     deliveryPeeType: '01',
-    deliveryNo: 38504824
+    deliveryNo: 38504824,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29772,7 +29772,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '08',
     deliveryPeeType: '04',
-    deliveryNo: 3604718
+    deliveryNo: 3604718,
   },
   {
     deliveryType: 'Parcel',
@@ -29787,7 +29787,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '08',
     deliveryPeeType: '03',
-    deliveryNo: 97315678
+    deliveryNo: 97315678,
   },
   {
     deliveryType: 'Parcel',
@@ -29802,7 +29802,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 87785901
+    deliveryNo: 87785901,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29817,7 +29817,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 73704695
+    deliveryNo: 73704695,
   },
   {
     deliveryType: 'Parcel',
@@ -29832,7 +29832,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '03',
-    deliveryNo: 55581937
+    deliveryNo: 55581937,
   },
   {
     deliveryType: 'Parcel',
@@ -29847,7 +29847,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '03',
-    deliveryNo: 62599745
+    deliveryNo: 62599745,
   },
   {
     deliveryType: 'Parcel',
@@ -29862,7 +29862,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '07',
     deliveryPeeType: '02',
-    deliveryNo: 85472782
+    deliveryNo: 85472782,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29877,7 +29877,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '05',
     deliveryPeeType: '01',
-    deliveryNo: 77179361
+    deliveryNo: 77179361,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29892,7 +29892,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '06',
     deliveryPeeType: '02',
-    deliveryNo: 66726322
+    deliveryNo: 66726322,
   },
   {
     deliveryType: 'Parcel',
@@ -29907,7 +29907,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '02',
-    deliveryNo: 86286435
+    deliveryNo: 86286435,
   },
   {
     deliveryType: 'Parcel',
@@ -29922,7 +29922,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '03',
     deliveryPeeType: '02',
-    deliveryNo: 39097827
+    deliveryNo: 39097827,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29937,7 +29937,7 @@ export const data = [
     deliveryState: '1',
     deliveryCompany: '02',
     deliveryPeeType: '04',
-    deliveryNo: 34440781
+    deliveryNo: 34440781,
   },
   {
     deliveryType: 'Visit',
@@ -29952,7 +29952,7 @@ export const data = [
     deliveryState: '0',
     deliveryCompany: '01',
     deliveryPeeType: '02',
-    deliveryNo: 86807966
+    deliveryNo: 86807966,
   },
   {
     deliveryType: 'ExpressDelivery',
@@ -29967,7 +29967,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 19059965
+    deliveryNo: 19059965,
   },
   {
     deliveryType: 'Visit',
@@ -29982,7 +29982,7 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '02',
     deliveryPeeType: '03',
-    deliveryNo: 23908785
+    deliveryNo: 23908785,
   },
   {
     deliveryType: 'Parcel',
@@ -29997,6 +29997,6 @@ export const data = [
     deliveryState: '2',
     deliveryCompany: '01',
     deliveryPeeType: '04',
-    deliveryNo: 24497745
-  }
+    deliveryNo: 24497745,
+  },
 ];

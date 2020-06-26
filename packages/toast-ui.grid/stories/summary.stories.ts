@@ -4,7 +4,7 @@ import { SummaryValueMap } from '../types/store/summary';
 import '../src/css/grid.css';
 
 export default {
-  title: 'Summary'
+  title: 'Summary',
 };
 
 function createDefaultSummaryOption() {
@@ -14,14 +14,14 @@ function createDefaultSummaryOption() {
       price: {
         template(valueMap: SummaryValueMap) {
           return `MAX: ${valueMap.max}<br>MIN: ${valueMap.min}`;
-        }
+        },
       },
       downloadCount: {
         template(valueMap: SummaryValueMap) {
           return `TOTAL: ${valueMap.sum}<br>AVG: ${valueMap.avg.toFixed(2)}`;
-        }
-      }
-    }
+        },
+      },
+    },
   };
   return summary as OptSummaryData;
 }
@@ -30,28 +30,28 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const data = [
     {
       price: 10000,
-      downloadCount: 1000
+      downloadCount: 1000,
     },
     {
       price: 20000,
-      downloadCount: 1000
+      downloadCount: 1000,
     },
     {
       price: 7000,
-      downloadCount: 1000
+      downloadCount: 1000,
     },
     {
       price: 25000,
-      downloadCount: 200
+      downloadCount: 200,
     },
     {
       price: 15000,
-      downloadCount: 1000
-    }
+      downloadCount: 1000,
+    },
   ];
   const columns = [
     { name: 'price', minWidth: 150 },
-    { name: 'downloadCount', minWidth: 150 }
+    { name: 'downloadCount', minWidth: 150 },
   ];
   const summary = createDefaultSummaryOption();
 

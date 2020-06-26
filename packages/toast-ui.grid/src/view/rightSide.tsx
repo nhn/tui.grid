@@ -26,7 +26,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     const { cornerTopHeight, bodyHeight, scrollXHeight } = this.props;
     const style = {
       top: cornerTopHeight,
-      height: bodyHeight - scrollXHeight
+      height: bodyHeight - scrollXHeight,
     };
 
     return <div class={cls('scrollbar-y-inner-border')} style={style} />;
@@ -54,7 +54,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     const style = {
       height: scrollXHeight,
       width: frozenBorderWidth,
-      marginLeft: frozenBorderWidth ? -(frozenBorderWidth + cellBorderWidth) : 0
+      marginLeft: frozenBorderWidth ? -(frozenBorderWidth + cellBorderWidth) : 0,
     };
 
     return <div class={cls('scrollbar-frozen-border')} style={style} />;
@@ -64,7 +64,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     const { frozenBorderWidth } = this.props;
     const style = {
       marginLeft: -frozenBorderWidth,
-      width: frozenBorderWidth
+      width: frozenBorderWidth,
     };
 
     return <div class={cls('frozen-border')} style={style} />;
@@ -75,7 +75,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     const style = {
       display: 'block',
       marginLeft,
-      width
+      width,
     };
 
     return (
@@ -106,7 +106,7 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
     tableBorderWidth,
     bodyHeight,
     summaryPosition,
-    frozenBorderWidth
+    frozenBorderWidth,
   } = dimension;
 
   let cornerTopHeight = headerHeight;
@@ -140,6 +140,6 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
     frozenBorderWidth,
     summaryPosition,
     scrollX,
-    scrollY
+    scrollY,
   };
 })(RightSideComp);

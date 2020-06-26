@@ -44,7 +44,7 @@ class SummaryAreaComp extends Component<Props> {
         <div
           class={cls('summary-area')}
           onScroll={this.handleScroll}
-          ref={el => {
+          ref={(el) => {
             this.el = el;
           }}
         >
@@ -65,6 +65,6 @@ export const SummaryArea = connect<StoreProps, OwnProps>((store, { side }) => {
   return {
     height: summaryHeight,
     columns: column.visibleColumnsBySideWithRowHeader[side],
-    scrollLeft
+    scrollLeft,
   };
 })(SummaryAreaComp);

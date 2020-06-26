@@ -60,7 +60,7 @@ export class SelectEditor implements CellEditor {
     // To hide the initial layer which is having the position which is not calculated properly
     setOpacity(layer, 0);
 
-    const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
+    const data = listItems.map((item) => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(layer, { data });
 
     this.selectBoxEl.on('close', () => {

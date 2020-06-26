@@ -3,7 +3,7 @@ import { data as sortedData } from '../../samples/dataSource/sortedData';
 
 const successResponse = {
   result: true,
-  data: {}
+  data: {},
 };
 
 export function runMockServer() {
@@ -17,10 +17,10 @@ export function runMockServer() {
         contents: data.slice(0, 10),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readPage1');
 
   cy.route({
@@ -32,10 +32,10 @@ export function runMockServer() {
         contents: data.slice(10),
         pagination: {
           page: 2,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readPage2');
 
   cy.route({
@@ -47,10 +47,10 @@ export function runMockServer() {
         contents: sortedData.slice(0, 10),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readAscData');
 
   cy.route({
@@ -62,10 +62,10 @@ export function runMockServer() {
         contents: sortedData.slice(0, 10).reverse(),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readDescData');
 
   cy.route({
@@ -77,10 +77,10 @@ export function runMockServer() {
         contents: data.slice(0, 5),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('perPage5');
 
   cy.route({
@@ -93,10 +93,10 @@ export function runMockServer() {
         contents: data.slice(0, 10),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readPageWithInitParams');
 
   cy.route({
@@ -108,34 +108,34 @@ export function runMockServer() {
         contents: data.slice(0, 10),
         pagination: {
           page: 1,
-          totalCount: 20
-        }
-      }
-    }
+          totalCount: 20,
+        },
+      },
+    },
   }).as('readPageWithRequestParams');
 
   cy.route({
     method: 'POST',
     url: '/api/create',
-    response: successResponse
+    response: successResponse,
   }).as('createData');
 
   cy.route({
     method: 'PUT',
     url: '/api/update',
-    response: successResponse
+    response: successResponse,
   }).as('updateData');
 
   cy.route({
     method: 'DELETE',
     url:
       '/api/delete?deletedRows[0][id]=19&deletedRows[0][name]=The Magic Whip&deletedRows[0][artist]=Blur&deletedRows[0][rowKey]=1',
-    response: successResponse
+    response: successResponse,
   }).as('deleteData');
 
   cy.route({
     method: 'POST',
     url: '/api/modify',
-    response: successResponse
+    response: successResponse,
   }).as('modifyData');
 }

@@ -33,7 +33,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
 
 class SelectFilterComp extends Component<Props> {
   public state = {
-    searchInput: ''
+    searchInput: '',
   };
 
   private handleChange = debounce((ev: Event, id: string) => {
@@ -57,7 +57,7 @@ class SelectFilterComp extends Component<Props> {
     const { columnData, isAllSelected } = this.props;
     const { searchInput } = this.state;
     const data = searchInput.length
-      ? columnData.filter(item => String(item.value).indexOf(searchInput) !== -1)
+      ? columnData.filter((item) => String(item.value).indexOf(searchInput) !== -1)
       : columnData;
 
     return (
@@ -80,7 +80,7 @@ class SelectFilterComp extends Component<Props> {
           </label>
         </li>
         <ul className={cls('filter-list')}>
-          {data.map(item => {
+          {data.map((item) => {
             const { value, checked } = item;
             const text = String(value);
 
@@ -93,7 +93,7 @@ class SelectFilterComp extends Component<Props> {
                   <input
                     type="checkbox"
                     checked={checked}
-                    onChange={ev => this.handleChange(ev, text)}
+                    onChange={(ev) => this.handleChange(ev, text)}
                   />
                   <span>{value}</span>
                 </label>
@@ -115,9 +115,9 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
     const { name: columnName } = columnAddress;
 
     const uniqueColumnData = getUniqColumnData(rawData, column, columnName);
-    const columnData = uniqueColumnData.map(value => ({
+    const columnData = uniqueColumnData.map((value) => ({
       value,
-      checked: some(item => value === item.value, state)
+      checked: some((item) => value === item.value, state),
     }));
 
     return {
@@ -126,7 +126,7 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
       columnInfo: allColumnMap[columnName],
       columnAddress,
       filters,
-      isAllSelected: state.length === uniqueColumnData.length
+      isAllSelected: state.length === uniqueColumnData.length,
     };
   }
 )(SelectFilterComp);

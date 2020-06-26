@@ -10,7 +10,7 @@ function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], 
   const errorValue = avgValue * targetLen - extraWidth; // to correct total width
   const result = [...widths];
 
-  targetIdxes.forEach(idx => {
+  targetIdxes.forEach((idx) => {
     result[idx] += avgValue;
   });
 
@@ -23,7 +23,7 @@ function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], 
 
 function fillEmptyWidth(contentWidth: number, widths: number[]) {
   const remainTotalWidth = contentWidth - sum(widths);
-  const emptyIndexes = findIndexes(width => !width, widths);
+  const emptyIndexes = findIndexes((width) => !width, widths);
 
   return distributeExtraWidthEqually(remainTotalWidth, emptyIndexes, widths);
 }
@@ -68,7 +68,7 @@ function adjustWidths(
   const columnLength = widths.length;
   const totalExtraWidth = availableWidth - sum(widths);
   const fixedCount = fixedFlags.filter(Boolean).length;
-  const fixedIndexes = findIndexes(v => !v, fixedFlags);
+  const fixedIndexes = findIndexes((v) => !v, fixedFlags);
 
   if (totalExtraWidth > 0 && columnLength > fixedCount) {
     return distributeExtraWidthEqually(totalExtraWidth, fixedIndexes, widths);
@@ -76,7 +76,7 @@ function adjustWidths(
 
   if (fitToReducedTotal && totalExtraWidth < 0) {
     const availableWidthInfos = fixedIndexes.map(
-      index => [index, widths[index] - minWidths[index]] as [number, number]
+      (index) => [index, widths[index] - minWidths[index]] as [number, number]
     );
     return reduceExcessColumnWidthSub(totalExtraWidth, availableWidthInfos, widths);
   }
@@ -123,14 +123,14 @@ export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords 
 
       return {
         L: widths.slice(0, visibleFrozenCount),
-        R: widths.slice(visibleFrozenCount)
+        R: widths.slice(visibleFrozenCount),
       };
     },
 
     get offsets(this: ColumnCoords) {
       return {
         L: calculateOffsets(this.widths.L, dimension.cellBorderWidth),
-        R: calculateOffsets(this.widths.R, dimension.cellBorderWidth)
+        R: calculateOffsets(this.widths.R, dimension.cellBorderWidth),
       };
     },
 
@@ -146,15 +146,15 @@ export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords 
 
       return {
         L: leftAreaWidth - frozenBorderWidth,
-        R: width - leftAreaWidth
+        R: width - leftAreaWidth,
       };
     },
 
     get totalColumnWidth(this: ColumnCoords) {
       return {
         L: last(this.offsets.L) + last(this.widths.L),
-        R: last(this.offsets.R) + last(this.widths.R)
+        R: last(this.offsets.R) + last(this.widths.R),
       };
-    }
+    },
   });
 }

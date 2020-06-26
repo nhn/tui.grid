@@ -9,7 +9,7 @@ import {
   setCursorStyle,
   hasClass,
   isDatePickerElement,
-  findParent
+  findParent,
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -57,7 +57,7 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
   'totalRowHeight',
   'offsetLeft',
   'offsetTop',
-  'totalColumnWidth'
+  'totalColumnWidth',
 ];
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISTANCE_FOR_DRAG = 10;
@@ -69,7 +69,7 @@ class BodyAreaComp extends Component<Props> {
 
   private dragStartData: DragStartData = {
     pageX: null,
-    pageY: null
+    pageY: null,
   };
 
   private prevScrollLeft = 0;
@@ -178,7 +178,7 @@ class BodyAreaComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
-    return some(propName => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
+    return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
   public componentWillReceiveProps(nextProps: Props) {
@@ -199,7 +199,7 @@ class BodyAreaComp extends Component<Props> {
     dummyRowCount,
     scrollX,
     scrollY,
-    cellBorderWidth
+    cellBorderWidth,
   }: Props) {
     const areaStyle: AreaStyle = { height: bodyHeight };
     if (!scrollX) {
@@ -212,11 +212,11 @@ class BodyAreaComp extends Component<Props> {
       top: totalRowHeight ? offsetTop : 0,
       left: totalRowHeight ? offsetLeft : 0,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
-      overflow: dummyRowCount ? 'hidden' : 'visible'
+      overflow: dummyRowCount ? 'hidden' : 'visible',
     };
     const containerStyle = {
       width: totalColumnWidth + (side === 'R' ? 0 : cellBorderWidth),
-      height: totalRowHeight ? totalRowHeight + cellBorderWidth : '100%'
+      height: totalRowHeight ? totalRowHeight + cellBorderWidth : '100%',
     };
 
     return (
@@ -225,7 +225,7 @@ class BodyAreaComp extends Component<Props> {
         style={areaStyle}
         onScroll={this.handleScroll}
         onMouseDown={this.handleMouseDown}
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
       >
@@ -265,6 +265,6 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollX,
     scrollY,
     cellBorderWidth,
-    eventBus: getEventBus(id)
+    eventBus: getEventBus(id),
   };
 })(BodyAreaComp);

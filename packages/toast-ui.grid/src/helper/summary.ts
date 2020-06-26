@@ -19,20 +19,20 @@ function assignFilteredSummaryValue(summaryValue: SummaryValue) {
       min,
       max,
       avg,
-      cnt
-    }
+      cnt,
+    },
   };
 }
 
 export function getSummaryValue(columnName: string, rawData: Row[], filteredRawData: Row[]) {
-  const columnValues = rawData.map(row => row[columnName]);
+  const columnValues = rawData.map((row) => row[columnName]);
   const summaryValue = calculate(columnValues);
 
   if (rawData.length === filteredRawData.length) {
     return { ...summaryValue, ...assignFilteredSummaryValue(summaryValue) };
   }
 
-  const filteredColumnValues = filteredRawData.map(row => row[columnName]);
+  const filteredColumnValues = filteredRawData.map((row) => row[columnName]);
   return { ...summaryValue, ...assignFilteredSummaryValue(calculate(filteredColumnValues)) };
 }
 
@@ -77,7 +77,7 @@ export function castToSummaryColumnContent(content?: ColumnContentType): Summary
     : {
         template: content.template,
         useAutoSummary:
-          typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary
+          typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary,
       };
 }
 

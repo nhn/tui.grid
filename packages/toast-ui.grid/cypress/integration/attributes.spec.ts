@@ -1,7 +1,7 @@
 import { cls } from '@/helper/dom';
 
 function assertDisabledBodyCells(disabled: boolean) {
-  cy.getBodyCells().each($el => {
+  cy.getBodyCells().each(($el) => {
     if (disabled) {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     } else {
@@ -21,7 +21,7 @@ describe('className', () => {
         name: 'Kim',
         age: 30,
         location: 'seoul',
-        _attributes: { className: { row: ['row-test-a'] } }
+        _attributes: { className: { row: ['row-test-a'] } },
       },
       {
         name: 'Lee',
@@ -29,9 +29,9 @@ describe('className', () => {
         location: 'busan',
         _attributes: {
           className: {
-            column: { age: ['column-test-a'], location: ['column-test-b'] }
-          }
-        }
+            column: { age: ['column-test-a'], location: ['column-test-b'] },
+          },
+        },
       },
       {
         name: 'Han',
@@ -40,10 +40,10 @@ describe('className', () => {
         _attributes: {
           className: {
             row: ['row-test-a'],
-            column: { name: ['column-test-a'], location: ['column-test-b'] }
-          }
-        }
-      }
+            column: { name: ['column-test-a'], location: ['column-test-b'] },
+          },
+        },
+      },
     ];
     const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
 
@@ -60,13 +60,13 @@ describe('className', () => {
   it('addColumnClassName() / removeColumnClassName()', () => {
     cy.gridInstance().invoke('addColumnClassName', 'age', 'column-test-d');
 
-    cy.getColumnCells('age').each($el => {
+    cy.getColumnCells('age').each(($el) => {
       cy.wrap($el).should('have.class', 'column-test-d');
     });
 
     cy.gridInstance().invoke('removeColumnClassName', 'age', 'column-test-d');
 
-    cy.getColumnCells('age').each($el => {
+    cy.getColumnCells('age').each(($el) => {
       cy.wrap($el).should('not.have.class', 'column-test-d');
     });
   });
@@ -84,13 +84,13 @@ describe('className', () => {
   it('addRowClassName() / removeRowClassName()', () => {
     cy.gridInstance().invoke('addRowClassName', 1, 'tui-grid-row-test');
 
-    cy.getCells(1).each($el => {
+    cy.getCells(1).each(($el) => {
       cy.wrap($el).should('have.class', 'tui-grid-row-test');
     });
 
     cy.gridInstance().invoke('removeRowClassName', 1, 'tui-grid-row-test');
 
-    cy.getCells(1).each($el => {
+    cy.getCells(1).each(($el) => {
       cy.wrap($el).should('not.have.class', 'tui-grid-row-test');
     });
   });
@@ -103,20 +103,20 @@ describe('row disabled', () => {
         name: 'Kim',
         age: 30,
         location: 'seoul',
-        _attributes: { checkDisabled: true }
+        _attributes: { checkDisabled: true },
       },
       {
         name: 'Lee',
         age: 40,
         location: 'busan',
-        _attributes: { disabled: true }
+        _attributes: { disabled: true },
       },
       {
         name: 'Han',
         age: 28,
         location: 'Bundang',
-        _attributes: { checkDisabled: false, disabled: true }
-      }
+        _attributes: { checkDisabled: false, disabled: true },
+      },
     ];
     const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
 
@@ -135,7 +135,7 @@ describe('row disabled', () => {
     });
 
     // second row
-    cy.getCells(1).each($el => {
+    cy.getCells(1).each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
@@ -153,7 +153,7 @@ describe('row disabled', () => {
   it('enableRow() / disableRow()', () => {
     cy.gridInstance().invoke('disableRow', 1);
 
-    cy.getCells(1).each($el => {
+    cy.getCells(1).each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
@@ -187,19 +187,19 @@ describe('disabled precedence', () => {
         name: 'Kim',
         age: 30,
         location: 'seoul',
-        _attributes: { checkDisabled: true }
+        _attributes: { checkDisabled: true },
       },
       {
         name: 'Lee',
         age: 40,
-        location: 'busan'
+        location: 'busan',
       },
       {
         name: 'Han',
         age: 28,
         location: 'Bundang',
-        _attributes: { checkDisabled: false, disabled: true }
-      }
+        _attributes: { checkDisabled: false, disabled: true },
+      },
     ];
     const columns = [{ name: 'name' }, { name: 'age', disabled: true }, { name: 'location' }];
 
@@ -226,7 +226,7 @@ describe('disabled precedence', () => {
 
     cy.gridInstance().invoke('disableRow', 0);
 
-    cy.getCells(0).each($el => {
+    cy.getCells(0).each(($el) => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
@@ -242,18 +242,18 @@ describe('all disabled', () => {
       {
         name: 'Kim',
         age: 30,
-        location: 'seoul'
+        location: 'seoul',
       },
       {
         name: 'Lee',
         age: 40,
-        location: 'busan'
+        location: 'busan',
       },
       {
         name: 'Han',
         age: 28,
-        location: 'Bundang'
-      }
+        location: 'Bundang',
+      },
     ];
     const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
 
@@ -280,19 +280,19 @@ it('header checkbox should be checked when all checkbox is checked except disabl
     {
       name: 'Kim',
       age: 30,
-      location: 'seoul'
+      location: 'seoul',
     },
     {
       name: 'Lee',
       age: 40,
       location: 'busan',
-      _attributes: { checkDisabled: true }
+      _attributes: { checkDisabled: true },
     },
     {
       name: 'Han',
       age: 28,
-      location: 'Bundang'
-    }
+      location: 'Bundang',
+    },
   ];
   const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
 
@@ -300,7 +300,5 @@ it('header checkbox should be checked when all checkbox is checked except disabl
   cy.gridInstance().invoke('check', 0);
   cy.gridInstance().invoke('check', 2);
 
-  cy.getHeaderCell('_checked')
-    .find('input')
-    .should('be.checked');
+  cy.getHeaderCell('_checked').find('input').should('be.checked');
 });

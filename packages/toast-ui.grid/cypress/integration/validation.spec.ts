@@ -11,13 +11,13 @@ interface WindowWithGrid extends Window {
 
 const data = [
   { name: 'note', price: 10000 },
-  { name: 'pen', price: 4000 }
+  { name: 'pen', price: 4000 },
 ];
 
 it('should check the validation of cell - required', () => {
   cy.createGrid({
     data,
-    columns: [{ name: 'name', validation: { required: true } }]
+    columns: [{ name: 'name', validation: { required: true } }],
   });
 
   cy.gridInstance().invoke('setValue', 0, 'name', '');
@@ -29,7 +29,7 @@ describe('should check the validation of cell - regExp', () => {
   beforeEach(() => {
     cy.createGrid({
       data,
-      columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
+      columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }],
     });
   });
 
@@ -47,21 +47,21 @@ describe('should check the validation of cell - regExp', () => {
             {
               columnName: 'name',
               errorCode: ['REGEXP'],
-              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
-            }
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }],
+            },
           ],
-          rowKey: 0
+          rowKey: 0,
         },
         {
           errors: [
             {
               columnName: 'name',
               errorCode: ['REGEXP'],
-              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }]
-            }
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }],
+            },
           ],
-          rowKey: 1
-        }
+          rowKey: 1,
+        },
       ]);
   });
 });
@@ -70,7 +70,7 @@ describe('should check the validation of cell - dataType: string', () => {
   it('check `string` type validation', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'name', validation: { dataType: 'string' } }]
+      columns: [{ name: 'name', validation: { dataType: 'string' } }],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'name', 123);
@@ -81,7 +81,7 @@ describe('should check the validation of cell - dataType: string', () => {
   it('min and max work if the value is a string type number.', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'string', min: 10, max: 20 } }]
+      columns: [{ name: 'price', validation: { dataType: 'string', min: 10, max: 20 } }],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', '21');
@@ -94,7 +94,7 @@ describe('should check the validation of cell - dataType: number', () => {
   it('check `number` type validation', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'number' } }]
+      columns: [{ name: 'price', validation: { dataType: 'number' } }],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 'test');
@@ -105,7 +105,7 @@ describe('should check the validation of cell - dataType: number', () => {
   it('check `min` value validation', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }]
+      columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 0);
@@ -116,7 +116,7 @@ describe('should check the validation of cell - dataType: number', () => {
   it('check `max` value validation', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }]
+      columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 25);
@@ -127,7 +127,7 @@ describe('should check the validation of cell - dataType: number', () => {
   it('get validation result with max by validate API', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'number', max: 4000 } }]
+      columns: [{ name: 'price', validation: { dataType: 'number', max: 4000 } }],
     });
 
     cy.gridInstance()
@@ -138,18 +138,18 @@ describe('should check the validation of cell - dataType: number', () => {
             {
               columnName: 'price',
               errorCode: ['MAX'],
-              errorInfo: [{ code: 'MAX', max: 4000 }]
-            }
+              errorInfo: [{ code: 'MAX', max: 4000 }],
+            },
           ],
-          rowKey: 0
-        }
+          rowKey: 0,
+        },
       ]);
   });
 
   it('get validation result with min by validate API', () => {
     cy.createGrid({
       data,
-      columns: [{ name: 'price', validation: { dataType: 'number', min: 5000 } }]
+      columns: [{ name: 'price', validation: { dataType: 'number', min: 5000 } }],
     });
 
     cy.gridInstance()
@@ -160,11 +160,11 @@ describe('should check the validation of cell - dataType: number', () => {
             {
               columnName: 'price',
               errorCode: ['MIN'],
-              errorInfo: [{ code: 'MIN', min: 5000 }]
-            }
+              errorInfo: [{ code: 'MIN', min: 5000 }],
+            },
           ],
-          rowKey: 1
-        }
+          rowKey: 1,
+        },
       ]);
   });
 });
@@ -183,10 +183,10 @@ describe('should check the validation of cell - validatorFn', () => {
         {
           name: 'name',
           validation: {
-            validatorFn: (value: number) => value > 20 && value < 30
-          }
-        }
-      ]
+            validatorFn: (value: number) => value > 20 && value < 30,
+          },
+        },
+      ],
     });
 
     cy.gridInstance().invoke('setValue', 0, 'name', 19);
@@ -201,10 +201,10 @@ describe('should check the validation of cell - validatorFn', () => {
         {
           name: 'name',
           validation: {
-            validatorFn: stub
-          }
-        }
-      ]
+            validatorFn: stub,
+          },
+        },
+      ],
     });
 
     cy.wrap(stub).should('be.calledWithMatch', 'note', { rowKey: 0, name: 'note' }, 'name');
@@ -224,10 +224,10 @@ describe('should check the validation of cell - validatorFn', () => {
                   stub();
                 }
                 return true;
-              }
-            }
-          }
-        ]
+              },
+            },
+          },
+        ],
       });
 
       cy.gridInstance().invoke('appendRow', {});
@@ -250,10 +250,10 @@ describe('should check the validation of cell - validatorFn', () => {
                   stub(win.grid.getColumnValues('name'));
                 }
                 return true;
-              }
-            }
-          }
-        ]
+              },
+            },
+          },
+        ],
       });
 
       cy.gridInstance().invoke('appendRow', { name: 'pencil', price: 100 });
@@ -275,10 +275,10 @@ describe('should check the validation of cell - validatorFn', () => {
           validation: {
             validatorFn: (value: number) => {
               return { valid: value > 3000 && value < 10000, meta: { customCode: 'CUSTOM' } };
-            }
-          }
-        }
-      ]
+            },
+          },
+        },
+      ],
     });
 
     cy.gridInstance()
@@ -289,11 +289,11 @@ describe('should check the validation of cell - validatorFn', () => {
             {
               columnName: 'price',
               errorCode: ['VALIDATOR_FN'],
-              errorInfo: [{ code: 'VALIDATOR_FN', customCode: 'CUSTOM' }]
-            }
+              errorInfo: [{ code: 'VALIDATOR_FN', customCode: 'CUSTOM' }],
+            },
           ],
-          rowKey: 0
-        }
+          rowKey: 0,
+        },
       ]);
   });
 });
@@ -307,10 +307,10 @@ it('should check the validation of cell - combined', () => {
         validation: {
           min: 10,
           max: 30,
-          validatorFn: (value: number) => value !== 25
-        }
-      }
-    ]
+          validatorFn: (value: number) => value !== 25,
+        },
+      },
+    ],
   });
 
   cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
@@ -323,7 +323,7 @@ it('should check the validation of cell - combined', () => {
 it('should check the validation of cell after editing', () => {
   cy.createGrid({
     data,
-    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }],
   });
 
   cy.gridInstance().invoke('startEditing', 0, 'name');
@@ -336,7 +336,7 @@ it('should check the validation of cell after editing', () => {
 it('validate changed value after calling resetData API', () => {
   cy.createGrid({
     data: [],
-    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }],
   });
   cy.gridInstance().invoke('resetData', [{ name: '' }]);
 
@@ -346,11 +346,11 @@ it('validate changed value after calling resetData API', () => {
 it('validate changed value after calling setColumns API', () => {
   const columns = [
     { name: 'name', editor: 'text' },
-    { name: 'price', editor: 'text' }
+    { name: 'price', editor: 'text' },
   ];
-  const columnsWithValidation = columns.map(column => ({
+  const columnsWithValidation = columns.map((column) => ({
     ...column,
-    validation: { required: true }
+    validation: { required: true },
   }));
 
   cy.createGrid({ data: [{ name: 'name', price: '' }], columns });
@@ -365,7 +365,7 @@ describe('should check the validation of cell - unique', () => {
     const duplicateData = [
       { name: 'pen', price: 2000 },
       { name: 'note', price: 10000 },
-      { name: 'note', price: 4000 }
+      { name: 'note', price: 4000 },
     ];
     cy.createGrid({
       data: duplicateData,
@@ -374,17 +374,17 @@ describe('should check the validation of cell - unique', () => {
           name: 'name',
           editor: 'text',
           validation: {
-            unique: true
-          }
+            unique: true,
+          },
         },
         {
           name: 'price',
           validation: {
-            unique: true
-          }
-        }
+            unique: true,
+          },
+        },
       ],
-      rowHeaders: ['checkbox']
+      rowHeaders: ['checkbox'],
     });
   });
 
@@ -406,7 +406,7 @@ describe('should check the validation of cell - unique', () => {
   it('check `unique` validation after calling appendRows', () => {
     cy.gridInstance().invoke('appendRows', [
       { name: 'pen', price: 100 },
-      { name: 'eraser', price: 3200 }
+      { name: 'eraser', price: 3200 },
     ]);
 
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
@@ -419,7 +419,7 @@ describe('should check the validation of cell - unique', () => {
   it('check `unique` validation after calling appendRows', () => {
     cy.gridInstance().invoke('appendRows', [
       { name: 'pen', price: 100 },
-      { name: 'eraser', price: 3200 }
+      { name: 'eraser', price: 3200 },
     ]);
 
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
@@ -471,7 +471,7 @@ describe('should check the validation of cell - unique', () => {
   it('clear existing unique info properly after calling resetData', () => {
     cy.gridInstance().invoke('resetData', [
       { name: 'note', price: 10000 },
-      { name: 'pen', price: 2000 }
+      { name: 'pen', price: 2000 },
     ]);
 
     cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));

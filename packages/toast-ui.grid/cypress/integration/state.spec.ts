@@ -18,17 +18,17 @@ function runMockServer() {
         contents: [{ A: 'test', B: 'test' }],
         pagination: {
           page: 1,
-          totalCount: 2
-        }
-      }
-    }
+          totalCount: 2,
+        },
+      },
+    },
   });
 }
 
 const data = {
   api: {
-    readData: { url: '/api/read', method: 'GET' }
-  }
+    readData: { url: '/api/read', method: 'GET' },
+  },
 };
 
 it('should show "No data." text when there is no data.', () => {

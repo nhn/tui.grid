@@ -19,7 +19,7 @@ import {
   OptHeader,
   OptRow,
   OptColumn,
-  ResetOptions
+  ResetOptions,
 } from './options';
 import {
   ModifiedRowsOptions,
@@ -27,7 +27,7 @@ import {
   Params,
   RequestType,
   ModificationTypeCode,
-  RequestOptions
+  RequestOptions,
 } from './dataSource';
 import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
 
@@ -306,6 +306,6 @@ export {
   RequestOptions,
   FilterOptionType,
   Filter,
-  FilterState
+  FilterState,
 };
 export default tui.Grid;

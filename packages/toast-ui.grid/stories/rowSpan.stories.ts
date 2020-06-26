@@ -2,7 +2,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'RowSpan'
+  title: 'RowSpan',
 };
 
 const data = [
@@ -13,14 +13,14 @@ const data = [
     _attributes: {
       rowSpan: {
         name: 2,
-        artist: 3
-      }
-    }
+        artist: 3,
+      },
+    },
   },
   {
     name: 'Beautiful Lies',
     artist: 'Birdy',
-    type: 'Deluxe'
+    type: 'Deluxe',
   },
   {
     name: 'Skinny Love',
@@ -28,14 +28,14 @@ const data = [
     type: 'Single',
     _attributes: {
       rowSpan: {
-        type: 2
-      }
-    }
+        type: 2,
+      },
+    },
   },
   {
     name: 'A Head Full Of Dreams',
     artist: 'Coldplay',
-    type: 'Single'
+    type: 'Single',
   },
   {
     name: '21',
@@ -43,31 +43,31 @@ const data = [
     type: 'Deluxe',
     _attributes: {
       rowSpan: {
-        artist: 3
-      }
-    }
+        artist: 3,
+      },
+    },
   },
   {
     name: '25',
     artist: 'Adele',
-    type: 'Deluxe'
+    type: 'Deluxe',
   },
   {
     name: 'Water Under The Bridge',
     artist: 'Adele',
-    type: 'Single'
+    type: 'Single',
   },
   {
     name: 'Make Out',
     artist: 'LANY',
-    type: 'EP'
-  }
+    type: 'EP',
+  },
 ];
 
 const columns = [
   { name: 'name', editor: 'text' },
   { name: 'artist', editor: 'text' },
-  { name: 'type', editor: 'text' }
+  { name: 'type', editor: 'text' },
 ];
 
 function createGrid() {

@@ -12,7 +12,7 @@ import {
   setLoadingState,
   updateRowNumber,
   setCheckedAllRows,
-  uncheck
+  uncheck,
 } from './data';
 import {
   getParentRow,
@@ -24,7 +24,7 @@ import {
   isLeaf,
   isExpanded,
   isRootChildRow,
-  getDepth
+  getDepth,
 } from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -83,7 +83,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
   updateTreeColumnWidth(childRowKeys, column, columnCoords, data.rawData);
 
-  childRowKeys.forEach(childRowKey => {
+  childRowKeys.forEach((childRowKey) => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
 
     if (!childRow) {
@@ -236,7 +236,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
 
   const childRowKeys = getChildRowKeys(row);
 
-  childRowKeys.forEach(childRowKey => {
+  childRowKeys.forEach((childRowKey) => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
 
     if (!childRow) {
@@ -277,7 +277,7 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
   if (row) {
     traverseAncestorRows(rawData, row, (parentRow: Row) => {
       const childRowKeys = getChildRowKeys(parentRow);
-      const checkedChildRows = childRowKeys.filter(childRowKey => {
+      const checkedChildRows = childRowKeys.filter((childRowKey) => {
         const childRow = findRowByRowKey(data, column, id, childRowKey);
 
         return !!childRow && childRow._attributes.checked;
@@ -329,7 +329,7 @@ export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean
 }
 
 export function expandAll(store: Store) {
-  store.data.rawData.forEach(row => {
+  store.data.rawData.forEach((row) => {
     if (isRootChildRow(row) && !isLeaf(row)) {
       expand(store, row, true);
     }
@@ -346,7 +346,7 @@ export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boole
 }
 
 export function collapseAll(store: Store) {
-  store.data.rawData.forEach(row => {
+  store.data.rawData.forEach((row) => {
     if (isRootChildRow(row) && !isLeaf(row)) {
       collapse(store, row, true);
     }
@@ -372,17 +372,17 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
   const rawRows = flattenTreeData(id, [row], parentRow!, column, {
     keyColumnName: column.keyColumnName,
-    offset
+    offset,
   });
 
   fillMissingColumnData(column, rawRows);
 
   batchedInvokeObserver(() => {
     rawData.splice(startIdx, 0, ...rawRows);
-    const viewRows = rawRows.map(rawRow => createViewRow(id, rawRow, rawData, column));
+    const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
     viewData.splice(startIdx, 0, ...viewRows);
   });
-  const rowHeights = rawRows.map(rawRow => {
+  const rowHeights = rawRows.map((rawRow) => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
     getDataManager(id).push('CREATE', rawRow, true);
 

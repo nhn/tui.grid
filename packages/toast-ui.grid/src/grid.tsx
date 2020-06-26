@@ -16,7 +16,7 @@ import {
   Dictionary,
   OptFilter,
   LifeCycleEventName,
-  ResetOptions
+  ResetOptions,
 } from '@t/options';
 import { Store } from '@t/store';
 import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
@@ -31,7 +31,7 @@ import {
   ModifiedRowsOptions,
   Params,
   ModifiedDataManager,
-  ModificationTypeCode
+  ModificationTypeCode,
 } from '@t/dataSource';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -52,7 +52,7 @@ import {
   findIndexByRowKey,
   findRowByRowKey,
   getRowHeight,
-  getFormattedValue
+  getFormattedValue,
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -64,7 +64,7 @@ import {
   getChildRows,
   getAncestorRows,
   getDescendantRows,
-  getDepth
+  getDepth,
 } from './query/tree';
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
@@ -319,7 +319,7 @@ export default class Grid implements TuiGrid {
     }
 
     const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
-    Object.keys(lifeCycleEvent).forEach(eventName => {
+    Object.keys(lifeCycleEvent).forEach((eventName) => {
       this.eventBus.on(
         eventName as LifeCycleEventName,
         lifeCycleEvent[eventName as LifeCycleEventName]!
@@ -582,7 +582,7 @@ export default class Grid implements TuiGrid {
 
       return {
         start: [row[0], column[0]],
-        end: [row[1], column[1]]
+        end: [row[1], column[1]],
       };
     }
 
@@ -811,7 +811,7 @@ export default class Grid implements TuiGrid {
   public getColumns() {
     return this.store.column.allColumns
       .filter(({ name }) => !isRowHeader(name))
-      .map(column => getOriginObject(column as Observable<ColumnInfo>));
+      .map((column) => getOriginObject(column as Observable<ColumnInfo>));
   }
 
   /**
@@ -912,7 +912,7 @@ export default class Grid implements TuiGrid {
    */
   public getCheckedRows(): Row[] {
     const { rows } = getCheckedRowInfoList(this.store);
-    return rows.map(row => getOriginObject(row as Observable<Row>));
+    return rows.map((row) => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -1173,7 +1173,7 @@ export default class Grid implements TuiGrid {
    * @returns {Array} - A list of all rows
    */
   public getData() {
-    return this.store.data.rawData.map(row => getOriginObject(row as Observable<Row>));
+    return this.store.data.rawData.map((row) => getOriginObject(row as Observable<Row>));
   }
 
   /**

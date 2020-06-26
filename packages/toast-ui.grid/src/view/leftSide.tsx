@@ -35,5 +35,5 @@ class LeftSideComp extends Component<Props> {
 export const LeftSide = connect<StoreProps>(({ columnCoords, dimension }) => ({
   width: columnCoords.areaWidth.L,
   scrollX: dimension.scrollX,
-  summaryPosition: dimension.summaryPosition
+  summaryPosition: dimension.summaryPosition,
 }))(LeftSideComp);

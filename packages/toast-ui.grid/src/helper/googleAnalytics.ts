@@ -47,7 +47,7 @@ export function sendHostname() {
 
   window.localStorage.setItem(applicationKeyForStorage, String(new Date().getTime()));
 
-  setTimeout(function() {
+  setTimeout(function () {
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
       imagePing('https://www.google-analytics.com/collect', {
         v: 1,
@@ -57,7 +57,7 @@ export function sendHostname() {
         dp: hostname,
         dh: 'grid',
         el: 'grid',
-        ec: 'use'
+        ec: 'use',
       });
     }
   }, 1000);

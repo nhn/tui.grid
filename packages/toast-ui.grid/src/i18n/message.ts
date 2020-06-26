@@ -7,14 +7,14 @@ const confirmMessageMap: MessageMap = {
   CREATE: 'net.confirmCreate',
   UPDATE: 'net.confirmUpdate',
   DELETE: 'net.confirmDelete',
-  MODIFY: 'net.confirmModify'
+  MODIFY: 'net.confirmModify',
 };
 
 const alertMessageMap: MessageMap = {
   CREATE: 'net.noDataToCreate',
   UPDATE: 'net.noDataToUpdate',
   DELETE: 'net.noDataToDelete',
-  MODIFY: 'net.noDataToModify'
+  MODIFY: 'net.noDataToModify',
 };
 
 export function getConfirmMessage(type: RequestTypeCode, count: number) {

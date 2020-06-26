@@ -6,20 +6,20 @@ export const twoDepthData: Dictionary<ListItem[]> = {
     { text: '', value: '' },
     { text: 'Balad/Dance/Pop', value: '01_01' },
     { text: 'Hiphop/R&B', value: '01_02' },
-    { text: 'Indie', value: '01_03' }
+    { text: 'Indie', value: '01_03' },
   ],
   '02': [
     { text: '', value: '' },
     { text: 'Pop', value: '02_01' },
     { text: 'Hiphop', value: '02_02' },
-    { text: 'R&B', value: '02_03' }
+    { text: 'R&B', value: '02_03' },
   ],
   '03': [
     { text: '', value: '' },
     { text: 'OST', value: '03_01' },
     { text: 'Classic', value: '03_02' },
-    { text: 'New Age', value: '03_03' }
-  ]
+    { text: 'New Age', value: '03_03' },
+  ],
 };
 
 export const threeDepthData: Dictionary<ListItem[]> = {
@@ -31,7 +31,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Beautiful', value: '01_01_0004' },
     { text: 'KNOCK KNOCK', value: '01_01_0005' },
     { text: 'Rookie', value: '01_01_0006' },
-    { text: 'Round And Round', value: '01_01_0007' }
+    { text: 'Round And Round', value: '01_01_0007' },
   ],
   '01_02': [
     { text: '', value: '' },
@@ -41,7 +41,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Comedian', value: '01_02_0004' },
     { text: 'what2do', value: '01_02_0005' },
     { text: 'Bye bye my blue', value: '01_02_0006' },
-    { text: 'I NEED U', value: '01_02_0007' }
+    { text: 'I NEED U', value: '01_02_0007' },
   ],
   '01_03': [
     { text: '', value: '' },
@@ -51,7 +51,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Come Back Home', value: '01_03_0004' },
     { text: 'MONSTER', value: '01_03_0005' },
     { text: 'Free Somebody', value: '01_03_0006' },
-    { text: 'Vineyard', value: '01_03_0007' }
+    { text: 'Vineyard', value: '01_03_0007' },
   ],
   '02_01': [
     { text: '', value: '' },
@@ -61,7 +61,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Stay With Me', value: '02_01_0004' },
     { text: "I'm Not The Only One", value: '02_01_0005' },
     { text: 'Youth', value: '02_01_0006' },
-    { text: 'Love On Top', value: '02_01_0007' }
+    { text: 'Love On Top', value: '02_01_0007' },
   ],
   '02_02': [
     { text: '', value: '' },
@@ -71,7 +71,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Love The Way You Lie', value: '02_02_0004' },
     { text: 'I Feel It Coming', value: '02_02_0005' },
     { text: 'GDFR', value: '02_02_0006' },
-    { text: 'Love Me In Everything', value: '02_02_0007' }
+    { text: 'Love Me In Everything', value: '02_02_0007' },
   ],
   '02_03': [
     { text: '', value: '' },
@@ -81,7 +81,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Happy', value: '02_03_0004' },
     { text: 'If You Wonder', value: '02_03_0005' },
     { text: 'Want To Want Me', value: '02_03_0006' },
-    { text: 'Get Lucky', value: '02_03_0007' }
+    { text: 'Get Lucky', value: '02_03_0007' },
   ],
   '03_01': [
     { text: '', value: '' },
@@ -89,7 +89,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'You Are My Everything', value: '03_01_0002' },
     { text: 'Summer Montage / Madeline', value: '03_01_0003' },
     { text: 'Memory', value: '03_01_0004' },
-    { text: 'A Lovely Night', value: '03_01_0005' }
+    { text: 'A Lovely Night', value: '03_01_0005' },
   ],
   '03_02': [
     { text: '', value: '' },
@@ -97,7 +97,7 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Elgar: Salut D`amour', value: '03_02_0002' },
     { text: 'Refuse', value: '03_02_0003' },
     { text: 'Liebestraume S541: No. 3 in A flat', value: '03_02_0004' },
-    { text: 'Three Romances Op94: nr 2 in A', value: '03_02_0005' }
+    { text: 'Three Romances Op94: nr 2 in A', value: '03_02_0005' },
   ],
   '03_03': [
     { text: '', value: '' },
@@ -105,8 +105,8 @@ export const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Blind Film', value: '03_03_0002' },
     { text: 'Merry Christmas Mr.Lawrence', value: '03_03_0003' },
     { text: 'After The Play', value: '03_03_0004' },
-    { text: 'River Flows In You', value: '03_03_0005' }
-  ]
+    { text: 'River Flows In You', value: '03_03_0005' },
+  ],
 };
 
 export const data = [
@@ -115,20 +115,20 @@ export const data = [
     category1: '',
     category2: '',
     category3: '',
-    category4: ''
+    category4: '',
   },
   {
     category1: '02',
     category2: '02_03',
     category3: '02_03_0001',
-    category4: '01'
+    category4: '01',
   },
   {
     category1: '03',
     category2: '03_01',
     category3: '03_01_0001',
-    category4: '02'
-  }
+    category4: '02',
+  },
 ];
 
 export const orderedRelationColumns = [
@@ -143,9 +143,9 @@ export const orderedRelationColumns = [
           { text: '', value: '' },
           { text: 'Domestic', value: '01' },
           { text: 'Overseas', value: '02' },
-          { text: 'Etc', value: '03' }
-        ]
-      }
+          { text: 'Etc', value: '03' },
+        ],
+      },
     },
     relations: [
       {
@@ -158,9 +158,9 @@ export const orderedRelationColumns = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     header: 'Category2',
@@ -169,8 +169,8 @@ export const orderedRelationColumns = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
+        listItems: [],
+      },
     },
     relations: [
       {
@@ -183,9 +183,9 @@ export const orderedRelationColumns = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     header: 'Category3',
@@ -194,9 +194,9 @@ export const orderedRelationColumns = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
-    }
+        listItems: [],
+      },
+    },
   },
   {
     header: 'No relation',
@@ -208,11 +208,11 @@ export const orderedRelationColumns = [
         listItems: [
           { text: 'Select', value: '' },
           { text: 'no', value: '01' },
-          { text: 'relation', value: '02' }
-        ]
-      }
-    }
-  }
+          { text: 'relation', value: '02' },
+        ],
+      },
+    },
+  },
 ];
 
 export const unorderedRelationColumns1 = [
@@ -223,8 +223,8 @@ export const unorderedRelationColumns1 = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
+        listItems: [],
+      },
     },
     relations: [
       {
@@ -237,9 +237,9 @@ export const unorderedRelationColumns1 = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     header: 'Category1',
@@ -252,9 +252,9 @@ export const unorderedRelationColumns1 = [
           { text: '', value: '' },
           { text: 'Domestic', value: '01' },
           { text: 'Overseas', value: '02' },
-          { text: 'Etc', value: '03' }
-        ]
-      }
+          { text: 'Etc', value: '03' },
+        ],
+      },
     },
     relations: [
       {
@@ -267,9 +267,9 @@ export const unorderedRelationColumns1 = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     header: 'No relation',
@@ -281,10 +281,10 @@ export const unorderedRelationColumns1 = [
         listItems: [
           { text: 'Select', value: '' },
           { text: 'no', value: '01' },
-          { text: 'relation', value: '02' }
-        ]
-      }
-    }
+          { text: 'relation', value: '02' },
+        ],
+      },
+    },
   },
   {
     header: 'Category3',
@@ -293,10 +293,10 @@ export const unorderedRelationColumns1 = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
-    }
-  }
+        listItems: [],
+      },
+    },
+  },
 ];
 
 export const unorderedRelationColumns2 = [
@@ -307,8 +307,8 @@ export const unorderedRelationColumns2 = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
+        listItems: [],
+      },
     },
     relations: [
       {
@@ -321,9 +321,9 @@ export const unorderedRelationColumns2 = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     header: 'No relation',
@@ -335,10 +335,10 @@ export const unorderedRelationColumns2 = [
         listItems: [
           { text: 'Select', value: '' },
           { text: 'no', value: '01' },
-          { text: 'relation', value: '02' }
-        ]
-      }
-    }
+          { text: 'relation', value: '02' },
+        ],
+      },
+    },
   },
   {
     header: 'Category3',
@@ -347,9 +347,9 @@ export const unorderedRelationColumns2 = [
     editor: {
       type: 'select',
       options: {
-        listItems: []
-      }
-    }
+        listItems: [],
+      },
+    },
   },
   {
     header: 'Category1',
@@ -362,9 +362,9 @@ export const unorderedRelationColumns2 = [
           { text: '', value: '' },
           { text: 'Domestic', value: '01' },
           { text: 'Overseas', value: '02' },
-          { text: 'Etc', value: '03' }
-        ]
-      }
+          { text: 'Etc', value: '03' },
+        ],
+      },
     },
     relations: [
       {
@@ -377,8 +377,8 @@ export const unorderedRelationColumns2 = [
         },
         disabled({ value }: { value: string }) {
           return !value;
-        }
-      }
-    ]
-  }
+        },
+      },
+    ],
+  },
 ];

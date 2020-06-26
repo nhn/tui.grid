@@ -30,7 +30,7 @@ export function compare(valueA: CellValue, valueB: CellValue) {
 function getComparators(columns: SortedColumnWithComprator[]) {
   const comparators: { name: string; comparator: Function }[] = [];
 
-  columns.forEach(column => {
+  columns.forEach((column) => {
     const { columnName, ascending, comparator: customComparator } = column;
     const comparator = customComparator || compare;
 
@@ -39,7 +39,7 @@ function getComparators(columns: SortedColumnWithComprator[]) {
       comparator: ascending
         ? comparator
         : (valueA: CellValue, valueB: CellValue, rowA: Row, rowB: Row) =>
-            -comparator(valueA, valueB, rowA, rowB)
+            -comparator(valueA, valueB, rowA, rowB),
     });
   });
 

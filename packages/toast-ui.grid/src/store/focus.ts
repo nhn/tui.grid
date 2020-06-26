@@ -28,7 +28,7 @@ export function create({
   columnCoords,
   editingEvent,
   tabMode,
-  id
+  id,
 }: FocusOption): Observable<Focus> {
   return observable({
     rowKey: null,
@@ -122,6 +122,6 @@ export function create({
       }
 
       return { left, right, top, bottom };
-    }
+    },
   });
 }

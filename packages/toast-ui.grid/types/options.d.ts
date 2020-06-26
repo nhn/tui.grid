@@ -10,7 +10,7 @@ import {
   VAlignType,
   RowHeaderType,
   ColumnFilterOption,
-  ComplexColumnInfo
+  ComplexColumnInfo,
 } from './store/column';
 import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';

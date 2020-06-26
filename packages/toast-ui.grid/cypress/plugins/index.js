@@ -15,14 +15,14 @@
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
 
-module.exports = on => {
+module.exports = (on) => {
   const options = {
     webpackOptions: {
       resolve: {
         extensions: ['.ts', '.tsx', '.js'],
         alias: {
-          '@': path.resolve('./src')
-        }
+          '@': path.resolve('./src'),
+        },
       },
       // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
       devtool: 'cheap-module-eval-source-map',
@@ -32,12 +32,12 @@ module.exports = on => {
             test: /\.tsx?$/,
             loader: 'ts-loader',
             options: {
-              transpileOnly: true
-            }
-          }
-        ]
-      }
-    }
+              transpileOnly: true,
+            },
+          },
+        ],
+      },
+    },
   };
 
   on('file:preprocessor', wp(options));

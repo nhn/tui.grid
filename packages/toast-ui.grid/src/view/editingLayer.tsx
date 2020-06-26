@@ -98,7 +98,7 @@ export class EditingLayerComp extends Component<Props> {
       value,
       formattedValue,
       width: right - left,
-      portalEditingKeydown: this.handleKeyDown
+      portalEditingKeydown: this.handleKeyDown,
     };
     const cellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
@@ -130,7 +130,7 @@ export class EditingLayerComp extends Component<Props> {
     const {
       focusedColumnName: prevFocusedColumnName,
       focusedRowKey: prevFocusedRowKey,
-      active: prevActive
+      active: prevActive,
     } = this.props;
     const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
@@ -157,7 +157,7 @@ export class EditingLayerComp extends Component<Props> {
       left,
       width: width + cellBorderWidth,
       height: top ? height + cellBorderWidth : height,
-      lineHeight: top ? `${height - cellBorderWidth}px` : `${height - cellBorderWidth * 2}px`
+      lineHeight: top ? `${height - cellBorderWidth}px` : `${height - cellBorderWidth * 2}px`,
     };
 
     return (
@@ -165,7 +165,7 @@ export class EditingLayerComp extends Component<Props> {
         style={editorStyles}
         className={cls('layer-editing', 'cell-content', 'cell-content-editor')}
         onKeyDown={this.handleKeyDown}
-        ref={el => {
+        ref={(el) => {
           this.contentEl = el;
         }}
       />
@@ -181,7 +181,7 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     rowKey: focusedRowKey,
     columnName: focusedColumnName,
     forcedDestroyEditing,
-    cellPosRect
+    cellPosRect,
   } = focus;
 
   return {
@@ -194,6 +194,6 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     cellBorderWidth: dimension.cellBorderWidth,
     editingAddress,
     filteredViewData: data.filteredViewData,
-    allColumnMap: column.allColumnMap
+    allColumnMap: column.allColumnMap,
   };
 }, true)(EditingLayerComp);

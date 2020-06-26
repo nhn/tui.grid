@@ -13,17 +13,17 @@ export default {
   props: {
     data: {
       type: [Array, Object],
-      required: true
+      required: true,
     },
     columns: {
       type: Array,
-      required: true
+      required: true,
     },
     options: {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     // @deprecated. You should use it via importing tui-grid directly.
     theme: {
@@ -37,7 +37,7 @@ export default {
         }
 
         return result;
-      }
+      },
     },
     // @deprecated. You should use it via importing tui-grid directly.
     language: {
@@ -51,14 +51,14 @@ export default {
         }
 
         return result;
-      }
-    }
+      },
+    },
   },
   mounted() {
     const options = Object.assign(this.options || {}, this.$attrs, {
       el: this.$refs.tuiGrid,
       data: this.data,
-      columns: this.columns
+      columns: this.columns,
     });
 
     this.gridInstance = new Grid(options);
@@ -67,7 +67,7 @@ export default {
     this.setLanguage();
   },
   beforeDestroy() {
-    Object.keys(this.$listeners).forEach(eventName => {
+    Object.keys(this.$listeners).forEach((eventName) => {
       this.gridInstance.off(eventName);
     });
     this.gridInstance.destroy();
@@ -106,7 +106,7 @@ export default {
       return typeof this.gridInstance[methodName] === 'function'
         ? this.gridInstance[methodName](...args)
         : null;
-    }
-  }
+    },
+  },
 };
 </script>

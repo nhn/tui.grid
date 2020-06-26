@@ -3,7 +3,7 @@ import {
   NumberFilterCode,
   TextFilterCode,
   Filter,
-  ActiveColumnAddress
+  ActiveColumnAddress,
 } from '@t/store/filterLayerState';
 import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
@@ -82,12 +82,12 @@ class TextFilterComp extends Component<Props> {
       <div>
         <div className={cls('filter-dropdown')}>
           <select
-            ref={ref => {
+            ref={(ref) => {
               this.selectEl = ref;
             }}
             onChange={this.handleChange}
           >
-            {Object.keys(selectOption).map(key => {
+            {Object.keys(selectOption).map((key) => {
               return (
                 <option value={key} key={key} selected={code === key}>
                   {selectOption[key as NumberFilterCode | TextFilterCode]}
@@ -97,7 +97,7 @@ class TextFilterComp extends Component<Props> {
           </select>
         </div>
         <input
-          ref={ref => {
+          ref={(ref) => {
             this.inputEl = ref;
           }}
           type="text"
@@ -121,7 +121,7 @@ export const TextFilter = connect<StoreProps, OwnProps>(
       columnAddress,
       filterIndex,
       filters,
-      filterState
+      filterState,
     };
   }
 )(TextFilterComp);

@@ -6,7 +6,7 @@ import {
   convertTableToData,
   isSupportWindowClipboardData,
   setClipboardSelection,
-  WindowWithClipboard
+  WindowWithClipboard,
 } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 import { isEdge, isMobile } from '../helper/browser';
@@ -227,7 +227,7 @@ class ClipboardComp extends Component<Props> {
         onCopy={this.onCopy}
         onPaste={this.onPaste}
         contentEditable={true}
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}
       />
@@ -238,5 +238,5 @@ class ClipboardComp extends Component<Props> {
 export const Clipboard = connect<StoreProps>(({ focus, filterLayerState }) => ({
   navigating: focus.navigating,
   editing: !!focus.editingAddress,
-  filtering: !!filterLayerState.activeColumnAddress
+  filtering: !!filterLayerState.activeColumnAddress,
 }))(ClipboardComp);

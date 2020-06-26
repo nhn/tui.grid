@@ -27,8 +27,8 @@ describe('serialize object format', () => {
     const obj = {
       a: {
         b: 1,
-        c: { nested: 2 }
-      }
+        c: { nested: 2 },
+      },
     };
     const serialized = serialize(obj);
     const encoded = encode('a[b]=1&a[c][nested]=2');

@@ -4,7 +4,7 @@ import {
   CellValue,
   RowAttributes,
   LoadingState,
-  RemoveTargetRows
+  RemoveTargetRows,
 } from '@t/store/data';
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
@@ -19,7 +19,7 @@ import {
   isEmpty,
   someProp,
   findPropIndex,
-  silentSplice
+  silentSplice,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchedInvokeObserver } from '../helper/observable';
@@ -37,7 +37,7 @@ import {
   updateSortKey,
   sortByCurrentState,
   resetSortKey,
-  resetSortState
+  resetSortState,
 } from './sort';
 import {
   findIndexByRowKey,
@@ -51,13 +51,13 @@ import {
   isSorted,
   isFiltered,
   getMaxRowKey,
-  isScrollPagination
+  isScrollPagination,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
   updateSummaryValueByColumn,
   updateSummaryValueByRow,
-  updateAllSummaryValues
+  updateAllSummaryValues,
 } from './summary';
 import { initFilter, resetFilterState } from './filter';
 import { getSelectionRange } from '../query/selection';
@@ -71,7 +71,7 @@ import {
   createNewValidationMap,
   replaceColumnUniqueInfoMap,
   forceValidateUniquenessOfColumns,
-  forceValidateUniquenessOfColumn
+  forceValidateUniquenessOfColumn,
 } from '../store/helper/validation';
 
 function updateHeightsWithFilteredData(store: Store) {
@@ -87,8 +87,8 @@ export function updateHeights(store: Store) {
   const { rowHeight } = dimension;
 
   rowCoords.heights = pageOptions.useClient
-    ? filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
-    : filteredRawData.map(row => getRowHeight(row, rowHeight));
+    ? filteredRawData.slice(...pageRowRange).map((row) => getRowHeight(row, rowHeight))
+    : filteredRawData.map((row) => getRowHeight(row, rowHeight));
 }
 
 export function makeObservable(store: Store, rowIndex: number) {
@@ -209,7 +209,7 @@ export function setAllRowAttribute<K extends keyof RowAttributes>(
   const { filteredRawData } = data;
   const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
 
-  filteredRawData.slice(...range).forEach(row => {
+  filteredRawData.slice(...range).forEach((row) => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
       // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
@@ -241,7 +241,7 @@ export function setColumnValues(
         rowKey: targetRow.rowKey,
         columnName,
         prevValue: targetRow[columnName],
-        value
+        value,
       });
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
@@ -333,7 +333,7 @@ function applyPasteDataToRawData(
   const { visibleColumnsWithRowHeader } = column;
   const {
     row: [startRowIndex, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
+    column: [startColumnIndex, endColumnIndex],
   } = indexToPaste;
 
   const columnNames = mapProp('name', visibleColumnsWithRowHeader);
@@ -351,7 +351,7 @@ function applyPasteDataToRawData(
           rowKey: targetRow.rowKey,
           columnName: name,
           prevValue: targetRow[name],
-          value
+          value,
         });
         pasted = true;
         targetRow[name] = value;
@@ -382,7 +382,7 @@ export function setDisabledAllCheckbox({ data }: Store) {
   const { rawData } = data;
 
   data.disabledAllCheckbox =
-    !!rawData.length && rawData.every(row => row._attributes.checkDisabled);
+    !!rawData.length && rawData.every((row) => row._attributes.checkDisabled);
 }
 
 function setRowOrColumnDisabled(target: RowAttributes | ColumnInfo, disabled: boolean) {
@@ -396,12 +396,12 @@ function setRowOrColumnDisabled(target: RowAttributes | ColumnInfo, disabled: bo
 // @TODO consider the client pagination with disabled
 export function setDisabled(store: Store, disabled: boolean) {
   const { data, column } = store;
-  data.rawData.forEach(row => {
+  data.rawData.forEach((row) => {
     row._disabledPriority = {};
     setAllRowAttribute(store, 'disabled', disabled);
     setAllRowAttribute(store, 'checkDisabled', disabled);
   });
-  column.columnsWithoutRowHeader.forEach(columnInfo => {
+  column.columnsWithoutRowHeader.forEach((columnInfo) => {
     columnInfo.disabled = disabled;
   });
   data.disabledAllCheckbox = disabled;
@@ -418,7 +418,7 @@ export function setRowDisabled(
   if (row) {
     const { _attributes, _disabledPriority } = row;
 
-    column.allColumns.forEach(columnInfo => {
+    column.allColumns.forEach((columnInfo) => {
       _disabledPriority[columnInfo.name] = 'ROW';
     });
 
@@ -435,7 +435,7 @@ export function setColumnDisabled({ data, column }: Store, disabled: boolean, co
     return;
   }
 
-  data.rawData.forEach(row => {
+  data.rawData.forEach((row) => {
     row._disabledPriority[columnName] = 'COLUMN';
   });
   setRowOrColumnDisabled(column.allColumnMap[columnName], disabled);
@@ -644,7 +644,7 @@ export function removeCellClassName(
 export function addColumnClassName({ data }: Store, columnName: string, className: string) {
   const { rawData } = data;
 
-  rawData.forEach(row => {
+  rawData.forEach((row) => {
     addClassNameToAttribute(row, columnName, className);
   });
 }
@@ -652,7 +652,7 @@ export function addColumnClassName({ data }: Store, columnName: string, classNam
 export function removeColumnClassName({ data }: Store, columnName: string, className: string) {
   const { rawData } = data;
 
-  rawData.forEach(row => {
+  rawData.forEach((row) => {
     removeClassNameToAttribute(row, columnName, className);
   });
 }
@@ -668,8 +668,8 @@ export function setCheckedAllRows({ data }: Store) {
   if (filteredRawData.length) {
     const enableCheckRows = filteredRawData
       .slice(...pageRowRange)
-      .filter(row => !row._attributes.checkDisabled);
-    result = !!enableCheckRows.length && enableCheckRows.every(row => row._attributes.checked);
+      .filter((row) => !row._attributes.checkDisabled);
+    result = !!enableCheckRows.length && enableCheckRows.every((row) => row._attributes.checked);
   }
   data.checkedAllRows = result;
 }

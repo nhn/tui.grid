@@ -5,7 +5,7 @@ const reactivePropSetterMap = {
   data: 'resetData',
   columns: 'setColumns',
   bodyHeight: 'setBodyHeight',
-  frozenColumnCount: 'setFrozenColumnCount'
+  frozenColumnCount: 'setFrozenColumnCount',
 };
 
 export default class Grid extends React.Component {
@@ -15,8 +15,8 @@ export default class Grid extends React.Component {
 
   bindEventHandlers(props) {
     Object.keys(props)
-      .filter(key => /^on[A-Z][a-zA-Z]+/.test(key))
-      .forEach(key => {
+      .filter((key) => /^on[A-Z][a-zA-Z]+/.test(key))
+      .forEach((key) => {
         const eventName = key[2].toLowerCase() + key.slice(3);
         this.gridInst.off(eventName);
         this.gridInst.on(eventName, props[key]);
@@ -34,7 +34,7 @@ export default class Grid extends React.Component {
   componentDidMount() {
     this.gridInst = new TuiGrid({
       el: this.rootEl.current,
-      ...this.props
+      ...this.props,
     });
 
     this.bindEventHandlers(this.props);
@@ -43,10 +43,10 @@ export default class Grid extends React.Component {
   shouldComponentUpdate(nextProps) {
     const { oneTimeBindingProps = [] } = this.props;
     const reactiveProps = Object.keys(reactivePropSetterMap).filter(
-      propName => oneTimeBindingProps.indexOf(propName) === -1
+      (propName) => oneTimeBindingProps.indexOf(propName) === -1
     );
 
-    reactiveProps.forEach(propName => {
+    reactiveProps.forEach((propName) => {
       const currentValue = this.props[propName];
       const nextValue = nextProps[propName];
       if (currentValue !== nextValue) {

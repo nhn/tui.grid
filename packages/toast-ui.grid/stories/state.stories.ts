@@ -3,7 +3,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'State layer'
+  title: 'State layer',
 };
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -35,7 +35,7 @@ export const noDataWithScroll = () => {
     columns,
     bodyHeight: 'fitToParent',
     columnOptions: { minWidth: 300 },
-    width: 300
+    width: 300,
   });
 
   return el;

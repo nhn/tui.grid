@@ -20,42 +20,26 @@ function getColumnResizeHandle() {
 }
 
 function assertWidth(width: number) {
-  cy.getByCls('container')
-    .invoke('width')
-    .should('eql', width);
+  cy.getByCls('container').invoke('width').should('eql', width);
 
-  getRside()
-    .invoke('width')
-    .should('eql', width);
+  getRside().invoke('width').should('eql', width);
 
   getRsideHeader()
     .invoke('width')
     .should('eql', width - 17);
 
-  cy.getRsideBody()
-    .invoke('width')
-    .should('eql', width);
+  cy.getRsideBody().invoke('width').should('eql', width);
 }
 
 function assertColumnWidth(widths: number[]) {
-  getRsideHeader()
-    .get('th')
-    .as('headCols');
+  getRsideHeader().get('th').as('headCols');
 
-  cy.getRsideBody()
-    .get('tr:first-child td')
-    .as('bodyCols');
+  cy.getRsideBody().get('tr:first-child td').as('bodyCols');
 
   widths.forEach((width, index) => {
-    cy.get('@headCols')
-      .eq(index)
-      .invoke('outerWidth')
-      .should('eql', width);
+    cy.get('@headCols').eq(index).invoke('outerWidth').should('eql', width);
 
-    cy.get('@bodyCols')
-      .eq(index)
-      .invoke('outerWidth')
-      .should('eql', width);
+    cy.get('@bodyCols').eq(index).invoke('outerWidth').should('eql', width);
   });
 }
 
@@ -69,13 +53,11 @@ function assertHandleOffset(index: number, offsetLeft: number) {
 }
 
 function assertHandleLength(length: number) {
-  getColumnResizeHandle()
-    .its('length')
-    .should('eql', length);
+  getColumnResizeHandle().its('length').should('eql', length);
 }
 
 function assertBodyHeight(height: number) {
-  cy.getByCls('body-area').each($body => {
+  cy.getByCls('body-area').each(($body) => {
     expect($body.height()).to.eq(height);
   });
 }
@@ -102,7 +84,7 @@ function createGridWithWidths(widths: WidthInfo[], commonMinWidth?: number) {
     name: `c${index}`,
     width,
     minWidth,
-    resizable
+    resizable,
   }));
 
   const data: OptRow[] = [{}];
@@ -234,9 +216,7 @@ describe('auto calculate column widths (container: 600)', () => {
       createGridWithWidths([{}, {}, {}]);
       const nextWidth = 720 + SCROLLBAR_WIDTH;
 
-      cy.getByCls('container')
-        .parent()
-        .invoke('width', nextWidth);
+      cy.getByCls('container').parent().invoke('width', nextWidth);
       cy.window().trigger('resize');
 
       assertColumnWidth([240, 240, 240]);
@@ -267,7 +247,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
 describe('body height', () => {
   function dragHeightReiszeHandle(distance: number) {
-    cy.getByCls('height-resize-handle').within($el => {
+    cy.getByCls('height-resize-handle').within(($el) => {
       const { top } = $el.offset()!;
 
       cy.root()
@@ -326,7 +306,7 @@ describe('row height', () => {
 
     cy.getRsideBody()
       .find('tr')
-      .each($el => {
+      .each(($el) => {
         expect($el.height()).to.eql(70);
       });
   });
@@ -335,12 +315,8 @@ describe('row height', () => {
     const data = [{ c1: 'test1', _attributes: { height: 70 } }, { c2: 'test2' }];
     createGridWithRowHeight({ data });
 
-    cy.getByCls('row-odd')
-      .invoke('height')
-      .should('eq', 70);
-    cy.getByCls('row-even')
-      .invoke('height')
-      .should('eq', 40);
+    cy.getByCls('row-odd').invoke('height').should('eq', 70);
+    cy.getByCls('row-even').invoke('height').should('eq', 40);
   });
 
   it('rowHeight: auto - The rowHeight changes according to the text longest content.', () => {
@@ -351,8 +327,8 @@ describe('row height', () => {
         col3:
           'grid         example\ngrid newline example\n\ngrid newline example\n\ngrid newline example\n\n',
         col4: 'grid         example\ngrid newline example\n\ngrid newline example\n\n',
-        col5: 'grid         example\ngrid newline example\n\ngrid newline example\n\n'
-      }
+        col5: 'grid         example\ngrid newline example\n\ngrid newline example\n\n',
+      },
     ];
     const columns = [
       { name: 'col1' },
@@ -360,24 +336,20 @@ describe('row height', () => {
       {
         name: 'col3',
         whiteSpace: 'normal',
-        editor: 'text'
+        editor: 'text',
       },
       { name: 'col4' },
-      { name: 'col5' }
+      { name: 'col5' },
     ];
 
     cy.createGrid({ data, columns, rowHeight: 'auto' });
 
-    cy.getByCls('row-odd')
-      .invoke('height')
-      .should('eq', 69);
+    cy.getByCls('row-odd').invoke('height').should('eq', 69);
 
     cy.gridInstance().invoke('startEditing', 0, 'col3');
     cy.getByCls('content-text').type('Kim');
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getByCls('row-odd')
-      .invoke('height')
-      .should('eq', 40);
+    cy.getByCls('row-odd').invoke('height').should('eq', 40);
   });
 });

@@ -4,7 +4,7 @@ import { findProp, includes, mapProp, some, someProp } from '../helper/common';
 type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
 
 export function isParentColumnHeader(complexColumnHeaders: ComplexColumnInfo[], name: string) {
-  return !!complexColumnHeaders.length && some(item => item.name === name, complexColumnHeaders);
+  return !!complexColumnHeaders.length && some((item) => item.name === name, complexColumnHeaders);
 }
 
 export function isHiddenColumn(column: Column, columnName: string) {
@@ -30,7 +30,7 @@ export function getColumnHierarchy(
     complexColumns.push(column);
 
     if (complexColumnHeaders) {
-      complexColumnHeaders.forEach(complexColumnHeader => {
+      complexColumnHeaders.forEach((complexColumnHeader) => {
         if (includes(complexColumnHeader.childNames, column.name)) {
           getColumnHierarchy(complexColumnHeader, complexColumnHeaders, complexColumns);
         }
@@ -42,7 +42,7 @@ export function getColumnHierarchy(
 }
 
 export function getRemovedHiddenChildColumns(hierarchies: MergedComplexColumns[]) {
-  return hierarchies.map(columns => {
+  return hierarchies.map((columns) => {
     if (columns.length > 1) {
       // The hideChildHeaders option always exists in the second column to last.
       const { hideChildHeaders } = columns[columns.length - 2] as ComplexColumnInfo;
@@ -60,7 +60,7 @@ export function getComplexColumnsHierarchy(
   complexColumnHeaders: ComplexColumnInfo[]
 ) {
   return getRemovedHiddenChildColumns(
-    columns.map(column => getColumnHierarchy(column, complexColumnHeaders).reverse())
+    columns.map((column) => getColumnHierarchy(column, complexColumnHeaders).reverse())
   );
 }
 
@@ -78,7 +78,7 @@ export function getChildHeaderCount(
   if (!leafColumn) {
     const complexColumn = findProp('name', name, complexColumns);
     if (complexColumn) {
-      complexColumn.childNames.forEach(childName => {
+      complexColumn.childNames.forEach((childName) => {
         const leafChildColumn = someProp('name', childName, columns);
         count += leafChildColumn ? 1 : getChildHeaderCount(columns, complexColumns, childName);
       });

@@ -38,7 +38,7 @@ export function create({
   scrollY = true,
   summaryHeight = 0,
   summaryPosition = 'bottom',
-  headerHeight = 40
+  headerHeight = 40,
 }: DimensionOption): Dimension {
   const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
@@ -84,6 +84,6 @@ export function create({
       const totalBorderWidth = columnLen * this.cellBorderWidth;
 
       return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
-    }
+    },
   });
 }

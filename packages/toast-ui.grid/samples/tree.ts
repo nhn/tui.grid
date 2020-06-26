@@ -13,7 +13,7 @@ export const data = [
     downloadCount: 1000,
     listenCount: 5000,
     _attributes: {
-      expanded: true
+      expanded: true,
     },
     _children: [
       {
@@ -29,7 +29,7 @@ export const data = [
         price: 6000,
         downloadCount: 1000,
         listenCount: 5000,
-        _children: []
+        _children: [],
       },
       {
         id: 491379,
@@ -45,7 +45,7 @@ export const data = [
         downloadCount: 1000,
         listenCount: 5000,
         _attributes: {
-          expanded: true
+          expanded: true,
         },
         _children: [
           {
@@ -74,7 +74,7 @@ export const data = [
                 grade: '3',
                 price: 20000,
                 downloadCount: 1000,
-                listenCount: 5000
+                listenCount: 5000,
               },
               {
                 id: 583551,
@@ -88,11 +88,11 @@ export const data = [
                 grade: '5',
                 price: 15000,
                 downloadCount: 1000,
-                listenCount: 5000
-              }
-            ]
-          }
-        ]
+                listenCount: 5000,
+              },
+            ],
+          },
+        ],
       },
       {
         id: 498896,
@@ -106,7 +106,7 @@ export const data = [
         grade: '3',
         price: 15000,
         downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
       },
       {
         id: 504288,
@@ -120,9 +120,9 @@ export const data = [
         grade: '1',
         price: 13000,
         downloadCount: 1000,
-        listenCount: 5000
-      }
-    ]
+        listenCount: 5000,
+      },
+    ],
   },
   {
     id: 436461,
@@ -136,7 +136,7 @@ export const data = [
     grade: '5',
     price: 20000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 295651,
@@ -150,8 +150,8 @@ export const data = [
     grade: '2',
     price: 7000,
     downloadCount: 1000,
-    listenCount: 5000
-  }
+    listenCount: 5000,
+  },
 ];
 
 export const lazyObserbableTestdata = [
@@ -167,7 +167,7 @@ export const lazyObserbableTestdata = [
     grade: '5',
     price: 20000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 295651,
@@ -181,7 +181,7 @@ export const lazyObserbableTestdata = [
     grade: '2',
     price: 7000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 541713,
@@ -195,7 +195,7 @@ export const lazyObserbableTestdata = [
     grade: '3',
     price: 25000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 265289,
@@ -209,7 +209,7 @@ export const lazyObserbableTestdata = [
     grade: '5',
     price: 15000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 555871,
@@ -223,7 +223,7 @@ export const lazyObserbableTestdata = [
     grade: '4',
     price: 11000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 550571,
@@ -237,7 +237,7 @@ export const lazyObserbableTestdata = [
     grade: '3',
     price: 30000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 544128,
@@ -251,7 +251,7 @@ export const lazyObserbableTestdata = [
     grade: '2',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 366374,
@@ -265,7 +265,7 @@ export const lazyObserbableTestdata = [
     grade: '3',
     price: 9000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 8012747,
@@ -279,7 +279,7 @@ export const lazyObserbableTestdata = [
     grade: '5',
     price: 10000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 502792,
@@ -293,7 +293,7 @@ export const lazyObserbableTestdata = [
     grade: '5',
     price: 18000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 294574,
@@ -307,7 +307,7 @@ export const lazyObserbableTestdata = [
     grade: '3',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 317659,
@@ -321,7 +321,7 @@ export const lazyObserbableTestdata = [
     grade: '2',
     price: 7000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5000,
   },
   {
     id: 549731,
@@ -337,7 +337,7 @@ export const lazyObserbableTestdata = [
     downloadCount: 1000,
     listenCount: 5000,
     _attributes: {
-      expanded: false
+      expanded: false,
     },
     _children: [
       {
@@ -353,7 +353,7 @@ export const lazyObserbableTestdata = [
         price: 6000,
         downloadCount: 1000,
         listenCount: 5000,
-        _children: []
+        _children: [],
       },
       {
         id: 491379,
@@ -369,7 +369,7 @@ export const lazyObserbableTestdata = [
         downloadCount: 1000,
         listenCount: 5000,
         _attributes: {
-          expanded: false
+          expanded: false,
         },
         _children: [
           {
@@ -398,7 +398,7 @@ export const lazyObserbableTestdata = [
                 grade: '3',
                 price: 20000,
                 downloadCount: 1000,
-                listenCount: 5000
+                listenCount: 5000,
               },
               {
                 id: 583551,
@@ -412,11 +412,11 @@ export const lazyObserbableTestdata = [
                 grade: '5',
                 price: 15000,
                 downloadCount: 1000,
-                listenCount: 5000
-              }
-            ]
-          }
-        ]
+                listenCount: 5000,
+              },
+            ],
+          },
+        ],
       },
       {
         id: 498896,
@@ -430,9 +430,9 @@ export const lazyObserbableTestdata = [
         grade: '3',
         price: 15000,
         downloadCount: 1000,
-        listenCount: 5000
-      }
-    ]
+        listenCount: 5000,
+      },
+    ],
   },
   {
     id: 504288,
@@ -446,6 +446,6 @@ export const lazyObserbableTestdata = [
     grade: '1',
     price: 13000,
     downloadCount: 1000,
-    listenCount: 5000
-  }
+    listenCount: 5000,
+  },
 ];

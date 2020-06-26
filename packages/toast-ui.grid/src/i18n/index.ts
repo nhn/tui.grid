@@ -13,7 +13,7 @@ const messages: OptI18nLanguage = {
       noData: 'No data.',
       loadingData: 'Loading data.',
       resizeHandleGuide:
-        'You can change the width of the column by mouse drag, and initialize the width by double-clicking.'
+        'You can change the width of the column by mouse drag, and initialize the width by double-clicking.',
     },
     net: {
       confirmCreate: 'Are you sure you want to create {{count}} data?',
@@ -24,15 +24,15 @@ const messages: OptI18nLanguage = {
       noDataToUpdate: 'No data to update.',
       noDataToDelete: 'No data to delete.',
       noDataToModify: 'No data to modify.',
-      failResponse: 'An error occurred while requesting data.\nPlease try again.'
-    }
+      failResponse: 'An error occurred while requesting data.\nPlease try again.',
+    },
   },
   ko: {
     display: {
       noData: '데이터가 존재하지 않습니다.',
       loadingData: '데이터를 불러오는 중입니다.',
       resizeHandleGuide:
-        '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
+        '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.',
     },
     net: {
       confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',
@@ -43,9 +43,9 @@ const messages: OptI18nLanguage = {
       noDataToUpdate: '수정할 데이터가 없습니다.',
       noDataToDelete: '삭제할 데이터가 없습니다.',
       noDataToModify: '처리할 데이터가 없습니다.',
-      failResponse: '데이터 요청 중에 에러가 발생하였습니다.\n다시 시도하여 주시기 바랍니다.'
-    }
-  }
+      failResponse: '데이터 요청 중에 에러가 발생하였습니다.\n다시 시도하여 주시기 바랍니다.',
+    },
+  },
 };
 
 let messageMap: MessageMapType = {};
@@ -62,11 +62,11 @@ function flattenMessageMap(data: OptI18nData = {}): MessageMapType {
   const obj: MessageMapType = {};
   let newKey: string;
 
-  Object.keys(data).forEach(key => {
+  Object.keys(data).forEach((key) => {
     const keyWithType = key as KeyType;
     const groupMessages = data[keyWithType] as MessageMapType;
 
-    Object.keys(groupMessages).forEach(subKey => {
+    Object.keys(groupMessages).forEach((subKey) => {
       newKey = `${key}.${subKey}`;
       obj[newKey] = groupMessages[subKey];
     });
@@ -121,5 +121,5 @@ export default {
     const message = messageMap[key];
 
     return replaceText(message, replacements);
-  }
+  },
 };

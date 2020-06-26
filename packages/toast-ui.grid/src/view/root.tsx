@@ -15,7 +15,7 @@ export class Root extends Component<Props> {
   public getChildContext() {
     return {
       store: this.props.store,
-      dispatch: this.props.dispatch
+      dispatch: this.props.dispatch,
     };
   }
 
