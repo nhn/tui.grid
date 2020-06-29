@@ -121,9 +121,8 @@ When tree columns have been initialized, certain API acts differently.
 | `check` | If `useCascadingCheckbox: true`, change the state of the checkbox while maintaining the parent-child relationship. |
 | `uncheck` | If `useCascadingCheckbox: true`, change the state of the checkbox while maintaining the parent-child relationship. |
 
-### Reference
-
-If you are using tree columns, there are restrictions on using **sorting**, **row merging**, and **pagination.**
+> **Note**
+> If you are using tree columns, there are restrictions on using **sorting**, **row merging**, and **pagination.**
 
 ## Example
 

@@ -71,6 +71,6 @@ const grid = new Grid({
 });
 ```
 
-## Note
-* Custom column header can be used with `v4.7.0` and up.
-* Options **sortable** and **filter** are ignored in custom column header.
+> **Note**
+> * Custom column header can be used with `v4.7.0` and up.
+> * Options **sortable** and **filter** are ignored in custom column header.

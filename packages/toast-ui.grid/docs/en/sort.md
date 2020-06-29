@@ -68,9 +68,8 @@ If you click the sort button without holding down the `Cmd(Ctrl)` key, all of pr
 
 ![image](https://user-images.githubusercontent.com/37766175/64320470-954a6d80-cff9-11e9-977b-9cb1421b0a7c.gif)
 
-### Note
-
-Multiple column sort feature can only be implemented in `v4.2.0` and above. 
+> **Note**
+> Multiple column sort feature can only be implemented in `v4.2.0` and above. 
 
 ## Syncing Data Source
 If you decide to use the Grid's [Data Source](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/data-source.md) to integrate remote data, you need to configure the `useClientSort` option in order to use the sort functionality, as presented below. 
@@ -96,39 +95,32 @@ const grid = new Grid({
 });
 ```
 
-### Note
-
-Currently, data synced using the `Data Source` can only be sorted individually. While we plan on implementing the functionality of sorting multiple columns at once, at the moment, it is not yet supported. 
+> **Note**
+> Currently, data synced using the `Data Source` can only be sorted individually. While we plan on implementing the functionality of sorting multiple columns at once, at the moment, it is not yet supported. 
 
 
 ## Custom Comparator
 
 If you want to sort the data with your own comparator, the `comparator` option can be useful for it. 
-The structure of the Custom Comparator is same as [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) that runs in the javaScript `sort` function, but there is a difference that row information to be sorted can also be used as parameters. It is possible to sort the data with other column data using these parameters.
+The structure of the Custom Comparator is same as [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) that runs in the javascript `sort` function, but there is a difference that row information to be sorted can also be used as parameters. It is possible to sort the data with other column data using these parameters.
 
 ```js
 const comparator = (valueA, valueB, rowA, rowB) => {
-  if (valueA.length < valueB.length) {
-    return -1;
-  }
-  if (valueA.length > valueB.length) {
-    return 1;
-  }
-  return 0;
+  return (valueA.length + rowA.alphabetB.length) - (valueB.length + rowB.alphabetB.length);
 };
 
 const grid = new Grid({
   data,
   columns: [
     { name: 'alphabetA', header: 'alphabetA', comparator  },
+    { name: 'alphabetB', header: 'alphabetB'  },
     // ...
   ]
 })
 ```
 
-### Note
-
-Custom Comparator feature can only be implemented in `v4.14.0` and above. 
+> **Note**
+> Custom Comparator feature can only be implemented in `v4.14.0` and above. 
 
 ## Using the Sort API
 

@@ -77,8 +77,8 @@ grid.on('scrollEnd', () => {
 })
 ```
 
-## Note
-The infinite scroll feature can be used from `v4.10.0` and up. 
+> **Note**
+> The infinite scroll feature can be used from `v4.10.0` and up. 
 
 ## Examples
 

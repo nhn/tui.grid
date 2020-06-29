@@ -68,9 +68,8 @@ const grid = new Grid({
 
 ![image](https://user-images.githubusercontent.com/37766175/64320470-954a6d80-cff9-11e9-977b-9cb1421b0a7c.gif)
 
-### 참조
-
-다중 컬럼 정렬은 `v4.2.0` 이상부터 사용할 수 있는 기능이다.
+> **참조**
+> 다중 컬럼 정렬은 `v4.2.0` 이상부터 사용할 수 있는 기능이다.
 
 ## 데이터 소스 연동
 Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)를 이용하여 원격 데이터를 사용하는 경우, 정렬 기능을 사용하기 위해 아래와 같이 `useClientSort` 옵션 설정이 필요하다. 
@@ -96,9 +95,8 @@ const grid = new Grid({
 });
 ```
 
-### 참조
-
-현재 `데이터 소스`에서는 단일 컬럼 정렬 기준으로만 연동이 가능하다. 다중 컬럼 정렬 연동은 이후 추가 지원될 계획이나, 현재는 지원되지 않는 상태이다.
+> **참조**
+> 현재 `데이터 소스`에서는 단일 컬럼 정렬 기준으로만 연동이 가능하다. 다중 컬럼 정렬 연동은 이후 추가 지원될 계획이나, 현재는 지원되지 않는 상태이다.
 
 ## Custom Comparator
 
@@ -106,27 +104,21 @@ const grid = new Grid({
 
 ```js
 const comparator = (valueA, valueB, rowA, rowB) => {
-  if (valueA.length < valueB.length) {
-    return -1;
-  }
-  if (valueA.length > valueB.length) {
-    return 1;
-  }
-  return 0;
+  return (valueA.length + rowA.alphabetB.length) - (valueB.length + rowB.alphabetB.length);
 };
 
 const grid = new Grid({
   data,
   columns: [
     { name: 'alphabetA', header: 'alphabetA', comparator  },
+    { name: 'alphabetB', header: 'alphabetB'  },
     // ...
   ]
 })
 ```
 
-### 참조
-
-Custom Comparator 는 `v4.14.0` 이상부터 사용할 수 있는 기능이다.
+> **참조**
+> Custom Comparator 는 `v4.14.0` 이상부터 사용할 수 있는 기능이다.
 
 ## 정렬 API 사용하기
 
