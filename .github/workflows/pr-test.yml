@@ -31,3 +31,9 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           npm run e2e-test:ci
+      - name: visual test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          APPLITOOLS_API_KEY: ${{secrets.APPLITOOLS_API_KEY}}
+        run: |
+          npm run visual-test
