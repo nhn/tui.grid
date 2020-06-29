@@ -1,20 +1,22 @@
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import { OptColumn } from '../types/options';
+import { OptColumn, OptThemePresetNames, OptPreset } from '../types/options';
 import { cls } from '../src/helper/dom';
 import { Side } from '../types/store/focus';
+
+type ThemeOptions = { preset: OptThemePresetNames; extOptions?: OptPreset };
 
 export default {
   title: 'Theme',
 };
 
-function getBody(el, side: Side) {
+function getBody(el: HTMLElement, side: Side) {
   return el.querySelector(
     `.${cls(side === 'L' ? 'lside-area' : 'rside-area')} .${cls('body-area')}`
-  );
+  )!;
 }
 
-function createGridWithTheme(options) {
+function createGridWithTheme(options: ThemeOptions) {
   const { preset, extOptions } = options;
   const data = [
     {
@@ -125,7 +127,7 @@ export const rowHoverWithCustomTheme = () => {
 
   setTimeout(() => {
     (['L', 'R'] as const).forEach((side) => {
-      const row = getBody(el, side).querySelector(`.${cls('row-even')}`);
+      const row = getBody(el, side).querySelector(`.${cls('row-even')}`)!;
       row.className = `${cls('row-even')} ${cls('row-hover')}`;
     });
   });

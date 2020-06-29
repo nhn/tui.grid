@@ -13,7 +13,7 @@ class SliderRenderer implements CellRenderer {
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
-    const { min, max } = props.columnInfo.renderer.options;
+    const { min, max } = props.columnInfo.renderer.options as { min: number; max: number };
 
     el.type = 'range';
     el.style.width = '98%';
