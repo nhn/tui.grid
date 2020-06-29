@@ -5,7 +5,7 @@ import { Column } from '@t/store/column';
 import { Dimension } from '@t/store/dimension';
 import { RowCoords } from '@t/store/rowCoords';
 import { Data } from '@t/store/data';
-import { Observable, observable } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { getSortedRange } from '../query/selection';
 import { isClientPagination } from '../query/data';
 
@@ -89,8 +89,8 @@ export function create({
   column: columnInfo,
   dimension,
   data,
-}: SelectionOption): Observable<Selection> {
-  return observable({
+}: SelectionOption) {
+  return observable<Selection>({
     inputRange: null,
     unit: selectionUnit,
     type: 'cell' as SelectionType,

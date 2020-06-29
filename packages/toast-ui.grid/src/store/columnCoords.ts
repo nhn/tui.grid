@@ -111,7 +111,7 @@ interface ColumnCoordsOption {
   dimension: Dimension;
 }
 
-export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords {
+export function create({ column, dimension }: ColumnCoordsOption) {
   return observable<ColumnCoords>({
     get widths() {
       const { visibleColumnsWithRowHeader, visibleFrozenCount } = column;

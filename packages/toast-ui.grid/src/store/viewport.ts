@@ -5,7 +5,7 @@ import { RowCoords } from '@t/store/rowCoords';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { Range } from '@t/store/selection';
 import { Viewport } from '@t/store/viewport';
-import { observable, Observable } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 import { getMaxRowSpanCount, isRowSpanEnabled } from '../query/rowSpan';
 import { isClientPagination } from '../query/data';
@@ -68,8 +68,8 @@ export function create({
   rowCoords,
   columnCoords,
   showDummyRows,
-}: ViewportOption): Observable<Viewport> {
-  return observable({
+}: ViewportOption) {
+  return observable<Viewport>({
     scrollLeft: 0,
     scrollTop: 0,
     scrollPixelScale: 40,

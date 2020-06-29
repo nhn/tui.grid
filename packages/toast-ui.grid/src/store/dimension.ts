@@ -39,7 +39,7 @@ export function create({
   summaryHeight = 0,
   summaryPosition = 'bottom',
   headerHeight = 40,
-}: DimensionOption): Dimension {
+}: DimensionOption) {
   const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
   return observable<Dimension>({

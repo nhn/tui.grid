@@ -45,7 +45,7 @@ export function createSummaryValue(
   };
 }
 
-export function create({ column, data, summary }: SummaryOption): Summary {
+export function create({ column, data, summary }: SummaryOption) {
   const summaryColumnContents: SummaryColumnContents = {};
   const summaryValues: SummaryValues = {};
   const { columnContent: orgColumnContent, defaultContent } = summary;
@@ -70,5 +70,5 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     });
   }
 
-  return observable({ summaryColumnContents, summaryValues, defaultContent });
+  return observable<Summary>({ summaryColumnContents, summaryValues, defaultContent });
 }

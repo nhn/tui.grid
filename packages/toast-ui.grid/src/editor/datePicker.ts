@@ -2,7 +2,7 @@ import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '@t/options';
 import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
+import { deepMergedCopy, isNumber, isString } from '../helper/common';
 import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 
 export class DatePickerEditor implements CellEditor {
@@ -78,7 +78,7 @@ export class DatePickerEditor implements CellEditor {
       datepickerInputContainer.appendChild(icon);
     }
 
-    let date = isUndefined(value) || isNull(value) ? '' : new Date();
+    let date;
 
     if (!options.format) {
       options.format = 'yyyy-MM-dd';
@@ -90,7 +90,7 @@ export class DatePickerEditor implements CellEditor {
 
     const defaultOptions = {
       date,
-      type: 'date',
+      type: 'date' as const,
       input: {
         element: this.inputEl,
         format: options.format,

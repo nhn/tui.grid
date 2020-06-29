@@ -67,7 +67,7 @@ class DatePickerFilterComp extends Component<Props> {
 
     const defaultOptions = {
       date,
-      type: 'date',
+      type: 'date' as const,
       input: {
         element: this.inputEl,
         format: options.format,

@@ -17,7 +17,7 @@ import { Column, FormatterProps, Formatter, ColumnInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
 import { OptRow, Dictionary } from '@t/options';
 import { Range } from '@t/store/selection';
-import { observable, observe, Observable } from '../helper/observable';
+import { observable, observe } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {
   someProp,
@@ -516,7 +516,7 @@ export function create({
   useClientSort,
   disabled,
   id,
-}: DataOption): Observable<Data> {
+}: DataOption) {
   const { rawData, viewData } = createData(id, data, column, { lazyObservable: true, disabled });
 
   const sortState: SortState = {
@@ -583,5 +583,5 @@ export function create({
 
       return [start, end] as Range;
     },
-  });
+  } as Data);
 }

@@ -4,7 +4,7 @@ import { Dimension } from '@t/store/dimension';
 import { RowCoords } from '@t/store/rowCoords';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { EditingEvent, TabMode, Focus } from '@t/store/focus';
-import { Observable, observable } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
 import { findIndexByRowKey, isClientPagination, getRowIndexWithPage } from '../query/data';
@@ -29,7 +29,7 @@ export function create({
   editingEvent,
   tabMode,
   id,
-}: FocusOption): Observable<Focus> {
+}: FocusOption) {
   return observable({
     rowKey: null,
     columnName: null,
@@ -123,5 +123,5 @@ export function create({
 
       return { left, right, top, bottom };
     },
-  });
+  } as Focus);
 }
