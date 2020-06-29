@@ -76,8 +76,8 @@ const grid = new Grid({
 });
 ```
 
-#### Note
-`initParams` option can be used with `v4.9.0` and up. 
+> **Note**
+> `initParams` option can be used with `v4.9.0` and up. 
 
 ## Protocol Used in `readData`
 
@@ -277,8 +277,8 @@ const grid = new Grid({
 });
 ```
 
-### Note
-All ajax options except `withCredentials` can be used from `v4.9.0` and up.
+> **Note**
+> All ajax options except `withCredentials` can be used from `v4.9.0` and up.
 
 ## Pagination
 
@@ -327,8 +327,8 @@ const dataSource = {
 }
 ```
 
-### Note
-RESTful URI configurations can be used from `v4.9.0` and up.
+> **Note**
+> RESTful URI configurations can be used from `v4.9.0` and up.
 
 ## hideLoadingBar Option
 You can use the `hideLoadingBar` option to hide the basic loading bar. By default, it is set to `false`. 
@@ -345,8 +345,8 @@ const grid = new Grid({
 });
 ```
 
-### Note
-`hideLoadingBar` option can be used from `v4.9.0` and up.
+> **Note**
+> `hideLoadingBar` option can be used from `v4.9.0` and up.
 
 ## Example
 

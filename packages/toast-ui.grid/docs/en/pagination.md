@@ -41,9 +41,8 @@ const grid = new Grid({
   }
 });
 ```
-### Note
-
-The Client Pagiantion feature can only be used with `v4.5.0` and above. 
+> **Note**
+> The Client Pagiantion feature can only be used with `v4.5.0` and above. 
 
 ## API Comparison
 

@@ -119,9 +119,8 @@ grid.on('expand', (ev) => {
 | `check` | `useCascadingCheckbox: true`로 설정되어있다면 부모-자식 관계를 유지하며 체크 박스의 상태를 바꾼다. |
 | `uncheck` | `useCascadingCheckbox: true`로 설정되어있다면 부모-자식 관계를 유지하며 체크 박스의 상태를 바꾼다. |
 
-### 참조
-
-트리 컬럼을 사용하는 경우, **sorting**, **row merging**, **pagination**의 사용에 제한이 있다.
+> **참조**
+> 트리 컬럼을 사용하는 경우, **sorting**, **row merging**, **pagination**의 사용에 제한이 있다.
 
 ## 예제
 

@@ -75,8 +75,8 @@ const grid = new Grid({
 });
 ```
 
-#### 참조
-`initParams` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
+> **참조**
+> `initParams` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ### `readData`의 프로토콜
 
@@ -272,8 +272,8 @@ const grid = new Grid({
 });
 ```
 
-### 참조
-`withCredentials` 외에 모든 ajax 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
+> **참조**
+> `withCredentials` 외에 모든 ajax 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ## 페이지네이션
 
@@ -322,8 +322,8 @@ const dataSource = {
 }
 ```
 
-### 참조
-RESTful URI 설정은 `v4.9.0` 이상부터 사용할 수 있다.
+> **참조**
+> RESTful URI 설정은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ## 로딩바 숨김 옵션
 `hideLoadingBar`옵션을 설정하여 기본 로딩바를 숨길 수 있다. 기본값은 `false`이다.
@@ -340,8 +340,8 @@ const grid = new Grid({
 });
 ```
 
-### 참조
-`hideLoadingBar` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
+> **참조**
+> `hideLoadingBar` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ## 예제
 
