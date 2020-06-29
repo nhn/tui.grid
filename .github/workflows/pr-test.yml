@@ -1,0 +1,33 @@
+name: test on pull request
+on: pull_request
+jobs: 
+  test:
+    name: lint, type, e2e test
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./packages/toast-ui.grid
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install(toast.ui-grid)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: eslint
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run lint:all
+      - name: check types
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run check-types:all
+      - name: e2e test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run e2e-test:ci
