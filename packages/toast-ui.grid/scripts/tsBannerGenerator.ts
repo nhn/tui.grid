@@ -1,10 +1,10 @@
-/*eslint-disable*/
+/* eslint-disable */
 const fs = require('fs');
 const path = require('path');
-const package = require('./package');
+const package = require('../package');
 
 const { version } = package;
-const declareFilePath = path.join(__dirname, 'types/index.d.ts');
+const declareFilePath = path.join(__dirname, '../types/index.d.ts');
 const tsVersion = /[0-9.]+/.exec(package.devDependencies.typescript)[0];
 const tsBanner = `// Type definitions for TOAST UI Grid v${version}\n// TypeScript Version: ${tsVersion}`;
 

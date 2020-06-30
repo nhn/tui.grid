@@ -10,7 +10,7 @@
     "lint:test": "eslint cypress --ext .ts,.tsx",
     "validate": "npm run check-types && npm run lint",
     "start": "npm run validate && webpack-dev-server",
-    "build": "npm run validate && (webpack --mode=production & webpack --mode=production --minify) && node tsBannerGenerator.ts",
+    "build": "npm run validate && (webpack --mode=production & webpack --mode=production --minify) && node ./scripts/tsBannerGenerator.ts",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test": "npm run lint:test && start-server-and-test start http://localhost:8000 cy:open",
