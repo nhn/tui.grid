@@ -10,11 +10,11 @@ interface RowCoordsOption {
   dimension: Dimension;
 }
 
-export function create({ data, dimension }: RowCoordsOption): RowCoords {
+export function create({ data, dimension }: RowCoordsOption) {
   const { rowHeight } = dimension;
   const { pageOptions, pageRowRange } = data;
 
-  return observable({
+  return observable<RowCoords>({
     heights: pageOptions.useClient
       ? data.filteredRawData.slice(...pageRowRange).map((row) => getRowHeight(row, rowHeight))
       : data.filteredRawData.map((row) => getRowHeight(row, rowHeight)),

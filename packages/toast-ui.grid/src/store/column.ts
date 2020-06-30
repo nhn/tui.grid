@@ -364,7 +364,7 @@ export function create({
   valign,
   columnHeaders,
   disabled,
-}: ColumnOption): Column {
+}: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
@@ -401,7 +401,7 @@ export function create({
     createComplexColumnHeaders(column, columnHeaderInfo)
   );
 
-  return observable({
+  return observable<Column>({
     keyColumnName,
     allColumns,
     complexColumnHeaders,
@@ -454,7 +454,7 @@ export function create({
         .map(({ name, defaultValue }) => ({ name, value: defaultValue }));
     },
 
-    get visibleFrozenCount(this: Column) {
+    get visibleFrozenCount() {
       return this.visibleColumnsBySideWithRowHeader.L.length;
     },
 

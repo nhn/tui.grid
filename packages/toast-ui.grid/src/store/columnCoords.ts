@@ -111,9 +111,9 @@ interface ColumnCoordsOption {
   dimension: Dimension;
 }
 
-export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords {
+export function create({ column, dimension }: ColumnCoordsOption) {
   return observable<ColumnCoords>({
-    get widths(this: ColumnCoords) {
+    get widths() {
       const { visibleColumnsWithRowHeader, visibleFrozenCount } = column;
       const widths = calculateWidths(
         visibleColumnsWithRowHeader,
@@ -127,14 +127,14 @@ export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords 
       };
     },
 
-    get offsets(this: ColumnCoords) {
+    get offsets() {
       return {
         L: calculateOffsets(this.widths.L, dimension.cellBorderWidth),
         R: calculateOffsets(this.widths.R, dimension.cellBorderWidth),
       };
     },
 
-    get areaWidth(this: ColumnCoords) {
+    get areaWidth() {
       const { visibleFrozenCount } = column;
       const { width, frozenBorderWidth, cellBorderWidth } = dimension;
       let leftAreaWidth = 0;
@@ -150,7 +150,7 @@ export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords 
       };
     },
 
-    get totalColumnWidth(this: ColumnCoords) {
+    get totalColumnWidth() {
       return {
         L: last(this.offsets.L) + last(this.widths.L),
         R: last(this.offsets.R) + last(this.widths.R),

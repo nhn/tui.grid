@@ -2,7 +2,7 @@ export {};
 
 interface Data {
   name: string;
-  age: number;
+  age: number | string;
 }
 
 interface ModifiedRowsLengthMap {
@@ -144,7 +144,6 @@ describe('update rows', () => {
 
       assertModifiedRowsLength({ createdRows: 0, updatedRows: 2, deletedRows: 0 });
       assertModifiedRowsContainsObject({
-        // @ts-ignore
         updatedRows: [
           { name: '', age: '' },
           { name: '', age: '' },

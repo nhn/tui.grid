@@ -4,7 +4,7 @@ import { Dimension } from '@t/store/dimension';
 import { RowCoords } from '@t/store/rowCoords';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { EditingEvent, TabMode, Focus } from '@t/store/focus';
-import { Observable, observable } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
 import { findIndexByRowKey, isClientPagination, getRowIndexWithPage } from '../query/data';
@@ -29,7 +29,7 @@ export function create({
   editingEvent,
   tabMode,
   id,
-}: FocusOption): Observable<Focus> {
+}: FocusOption) {
   return observable({
     rowKey: null,
     columnName: null,
@@ -41,7 +41,7 @@ export function create({
     forcedDestroyEditing: false,
     tabMode,
 
-    get side(this: Focus) {
+    get side() {
       if (this.columnName === null) {
         return null;
       }
@@ -51,7 +51,7 @@ export function create({
         : 'L';
     },
 
-    get columnIndex(this: Focus) {
+    get columnIndex() {
       const { columnName, side } = this;
 
       return columnName === null || side === null
@@ -59,7 +59,7 @@ export function create({
         : findPropIndex('name', columnName, column.visibleColumnsBySideWithRowHeader[side]);
     },
 
-    get totalColumnIndex(this: Focus) {
+    get totalColumnIndex() {
       const { visibleColumnsBySideWithRowHeader } = column;
       const { columnIndex, side } = this;
 
@@ -70,13 +70,13 @@ export function create({
       return side === 'R' ? columnIndex + visibleColumnsBySideWithRowHeader.L.length : columnIndex;
     },
 
-    get rowIndex(this: Focus) {
+    get rowIndex() {
       const { rowKey } = this;
 
       return rowKey === null ? null : findIndexByRowKey(data, column, id, rowKey);
     },
 
-    get originalRowIndex(this: Focus) {
+    get originalRowIndex() {
       const { rowIndex } = this;
       const { pageOptions } = data;
 
@@ -93,7 +93,7 @@ export function create({
       return rowIndex;
     },
 
-    get cellPosRect(this: Focus) {
+    get cellPosRect() {
       const { columnIndex, rowIndex, side, columnName, rowKey } = this;
       const { filteredRawData, sortState } = data;
       const { cellBorderWidth } = dimension;
@@ -123,5 +123,5 @@ export function create({
 
       return { left, right, top, bottom };
     },
-  });
+  } as Focus);
 }

@@ -5,7 +5,7 @@ import { RowCoords } from '@t/store/rowCoords';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { Range } from '@t/store/selection';
 import { Viewport } from '@t/store/viewport';
-import { observable, Observable } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 import { getMaxRowSpanCount, isRowSpanEnabled } from '../query/rowSpan';
 import { isClientPagination } from '../query/data';
@@ -68,8 +68,8 @@ export function create({
   rowCoords,
   columnCoords,
   showDummyRows,
-}: ViewportOption): Observable<Viewport> {
-  return observable({
+}: ViewportOption) {
+  return observable<Viewport>({
     scrollLeft: 0,
     scrollTop: 0,
     scrollPixelScale: 40,
@@ -93,7 +93,7 @@ export function create({
     },
 
     // only for right side columns
-    get colRange(this: Observable<Viewport>) {
+    get colRange() {
       const range = calculateRange(
         this.scrollLeft,
         columnCoords.areaWidth.R,
@@ -105,15 +105,15 @@ export function create({
     },
 
     // only for right side columns
-    get columns(this: Viewport) {
+    get columns() {
       return column.visibleColumnsBySideWithRowHeader.R.slice(...this.colRange);
     },
 
-    get offsetLeft(this: Viewport) {
+    get offsetLeft() {
       return columnCoords.offsets.R[this.colRange[0]];
     },
 
-    get rowRange(this: Observable<Viewport>) {
+    get rowRange() {
       const range = calculateRange(
         this.scrollTop,
         dimension.bodyHeight,
@@ -125,11 +125,11 @@ export function create({
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
-    get rows(this: Viewport) {
+    get rows() {
       return data.filteredViewData.slice(...this.rowRange);
     },
 
-    get offsetTop(this: Viewport) {
+    get offsetTop() {
       return rowCoords.offsets[this.rowRange[0] - data.pageRowRange[0]];
     },
 

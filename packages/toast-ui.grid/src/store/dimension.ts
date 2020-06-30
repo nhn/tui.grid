@@ -39,7 +39,7 @@ export function create({
   summaryHeight = 0,
   summaryPosition = 'bottom',
   headerHeight = 40,
-}: DimensionOption): Dimension {
+}: DimensionOption) {
   const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
   return observable<Dimension>({
@@ -72,14 +72,14 @@ export function create({
       return this.scrollX ? this.scrollbarWidth : 0;
     },
 
-    get frozenBorderWidth(this: Dimension) {
+    get frozenBorderWidth() {
       const { visibleColumnsBySide } = column;
       const visibleLeftColumnCount = visibleColumnsBySide.L.length;
 
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
-    get contentsWidth(this: Dimension) {
+    get contentsWidth() {
       const columnLen = column.visibleColumnsWithRowHeader.length;
       const totalBorderWidth = columnLen * this.cellBorderWidth;
 
