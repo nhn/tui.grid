@@ -14,8 +14,8 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-function getRsideBody(el) {
-  return el.querySelector(`.${cls('rside-area')} .${cls('body-area')}`);
+function getRsideBody(el: HTMLElement) {
+  return el.querySelector(`.${cls('rside-area')} .${cls('body-area')}`)!;
 }
 
 const columns = [

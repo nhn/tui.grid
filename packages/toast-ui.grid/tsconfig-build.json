@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@t/*": ["types/*"]
+    },
+    "types": ["cypress", "node", "tui-pagination", "tui-date-picker"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*", "cypress/**/*.ts", "stories/**/*.ts"]
+}

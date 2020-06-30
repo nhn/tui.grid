@@ -52,7 +52,7 @@ function createGrid(pageOptions?: PageOptions) {
 
 function clickLastPageBtnAsync(el: HTMLElement) {
   setTimeout(() => {
-    const lastBtn: HTMLElement = el.querySelector('.tui-page-btn.tui-last');
+    const lastBtn = el.querySelector('.tui-page-btn.tui-last') as HTMLElement;
     lastBtn.click();
   });
 }

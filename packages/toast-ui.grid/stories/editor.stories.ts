@@ -9,19 +9,15 @@ export default {
   title: 'Editor',
 };
 
-class ColorPickerEditor implements CellEditor {
+class CustomEditor implements CellEditor {
   el: HTMLInputElement;
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('input');
-    const { grid, rowKey, columnInfo } = props;
 
-    el.type = 'color';
+    el.type = 'text';
+    el.style.background = '#ccc';
     el.value = String(props.value);
-
-    el.addEventListener('change', () => {
-      grid.setValue(rowKey, columnInfo.name, Number(el.value));
-    });
 
     this.el = el;
   }
@@ -195,7 +191,7 @@ const columns: OptColumn[] = [
     header: 'Album Color',
     name: 'albumColor',
     editor: {
-      type: ColorPickerEditor,
+      type: CustomEditor,
     },
   },
 ];
@@ -314,7 +310,7 @@ export const customEditor = () => {
 };
 const customEditorNote = `
 ## Custom Editor
-- Customizing cell editor with color picker.
+- Customizing cell editor with custom text editor.
 - The Editing Cell
   - Row Index: \`8\`
   - Column Index: \`5\`

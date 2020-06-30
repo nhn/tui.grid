@@ -1,0 +1,28 @@
+name: Visual Test
+on: pull_request
+jobs: 
+  test:
+    name: Visual Test
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./packages/toast-ui.grid
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install(toast.ui-grid)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: visual test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          APPLITOOLS_API_KEY: ${{secrets.APPLITOOLS_API_KEY}}
+        run: |
+          npm run visual-test

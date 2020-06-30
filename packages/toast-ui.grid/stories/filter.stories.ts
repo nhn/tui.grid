@@ -15,7 +15,7 @@ function createGrid(columns: OptColumn[], data: OptRow[] = []) {
 
 function clickFilterBtnAsync(el: HTMLElement, callback?: () => void) {
   setTimeout(() => {
-    const filterBtn: HTMLElement = el.querySelector('.tui-grid-btn-filter');
+    const filterBtn = el.querySelector('.tui-grid-btn-filter') as HTMLElement;
     filterBtn.click();
     if (callback) {
       callback();
@@ -25,7 +25,7 @@ function clickFilterBtnAsync(el: HTMLElement, callback?: () => void) {
 
 function clickLayerInputAsync(el: HTMLElement) {
   setTimeout(() => {
-    const input: HTMLElement = el.querySelector('.tui-grid-filter-input');
+    const input = el.querySelector('.tui-grid-filter-input') as HTMLElement;
     input.click();
   });
 }
