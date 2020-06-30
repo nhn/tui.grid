@@ -2,7 +2,7 @@ name: test on pull request
 on: pull_request
 jobs: 
   test:
-    name: lint, type, e2e test
+    name: lint, type, e2e, visual test
     runs-on: ubuntu-latest
     env:
       WORKING_DIRECTORY: ./packages/toast-ui.grid
