@@ -68,7 +68,7 @@
       "example25-large-data-performance": "25. Large Data Performance",
       "example26-infinite-scroll": "26. infinite scroll"
     },
-    "globalErrorLogVariable": true
+    "globalErrorLogVariable": "errorLogs"
   },
   "pathPrefix": "tui.grid"
 }
