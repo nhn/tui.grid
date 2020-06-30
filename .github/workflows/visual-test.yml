@@ -1,13 +1,14 @@
-name: test on pull request
+name: Visual Test
 on: pull_request
 jobs: 
   test:
-    name: lint, type, e2e, visual test
+    name: Visual Test
     runs-on: ubuntu-latest
     env:
       WORKING_DIRECTORY: ./packages/toast-ui.grid
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout branch
+        uses: actions/checkout@v2
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
@@ -19,18 +20,6 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           npm install
-      - name: eslint
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm run lint:all
-      - name: check types
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm run check-types:all
-      - name: e2e test
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm run e2e-test:ci
       - name: visual test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
