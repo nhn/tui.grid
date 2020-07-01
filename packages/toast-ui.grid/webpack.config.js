@@ -42,7 +42,7 @@ const commonConfig = {
     path: path.resolve(__dirname, 'dist'),
   },
 };
-module.exports = (env, { mode = 'development' }) => {
+module.exports = (env, { mode }) => {
   if (mode === 'production') {
     const { version, author, license } = package;
     const banner = [
@@ -55,7 +55,7 @@ module.exports = (env, { mode = 'development' }) => {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
-          filename: package.name + (minify ? '.min' : '') + '.css',
+          filename: `${package.name + (minify ? '.min' : '')}.css`,
         }),
         new webpack.BannerPlugin({ banner, entryOnly: true }),
       ],
@@ -109,6 +109,9 @@ module.exports = (env, { mode = 'development' }) => {
     return merge(commonConfig, productionConfig);
   }
 
+  // only add HtmlWebpackPlugin plugin when executing the test srcipt
+  const plugins = mode === 'development' ? [] : [new HtmlWebpackPlugin({ template: 'index.html' })];
+
   return merge(commonConfig, {
     mode,
     devtool: 'inline-source-map',
@@ -120,12 +123,7 @@ module.exports = (env, { mode = 'development' }) => {
         },
       ],
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        filename: 'dist/index.html',
-        template: 'index.html',
-      }),
-    ],
+    plugins,
     devServer: {
       inline: true,
       host: '0.0.0.0',
