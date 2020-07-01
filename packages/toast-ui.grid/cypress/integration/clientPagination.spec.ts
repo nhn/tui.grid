@@ -207,13 +207,11 @@ describe('type: scroll', () => {
 
     cy.gridInstance().invoke('setPerPage', 30);
 
-    setTimeout(() => {
-      cy.getByCls('body-container')
-        .invoke('height')
-        .then((height) => {
-          initialHeight.should('eq', height);
-        });
-    });
+    cy.getByCls('body-container')
+      .invoke('height')
+      .then((height) => {
+        initialHeight.should('eq', height);
+      });
   });
 
   it('should check the header checkbox of added data on scrolling at the bottommost', () => {
