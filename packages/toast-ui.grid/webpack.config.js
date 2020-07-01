@@ -55,7 +55,7 @@ module.exports = (env, { mode }) => {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
-          filename: `${package.name + (minify ? '.min' : '')}.css`,
+          filename: package.name + (minify ? '.min' : '') + '.css',
         }),
         new webpack.BannerPlugin({ banner, entryOnly: true }),
       ],
