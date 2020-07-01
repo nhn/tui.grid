@@ -42,7 +42,7 @@
   "license": "MIT",
   "devDependencies": {
     "@applitools/eyes-storybook": "^3.5.3",
-    "@cypress/webpack-preprocessor": "^5.4.1",
+    "@cypress/webpack-preprocessor": "^4.0.3",
     "@storybook/addon-knobs": "^5.3.19",
     "@storybook/addon-notes": "^5.3.19",
     "@storybook/html": "^5.3.19",
