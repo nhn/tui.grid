@@ -439,33 +439,40 @@ describe('select, checkbox, radio editor', () => {
 //     .should('eq', 20);
 // });
 
-// @TODO: cannot pass the test in headless mode, need to ask this issue
-// it('should not copy prev value as moving the editing cell by tab keyMap', () => {
-//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
-//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+it('should not copy prev value as moving the editing cell by tab keyMap', () => {
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 },
+    { name: 'Ryu', age: 22 },
+  ];
+  const columns = [
+    { name: 'name', editor: 'text' },
+    { name: 'age', editor: 'text' },
+  ];
 
-//   cy.createGrid({ data, columns });
-//   cy.gridInstance().invoke('startEditing', 0, 'name');
-//   cy.get(`.${cls('content-text')}`).tab();
+  cy.createGrid({ data, columns });
 
-//   cy.get(`.${cls('content-text')}`)
-//     .invoke('val')
-//     .should('eq', '20');
+  cy.gridInstance().invoke('startEditing', 0, 'age');
 
-//   cy.get(`.${cls('content-text')}`).tab({ shift: true });
+  cy.getByCls('content-text').invoke('val').should('eq', '20');
 
-//   cy.get(`.${cls('content-text')}`)
-//     .invoke('val')
-//     .should('eq', 'Lee');
-// });
+  cy.getByCls('content-text').tab().tab({ shift: true });
 
-// it('should destroy the editing cell as next cell is not editable cell on moving by tab keyMap', () => {
-//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
-//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+  cy.getByCls('content-text').invoke('val').should('eq', 'Lee');
+});
 
-//   cy.createGrid({ data, columns });
-//   cy.gridInstance().invoke('startEditing', 0, 'name');
-//   cy.get(`.${cls('content-text')}`).tab();
+it('should destroy the editing cell as next cell is not editable cell on moving by tab keyMap', () => {
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 },
+    { name: 'Ryu', age: 22 },
+  ];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
-//   cy.get(`.${cls('content-text')}`).should('be.not.visible');
-// });
+  cy.createGrid({ data, columns });
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.getByCls('content-text').tab().tab();
+
+  cy.getByCls('content-text').should('be.not.visible');
+});

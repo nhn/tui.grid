@@ -20,15 +20,15 @@ it('observe() should invoke callback function whenever related props changed', (
   expect(callback1).to.be.calledWith('Kim', 'JS Guide');
   expect(callback2).to.be.calledWith(20, 'Lee');
 
-  callback1.reset();
-  callback2.reset();
+  callback1.resetHistory();
+  callback2.resetHistory();
 
   person.age = 11;
   expect(callback1).not.to.be.called;
   expect(callback2).to.be.calledWith(11, 'Lee');
 
-  callback1.reset();
-  callback2.reset();
+  callback1.resetHistory();
+  callback2.resetHistory();
 
   book.title = 'Java Guide';
   expect(callback1).to.be.calledWith('Kim', 'Java Guide');
@@ -57,8 +57,8 @@ it('computed (getter) property and observe', () => {
   expect(callback2).to.be.calledWith('12');
   expect(callback3).to.be.calledWith('123');
 
-  callback2.reset();
-  callback3.reset();
+  callback2.resetHistory();
+  callback3.resetHistory();
 
   person.p1 = 'A';
   expect(callback2).to.be.calledWith('A2');
@@ -100,7 +100,7 @@ it('observe returns a function which stops observing', () => {
 it('array index property cannot be observable', () => {
   expect(() => {
     observable([1, 2, 3]);
-  }).to.throw(Error, 'Array object cannot be Reactive');
+  }).to.throw('Array object cannot be Reactive');
 });
 
 it('notify methods should invoke observers', () => {
@@ -117,12 +117,14 @@ it('notify methods should invoke observers', () => {
   observe(() => callback1(person.p1));
   observe(() => callback2(person.p2));
 
-  callback1.reset();
+  callback1.resetHistory();
   notify(person, 'p1');
+
   expect(callback1).to.be.calledWith('1');
 
-  callback2.reset();
+  callback2.resetHistory();
   notify(person, 'p2');
+
   expect(callback2).to.be.calledWith('12');
 });
 
@@ -141,7 +143,7 @@ it('observe should react to conditional logic', () => {
 
   person.flag = true;
 
-  callback.reset();
+  callback.resetHistory();
 
   person.name = 'Lee';
 
@@ -176,9 +178,9 @@ it('recursive observe should work properly with dynamic observe', () => {
     callback2(obj2.num);
   });
 
-  callback1.reset();
-  callback2.reset();
-  callback3.reset();
+  callback1.resetHistory();
+  callback2.resetHistory();
+  callback3.resetHistory();
 
   obj1.num = 10;
 
@@ -186,7 +188,7 @@ it('recursive observe should work properly with dynamic observe', () => {
   expect(callback2).to.be.calledWith(20);
   expect(callback3).to.be.calledWith(0);
 
-  callback3.reset();
+  callback3.resetHistory();
 
   obj3.num = 10;
 

@@ -61,6 +61,3 @@ chai.use((_chai) => {
     new _chai.Assertion(actual).to.be.eql(columnData);
   });
 });
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')

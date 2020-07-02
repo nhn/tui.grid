@@ -8,6 +8,7 @@ import { deepCopy } from '@/helper/common';
 import { cls, ClassNameType } from '@/helper/dom';
 
 const PER_PAGE = 10;
+const ROW_HEIGHT = 40;
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true, editor: 'text' },
@@ -148,7 +149,7 @@ describe('create grid with dataSource config', () => {
         .should('contain', { 'x-custom-header': 'x-custom-header' });
       cy.wrap(stub).should('be.calledOnce');
 
-      stub.reset();
+      stub.resetHistory();
 
       cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
 
@@ -574,48 +575,46 @@ it('stop custom event if prev event is prevented.', () => {
   cy.wrap(onSuccessResponse).should('be.not.called');
 });
 
-// @TODO solve the intermittent broken problem
-// function createGridWithScrollType(dataSource?: DataSource) {
-//   cy.createGrid({
-//     data: { ...(dataSource || data) },
-//     bodyHeight: 300,
-//     columns,
-//     useClientSort: true,
-//     pageOptions: { perPage: PER_PAGE, type: 'scroll' }
-//   });
-// }
-// describe('type: scroll', () => {
-//   beforeEach(() => {
-//     createGridWithScrollType();
-//   });
+function createGridWithScrollType(dataSource?: DataSource) {
+  cy.createGrid({
+    data: { ...(dataSource || data) },
+    bodyHeight: 300,
+    columns,
+    useClientSort: true,
+    pageOptions: { perPage: PER_PAGE, type: 'scroll' },
+  });
+}
 
-//   it('should add next data on scrolling at the bottommost', () => {
-//     cy.getByCls('body-container')
-//       .invoke('height')
-//       .should('eq', PER_PAGE * ROW_HEIGHT + 1);
+describe('type: scroll', () => {
+  beforeEach(() => {
+    createGridWithScrollType();
+  });
 
-//     // scroll at the bottommost
-//     cy.focusAndWait(9, 'name');
+  it('should add next data on scrolling at the bottommost', () => {
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', PER_PAGE * ROW_HEIGHT + 1);
 
-//     cy.getCell(10, 'id').should('have.text', '10');
-//     cy.getByCls('body-container')
-//       .invoke('height')
-//       .should('eq', PER_PAGE * ROW_HEIGHT * 2 + 1);
-//   });
+    // scroll at the bottommost
+    cy.focusAndWait(9, 'name');
 
-//   it('should not change page data after calling setPerPage API', () => {
-//     createGridWithScrollType();
+    cy.getCell(10, 'id').should('have.text', '10');
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', PER_PAGE * ROW_HEIGHT * 2 + 1);
+  });
 
-//     const initialHeight = cy.getByCls('body-container').invoke('height');
+  it('should not change page data after calling setPerPage API', () => {
+    createGridWithScrollType();
 
-//     cy.gridInstance().invoke('setPerPage', 30);
+    const initialHeight = cy.getByCls('body-container').invoke('height');
 
-//     setTimeout(() => {
-//       cy.getByCls('body-container')
-//         .invoke('height')
-//         .then(height => {
-//           initialHeight.should('be.eq', height);
-//         });
-//     });
-//   });
-// });
+    cy.gridInstance().invoke('setPerPage', 30);
+
+    cy.getByCls('body-container')
+      .invoke('height')
+      .then((height) => {
+        initialHeight.should('be.eq', height);
+      });
+  });
+});

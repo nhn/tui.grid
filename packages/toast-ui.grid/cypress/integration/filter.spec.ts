@@ -739,13 +739,12 @@ describe('check other option when filtering', () => {
   });
 
   it('should maintain the row number after filtering', () => {
-    const filteredRowNum = ['2', '6'];
     cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
 
-    setTimeout(() => {
-      cy.getRowHeaderCells('_number').each(($el, idx) => {
-        expect($el.text()).to.eq(filteredRowNum[idx]);
-      });
+    cy.getRowHeaderCells('_number').should(($el) => {
+      expect($el).to.have.length(2);
+      expect($el.eq(0)).to.contain('2');
+      expect($el.eq(1)).to.contain('6');
     });
   });
 
