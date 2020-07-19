@@ -765,8 +765,11 @@ export function appendRows(store: Store, inputData: OptRow[]) {
 
   if (!column.keyColumnName) {
     const rowKey = getMaxRowKey(data);
-    inputData.forEach((row, index) => {
-      row.rowKey = rowKey + index;
+    inputData = inputData.map((row, index) => {
+      return {
+        ...row,
+        rowKey: rowKey + index,
+      };
     });
   }
 
