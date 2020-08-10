@@ -296,6 +296,26 @@ describe('should check the validation of cell - validatorFn', () => {
         },
       ]);
   });
+
+  it('The value of `validatorFn` should be equal to original cell value when the value is `null` or `undefined`', () => {
+    /* eslint-disable no-undefined */
+    const nullData = [{ name: null }, { name: undefined }];
+    cy.createGrid({
+      data: nullData,
+      columns: [
+        {
+          name: 'name',
+          validation: {
+            validatorFn: stub,
+          },
+        },
+      ],
+    });
+
+    cy.wrap(stub).should('be.calledWithMatch', null, { rowKey: 0, name: null }, 'name');
+    cy.wrap(stub).should('be.calledWithMatch', undefined, { rowKey: 1, name: undefined }, 'name');
+    /* eslint-enable no-undefined */
+  });
 });
 
 it('should check the validation of cell - combined', () => {
