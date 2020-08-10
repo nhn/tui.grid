@@ -172,7 +172,7 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode({ id, value, row, validation, columnName: name }),
+    invalidStates: getValidationCode({ id, value: row[name], row, validation, columnName: name }),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value,
   };
