@@ -1,6 +1,7 @@
 import GridEvent from '@/event/gridEvent';
 import { CellValue } from '@t/store/data';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
+import { GridEventProps } from '@t/event';
 
 before(() => {
   cy.visit('/dist');
@@ -36,6 +37,20 @@ function createGridWithEditingFinishEvent(stub: Function) {
 
   cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
   cy.gridInstance().invoke('on', 'editingFinish', stub);
+}
+
+function createGridWithEditingEvent() {
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 },
+    { name: 'Ryu', age: 22 },
+  ];
+  const columns = [
+    { name: 'name', editor: 'text' },
+    { name: 'age', editor: 'text' },
+  ];
+
+  cy.createGrid({ data, columns, editingEvent: 'click' });
 }
 
 describe('with interaction', () => {
@@ -475,4 +490,51 @@ it('should destroy the editing cell as next cell is not editable cell on moving 
   cy.getByCls('content-text').tab().tab();
 
   cy.getByCls('content-text').should('be.not.visible');
+});
+
+describe('editing event: click', () => {
+  beforeEach(() => {
+    createGridWithEditingEvent();
+  });
+
+  it('should render the editing layer when clicking the cell', () => {
+    cy.getCell(0, 'name').click().trigger('click');
+
+    cy.getByCls('content-text').should('be.visible');
+  });
+
+  it('shoud not copy the value to other cell when focus event is stoped', () => {
+    cy.gridInstance().invoke('on', (ev: GridEventProps & GridEvent) => {
+      if (ev.columnName === 'name') {
+        ev.stop();
+      }
+    });
+
+    cy.getCell(0, 'age').click().trigger('click');
+    // click the cell which stops to change focus
+    cy.getCell(0, 'name').click();
+    cy.getCell(1, 'age').click().trigger('click');
+
+    cy.getByCls('content-text').should('be.visible').and('have.value', '28');
+  });
+
+  ['API', 'UI'].forEach((type) => {
+    it(`shoud not emit the error when clicking the cell which stops to change focus by ${type}`, () => {
+      cy.gridInstance().invoke('on', (ev: GridEventProps & GridEvent) => {
+        if (ev.columnName === 'name') {
+          ev.stop();
+        }
+      });
+
+      // click the cell which stops to change focus
+      if (type === 'UI') {
+        cy.getCell(0, 'name').click();
+      } else {
+        cy.gridInstance().invoke('startEditing', 0, 'name');
+      }
+      cy.getCell(1, 'age').click().trigger('click');
+
+      cy.getByCls('content-text').should('be.visible').and('have.value', '28');
+    });
+  });
 });
