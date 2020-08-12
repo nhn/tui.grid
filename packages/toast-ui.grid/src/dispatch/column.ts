@@ -13,8 +13,11 @@ import { isObservable, notify } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
-import { findProp } from '../helper/common';
+import { findProp, findPropIndex } from '../helper/common';
 import { initScrollPosition } from './viewport';
+import { getColumnSide } from '../query/column';
+import { getTextWidth, getComputedFontStyle } from '../helper/dom';
+import { getMaxTextMap } from '../store/helper/data';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -142,11 +145,13 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   initFilter(store);
   unsort(store);
+  updateAutoResizingColumnWidth(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
   column.visibleColumns.forEach((columnInfo, idx) => {
     columnInfo.baseWidth = widths[idx];
+    columnInfo.autoResizing = false;
   });
 }
 
@@ -205,4 +210,23 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
+}
+
+export function updateAutoResizingColumnWidth({ data, column, columnCoords }: Store) {
+  const maxTextMap = getMaxTextMap();
+  const { allColumnMap, autoResizingColumn, visibleColumnsBySide } = column;
+
+  if (data.rawData.length) {
+    autoResizingColumn.forEach(({ name }) => {
+      const side = getColumnSide(column, name);
+      const index = findPropIndex('name', name, visibleColumnsBySide[side]);
+      const prevWidth = columnCoords.widths[side][index];
+      const width = getTextWidth(maxTextMap[name], getComputedFontStyle());
+
+      if (prevWidth < width) {
+        allColumnMap[name].baseWidth = width;
+        allColumnMap[name].fixedWidth = true;
+      }
+    });
+  }
 }
