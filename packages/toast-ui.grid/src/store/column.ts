@@ -278,6 +278,7 @@ export function createColumn(
     className,
     disabled,
     comparator,
+    autoResizing: width === 'auto',
   });
 }
 
@@ -315,6 +316,7 @@ function createRowHeader(data: OptRowHeader, columnHeaderInfo: ColumnHeaderInfo)
     headerAlign,
     headerVAlign,
     headerRenderer,
+    autoResizing: false,
   });
 }
 
@@ -495,6 +497,10 @@ export function create({
 
     get emptyRow() {
       return this.columnsWithoutRowHeader.reduce((acc, { name }) => ({ ...acc, [name]: null }), {});
+    },
+
+    get autoResizingColumn() {
+      return this.columnsWithoutRowHeader.filter(({ autoResizing }) => autoResizing);
     },
 
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox }),
