@@ -243,6 +243,57 @@ describe('auto calculate column widths (container: 600)', () => {
       assertColumnWidth([250, 200, 150]);
     });
   });
+
+  context('should extend the width with `width: auto` option as text length', () => {
+    it('initial rendering', () => {
+      const data: OptRow[] = [{}];
+      const names = ['c1', 'c2', 'c3', 'c4', 'c5'];
+      const columns = names.map((name) => ({ name, width: 'auto' }));
+
+      columns.forEach(({ name }) => {
+        data[0][name] = name;
+      });
+      data[0].c1 = 'looooooooooooooong contents';
+
+      cy.createGrid({ data, columns });
+
+      assertColumnWidth([197, 147, 147, 147, 145]);
+    });
+
+    it('after calling resetData()', () => {
+      const data: OptRow[] = [{}];
+      const names = ['c1', 'c2', 'c3', 'c4', 'c5'];
+      const columns = names.map((name) => ({ name, width: 'auto' }));
+
+      columns.forEach(({ name }) => {
+        data[0][name] = name;
+      });
+
+      cy.createGrid({ data, columns });
+      cy.gridInstance().invoke('resetData', [{ c1: 'looooooooooooooong contents' }]);
+
+      assertColumnWidth([197, 147, 147, 147, 145]);
+    });
+
+    it('after calling setColumns()', () => {
+      const data: OptRow[] = [{}];
+      const names = ['c1', 'c2', 'c3', 'c4', 'c5'];
+      const columns = names.map((name) => ({ name }));
+
+      columns.forEach(({ name }) => {
+        data[0][name] = name;
+      });
+      data[0].c1 = 'looooooooooooooong contents';
+
+      cy.createGrid({ data, columns });
+      cy.gridInstance().invoke(
+        'setColumns',
+        names.map((name) => ({ name, width: 'auto' }))
+      );
+
+      assertColumnWidth([197, 147, 147, 147, 145]);
+    });
+  });
 });
 
 describe('body height', () => {
