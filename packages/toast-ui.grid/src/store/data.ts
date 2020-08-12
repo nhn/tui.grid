@@ -2,7 +2,6 @@ import {
   RowSpanAttributeValue,
   PageOptions,
   Row,
-  CellValue,
   ListItem,
   RowKey,
   RowSpan,
@@ -13,7 +12,7 @@ import {
   SortState,
   RawRowOptions,
 } from '@t/store/data';
-import { Column, FormatterProps, Formatter, ColumnInfo } from '@t/store/column';
+import { Column, ColumnInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
 import { OptRow, Dictionary } from '@t/options';
 import { Range } from '@t/store/selection';
@@ -21,7 +20,6 @@ import { observable, observe } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {
   someProp,
-  encodeHTMLEntity,
   isUndefined,
   isBoolean,
   isEmpty,
@@ -30,10 +28,10 @@ import {
   assign,
   isNull,
 } from '../helper/common';
-import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
+import { getFormattedValue, setMaxTextMap } from './helper/data';
 
 interface DataOption {
   data: OptRow[];
@@ -65,39 +63,6 @@ let dataCreationKey = '';
 export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
   return dataCreationKey;
-}
-
-function getCellDisplayValue(value: CellValue) {
-  if (typeof value === 'undefined' || value === null) {
-    return '';
-  }
-  return String(value);
-}
-
-export function getFormattedValue(
-  props: FormatterProps,
-  formatter?: Formatter,
-  defaultValue?: CellValue,
-  relationListItems?: ListItem[]
-) {
-  let value: CellValue;
-
-  if (formatter === 'listItemText') {
-    value = listItemText(props, relationListItems);
-  } else if (typeof formatter === 'function') {
-    value = formatter(props);
-  } else if (typeof formatter === 'string') {
-    value = formatter;
-  } else {
-    value = defaultValue;
-  }
-
-  const strValue = getCellDisplayValue(value);
-
-  if (strValue && props.column.escapeHTML) {
-    return encodeHTMLEntity(strValue);
-  }
-  return strValue;
 }
 
 function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {
@@ -405,6 +370,7 @@ export function createRawRow(
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   setRowRelationListItems(row as Row, column.columnMapWithRelation);
+  setMaxTextMap(column, row as Row);
 
   if (lazyObservable) {
     addUniqueInfoMap(id, row, column);
@@ -433,14 +399,14 @@ export function createData(
       disabled,
     });
   } else {
-    rawData = data.map((row, index, rows) =>
-      createRawRow(id, row, index, column, {
+    rawData = data.map((row, index, rows) => {
+      return createRawRow(id, row, index, column, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable,
         disabled,
-      })
-    );
+      });
+    });
   }
 
   const viewData = rawData.map((row: Row) =>

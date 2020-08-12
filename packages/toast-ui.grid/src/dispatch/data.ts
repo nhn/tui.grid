@@ -73,6 +73,7 @@ import {
   forceValidateUniquenessOfColumns,
   forceValidateUniquenessOfColumn,
 } from '../store/helper/validation';
+import { updateAutoResizingColumnWidth } from './column';
 
 function updateHeightsWithFilteredData(store: Store) {
   if (store.data.filters) {
@@ -564,6 +565,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
 
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
+  updateAutoResizingColumnWidth(store);
 
   setTimeout(() => {
     /**

@@ -1,9 +1,9 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
-import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
+import { Column, ColumnInfo } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
-import { createViewRow, getFormattedValue } from '../store/data';
+import { createViewRow } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
 import { notify, batchedInvokeObserver } from '../helper/observable';
 import { getDataManager } from '../instance';
@@ -29,9 +29,11 @@ import {
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
-import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/common';
-import { cls } from '../helper/dom';
+import { findProp, findPropIndex, removeArrayItem } from '../helper/common';
+import { getComputedFontStyle, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
+import { getColumnSide } from '../query/column';
+import { createFormattedValue } from '../store/helper/data';
 
 let computedFontStyle = '';
 
@@ -50,10 +52,6 @@ function changeHiddenAttr(row: Row, hidden: boolean) {
   if (tree) {
     tree.hidden = hidden;
   }
-}
-
-function getColumnSide(columnName: string, visibleColumns: VisibleColumnsBySide) {
-  return someProp('name', columnName, visibleColumns.R) ? 'R' : 'L';
 }
 
 function expand(store: Store, row: Row, recursive?: boolean) {
@@ -114,7 +112,7 @@ function updateTreeColumnWidth(
 ) {
   const { visibleColumnsBySideWithRowHeader, treeIcon } = column;
   const treeColumnName = column.treeColumnName!;
-  const treeColumnSide = getColumnSide(treeColumnName, visibleColumnsBySideWithRowHeader);
+  const treeColumnSide = getColumnSide(column, treeColumnName);
   const treeColumnIndex = findPropIndex(
     'name',
     treeColumnName,
@@ -123,14 +121,10 @@ function updateTreeColumnWidth(
 
   const columnInfo = visibleColumnsBySideWithRowHeader[treeColumnSide][treeColumnIndex];
 
-  if (columnInfo.resizable) {
-    const maxWidth = getChildTreeNodeMaxWidth(
-      childRowKeys,
-      rawData,
-      columnInfo,
-      treeColumnName,
-      treeIcon
-    );
+  // @TODO: auto resizing is operated with 'autoResizing' option
+  // 'resizable' condition should be deprecated in next version
+  if (columnInfo.resizable || columnInfo.autoResizing) {
+    const maxWidth = getChildTreeNodeMaxWidth(childRowKeys, rawData, columnInfo, treeIcon);
     const prevWidth = columnCoords.widths[treeColumnSide][treeColumnIndex];
 
     if (prevWidth < maxWidth) {
@@ -140,59 +134,22 @@ function updateTreeColumnWidth(
   }
 }
 
-function getTextWidth(text: string, font: string) {
-  const context = document.createElement('canvas').getContext('2d')!;
-  context.font = font;
-  const { width } = context.measureText(String(text));
-
-  return Math.ceil(width);
-}
-
-function getComputedFontStyle() {
-  const firstTreeCellNode = document.querySelector(`.${cls('tree-wrapper-relative')}`)!;
-  const walker = document.createTreeWalker(firstTreeCellNode, 4);
-  let node: Node = firstTreeCellNode;
-
-  while (walker.nextNode()) {
-    node = walker.currentNode;
-
-    if (node.nodeType === 3) {
-      node = node.parentElement!;
-      break;
-    }
-  }
-
-  const compStyle = getComputedStyle(node as Element);
-  const fontSize = compStyle.getPropertyValue('font-size');
-  const fontWeight = compStyle.getPropertyValue('font-weight');
-  const fontFamily = compStyle.getPropertyValue('font-family');
-
-  return `${fontWeight} ${fontSize} ${fontFamily}`;
-}
-
 function getChildTreeNodeMaxWidth(
   childRowKeys: RowKey[],
   rawData: Row[],
   column: ColumnInfo,
-  treeColumnName: string,
   useIcon?: boolean
 ) {
   const CELL_CONTENT_LEFT_PADDING = 14;
   const CELL_CONTENT_RIGHT_PADDING = 5;
   let maxLength = 0;
 
-  computedFontStyle = computedFontStyle || getComputedFontStyle();
+  computedFontStyle = computedFontStyle || getComputedFontStyle(true);
 
   const getMaxWidth = childRowKeys.reduce(
     (acc: () => number, rowKey) => {
       const row = findProp('rowKey', rowKey, rawData)!;
-      const value = row[treeColumnName];
-      const { formatter, defaultValue } = column;
-      const formattedValue = getFormattedValue(
-        { row, column, value },
-        formatter,
-        defaultValue || value
-      );
+      const formattedValue = createFormattedValue(row, column);
 
       if (formattedValue.length > maxLength) {
         maxLength = formattedValue.length;
