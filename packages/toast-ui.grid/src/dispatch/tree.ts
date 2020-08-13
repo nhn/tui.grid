@@ -34,6 +34,10 @@ import { getComputedFontStyle, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
 import { createFormattedValue } from '../store/helper/data';
+import {
+  TREE_CELL_CONTENT_LEFT_PADDING,
+  TREE_CELL_CONTENT_RIGHT_PADDING,
+} from '../helper/constant';
 
 let computedFontStyle = '';
 
@@ -140,8 +144,6 @@ function getChildTreeNodeMaxWidth(
   column: ColumnInfo,
   useIcon?: boolean
 ) {
-  const CELL_CONTENT_LEFT_PADDING = 14;
-  const CELL_CONTENT_RIGHT_PADDING = 5;
   let maxLength = 0;
 
   computedFontStyle = computedFontStyle || getComputedFontStyle(true);
@@ -156,8 +158,8 @@ function getChildTreeNodeMaxWidth(
         acc = () =>
           getTextWidth(formattedValue, computedFontStyle) +
           getTreeIndentWidth(getDepth(rawData, row), useIcon) +
-          CELL_CONTENT_LEFT_PADDING +
-          CELL_CONTENT_RIGHT_PADDING;
+          TREE_CELL_CONTENT_LEFT_PADDING +
+          TREE_CELL_CONTENT_RIGHT_PADDING;
       }
 
       return acc;

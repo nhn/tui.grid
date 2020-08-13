@@ -1,2 +1,4 @@
 export const FILTER_DEBOUNCE_TIME = 50;
 export const TREE_INDENT_WIDTH = 22;
+export const TREE_CELL_CONTENT_LEFT_PADDING = 14;
+export const TREE_CELL_CONTENT_RIGHT_PADDING = 5;
