@@ -64,7 +64,11 @@ export function moveTabFocus(store: Store, command: TabCommandType) {
     focus.navigating = true;
     changeFocus(store, nextRowKey, nextColumnName, id);
 
-    if (focus.tabMode === 'moveAndEdit') {
+    if (
+      focus.tabMode === 'moveAndEdit' &&
+      focus.rowKey === nextRowKey &&
+      focus.columnName === nextColumnName
+    ) {
       setTimeout(() => {
         startEditing(store, nextRowKey, nextColumnName);
       });

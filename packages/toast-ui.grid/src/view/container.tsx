@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { EditingEvent } from '@t/store/focus';
 import { SummaryPosition } from '@t/store/summary';
-import { ViewRow, PageOptions } from '@t/store/data';
+import { ViewRow, PageOptions, RowKey } from '@t/store/data';
 import { RenderState } from '@t/store/renderState';
 import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
@@ -42,6 +42,8 @@ interface StoreProps {
   scrollX: boolean;
   scrollY: boolean;
   renderState: RenderState;
+  focusedRowKey: RowKey | null;
+  focusedColumnName: string | null;
 }
 
 interface TouchEventInfo {
@@ -258,12 +260,14 @@ export class ContainerComp extends Component<Props> {
   };
 
   private startEditing(eventTarget: HTMLElement) {
-    const { dispatch } = this.props;
+    const { dispatch, focusedRowKey, focusedColumnName } = this.props;
     const address = getCellAddress(eventTarget);
 
     if (address) {
       const { rowKey, columnName } = address;
-      dispatch('startEditing', rowKey, columnName);
+      if (focusedRowKey === rowKey && focusedColumnName === columnName) {
+        dispatch('startEditing', rowKey, columnName);
+      }
     }
   }
 
@@ -394,5 +398,7 @@ export const Container = connect<StoreProps, OwnProps>(
     scrollX: dimension.scrollX,
     scrollY: dimension.scrollY,
     renderState,
+    focusedRowKey: focus.rowKey,
+    focusedColumnName: focus.columnName,
   })
 )(ContainerComp);

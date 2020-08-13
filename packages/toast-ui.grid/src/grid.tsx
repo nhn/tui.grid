@@ -672,7 +672,9 @@ export default class Grid implements TuiGrid {
    */
   public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean) {
     if (this.focus(rowKey, columnName, setScroll)) {
-      this.dispatch('startEditing', rowKey, columnName);
+      if (this.store.focus.rowKey === rowKey && this.store.focus.columnName === columnName) {
+        this.dispatch('startEditing', rowKey, columnName);
+      }
     }
   }
 
