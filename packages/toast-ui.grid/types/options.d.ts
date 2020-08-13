@@ -68,7 +68,9 @@ export type GridEventName =
   | 'beforeUnfilter'
   | 'afterUnfilter'
   | 'beforePageMove'
-  | 'afterPageMove';
+  | 'afterPageMove'
+  | 'beforeChange'
+  | 'afterChange';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {

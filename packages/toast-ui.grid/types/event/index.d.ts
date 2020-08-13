@@ -5,6 +5,13 @@ import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/fi
 import { ResizedColumn } from '../store/column';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
+interface CellChange {
+  rowKey: RowKey;
+  columnName: string;
+  value: CellValue;
+  nextValue?: CellValue;
+  prevValue?: CellValue;
+}
 
 export interface GridEventProps {
   value?: CellValue;
@@ -27,6 +34,8 @@ export interface GridEventProps {
   type?: FilterOptionType;
   operator?: OperatorType;
   page?: number;
+  changeType?: 'paste' | 'cell' | 'delete';
+  changes?: CellChange[];
 }
 
 export class TuiGridEvent {
