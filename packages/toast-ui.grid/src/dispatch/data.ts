@@ -121,6 +121,7 @@ export function setValue(
 ) {
   let gridEvent;
   const { column, data, id } = store;
+  const eventBus = getEventBus(id);
   const { rawData, viewData, sortState } = data;
   const { allColumnMap, columnsWithoutRowHeader } = column;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
@@ -141,6 +142,7 @@ export function setValue(
   const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
 
+  // @TODO: 'onBeforeChange' event is deprecated. This event will be replaced with 'beforeChange' event
   if (targetColumn && targetColumn.onBeforeChange) {
     gridEvent = new GridEvent({ rowKey, columnName, value: orgValue, nextValue: value });
     targetColumn.onBeforeChange(gridEvent);
@@ -148,6 +150,23 @@ export function setValue(
     if (gridEvent.isStopped()) {
       return;
     }
+  }
+
+  gridEvent = new GridEvent({
+    changeType: 'cell',
+    changes: [{ rowKey, columnName, value: orgValue, nextValue: value }],
+  });
+
+  /**
+   * Occurs before one or more cells is changed
+   * @event Grid#beforeChange
+   * @property {number | string} rowKey - rowKey of the unchecked row
+   * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('beforeChange', gridEvent);
+  if (gridEvent.isStopped()) {
+    return;
   }
 
   const { rowSpanMap } = targetRow;
@@ -176,13 +195,27 @@ export function setValue(
       getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
     }
   }
+  setAutoResizingColumnWidths(store);
 
+  // @TODO: 'onAfterChange' event is deprecated. This event will be replaced with 'afterChange' event
   if (targetColumn && targetColumn.onAfterChange) {
     gridEvent = new GridEvent({ rowKey, columnName, value, prevValue: orgValue });
     targetColumn.onAfterChange(gridEvent);
   }
 
-  setAutoResizingColumnWidths(store);
+  gridEvent = new GridEvent({
+    changeType: 'cell',
+    changes: [{ rowKey, columnName, value, prevValue: orgValue }],
+  });
+
+  /**
+   * Occurs after one or more cells is changed
+   * @event Grid#afterChange
+   * @property {number | string} rowKey - rowKey of the unchecked row
+   * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('afterChange', gridEvent);
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -327,12 +360,41 @@ export function uncheckAll(store: Store, allPage?: boolean) {
   eventBus.trigger('uncheckAll', gridEvent);
 }
 
+function createChangeInfo(
+  store: Store,
+  row: Row,
+  columnName: string,
+  pastingValue: CellValue,
+  index: number
+) {
+  const { id, column } = store;
+  const { rowKey } = row;
+  const prevChange = { rowKey, columnName, value: row[columnName], nextValue: pastingValue };
+  const nextChange = { rowKey, columnName, prevValue: row[columnName], value: pastingValue };
+  const changeValue = () => {
+    const { value, nextValue } = prevChange;
+    replaceColumnUniqueInfoMap(id, column, {
+      rowKey,
+      columnName,
+      prevValue: value,
+      value: nextValue,
+    });
+    nextChange.value = nextValue;
+    row[columnName] = nextValue;
+
+    return index;
+  };
+
+  return { prevChange, nextChange, changeValue };
+}
+
 function applyPasteDataToRawData(
   store: Store,
   pasteData: string[][],
   indexToPaste: SelectionRange
 ) {
   const { data, column, id } = store;
+  const eventBus = getEventBus(id);
   const { filteredRawData, filteredViewData } = data;
   const { visibleColumnsWithRowHeader } = column;
   const {
@@ -341,30 +403,67 @@ function applyPasteDataToRawData(
   } = indexToPaste;
 
   const columnNames = mapProp('name', visibleColumnsWithRowHeader);
+  const changeValueFns = [];
+  const prevChanges = [];
+  const nextChanges = [];
 
   for (let rowIndex = 0; rowIndex + startRowIndex <= endRowIndex; rowIndex += 1) {
-    let pasted = false;
     const rawRowIndex = rowIndex + startRowIndex;
     for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
       const name = columnNames[columnIndex + startColumnIndex];
       if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
         const targetRow = filteredRawData[rawRowIndex];
-        const value = pasteData[rowIndex][columnIndex];
-
-        replaceColumnUniqueInfoMap(id, column, {
-          rowKey: targetRow.rowKey,
-          columnName: name,
-          prevValue: targetRow[name],
-          value,
-        });
-        pasted = true;
-        targetRow[name] = value;
+        const { prevChange, nextChange, changeValue } = createChangeInfo(
+          store,
+          targetRow,
+          name,
+          pasteData[rowIndex][columnIndex],
+          rawRowIndex
+        );
+        prevChanges.push(prevChange);
+        nextChanges.push(nextChange);
+        changeValueFns.push(changeValue);
       }
     }
-    if (pasted) {
-      getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
-      forceValidateUniquenessOfColumns(data.rawData, column);
-    }
+  }
+  let gridEvent = new GridEvent({
+    changeType: 'paste',
+    changes: prevChanges,
+  });
+
+  /**
+   * Occurs before one or more cells is changed
+   * @event Grid#beforeChange
+   * @property {number | string} rowKey - rowKey of the unchecked row
+   * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('beforeChange', gridEvent);
+
+  if (!gridEvent.isStopped()) {
+    let index: number | null = null;
+    changeValueFns.forEach((changeValue) => {
+      const targetRowIndex = changeValue();
+      if (index !== targetRowIndex) {
+        index = targetRowIndex;
+        getDataManager(id).push('UPDATE', filteredRawData[index]);
+      }
+    });
+    forceValidateUniquenessOfColumns(data.rawData, column);
+
+    gridEvent = new GridEvent({
+      changeType: 'paste',
+      changes: nextChanges,
+    });
+
+    /**
+     * Occurs after one or more cells is changed
+     * @event Grid#afterChange
+     * @property {number | string} rowKey - rowKey of the unchecked row
+     * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('afterChange', gridEvent);
   }
 }
 
