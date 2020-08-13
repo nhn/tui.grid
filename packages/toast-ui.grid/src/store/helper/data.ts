@@ -3,15 +3,19 @@ import { ColumnInfo, Column, FormatterProps, Formatter } from '@t/store/column';
 import { listItemText } from '../../formatter/listItemText';
 import { encodeHTMLEntity } from '../../helper/common';
 
-const maxTextMap: Record<string, string> = {};
+interface MaxTextInfo {
+  formattedValue: string;
+  row: Row;
+}
+const maxTextMap: Record<string, MaxTextInfo> = {};
 
 export function setMaxTextMap(column: Column, row: Row) {
   column.autoResizingColumn.forEach((columnInfo) => {
     const { name } = columnInfo;
     const formattedValue = createFormattedValue(row, columnInfo);
 
-    if (!maxTextMap[name] || maxTextMap[name].length < formattedValue.length) {
-      maxTextMap[name] = formattedValue;
+    if (!maxTextMap[name] || maxTextMap[name].formattedValue.length < formattedValue.length) {
+      maxTextMap[name] = { formattedValue, row };
     }
   });
 }

@@ -18,6 +18,12 @@ import { initScrollPosition } from './viewport';
 import { getColumnSide } from '../query/column';
 import { getTextWidth, getComputedFontStyle } from '../helper/dom';
 import { getMaxTextMap } from '../store/helper/data';
+import { getTreeIndentWidth } from '../store/helper/tree';
+import { getDepth } from '../query/tree';
+import {
+  TREE_CELL_CONTENT_LEFT_PADDING,
+  TREE_CELL_CONTENT_RIGHT_PADDING,
+} from '../helper/constant';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -213,20 +219,37 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
 }
 
 export function updateAutoResizingColumnWidth({ data, column, columnCoords }: Store) {
-  const maxTextMap = getMaxTextMap();
-  const { allColumnMap, autoResizingColumn, visibleColumnsBySide } = column;
+  const {
+    allColumnMap,
+    autoResizingColumn,
+    visibleColumnsBySide,
+    treeColumnName,
+    treeIcon,
+  } = column;
 
-  if (data.rawData.length) {
-    autoResizingColumn.forEach(({ name }) => {
-      const side = getColumnSide(column, name);
-      const index = findPropIndex('name', name, visibleColumnsBySide[side]);
-      const prevWidth = columnCoords.widths[side][index];
-      const width = getTextWidth(maxTextMap[name], getComputedFontStyle());
-
-      if (prevWidth < width) {
-        allColumnMap[name].baseWidth = width;
-        allColumnMap[name].fixedWidth = true;
-      }
-    });
+  if (!data.rawData.length || !autoResizingColumn.length) {
+    return;
   }
+
+  const maxTextMap = getMaxTextMap();
+
+  autoResizingColumn.forEach(({ name }) => {
+    const side = getColumnSide(column, name);
+    const index = findPropIndex('name', name, visibleColumnsBySide[side]);
+    const prevWidth = columnCoords.widths[side][index];
+    const { formattedValue, row } = maxTextMap[name];
+    let width = getTextWidth(formattedValue, getComputedFontStyle());
+
+    if (treeColumnName) {
+      width +=
+        getTreeIndentWidth(getDepth(data.rawData, row), treeIcon) +
+        TREE_CELL_CONTENT_LEFT_PADDING +
+        TREE_CELL_CONTENT_RIGHT_PADDING;
+    }
+
+    if (prevWidth < width) {
+      allColumnMap[name].baseWidth = width;
+      allColumnMap[name].fixedWidth = true;
+    }
+  });
 }

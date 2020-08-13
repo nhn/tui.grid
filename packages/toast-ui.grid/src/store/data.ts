@@ -370,8 +370,10 @@ export function createRawRow(
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   setRowRelationListItems(row as Row, column.columnMapWithRelation);
-  setMaxTextMap(column, row as Row);
 
+  if (column.autoResizingColumn.length) {
+    setMaxTextMap(column, row as Row);
+  }
   if (lazyObservable) {
     addUniqueInfoMap(id, row, column);
   }
