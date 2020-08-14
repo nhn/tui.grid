@@ -1,5 +1,7 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
+import { nextTick } from 'process';
+import { GridEventProps } from '@t/event';
 
 const data = [
   { name: 'Kim', age: 10 },
@@ -23,6 +25,10 @@ beforeEach(() => {
     rowHeaders: ['rowNum', 'checkbox'],
   });
 });
+
+function clipboardType(key: string) {
+  cy.getByCls('clipboard').type(key, { force: true });
+}
 
 it('click', () => {
   const callback = cy.stub();
@@ -565,4 +571,110 @@ describe('filter', () => {
       });
     });
   });
+});
+
+describe('beforeChange, afterChange', () => {
+  ['UI', 'API'].forEach((type) => {
+    it(`should trigger beforeChange, afterChange event when changing the cell value by ${type}`, () => {
+      const callback = cy.stub();
+
+      cy.gridInstance().invoke('on', 'beforeChange', callback);
+      cy.gridInstance().invoke('on', 'afterChange', callback);
+
+      cy.gridInstance().invoke('setValue', 0, 'name', 'Test');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        changeType: 'cell',
+        changes: [{ rowKey: 0, columnName: 'name', value: 'Kim', nextValue: 'Test' }],
+      });
+
+      callback.resetHistory();
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        changeType: 'cell',
+        changes: [{ rowKey: 0, columnName: 'name', prevValue: 'Kim', value: 'Test' }],
+      });
+      cy.getRsideBody().should('have.cellData', [
+        ['Test', '10'],
+        ['Lee', '20'],
+      ]);
+    });
+  });
+
+  ['backspace', 'del'].forEach((key) => {
+    it(`should trigger beforeChange, afterChange event when deleting selection content by pressing ${key}`, () => {
+      const callback = cy.stub();
+
+      cy.gridInstance().invoke('on', 'beforeChange', callback);
+      cy.gridInstance().invoke('on', 'afterChange', callback);
+
+      cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 0] });
+      clipboardType('{backspace}');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        changeType: 'delete',
+        changes: [
+          { rowKey: 0, columnName: 'name', value: 'Kim', nextValue: '' },
+          { rowKey: 1, columnName: 'name', value: 'Lee', nextValue: '' },
+        ],
+      });
+
+      callback.resetHistory();
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        changeType: 'delete',
+        changes: [
+          { rowKey: 0, columnName: 'name', prevValue: 'Kim', value: '' },
+          { rowKey: 1, columnName: 'name', prevValue: 'Lee', value: '' },
+        ],
+      });
+      cy.getRsideBody().should('have.cellData', [
+        ['', '10'],
+        ['', '20'],
+      ]);
+    });
+  });
+
+  it('should not delete selection content when event is stopped', () => {
+    const before = cy.stub();
+    const after = cy.stub();
+
+    cy.gridInstance().invoke('on', 'beforeChange', (ev: GridEventProps & GridEvent) => {
+      before(ev);
+      ev.stop();
+    });
+    cy.gridInstance().invoke('on', 'afterChange', after);
+
+    cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 0] });
+    clipboardType('{backspace}');
+
+    cy.wrap(before).should('be.calledWithMatch', {
+      changeType: 'delete',
+      changes: [
+        { rowKey: 0, columnName: 'name', value: 'Kim', nextValue: '' },
+        { rowKey: 1, columnName: 'name', value: 'Lee', nextValue: '' },
+      ],
+    });
+
+    cy.wrap(after).should('not.be.called');
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Lee', '20'],
+    ]);
+  });
+
+  it('change the target value through beforeChange event when deleting the content', () => {
+    cy.gridInstance().invoke('on', 'beforeChange', (ev: GridEventProps & GridEvent) => {
+      ev.changes![0].nextValue = 'Changed';
+    });
+
+    cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 0] });
+    clipboardType('{backspace}');
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Changed', '10'],
+      ['', '20'],
+    ]);
+  });
+  // @TODO: add test case when pasting the data
 });
