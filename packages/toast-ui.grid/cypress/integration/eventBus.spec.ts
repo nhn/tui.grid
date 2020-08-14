@@ -663,6 +663,19 @@ describe('beforeChange, afterChange', () => {
     ]);
   });
 
+  it('change the target value through beforeChange event when changing the cell value', () => {
+    cy.gridInstance().invoke('on', 'beforeChange', (ev: GridEventProps & GridEvent) => {
+      ev.changes![0].nextValue = 'Changed';
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'name', 'Ryu');
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Changed', '10'],
+      ['Lee', '20'],
+    ]);
+  });
+
   it('change the target value through beforeChange event when deleting the content', () => {
     cy.gridInstance().invoke('on', 'beforeChange', (ev: GridEventProps & GridEvent) => {
       ev.changes![0].nextValue = 'Changed';

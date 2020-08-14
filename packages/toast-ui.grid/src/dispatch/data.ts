@@ -147,9 +147,10 @@ export function setValue(
     }
   }
 
+  const change = { rowKey, columnName, value: orgValue, nextValue: value };
   gridEvent = new GridEvent({
     changeType: 'cell',
-    changes: [{ rowKey, columnName, value: orgValue, nextValue: value }],
+    changes: [change],
   });
 
   /**
@@ -164,6 +165,7 @@ export function setValue(
     return;
   }
 
+  value = change.nextValue;
   const { rowSpanMap } = targetRow;
   const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
