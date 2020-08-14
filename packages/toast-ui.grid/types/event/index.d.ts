@@ -5,13 +5,14 @@ import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/fi
 import { ResizedColumn } from '../store/column';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
-interface CellChange {
+export interface CellChange {
   rowKey: RowKey;
   columnName: string;
   value: CellValue;
   nextValue?: CellValue;
   prevValue?: CellValue;
 }
+export type ChangeType = 'paste' | 'cell' | 'delete';
 
 export interface GridEventProps {
   value?: CellValue;
@@ -34,7 +35,7 @@ export interface GridEventProps {
   type?: FilterOptionType;
   operator?: OperatorType;
   page?: number;
-  changeType?: 'paste' | 'cell' | 'delete';
+  changeType?: ChangeType;
   changes?: CellChange[];
 }
 
