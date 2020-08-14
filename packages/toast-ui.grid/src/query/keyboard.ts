@@ -1,5 +1,5 @@
 import { Store } from '@t/store';
-import { Range } from '@t/store/selection';
+import { Range, SelectionRange } from '@t/store/selection';
 import { clamp, isNull } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from './rowSpan';
@@ -130,7 +130,7 @@ export function getNextCellIndex(
   return [rowIndex, columnIndex];
 }
 
-export function getRemoveRange(store: Store) {
+export function getRemoveRange(store: Store): SelectionRange | null {
   const { focus, selection } = store;
   const { totalColumnIndex, originalRowIndex } = focus;
   const { originalRange } = selection;
