@@ -332,6 +332,14 @@ describe('auto calculate column widths (container: 600)', () => {
 
       assertColumnWidth([197, 150, 150, 150, 150]);
     });
+
+    it('after calling setColumnValues()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('setColumnValues', 'c1', 'looooooooooooooong contents');
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
   });
 });
 

@@ -252,6 +252,7 @@ export function setColumnValues(
   });
   updateSummaryValueByColumn(store, columnName, { value });
   forceValidateUniquenessOfColumn(data.rawData, column, columnName);
+  setAutoResizingColumnWidths(store);
 }
 
 export function check(store: Store, rowKey: RowKey) {
