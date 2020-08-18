@@ -302,10 +302,8 @@ export function getTextWidth(text: string, font: string) {
   return Math.ceil(width);
 }
 
-export function getComputedFontStyle(treeCell = false) {
-  const firstCellNode = document.querySelector(
-    `.${cls(treeCell ? 'tree-wrapper-relative' : 'cell')}`
-  )!;
+export function getComputedFontStyle(selector: ClassNameType) {
+  const firstCellNode = document.querySelector(`.${cls(selector)}`)!;
   const walker = document.createTreeWalker(firstCellNode, 4);
   let node: Node = firstCellNode;
 

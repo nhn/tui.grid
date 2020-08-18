@@ -3,6 +3,7 @@ import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
 import { Column, ColumnInfo } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
+import { Dimension } from '@t/store/dimension';
 import { createViewRow } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
 import { notify, batchedInvokeObserver } from '../helper/observable';
@@ -34,10 +35,7 @@ import { getComputedFontStyle, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
 import { createFormattedValue } from '../store/helper/data';
-import {
-  TREE_CELL_CONTENT_LEFT_PADDING,
-  TREE_CELL_CONTENT_RIGHT_PADDING,
-} from '../helper/constant';
+import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
 import { setAutoResizingColumnWidths } from './column';
 
 let computedFontStyle = '';
@@ -84,7 +82,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
   const childRowKeys = getChildRowKeys(row);
 
-  updateTreeColumnWidth(childRowKeys, column, columnCoords, data.rawData);
+  updateTreeColumnWidth(childRowKeys, column, columnCoords, dimension, data.rawData);
 
   childRowKeys.forEach((childRowKey) => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
@@ -113,9 +111,10 @@ function updateTreeColumnWidth(
   childRowKeys: RowKey[],
   column: Column,
   columnCoords: ColumnCoords,
+  dimension: Dimension,
   rawData: Row[]
 ) {
-  const { visibleColumnsBySideWithRowHeader, treeIcon } = column;
+  const { visibleColumnsBySideWithRowHeader, treeIcon, allColumnMap } = column;
   const treeColumnName = column.treeColumnName!;
   const treeColumnSide = getColumnSide(column, treeColumnName);
   const treeColumnIndex = findPropIndex(
@@ -130,12 +129,11 @@ function updateTreeColumnWidth(
   // 'resizable' condition should be deprecated in next version
   if (columnInfo.resizable || columnInfo.autoResizing) {
     const maxWidth = getChildTreeNodeMaxWidth(childRowKeys, rawData, columnInfo, treeIcon);
-    const prevWidth = columnCoords.widths[treeColumnSide][treeColumnIndex];
+    const prevWidth =
+      columnCoords.widths[treeColumnSide][treeColumnIndex] + dimension.cellBorderWidth;
 
-    if (prevWidth < maxWidth) {
-      columnCoords.widths[treeColumnSide][treeColumnIndex] = maxWidth;
-      notify(columnCoords, 'widths');
-    }
+    allColumnMap[treeColumnName].baseWidth = Math.max(prevWidth, maxWidth);
+    allColumnMap[treeColumnName].fixedWidth = true;
   }
 }
 
@@ -147,7 +145,7 @@ function getChildTreeNodeMaxWidth(
 ) {
   let maxLength = 0;
 
-  computedFontStyle = computedFontStyle || getComputedFontStyle(true);
+  computedFontStyle = computedFontStyle || getComputedFontStyle('tree-wrapper-relative');
 
   const getMaxWidth = childRowKeys.reduce(
     (acc: () => number, rowKey) => {
@@ -159,8 +157,7 @@ function getChildTreeNodeMaxWidth(
         acc = () =>
           getTextWidth(formattedValue, computedFontStyle) +
           getTreeIndentWidth(getDepth(rawData, row), useIcon) +
-          TREE_CELL_CONTENT_LEFT_PADDING +
-          TREE_CELL_CONTENT_RIGHT_PADDING;
+          TREE_CELL_HORIZONTAL_PADDING;
       }
 
       return acc;

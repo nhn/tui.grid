@@ -24,10 +24,7 @@ import {
 } from '../store/helper/data';
 import { getTreeIndentWidth } from '../store/helper/tree';
 import { getDepth } from '../query/tree';
-import {
-  TREE_CELL_CONTENT_LEFT_PADDING,
-  TREE_CELL_CONTENT_RIGHT_PADDING,
-} from '../helper/constant';
+import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -259,13 +256,14 @@ function setColumnWidthByText({ data, column }: Store, columnName: string) {
   const { allColumnMap, treeColumnName, treeIcon } = column;
   const maxTextMap = getMaxTextMap();
   const { formattedValue, row } = maxTextMap[columnName];
-  let width = getTextWidth(formattedValue, getComputedFontStyle());
+  let width = getTextWidth(
+    formattedValue,
+    getComputedFontStyle(treeColumnName ? 'tree-wrapper-relative' : 'cell')
+  );
 
   if (treeColumnName) {
     width +=
-      getTreeIndentWidth(getDepth(data.rawData, row), treeIcon) +
-      TREE_CELL_CONTENT_LEFT_PADDING +
-      TREE_CELL_CONTENT_RIGHT_PADDING;
+      getTreeIndentWidth(getDepth(data.rawData, row), treeIcon) + TREE_CELL_HORIZONTAL_PADDING;
   }
 
   allColumnMap[columnName].baseWidth = Math.max(allColumnMap[columnName].minWidth, width);
