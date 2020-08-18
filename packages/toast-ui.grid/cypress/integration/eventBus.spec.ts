@@ -1,6 +1,5 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
-import { nextTick } from 'process';
 import { GridEventProps } from '@t/event';
 
 const data = [
