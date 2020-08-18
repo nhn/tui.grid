@@ -1,14 +1,7 @@
 import { Row, CellValue, ListItem } from '@t/store/data';
 import { ColumnInfo, Column, FormatterProps, Formatter } from '@t/store/column';
 import { listItemText } from '../../formatter/listItemText';
-import {
-  encodeHTMLEntity,
-  isEmpty,
-  isFunction,
-  isString,
-  isNull,
-  isUndefined,
-} from '../../helper/common';
+import { encodeHTMLEntity, isFunction, isString, isNull, isUndefined } from '../../helper/common';
 
 interface MaxTextInfo {
   formattedValue: string;
