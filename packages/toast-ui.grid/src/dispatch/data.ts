@@ -148,10 +148,7 @@ export function setValue(
   }
 
   const change = { rowKey, columnName, value: orgValue, nextValue: value };
-  gridEvent = new GridEvent({
-    origin: 'cell',
-    changes: [change],
-  });
+  gridEvent = new GridEvent({ origin: 'cell', changes: [change] });
 
   /**
    * Occurs before one or more cells is changed
