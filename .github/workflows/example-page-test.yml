@@ -14,7 +14,7 @@ jobs:
       - name: create config variable
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          node scripts/createConfigVariable.ts
+          node scripts/createConfigVariable.js
       - name: set global error variable
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
