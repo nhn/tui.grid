@@ -248,13 +248,11 @@ export function setAutoResizingColumnWidths(store: Store, targetData?: Row[]) {
 export function setColumnWidthsByText(store: Store) {
   const { autoResizingColumn } = store.column;
 
-  if (!store.data.rawData.length || !autoResizingColumn.length) {
-    return;
+  if (store.data.rawData.length && autoResizingColumn.length) {
+    autoResizingColumn.forEach(({ name }) => {
+      setColumnWidthByText(store, name);
+    });
   }
-
-  autoResizingColumn.forEach(({ name }) => {
-    setColumnWidthByText(store, name);
-  });
 }
 
 function setColumnWidthByText({ data, column }: Store, columnName: string) {
