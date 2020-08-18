@@ -38,6 +38,7 @@ import {
   TREE_CELL_CONTENT_LEFT_PADDING,
   TREE_CELL_CONTENT_RIGHT_PADDING,
 } from '../helper/constant';
+import { setAutoResizingColumnWidths } from './column';
 
 let computedFontStyle = '';
 
@@ -338,9 +339,10 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   batchedInvokeObserver(() => {
     rawData.splice(startIdx, 0, ...rawRows);
-    const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
-    viewData.splice(startIdx, 0, ...viewRows);
   });
+  const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
+  viewData.splice(startIdx, 0, ...viewRows);
+
   const rowHeights = rawRows.map((rawRow) => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
     getDataManager(id).push('CREATE', rawRow, true);
@@ -349,9 +351,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   });
   heights.splice(startIdx, 0, ...rowHeights);
 
-  setLoadingState(store, getLoadingState(rawData));
-  updateRowNumber(store, startIdx);
-  setCheckedAllRows(store);
+  postUpdateAfterManipulation(store, startIdx, rawRows);
 }
 
 // @TODO: consider tree disabled state with cascading
@@ -377,14 +377,19 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
 
   batchedInvokeObserver(() => {
     removedRows = rawData.splice(startIdx, deleteCount);
-    viewData.splice(startIdx, deleteCount);
   });
+  viewData.splice(startIdx, deleteCount);
   heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
     getDataManager(id).push('DELETE', removedRows[i]);
   }
-  setLoadingState(store, getLoadingState(rawData));
-  updateRowNumber(store, startIdx);
+  postUpdateAfterManipulation(store, startIdx, rawData);
+}
+
+function postUpdateAfterManipulation(store: Store, rowIndex: number, rows?: Row[]) {
+  setLoadingState(store, getLoadingState(store.data.rawData));
+  updateRowNumber(store, rowIndex);
   setCheckedAllRows(store);
+  setAutoResizingColumnWidths(store, rows);
 }

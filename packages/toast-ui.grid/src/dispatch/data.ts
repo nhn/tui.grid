@@ -73,7 +73,7 @@ import {
   forceValidateUniquenessOfColumns,
   forceValidateUniquenessOfColumn,
 } from '../store/helper/validation';
-import { updateAutoResizingColumnWidth } from './column';
+import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 
 function updateHeightsWithFilteredData(store: Store) {
   if (store.data.filters) {
@@ -181,6 +181,8 @@ export function setValue(
     gridEvent = new GridEvent({ rowKey, columnName, value, prevValue: orgValue });
     targetColumn.onAfterChange(gridEvent);
   }
+
+  setAutoResizingColumnWidths(store);
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -476,7 +478,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   getDataManager(id).push('CREATE', rawRow, inserted);
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
-  postUpdateAfterManipulation(store, at, 'DONE');
+  postUpdateAfterManipulation(store, at, 'DONE', [rawRow]);
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -496,9 +498,9 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   batchedInvokeObserver(() => {
     [removedRow] = rawData.splice(rowIndex, 1);
-    viewData.splice(rowIndex, 1);
-    updateHeights(store);
   });
+  viewData.splice(rowIndex, 1);
+  updateHeights(store);
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
@@ -565,7 +567,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
 
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
-  updateAutoResizingColumnWidth(store);
+  setColumnWidthsByText(store);
 
   setTimeout(() => {
     /**
@@ -735,8 +737,8 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
 
   batchedInvokeObserver(() => {
     rawData.splice(targetIndex, 0, rawRow);
-    viewData.splice(targetIndex, 0, viewRow);
   });
+  viewData.splice(targetIndex, 0, viewRow);
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
@@ -781,7 +783,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
   updateHeights(store);
-  postUpdateAfterManipulation(store, startIndex, 'DONE');
+  postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
 }
 
 export function removeRows(store: Store, targetRows: RemoveTargetRows) {
@@ -819,10 +821,16 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
   postUpdateAfterManipulation(store, rowIndexes[0], getLoadingState(rawData));
 }
 
-function postUpdateAfterManipulation(store: Store, rowIndex: number, state: LoadingState) {
+function postUpdateAfterManipulation(
+  store: Store,
+  rowIndex: number,
+  state: LoadingState,
+  rows?: Row[]
+) {
   setLoadingState(store, state);
   updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
   setCheckedAllRows(store);
   forceValidateUniquenessOfColumns(store.data.rawData, store.column);
+  setAutoResizingColumnWidths(store, rows);
 }

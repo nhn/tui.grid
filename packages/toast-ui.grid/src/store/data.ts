@@ -401,14 +401,14 @@ export function createData(
       disabled,
     });
   } else {
-    rawData = data.map((row, index, rows) => {
-      return createRawRow(id, row, index, column, {
+    rawData = data.map((row, index, rows) =>
+      createRawRow(id, row, index, column, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable,
         disabled,
-      });
-    });
+      })
+    );
   }
 
   const viewData = rawData.map((row: Row) =>

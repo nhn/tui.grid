@@ -7,7 +7,11 @@ interface MaxTextInfo {
   formattedValue: string;
   row: Row;
 }
-const maxTextMap: Record<string, MaxTextInfo> = {};
+let maxTextMap: Record<string, MaxTextInfo> = {};
+
+export function initMaxTextMap() {
+  maxTextMap = {};
+}
 
 export function setMaxTextMap(column: Column, row: Row) {
   column.autoResizingColumn.forEach((columnInfo) => {
@@ -15,9 +19,13 @@ export function setMaxTextMap(column: Column, row: Row) {
     const formattedValue = createFormattedValue(row, columnInfo);
 
     if (!maxTextMap[name] || maxTextMap[name].formattedValue.length < formattedValue.length) {
-      maxTextMap[name] = { formattedValue, row };
+      setMaxColumnTextMap(name, formattedValue, row);
     }
   });
+}
+
+export function setMaxColumnTextMap(columnName: string, formattedValue: string, row: Row) {
+  maxTextMap[columnName] = { formattedValue, row };
 }
 
 export function getMaxTextMap() {
