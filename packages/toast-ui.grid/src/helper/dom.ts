@@ -293,3 +293,33 @@ export function setClipboardSelection(node: ChildNode) {
     selection!.addRange(range);
   }
 }
+
+export function getTextWidth(text: string, font: string) {
+  const context = document.createElement('canvas').getContext('2d')!;
+  context.font = font;
+  const { width } = context.measureText(String(text));
+
+  return Math.ceil(width);
+}
+
+export function getComputedFontStyle(selector: ClassNameType) {
+  const firstCellNode = document.querySelector(`.${cls(selector)}`)!;
+  const walker = document.createTreeWalker(firstCellNode, 4);
+  let node: Node = firstCellNode;
+
+  while (walker.nextNode()) {
+    node = walker.currentNode;
+
+    if (node.nodeType === 3) {
+      node = node.parentElement!;
+      break;
+    }
+  }
+
+  const compStyle = getComputedStyle(node as Element);
+  const fontSize = compStyle.getPropertyValue('font-size');
+  const fontWeight = compStyle.getPropertyValue('font-weight');
+  const fontFamily = compStyle.getPropertyValue('font-family');
+
+  return `${fontWeight} ${fontSize} ${fontFamily}`;
+}

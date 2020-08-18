@@ -775,9 +775,9 @@ describe('events', () => {
 });
 
 describe('with resizable column options', () => {
-  const DEPTH_ONE_MAX_WIDTH = 200;
-  const DEPTH_TWO_MAX_WIDTH = 295;
-  const DEPTH_THREE_MAX_WIDTH = 348;
+  const DEPTH_ONE_MAX_WIDTH = 199;
+  const DEPTH_TWO_MAX_WIDTH = 294;
+  const DEPTH_THREE_MAX_WIDTH = 347;
 
   let targetData: OptRow[] = [];
   let targetColumns: OptColumn[] = [];
@@ -940,5 +940,40 @@ describe('editing tree cell', () => {
     cy.gridInstance().invoke('startEditing', 1, 'c1');
 
     cy.getByCls('layer-editing').should('not.be.visible');
+  });
+});
+
+describe('should extend the width with `width: auto` option as text length', () => {
+  beforeEach(() => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'c1', width: 'auto', minWidth: 150 }, { name: 'c2' }],
+      treeColumnOptions: {
+        name: 'c1',
+      },
+    });
+  });
+
+  it('initial rendering', () => {
+    assertColumnWidth('c1', 157);
+  });
+
+  it('after calling appendTreeRow()', () => {
+    const appendedData = { c1: 'loooooooooooooooooooooooooooooooooooooog test data', c2: 'test' };
+
+    assertColumnWidth('c1', 157);
+
+    cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
+
+    assertColumnWidth('c1', 424);
+  });
+
+  it('after calling removeTreeRow()', () => {
+    const appendedData = { c1: 'loooooooooooooooooooooooooooooooooooooog test data', c2: 'test' };
+
+    cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
+    cy.gridInstance().invoke('removeTreeRow', 5);
+
+    assertColumnWidth('c1', 157);
   });
 });

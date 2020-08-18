@@ -87,3 +87,7 @@ export function getChildHeaderCount(
 
   return count;
 }
+
+export function getColumnSide(column: Column, columnName: string) {
+  return someProp('name', columnName, column.visibleColumnsBySideWithRowHeader.R) ? 'R' : 'L';
+}

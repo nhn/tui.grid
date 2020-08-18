@@ -133,7 +133,10 @@ describe('container width', () => {
 
 describe('auto calculate column widths (container: 600)', () => {
   it(`['auto', 'auto'] -> [300, 300]`, () => {
-    createGridWithWidths([{ width: 'auto' }, { width: 'auto' }]);
+    createGridWithWidths([
+      { width: 'auto', minWidth: 300 },
+      { width: 'auto', minWidth: 300 },
+    ]);
     assertColumnWidth([300, 300]);
   });
 
@@ -241,6 +244,101 @@ describe('auto calculate column widths (container: 600)', () => {
       assertHandleOffset(0, 250);
       assertHandleOffset(1, 450);
       assertColumnWidth([250, 200, 150]);
+    });
+  });
+
+  context('should extend the width with `width: auto` option as text length', () => {
+    function createGrid({ hasLongText = true, hasAutoWidth = true } = {}) {
+      const data: OptRow[] = [{}];
+      const names = ['c1', 'c2', 'c3', 'c4', 'c5'];
+      const columns = names.map((name) => ({ name, minWidth: 150 }));
+
+      columns.forEach(({ name }) => {
+        data[0][name] = name;
+      });
+      if (hasAutoWidth) {
+        // @ts-ignore
+        columns[0].width = 'auto';
+      }
+      if (hasLongText) {
+        data[0].c1 = 'looooooooooooooong contents';
+      }
+
+      cy.createGrid({ data, columns });
+    }
+
+    it('initial rendering', () => {
+      createGrid();
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling resetData()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('resetData', [{ c1: 'looooooooooooooong contents' }]);
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling setColumns()', () => {
+      createGrid({ hasAutoWidth: false });
+
+      const columns = ['c1', 'c2', 'c3', 'c4', 'c5'].map((name) => ({ name, minWidth: 150 }));
+      // @ts-ignore
+      columns[0].width = 'auto';
+      cy.gridInstance().invoke('setColumns', columns);
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling setValue()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('setValue', 0, 'c1', 'looooooooooooooong contents');
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling setRow()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('setRow', 0, { c1: 'looooooooooooooong contents' });
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling appendRow()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('appendRow', { c1: 'looooooooooooooong contents' });
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling removeRow()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('appendRow', { c1: 'looooooooooooooong contents' });
+      cy.gridInstance().invoke('removeRow', 1);
+
+      assertColumnWidth([150, 158, 158, 158, 159]);
+    });
+
+    it('after calling appendRows()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('appendRows', [{ c1: 'looooooooooooooong contents' }]);
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
+    });
+
+    it('after calling setColumnValues()', () => {
+      createGrid({ hasLongText: false });
+
+      cy.gridInstance().invoke('setColumnValues', 'c1', 'looooooooooooooong contents');
+
+      assertColumnWidth([197, 150, 150, 150, 150]);
     });
   });
 });

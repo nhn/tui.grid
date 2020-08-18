@@ -17,11 +17,8 @@ import {
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
-import {
-  createRawRow,
-  generateDataCreationKey,
-  getFormattedValue as formattedValue,
-} from '../store/data';
+import { createRawRow, generateDataCreationKey } from '../store/data';
+import { getFormattedValue as formattedValue } from '../store/helper/data';
 import { makeObservable } from '../dispatch/data';
 
 export function getCellAddressByIndex(

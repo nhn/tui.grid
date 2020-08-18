@@ -156,6 +156,7 @@ export interface ColumnInfo extends CommonColumnInfo {
   related?: boolean;
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
+  autoResizing: boolean;
 }
 
 export interface ComplexColumnInfo {
@@ -195,6 +196,7 @@ export interface Column {
   readonly columnMapWithRelation: Dictionary<ColumnInfo>;
   readonly columnsWithoutRowHeader: ColumnInfo[];
   readonly emptyRow: Record<string, null>;
+  readonly autoResizingColumn: ColumnInfo[];
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;

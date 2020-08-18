@@ -2,7 +2,7 @@ import { Store } from '@t/store';
 import { ColumnInfo, ResizedColumn, Column, ComplexColumnInfo } from '@t/store/column';
 import { Side } from '@t/store/focus';
 import { Range } from '@t/store/selection';
-import { ViewRow } from '@t/store/data';
+import { ViewRow, Row } from '@t/store/data';
 import { OptColumn, Dictionary } from '@t/options';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -15,6 +15,16 @@ import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
 import { findProp } from '../helper/common';
 import { initScrollPosition } from './viewport';
+import { getTextWidth, getComputedFontStyle } from '../helper/dom';
+import {
+  getMaxTextMap,
+  createFormattedValue,
+  setMaxColumnTextMap,
+  initMaxTextMap,
+} from '../store/helper/data';
+import { getTreeIndentWidth } from '../store/helper/tree';
+import { getDepth } from '../query/tree';
+import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -142,11 +152,13 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   initFilter(store);
   unsort(store);
+  setColumnWidthsByText(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
   column.visibleColumns.forEach((columnInfo, idx) => {
     columnInfo.baseWidth = widths[idx];
+    columnInfo.autoResizing = false;
   });
 }
 
@@ -205,4 +217,55 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
+}
+
+export function setAutoResizingColumnWidths(store: Store, targetData?: Row[]) {
+  const { autoResizingColumn } = store.column;
+  const rawData = targetData || store.data.rawData;
+
+  if (!rawData.length || !autoResizingColumn.length) {
+    return;
+  }
+
+  initMaxTextMap();
+  const maxTextMap = getMaxTextMap();
+
+  rawData.forEach((row) => {
+    autoResizingColumn.forEach((columnInfo) => {
+      const { name } = columnInfo;
+      const formattedValue = createFormattedValue(row, columnInfo);
+      if (!maxTextMap[name] || maxTextMap[name].formattedValue.length < formattedValue.length) {
+        setMaxColumnTextMap(name, formattedValue, row);
+      }
+    });
+  });
+  setColumnWidthsByText(store);
+}
+
+export function setColumnWidthsByText(store: Store) {
+  const { autoResizingColumn } = store.column;
+
+  if (store.data.rawData.length && autoResizingColumn.length) {
+    autoResizingColumn.forEach(({ name }) => {
+      setColumnWidthByText(store, name);
+    });
+  }
+}
+
+function setColumnWidthByText({ data, column }: Store, columnName: string) {
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const maxTextMap = getMaxTextMap();
+  const { formattedValue, row } = maxTextMap[columnName];
+  let width = getTextWidth(
+    formattedValue,
+    getComputedFontStyle(treeColumnName ? 'tree-wrapper-relative' : 'cell')
+  );
+
+  if (treeColumnName) {
+    width +=
+      getTreeIndentWidth(getDepth(data.rawData, row), treeIcon) + TREE_CELL_HORIZONTAL_PADDING;
+  }
+
+  allColumnMap[columnName].baseWidth = Math.max(allColumnMap[columnName].minWidth, width);
+  allColumnMap[columnName].fixedWidth = true;
 }
