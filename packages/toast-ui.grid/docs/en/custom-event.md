@@ -117,6 +117,8 @@ grid.on('mousedown', function(ev) {
 - `beforePageMove` : Before moving the page
 - `afterPageMove` : After moving the page
 - `scrollEnd` : When scrolling at the bottommost
+- `beforeChange`: Before one or more cells is changed
+- `afterChange`: After one or more cells is changed
 
 There are other events that can be used when using `DataSource`.
 
@@ -133,8 +135,8 @@ Also, the following events are available when the tree column is enabled.
 
 The following events can be added using option configurations.
 
-- `onBeforeChange`: Before the value of the cell is changed
-- `onAfterChange`: After the value of the cell is changed
+- `onBeforeChange`: Before the value of the cell is changed(**this event will be deprecated**, use `beforeChange` event)
+- `onAfterChange`: After the value of the cell is changed(**this event will be deprecated**, use `afterChange` event)
 - `onGridMounted`: When the Grid has successfully rendered onto the DOM
 - `onGridUpdated`: When the Grid data has updated and the Grid has rendered onto the DOM
 - `onGridBeforeDestroy`: Before the Grid is removed from the DOM

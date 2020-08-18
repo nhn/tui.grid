@@ -59,23 +59,11 @@
         {
           header: 'Name',
           name: 'name',
-          onBeforeChange(ev) {
-            console.log('Name before change:', ev);
-          },
-          onAfterChange(ev) {
-            console.log('Name after change:', ev);
-          },
           editor: 'text'
         },
         {
           header: 'Artist',
           name: 'artist',
-          onBeforeChange(ev) {
-            console.log('Artist before change:', ev);
-          },
-          onAfterChange(ev) {
-            console.log('Artist after change:', ev);
-          },
           editor: {
             type: CustomTextEditor,
             options: {
@@ -86,12 +74,6 @@
         {
           header: 'Type',
           name: 'typeCode',
-          onBeforeChange(ev) {
-            console.log('Type before change:' + ev);
-          },
-          onAfterChange(ev) {
-            console.log('Type after change:' + ev);
-          },
           formatter: 'listItemText',
           editor: {
             type: 'select',
@@ -107,12 +89,6 @@
         {
           header: 'Genre',
           name: 'genreCode',
-          onBeforeChange(ev) {
-            console.log('Genre before change', ev);
-          },
-          onAfterChange(ev) {
-            console.log('Genre after change:', ev);
-          },
           formatter: 'listItemText',
           editor: {
             type: 'checkbox',
@@ -133,12 +109,6 @@
         {
           header: 'Grade',
           name: 'grade',
-          onBeforeChange(ev) {
-            console.log('Grade before change:' + ev);
-          },
-          onAfterChange(ev) {
-            console.log('Grade after change:' + ev);
-          },
           copyOptions: {
             useListItemText: true
           },
@@ -156,7 +126,12 @@
         }
       ]
     });
-
+    grid.on('beforeChange', ev => {
+      console.log('before change:', ev);
+    });
+    grid.on('afterChange', ev => {
+      console.log('after change:', ev);
+    })
     grid.resetData(gridData);
   </script>
 </html>

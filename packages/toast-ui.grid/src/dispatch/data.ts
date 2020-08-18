@@ -7,13 +7,10 @@ import {
   RemoveTargetRows,
 } from '@t/store/data';
 import { Store } from '@t/store';
-import { SelectionRange } from '@t/store/selection';
 import { ColumnInfo } from '@t/store/column';
 import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
-import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
-  mapProp,
   removeArrayItem,
   includes,
   isEmpty,
@@ -23,7 +20,7 @@ import {
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchedInvokeObserver } from '../helper/observable';
-import { changeSelectionRange, initSelection } from './selection';
+import { initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager, getDataProvider } from '../instance';
@@ -42,7 +39,6 @@ import {
 import {
   findIndexByRowKey,
   findRowByRowKey,
-  isEditableCell,
   getRowHeight,
   getLoadingState,
   getAddedClassName,
@@ -60,7 +56,6 @@ import {
   updateAllSummaryValues,
 } from './summary';
 import { initFilter, resetFilterState } from './filter';
-import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
@@ -121,6 +116,7 @@ export function setValue(
 ) {
   let gridEvent;
   const { column, data, id } = store;
+  const eventBus = getEventBus(id);
   const { rawData, viewData, sortState } = data;
   const { allColumnMap, columnsWithoutRowHeader } = column;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
@@ -141,6 +137,7 @@ export function setValue(
   const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
 
+  // @TODO: 'onBeforeChange' event is deprecated. This event will be replaced with 'beforeChange' event
   if (targetColumn && targetColumn.onBeforeChange) {
     gridEvent = new GridEvent({ rowKey, columnName, value: orgValue, nextValue: value });
     targetColumn.onBeforeChange(gridEvent);
@@ -150,6 +147,22 @@ export function setValue(
     }
   }
 
+  const change = { rowKey, columnName, value: orgValue, nextValue: value };
+  gridEvent = new GridEvent({ origin: 'cell', changes: [change] });
+
+  /**
+   * Occurs before one or more cells is changed
+   * @event Grid#beforeChange
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
+   * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('beforeChange', gridEvent);
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  value = change.nextValue;
   const { rowSpanMap } = targetRow;
   const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
@@ -176,13 +189,27 @@ export function setValue(
       getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
     }
   }
+  setAutoResizingColumnWidths(store);
 
+  // @TODO: 'onAfterChange' event is deprecated. This event will be replaced with 'afterChange' event
   if (targetColumn && targetColumn.onAfterChange) {
     gridEvent = new GridEvent({ rowKey, columnName, value, prevValue: orgValue });
     targetColumn.onAfterChange(gridEvent);
   }
 
-  setAutoResizingColumnWidths(store);
+  gridEvent = new GridEvent({
+    origin: 'cell',
+    changes: [{ rowKey, columnName, value, prevValue: orgValue }],
+  });
+
+  /**
+   * Occurs after one or more cells is changed
+   * @event Grid#afterChange
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
+   * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('afterChange', gridEvent);
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -325,61 +352,6 @@ export function uncheckAll(store: Store, allPage?: boolean) {
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('uncheckAll', gridEvent);
-}
-
-function applyPasteDataToRawData(
-  store: Store,
-  pasteData: string[][],
-  indexToPaste: SelectionRange
-) {
-  const { data, column, id } = store;
-  const { filteredRawData, filteredViewData } = data;
-  const { visibleColumnsWithRowHeader } = column;
-  const {
-    row: [startRowIndex, endRowIndex],
-    column: [startColumnIndex, endColumnIndex],
-  } = indexToPaste;
-
-  const columnNames = mapProp('name', visibleColumnsWithRowHeader);
-
-  for (let rowIndex = 0; rowIndex + startRowIndex <= endRowIndex; rowIndex += 1) {
-    let pasted = false;
-    const rawRowIndex = rowIndex + startRowIndex;
-    for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
-      const name = columnNames[columnIndex + startColumnIndex];
-      if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
-        const targetRow = filteredRawData[rawRowIndex];
-        const value = pasteData[rowIndex][columnIndex];
-
-        replaceColumnUniqueInfoMap(id, column, {
-          rowKey: targetRow.rowKey,
-          columnName: name,
-          prevValue: targetRow[name],
-          value,
-        });
-        pasted = true;
-        targetRow[name] = value;
-      }
-    }
-    if (pasted) {
-      getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
-      forceValidateUniquenessOfColumns(data.rawData, column);
-    }
-  }
-}
-
-export function paste(store: Store, pasteData: string[][]) {
-  const { selection, id, data } = store;
-  const { pageOptions } = data;
-  const { originalRange } = selection;
-
-  if (originalRange) {
-    pasteData = copyDataToRange(originalRange, pasteData);
-  }
-
-  const rangeToPaste = getRangeToPaste(store, pasteData);
-  applyPasteDataToRawData(store, pasteData, rangeToPaste);
-  changeSelectionRange(selection, getSelectionRange(rangeToPaste, pageOptions), id);
 }
 
 export function setDisabledAllCheckbox({ data }: Store) {

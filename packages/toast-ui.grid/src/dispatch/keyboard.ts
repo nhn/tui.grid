@@ -7,7 +7,20 @@ import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../query/rowSpan';
 import { getDataManager } from '../instance';
-import { Row, RowKey } from '@t/store/data';
+import { getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
+import { createChangeInfo, isEditableCell } from '../query/data';
+import { forceValidateUniquenessOfColumns } from '../store/helper/validation';
+import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
+import { mapProp } from '../helper/common';
+import { CellChange, Origin } from '@t/event';
+
+type ChangeValueFn = () => number;
+interface ChangeInfo {
+  prevChanges: CellChange[];
+  nextChanges: CellChange[];
+  changeValueFns: ChangeValueFn[];
+}
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -150,31 +163,128 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
 }
 
 export function removeContent(store: Store) {
-  const { column, data, id } = store;
-  const { rawData } = data;
-  const removeRange = getRemoveRange(store);
+  const { column, data } = store;
+  const range = getRemoveRange(store);
 
-  if (!removeRange) {
+  if (!range) {
     return;
   }
 
   const {
     column: [columnStart, columnEnd],
     row: [rowStart, rowEnd],
-  } = removeRange;
-  const modifiedRowMap: { [key in RowKey]: Row } = {};
-  const manager = getDataManager(id);
+  } = range;
+  const changeValueFns: ChangeValueFn[] = [];
+  const prevChanges: CellChange[] = [];
+  const nextChanges: CellChange[] = [];
 
-  column.visibleColumnsWithRowHeader
-    .slice(columnStart, columnEnd + 1)
-    .filter(({ editor }) => !!editor)
-    .forEach(({ name }) => {
-      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
-        row[name] = '';
-        modifiedRowMap[row.rowKey] = row;
-      });
+  data.filteredRawData.slice(rowStart, rowEnd + 1).forEach((row, index) => {
+    column.visibleColumnsWithRowHeader.slice(columnStart, columnEnd + 1).forEach(({ name }) => {
+      const rowIndex = index + rowStart;
+      if (isEditableCell(data, column, rowIndex, name)) {
+        const { prevChange, nextChange, changeValue } = createChangeInfo(
+          store,
+          row,
+          name,
+          '',
+          rowIndex
+        );
+        prevChanges.push(prevChange);
+        nextChanges.push(nextChange);
+        changeValueFns.push(changeValue);
+      }
     });
-  Object.keys(modifiedRowMap).forEach((key: RowKey) => {
-    manager.push('UPDATE', modifiedRowMap[key]);
   });
+  updateDataByKeyMap(store, 'delete', { prevChanges, nextChanges, changeValueFns });
+}
+
+function applyCopiedData(store: Store, copiedData: string[][], range: SelectionRange) {
+  const { data, column } = store;
+  const { filteredRawData, filteredViewData } = data;
+  const { visibleColumnsWithRowHeader } = column;
+  const {
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex],
+  } = range;
+
+  const columnNames = mapProp('name', visibleColumnsWithRowHeader);
+  const changeValueFns = [];
+  const prevChanges = [];
+  const nextChanges = [];
+
+  for (let rowIndex = 0; rowIndex + startRowIndex <= endRowIndex; rowIndex += 1) {
+    const rawRowIndex = rowIndex + startRowIndex;
+    for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
+      const name = columnNames[columnIndex + startColumnIndex];
+      if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
+        const targetRow = filteredRawData[rawRowIndex];
+        const { prevChange, nextChange, changeValue } = createChangeInfo(
+          store,
+          targetRow,
+          name,
+          copiedData[rowIndex][columnIndex],
+          rawRowIndex
+        );
+        prevChanges.push(prevChange);
+        nextChanges.push(nextChange);
+        changeValueFns.push(changeValue);
+      }
+    }
+  }
+  updateDataByKeyMap(store, 'paste', { prevChanges, nextChanges, changeValueFns });
+}
+
+export function paste(store: Store, copiedData: string[][]) {
+  const { selection } = store;
+  const { originalRange } = selection;
+
+  if (originalRange) {
+    copiedData = copyDataToRange(originalRange, copiedData);
+  }
+
+  const rangeToPaste = getRangeToPaste(store, copiedData);
+  applyCopiedData(store, copiedData, rangeToPaste);
+}
+
+export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: ChangeInfo) {
+  const { id, data, column } = store;
+  const { rawData, filteredRawData } = data;
+  const { prevChanges, nextChanges, changeValueFns } = changeInfo;
+  const eventBus = getEventBus(id);
+  const manager = getDataManager(id);
+  let gridEvent = new GridEvent({ origin, changes: prevChanges });
+
+  /**
+   * Occurs before one or more cells is changed
+   * @event Grid#beforeChange
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
+   * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('beforeChange', gridEvent);
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  let index: number | null = null;
+  changeValueFns.forEach((changeValue) => {
+    const targetRowIndex = changeValue();
+    if (index !== targetRowIndex) {
+      index = targetRowIndex;
+      manager.push('UPDATE', filteredRawData[index]);
+    }
+  });
+  forceValidateUniquenessOfColumns(rawData, column);
+
+  gridEvent = new GridEvent({ origin, changes: nextChanges });
+
+  /**
+   * Occurs after one or more cells is changed
+   * @event Grid#afterChange
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
+   * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('afterChange', gridEvent);
 }

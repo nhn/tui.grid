@@ -1,6 +1,6 @@
 import { OptRow, Dictionary } from '@t/options';
 import { Store } from '@t/store';
-import { Data, Row, RowKey, SortState, RemoveTargetRows } from '@t/store/data';
+import { Data, Row, RowKey, SortState, RemoveTargetRows, CellValue } from '@t/store/data';
 import { Column } from '@t/store/column';
 import {
   isFunction,
@@ -20,6 +20,7 @@ import { isHiddenColumn } from './column';
 import { createRawRow, generateDataCreationKey } from '../store/data';
 import { getFormattedValue as formattedValue } from '../store/helper/data';
 import { makeObservable } from '../dispatch/data';
+import { replaceColumnUniqueInfoMap } from '../store/helper/validation';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -239,4 +240,32 @@ export function getFormattedValue(store: Store, rowKey: RowKey, columnName: stri
     return viewCell ? viewCell.formattedValue : null;
   }
   return null;
+}
+
+export function createChangeInfo(
+  store: Store,
+  row: Row,
+  columnName: string,
+  pastingValue: CellValue,
+  index: number
+) {
+  const { id, column } = store;
+  const { rowKey } = row;
+  const prevChange = { rowKey, columnName, value: row[columnName], nextValue: pastingValue };
+  const nextChange = { rowKey, columnName, prevValue: row[columnName], value: pastingValue };
+  const changeValue = () => {
+    const { value, nextValue } = prevChange;
+    replaceColumnUniqueInfoMap(id, column, {
+      rowKey,
+      columnName,
+      prevValue: value,
+      value: nextValue,
+    });
+    nextChange.value = nextValue;
+    row[columnName] = nextValue;
+
+    return index;
+  };
+
+  return { prevChange, nextChange, changeValue };
 }
