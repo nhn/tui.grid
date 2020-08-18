@@ -117,6 +117,8 @@ grid.on('mousedown', (ev) => {
 - `beforePageMove` : 페이지를 이동하기 전
 - `afterPageMove` : 페이지를 이동한 후
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
+- `beforeChange`: 하나 또는 여러 개의 셀 값이 변경되기 전
+- `afterChange`: 하나 또는 여러 개의 셀 값이 변경된 후
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.
 
@@ -133,8 +135,8 @@ grid.on('mousedown', (ev) => {
 
 옵션 설정을 이용한 사용할 수 있는 이벤트는 다음과 같다.
 
-- `onBeforeChange` : 셀의 값이 변경되기 전
-- `onAfterChange` : 셀의 값이 변경된 후
+- `onBeforeChange` : 셀의 값이 변경되기 전 (**deprecated 되었으니** `beforeChange`를 사용)
+- `onAfterChange` : 셀의 값이 변경된 후 (**deprecated 되었으니** `afterChange`를 사용)
 - `onGridMounted` : Grid가 DOM에 렌더링된 후
 - `onGridUpdated` : Grid의 모든 데이터가 변경되고 Grid가 DOM에 렌더링 된 후
 - `onGridBeforeDestroy` : Grid가 DOM에서 사라지기 전
