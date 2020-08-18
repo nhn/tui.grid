@@ -583,14 +583,14 @@ describe('beforeChange, afterChange', () => {
       cy.gridInstance().invoke('setValue', 0, 'name', 'Test');
 
       cy.wrap(callback).should('be.calledWithMatch', {
-        changeType: 'cell',
+        origin: 'cell',
         changes: [{ rowKey: 0, columnName: 'name', value: 'Kim', nextValue: 'Test' }],
       });
 
       callback.resetHistory();
 
       cy.wrap(callback).should('be.calledWithMatch', {
-        changeType: 'cell',
+        origin: 'cell',
         changes: [{ rowKey: 0, columnName: 'name', prevValue: 'Kim', value: 'Test' }],
       });
       cy.getRsideBody().should('have.cellData', [
@@ -611,7 +611,7 @@ describe('beforeChange, afterChange', () => {
       clipboardType('{backspace}');
 
       cy.wrap(callback).should('be.calledWithMatch', {
-        changeType: 'delete',
+        origin: 'delete',
         changes: [
           { rowKey: 0, columnName: 'name', value: 'Kim', nextValue: '' },
           { rowKey: 1, columnName: 'name', value: 'Lee', nextValue: '' },
@@ -621,7 +621,7 @@ describe('beforeChange, afterChange', () => {
       callback.resetHistory();
 
       cy.wrap(callback).should('be.calledWithMatch', {
-        changeType: 'delete',
+        origin: 'delete',
         changes: [
           { rowKey: 0, columnName: 'name', prevValue: 'Kim', value: '' },
           { rowKey: 1, columnName: 'name', prevValue: 'Lee', value: '' },
@@ -648,7 +648,7 @@ describe('beforeChange, afterChange', () => {
     clipboardType('{backspace}');
 
     cy.wrap(before).should('be.calledWithMatch', {
-      changeType: 'delete',
+      origin: 'delete',
       changes: [
         { rowKey: 0, columnName: 'name', value: 'Kim', nextValue: '' },
         { rowKey: 1, columnName: 'name', value: 'Lee', nextValue: '' },

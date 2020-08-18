@@ -12,7 +12,7 @@ export interface CellChange {
   nextValue?: CellValue;
   prevValue?: CellValue;
 }
-export type ChangeType = 'paste' | 'cell' | 'delete';
+export type Origin = 'paste' | 'cell' | 'delete';
 
 export interface GridEventProps {
   value?: CellValue;
@@ -35,7 +35,7 @@ export interface GridEventProps {
   type?: FilterOptionType;
   operator?: OperatorType;
   page?: number;
-  changeType?: ChangeType;
+  origin?: Origin;
   changes?: CellChange[];
 }
 

@@ -149,14 +149,14 @@ export function setValue(
 
   const change = { rowKey, columnName, value: orgValue, nextValue: value };
   gridEvent = new GridEvent({
-    changeType: 'cell',
+    origin: 'cell',
     changes: [change],
   });
 
   /**
    * Occurs before one or more cells is changed
    * @event Grid#beforeChange
-   * @property {string} changeType - The type of change('paste', 'delete', 'cell')
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
    * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
    * @property {Grid} instance - Current grid instance
    */
@@ -201,14 +201,14 @@ export function setValue(
   }
 
   gridEvent = new GridEvent({
-    changeType: 'cell',
+    origin: 'cell',
     changes: [{ rowKey, columnName, value, prevValue: orgValue }],
   });
 
   /**
    * Occurs after one or more cells is changed
    * @event Grid#afterChange
-   * @property {string} changeType - The type of change('paste', 'delete', 'cell')
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
    * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
    * @property {Grid} instance - Current grid instance
    */

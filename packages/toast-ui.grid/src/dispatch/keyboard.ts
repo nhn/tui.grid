@@ -13,7 +13,7 @@ import { createChangeInfo, isEditableCell } from '../query/data';
 import { forceValidateUniquenessOfColumns } from '../store/helper/validation';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
-import { CellChange, ChangeType } from '@t/event';
+import { CellChange, Origin } from '@t/event';
 
 type ChangeValueFn = () => number;
 interface ChangeInfo {
@@ -246,18 +246,18 @@ export function paste(store: Store, copiedData: string[][]) {
   applyCopiedData(store, copiedData, rangeToPaste);
 }
 
-export function updateDataByKeyMap(store: Store, changeType: ChangeType, changeInfo: ChangeInfo) {
+export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: ChangeInfo) {
   const { id, data, column } = store;
   const { rawData, filteredRawData } = data;
   const { prevChanges, nextChanges, changeValueFns } = changeInfo;
   const eventBus = getEventBus(id);
   const manager = getDataManager(id);
-  let gridEvent = new GridEvent({ changeType, changes: prevChanges });
+  let gridEvent = new GridEvent({ origin, changes: prevChanges });
 
   /**
    * Occurs before one or more cells is changed
    * @event Grid#beforeChange
-   * @property {string} changeType - The type of change('paste', 'delete', 'cell')
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
    * @property {Array.<object>} changes - rowKey, column name, original values and next values before changing the values
    * @property {Grid} instance - Current grid instance
    */
@@ -277,12 +277,12 @@ export function updateDataByKeyMap(store: Store, changeType: ChangeType, changeI
   });
   forceValidateUniquenessOfColumns(rawData, column);
 
-  gridEvent = new GridEvent({ changeType, changes: nextChanges });
+  gridEvent = new GridEvent({ origin, changes: nextChanges });
 
   /**
    * Occurs after one or more cells is changed
    * @event Grid#afterChange
-   * @property {string} changeType - The type of change('paste', 'delete', 'cell')
+   * @property {string} origin - The type of change('paste', 'delete', 'cell')
    * @property {Array.<object>} changes - rowKey, column name, previous values and changed values after changing the values
    * @property {Grid} instance - Current grid instance
    */
