@@ -1,3 +1,4 @@
+/* eslint-disable */
 const fs = require('fs');
 const path = require('path');
 const config = require(path.resolve(__dirname, '../tuidoc.config.json'));
@@ -20,6 +21,7 @@ function getTestUrls() {
     }
     return urls;
   }, []);
+
 
   fs.writeFileSync('url.txt', testUrls.join(', '));
 }

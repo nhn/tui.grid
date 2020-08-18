@@ -10,7 +10,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:all": "eslint src cypress stories --ext .ts,.tsx",
     "dev": "npm run check-types && npm run lint && webpack-dev-server --mode=development",
-    "build": "npm run check-types:all && npm run lint:all && (webpack --mode=production & webpack --mode=production --minify) && node tsBannerGenerator.ts",
+    "build": "npm run check-types:all && npm run lint:all && (webpack --mode=production & webpack --mode=production --minify) && node ./scripts/tsBannerGenerator.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test-server": "webpack-dev-server",
