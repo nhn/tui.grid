@@ -1,4 +1,4 @@
-import { createCustomLayerRenderer, createCustomSvgRenderer } from '../helper/customLayerRenderer';
+import { createCustomLayerRenderer, CustomSvgRenderer } from '../helper/customLayerRenderer';
 
 before(() => {
   cy.visit('/dist');
@@ -29,14 +29,13 @@ describe('CREATE TYPE', () => {
   });
 });
 
-it.only('mousedown event should be worked on svg custom renderer', () => {
+it('mousedown event should be worked on svg custom renderer', () => {
   const data = [{ name: 'Lee', age: 20 }];
-  const CustomRenderer = createCustomSvgRenderer();
   const columns = [
     { name: 'name' },
     {
       name: 'age',
-      renderer: CustomRenderer,
+      renderer: CustomSvgRenderer,
     },
   ];
 
