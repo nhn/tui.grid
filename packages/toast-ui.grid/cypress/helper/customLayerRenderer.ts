@@ -25,3 +25,32 @@ export function createCustomLayerRenderer() {
 
   return CustomLayerRenderer;
 }
+
+export function createCustomSvgRenderer() {
+  class CustomSvgRenderer implements CellRenderer {
+    private el: SVGElement;
+
+    public constructor() {
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      const circle = document.createElementNS(svgNS, 'circle'); // Creates a <circle/>
+      circle.setAttribute('cx', '20');
+      circle.setAttribute('cy', '20');
+      circle.setAttribute('r', '15');
+
+      svg.appendChild(circle);
+
+      this.el = svg;
+    }
+
+    public getElement() {
+      return this.el;
+    }
+
+    public render() {
+      return this.el;
+    }
+  }
+
+  return CustomSvgRenderer;
+}
