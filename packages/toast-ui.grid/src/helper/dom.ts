@@ -158,8 +158,16 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   return result.join(' ');
 }
 
+function isSvgElement(el: Element) {
+  return el.namespaceURI?.indexOf('svg') !== -1;
+}
+
 export function isDatePickerElement(el: HTMLElement) {
   let currentEl: HTMLElement | null = el;
+
+  if (isSvgElement(el)) {
+    return false;
+  }
 
   while (currentEl && currentEl.className.split(' ').indexOf('tui-datepicker') === -1) {
     currentEl = currentEl.parentElement;
@@ -169,7 +177,7 @@ export function isDatePickerElement(el: HTMLElement) {
 }
 
 export function hasClass(el: HTMLElement, className: ClassNameType) {
-  return el.className.split(' ').indexOf(cls(className)) !== -1;
+  return !isSvgElement(el) && el.className.split(' ').indexOf(cls(className)) !== -1;
 }
 
 export function findParentByTagName(el: HTMLElement, tagName: string) {
