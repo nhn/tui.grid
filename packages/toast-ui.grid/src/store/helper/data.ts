@@ -1,7 +1,7 @@
 import { Row, CellValue, ListItem } from '@t/store/data';
 import { ColumnInfo, Column, FormatterProps, Formatter } from '@t/store/column';
 import { listItemText } from '../../formatter/listItemText';
-import { encodeHTMLEntity, isFunction, isString, isNull, isUndefined } from '../../helper/common';
+import { encodeHTMLEntity, isFunction, isString, isNil } from '../../helper/common';
 
 interface MaxTextInfo {
   formattedValue: string;
@@ -71,7 +71,7 @@ export function getFormattedValue(
 }
 
 function getCellDisplayValue(value: CellValue) {
-  if (isUndefined(value) || isNull(value)) {
+  if (isNil(value)) {
     return '';
   }
   return String(value);
