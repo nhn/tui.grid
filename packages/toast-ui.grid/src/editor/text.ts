@@ -1,6 +1,6 @@
 import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
-import { isUndefined, isNull } from '../helper/common';
+import { isNil } from '../helper/common';
 
 interface Options {
   type: 'text' | 'password';
@@ -15,7 +15,7 @@ export class TextEditor implements CellEditor {
 
     el.className = cls('content-text');
     el.type = options.type;
-    el.value = String(isUndefined(props.value) || isNull(props.value) ? '' : props.value);
+    el.value = String(isNil(props.value) ? '' : props.value);
 
     this.el = el;
   }

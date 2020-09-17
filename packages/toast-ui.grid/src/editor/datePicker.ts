@@ -2,7 +2,7 @@ import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '@t/options';
 import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString } from '../helper/common';
+import { deepMergedCopy, isNumber, isString, isNil } from '../helper/common';
 import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 
 export class DatePickerEditor implements CellEditor {
@@ -53,8 +53,8 @@ export class DatePickerEditor implements CellEditor {
     const {
       grid: { usageStatistics },
       columnInfo,
-      value,
     } = props;
+    const value = String(isNil(props.value) ? '' : props.value);
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
 

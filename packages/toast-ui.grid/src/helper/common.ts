@@ -297,6 +297,9 @@ export function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
+export function isNil(value: unknown): value is null | undefined {
+  return isUndefined(value) || isNull(value);
+}
 /**
  * check the emptiness(included null) of object or array. if obj parameter is null or undefind, return true
  * @param obj - target object or array
