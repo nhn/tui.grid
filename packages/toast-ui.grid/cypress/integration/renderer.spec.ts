@@ -1,4 +1,4 @@
-import { createCustomLayerRenderer, CustomSvgRenderer } from '../helper/customLayerRenderer';
+import { createCustomLayerRenderer, CustomSvgRenderer } from '../helper/customRenderer';
 
 before(() => {
   cy.visit('/dist');
