@@ -1,6 +1,6 @@
 import GridEvent from '@/event/gridEvent';
 import { CellValue } from '@t/store/data';
-import { createCustomLayerEditor, CustomTextEditor } from '../helper/customLayerEditor';
+import { createCustomLayerEditor, CustomTextEditor } from '../helper/customEditor';
 import { GridEventProps } from '@t/event';
 
 before(() => {
