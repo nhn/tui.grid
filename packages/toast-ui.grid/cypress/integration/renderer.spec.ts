@@ -1,4 +1,4 @@
-import { createCustomLayerRenderer } from '../helper/customLayerRenderer';
+import { createCustomLayerRenderer, CustomSvgRenderer } from '../helper/customRenderer';
 
 before(() => {
   cy.visit('/dist');
@@ -27,4 +27,20 @@ describe('CREATE TYPE', () => {
       cy.get('input[type=range]').should('have.length', data.length);
     });
   });
+});
+
+it('mousedown event should be worked on svg custom renderer', () => {
+  const data = [{ name: 'Lee', age: 20 }];
+  const columns = [
+    { name: 'name' },
+    {
+      name: 'age',
+      renderer: CustomSvgRenderer,
+    },
+  ];
+
+  cy.createGrid({ data, columns });
+  cy.getCell(0, 'age').click();
+
+  cy.getByCls('layer-focus').should('exist');
 });
