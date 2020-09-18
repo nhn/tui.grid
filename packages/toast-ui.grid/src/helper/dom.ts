@@ -162,8 +162,8 @@ function isSvgElement(el: Element) {
   return el.namespaceURI?.indexOf('svg') !== -1;
 }
 
-export function isDatePickerElement(el: HTMLElement) {
-  let currentEl: HTMLElement | null = el;
+export function isDatePickerElement(el: Element) {
+  let currentEl: Element | null = el;
 
   if (isSvgElement(el)) {
     return false;

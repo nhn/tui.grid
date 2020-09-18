@@ -15,7 +15,7 @@ export type CellRendererProps = CellRenderData & {
 };
 
 export interface CellRenderer {
-  getElement(): HTMLElement | SVGElement;
+  getElement(): Element;
   focused?(): void;
   mounted?(parent: HTMLElement): void;
   render(props: CellRendererProps): void;
