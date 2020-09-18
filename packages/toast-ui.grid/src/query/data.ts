@@ -13,6 +13,7 @@ import {
   removeArrayItem,
   uniqByProp,
   isEmpty,
+  isNil,
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -82,7 +83,7 @@ export function findIndexByRowKey(
   rowKey?: RowKey | null,
   filtered = true
 ) {
-  if (isUndefined(rowKey) || isNull(rowKey)) {
+  if (isNil(rowKey)) {
     return -1;
   }
 

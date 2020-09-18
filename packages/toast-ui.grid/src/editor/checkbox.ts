@@ -3,7 +3,7 @@ import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';
-import { findIndex } from '../helper/common';
+import { findIndex, isNil } from '../helper/common';
 import { getContainerElement, setLayerPosition, setOpacity } from './dom';
 
 const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
@@ -28,8 +28,9 @@ export class CheckboxEditor implements CellEditor {
   private elementIds: string[] = [];
 
   public constructor(props: CellEditorProps) {
-    const { columnInfo, width, value, formattedValue, portalEditingKeydown } = props;
+    const { columnInfo, width, formattedValue, portalEditingKeydown } = props;
     const el = document.createElement('div');
+    const value = String(isNil(props.value) ? '' : props.value);
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
 

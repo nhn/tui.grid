@@ -29,6 +29,7 @@ interface StoreProps {
 
 interface ResizerInfo {
   name: string;
+  header: string;
   height: number;
   width: number;
   offsetX: number;
@@ -82,7 +83,7 @@ class ColumnResizerComp extends Component<Props> {
   }
 
   private renderHandle(info: ResizerInfo, index: number) {
-    const { name, height, offsetX, offsetY, width } = info;
+    const { name, height, offsetX, offsetY, width, header } = info;
 
     const attrs = {
       [dataAttr.COLUMN_INDEX]: index,
@@ -92,7 +93,7 @@ class ColumnResizerComp extends Component<Props> {
     return (
       <div
         class={cls('column-resize-handle')}
-        title={name}
+        title={header}
         {...attrs}
         style={{
           height,
@@ -178,13 +179,14 @@ class ColumnResizerComp extends Component<Props> {
       const len = cols.length;
       let offsetY = headerHeight;
       cols.forEach((col, idx) => {
-        const { resizable, name } = col;
+        const { resizable, name, header } = col;
         const height = idx === len - 1 ? defaultHeight * (maxLen - len + 1) : defaultHeight;
         offsetY -= height;
 
         if (resizable && !this.isHideChildColumns(name) && !nameMap[name]) {
           resizerInfo.push({
             name,
+            header,
             height,
             offsetY,
             ...this.getResizerCoords(name),

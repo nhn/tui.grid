@@ -1,6 +1,6 @@
 import GridEvent from '@/event/gridEvent';
 import { CellValue } from '@t/store/data';
-import { createCustomLayerEditor } from '../helper/customLayerEditor';
+import { createCustomLayerEditor, CustomTextEditor } from '../helper/customEditor';
 import { GridEventProps } from '@t/event';
 
 before(() => {
@@ -536,5 +536,30 @@ describe('editing event: click', () => {
 
       cy.getByCls('content-text').should('be.visible').and('have.value', '28');
     });
+  });
+});
+
+describe('original cell value should be kept', () => {
+  beforeEach(() => {
+    const data = [
+      { name: null, age: 20 },
+      // eslint-disable-next-line no-undefined
+      { name: undefined, age: 28 },
+    ];
+    const columns = [{ name: 'name', editor: CustomTextEditor }, { name: 'age' }];
+
+    cy.createGrid({ data, columns, editingEvent: 'click' });
+  });
+
+  it('original value - `null`', () => {
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+
+    cy.get('input').should('have.value', 'null');
+  });
+
+  it('original value - `undefined`', () => {
+    cy.gridInstance().invoke('startEditing', 1, 'name');
+
+    cy.get('input').should('have.value', 'undefined');
   });
 });

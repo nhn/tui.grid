@@ -1,6 +1,6 @@
 import { Params } from '../../../types/dataSource';
 import { Dictionary } from '../../../types/options';
-import { isObject, isUndefined, isNull, isEmpty } from '../../helper/common';
+import { isObject, isEmpty, isNil } from '../../helper/common';
 
 /**
  * 1. Array format
@@ -21,9 +21,7 @@ import { isObject, isUndefined, isNull, isEmpty } from '../../helper/common';
  *   { a: { b: 1, c: 2 } } => a[b]=1&a[c]=2
  */
 function encodePairs(key: string, value: any) {
-  return `${encodeURIComponent(key)}=${encodeURIComponent(
-    isNull(value) || isUndefined(value) ? '' : value
-  )}`;
+  return `${encodeURIComponent(key)}=${encodeURIComponent(isNil(value) ? '' : value)}`;
 }
 
 function serializeParams(key: string, value: any, serializedList: string[]) {

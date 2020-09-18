@@ -27,6 +27,7 @@ import {
   isFunction,
   assign,
   isNull,
+  isNil,
 } from '../helper/common';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
@@ -113,8 +114,8 @@ function createViewCell(
   const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
-  if (isUndefined(value) || isNull(value)) {
-    value = defaultValue || '';
+  if (isNil(value) && !isNil(defaultValue)) {
+    value = defaultValue;
   }
 
   if (!relationMatched) {

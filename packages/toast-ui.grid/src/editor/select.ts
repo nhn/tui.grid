@@ -6,7 +6,7 @@ import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 import { getKeyStrokeString } from '../helper/keyboard';
-import { includes } from '../helper/common';
+import { includes, isNil } from '../helper/common';
 
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -22,8 +22,9 @@ export class SelectEditor implements CellEditor {
   private portalEditingKeydown: PortalEditingKeydown;
 
   public constructor(props: CellEditorProps) {
-    const { width, value, formattedValue, portalEditingKeydown } = props;
+    const { width, formattedValue, portalEditingKeydown } = props;
     const el = document.createElement('div');
+    const value = String(isNil(props.value) ? '' : props.value);
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
 
