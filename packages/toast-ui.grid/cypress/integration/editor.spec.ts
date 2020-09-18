@@ -539,7 +539,7 @@ describe('editing event: click', () => {
   });
 });
 
-describe('original cell value shoud be kept', () => {
+describe('original cell value should be kept', () => {
   beforeEach(() => {
     const data = [
       { name: null, age: 20 },
