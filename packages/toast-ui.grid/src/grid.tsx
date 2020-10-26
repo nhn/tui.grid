@@ -735,7 +735,7 @@ export default class Grid implements TuiGrid {
     const targetRow = findRowByRowKey(data, column, id, rowKey, false);
 
     if (targetRow) {
-      return targetRow[columnName] || null;
+      return targetRow[columnName] ?? null;
     }
 
     return null;
