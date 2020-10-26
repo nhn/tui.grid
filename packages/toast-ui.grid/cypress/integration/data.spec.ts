@@ -60,7 +60,7 @@ function assertCheckboxStatus(checked: boolean) {
   });
 }
 
-function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'> = {}) {
+function createGrid(options: Omit<OptGrid, 'el' | 'columns'> = {}) {
   const data = [
     { name: 'Kim', age: 10 },
     { name: 'Lee', age: 20 },
@@ -905,28 +905,37 @@ it('should change the value of the hidden cell', () => {
 });
 
 describe('getValue()', () => {
-  beforeEach(() => {
-    const columns = [{ name: 'name', filter: 'text' }, { name: 'age' }];
-    // @ts-ignore
-    createGrid({ columns });
-  });
-
   it('should get the value of the cell', () => {
+    createGrid();
     cy.gridInstance().invoke('getValue', 0, 'name').should('eq', 'Kim');
   });
 
   it('should get the value of the filtered cell', () => {
+    createGrid();
     invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
 
     cy.gridInstance().invoke('getValue', 0, 'name').should('eq', 'Kim');
   });
 
-  it('should return null when there is no matched rowKey ', () => {
+  it('should return null when there is no matched rowKey', () => {
+    createGrid();
     cy.gridInstance().invoke('getValue', 3, 'name').should('eq', null);
   });
 
-  it('should return null when there is no matched columnName ', () => {
+  it('should return null when there is no matched columnName', () => {
+    createGrid();
     cy.gridInstance().invoke('getValue', 0, 'none').should('eq', null);
+  });
+
+  it('should return falsy value properly', () => {
+    const data = [
+      { name: 'Kim', age: 10 },
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 0 },
+    ];
+    createGrid({ data });
+
+    cy.gridInstance().invoke('getValue', 2, 'age').should('eq', 0);
   });
 });
 
