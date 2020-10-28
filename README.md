@@ -181,8 +181,8 @@ For more information on PR's step, please see links of Contributing section.
 
 - [Code of Conduct](https://github.com/nhn/tui.grid/blob/master/CODE_OF_CONDUCT.md)
 - [Contributing guideline](https://github.com/nhn/tui.grid/blob/master/CONTRIBUTING.md)
-- [Issue guideline](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ISSUE_TEMPLATE.md)
-- [Commit convention](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/COMMIT_MESSAGE_CONVENTION.md)
+- [Commit convention](https://github.com/nhn/tui.grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+- [Issue guideline](https://github.com/nhn/tui.grid/tree/master/.github/ISSUE_TEMPLATE)
 
 ## 🍞 TOAST UI Family
 
@@ -201,7 +201,6 @@ For more information on PR's step, please see links of Contributing section.
 - [TOAST Dooray - Collaboration Service](https://dooray.com/)
 - [Shop by](https://www.godo.co.kr/shopby/main.gd)
 - [Payco](https://www.payco.com/)
-- [Payco Shopping](https://shopping.payco.com)
 - [YES24 - Movie Management System (Admin Tools)](http://m.movie.yes24.com/Movie/CurrentMovie.aspx)
 
 ## 📜 License
