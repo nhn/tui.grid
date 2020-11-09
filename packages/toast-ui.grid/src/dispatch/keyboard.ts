@@ -14,6 +14,7 @@ import { forceValidateUniquenessOfColumns } from '../store/helper/validation';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
 import { CellChange, Origin } from '@t/event';
+import { updateSummaryValueByCell } from './summary';
 
 type ChangeValueFn = () => number;
 interface ChangeInfo {
@@ -228,6 +229,10 @@ function applyCopiedData(store: Store, copiedData: string[][], range: SelectionR
         prevChanges.push(prevChange);
         nextChanges.push(nextChange);
         changeValueFns.push(changeValue);
+        updateSummaryValueByCell(store, name, {
+          orgValue: targetRow[name],
+          value: copiedData[rowIndex][columnIndex],
+        });
       }
     }
   }
@@ -235,7 +240,7 @@ function applyCopiedData(store: Store, copiedData: string[][], range: SelectionR
 }
 
 export function paste(store: Store, copiedData: string[][]) {
-  const { selection } = store;
+  const { selection, id } = store;
   const { originalRange } = selection;
 
   if (originalRange) {
@@ -244,6 +249,7 @@ export function paste(store: Store, copiedData: string[][]) {
 
   const rangeToPaste = getRangeToPaste(store, copiedData);
   applyCopiedData(store, copiedData, rangeToPaste);
+  changeSelectionRange(selection, rangeToPaste, id);
 }
 
 export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: ChangeInfo) {
