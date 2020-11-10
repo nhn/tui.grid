@@ -5,9 +5,9 @@ import { RowCoords } from '@t/store/rowCoords';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { EditingEvent, TabMode, Focus } from '@t/store/focus';
 import { observable } from '../helper/observable';
-import { someProp, findPropIndex } from '../helper/common';
+import { someProp, findPropIndex, isNull } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
-import { findIndexByRowKey, isClientPagination, getRowIndexWithPage } from '../query/data';
+import { findIndexByRowKey, isClientPagination } from '../query/data';
 
 interface FocusOption {
   data: Data;
@@ -73,21 +73,23 @@ export function create({
     get rowIndex() {
       const { rowKey } = this;
 
-      return rowKey === null ? null : findIndexByRowKey(data, column, id, rowKey);
+      if (isNull(rowKey)) {
+        return null;
+      }
+
+      const index = findIndexByRowKey(data, column, id, rowKey);
+
+      return isClientPagination(data) ? index - data.pageRowRange[0] : index;
     },
 
     get originalRowIndex() {
       const { rowIndex } = this;
-      const { pageOptions } = data;
 
-      if (rowIndex === null) {
+      if (isNull(rowIndex)) {
         return null;
       }
-
       if (isClientPagination(data)) {
-        const { perPage, page } = pageOptions;
-
-        return rowIndex + (page - 1) * perPage;
+        return rowIndex + data.pageRowRange[0];
       }
 
       return rowIndex;
@@ -102,13 +104,12 @@ export function create({
         return null;
       }
 
-      const targetRowIndex = getRowIndexWithPage(data, rowIndex);
       const { widths, offsets } = columnCoords;
       const borderWidth = widths[side].length - 1 === columnIndex ? 0 : cellBorderWidth;
       const left = offsets[side][columnIndex];
       const right = left + widths[side][columnIndex] + borderWidth;
-      const top = rowCoords.offsets[targetRowIndex];
-      const bottom = top + rowCoords.heights[targetRowIndex];
+      const top = rowCoords.offsets[rowIndex];
+      const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);
 
       if (isRowSpanEnabled(sortState) && rowSpan) {

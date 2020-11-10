@@ -226,8 +226,15 @@ export function isClientPagination({ pageOptions }: Data) {
   return !isEmpty(pageOptions) && pageOptions.useClient && pageOptions.type === 'pagination';
 }
 
-export function getRowIndexWithPage(data: Data, rowIndex: number) {
+export function getRowIndexPerPage(data: Data, rowIndex: number) {
   return isClientPagination(data) ? rowIndex % data.pageOptions.perPage : rowIndex;
+}
+
+export function getRowKeyByIndexWithPageRange(data: Data, rowIndex: number) {
+  if (isClientPagination(data)) {
+    rowIndex = rowIndex + data.pageRowRange[0];
+  }
+  return data.filteredRawData[rowIndex].rowKey;
 }
 
 export function getFormattedValue(store: Store, rowKey: RowKey, columnName: string) {

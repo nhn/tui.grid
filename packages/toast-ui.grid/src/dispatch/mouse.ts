@@ -10,7 +10,11 @@ import { changeFocus, saveAndFinishEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import { getRowRangeWithRowSpan } from '../query/rowSpan';
 import { getChildColumnRange } from '../query/selection';
-import { findIndexByRowKey, getRowIndexWithPage } from '../query/data';
+import {
+  findIndexByRowKey,
+  getRowIndexPerPage,
+  getRowKeyByIndexWithPageRange,
+} from '../query/data';
 import {
   findColumnIndexByPosition,
   findRowIndexByPosition,
@@ -176,7 +180,6 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const offsetLeft = pageX - left + scrollLeft;
   const offsetTop = pageY - top + scrollTop;
 
-  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
   const columnName = visibleColumnsBySideWithRowHeader[side][columnIndex].name;
 
@@ -185,8 +188,9 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       const dragData = { pageX, pageY };
       updateSelection(store, dragData);
     } else {
+      const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
       selectionEnd(store);
-      changeFocus(store, filteredRawData[rowIndex].rowKey, columnName, id);
+      changeFocus(store, getRowKeyByIndexWithPageRange(data, rowIndex), columnName, id);
     }
   }
 }
@@ -220,7 +224,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     row: [0, endRowIndex],
     column: [startColumnIndex, endColumnIndex],
   };
-  const { rowKey } = filteredRawData[0];
+  const rowKey = getRowKeyByIndexWithPageRange(data, 0);
 
   finishEditingByHeaderSelection(store, rowKey, columnName);
   changeFocus(store, rowKey, columnName, id);
@@ -273,7 +277,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rowIndexWithPage = getRowIndexWithPage(data, rowIndex);
+  const rowIndexWithPage = getRowIndexPerPage(data, rowIndex);
 
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
