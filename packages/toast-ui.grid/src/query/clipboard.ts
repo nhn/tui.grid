@@ -59,14 +59,14 @@ function getTextWithCopyOptionsApplied(
 function getValueToString(store: Store) {
   const {
     column: { visibleColumnsWithRowHeader },
-    focus: { rowIndex, columnName, totalColumnIndex },
+    focus: { originalRowIndex, columnName, totalColumnIndex },
     data: { filteredViewData, filteredRawData },
   } = store;
 
-  if (rowIndex === null || columnName === null || totalColumnIndex === null) {
+  if (originalRowIndex === null || columnName === null || totalColumnIndex === null) {
     return '';
   }
-  const valueMap = filteredViewData[rowIndex].valueMap[columnName];
+  const valueMap = filteredViewData[originalRowIndex].valueMap[columnName];
 
   return getTextWithCopyOptionsApplied(
     valueMap,
