@@ -1,18 +1,11 @@
 import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
 import { OptRow } from '@t/options';
+import { invokeFilter, clickFilterBtn, inputFilterValue } from '../helper/util';
 
 before(() => {
   cy.visit('/dist');
 });
-
-function invokeFilter(columnName: string, states: any) {
-  cy.gridInstance().invoke('filter', columnName, states);
-}
-
-function clickFilterBtn() {
-  cy.getByCls('btn-filter').click();
-}
 
 function selectFilterCode(option: any) {
   cy.getByCls('filter-container').find('select').select(option);
@@ -36,10 +29,6 @@ function getHeaderCheckbox() {
 
 function getCellCheckbox() {
   return cy.get('td input[type=checkbox]');
-}
-
-function inputFilterValue(value: string) {
-  cy.getByCls('filter-container', 'filter-input').type(value);
 }
 
 function applyFilterByUI(option: any, value: string) {

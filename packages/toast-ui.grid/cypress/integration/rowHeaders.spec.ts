@@ -1,14 +1,6 @@
+import { assertHeaderCheckboxStatus } from '../helper/assert';
+
 const columns = [{ name: 'name', minWidth: 150 }];
-
-function assertHeaderCheckboxStatus(disable: boolean) {
-  cy.getByCls('cell-row-header').get('input').eq(0).as('checkbox');
-
-  if (disable) {
-    cy.get('@checkbox').should('be.checked');
-  } else {
-    cy.get('@checkbox').should('not.be.checked');
-  }
-}
 
 before(() => {
   cy.visit('/dist');

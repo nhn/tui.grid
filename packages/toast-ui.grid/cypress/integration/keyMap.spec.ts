@@ -1,4 +1,5 @@
-import { Range } from '@t/store/selection';
+import { clipboardType } from '../helper/util';
+import { assertFocusedCell, assertSelectedRange } from '../helper/assert';
 
 // unable to test clipboard
 // https://github.com/cypress-io/cypress/issues/2386
@@ -26,18 +27,6 @@ beforeEach(() => {
 
 function assertEditFinished() {
   cy.getByCls('content-text').should('not.exist');
-}
-
-function clipboardType(key: string) {
-  cy.getByCls('clipboard').type(key, { force: true });
-}
-
-function assertFocusedCell(columnName: string, rowKey: number) {
-  cy.gridInstance().invoke('getFocusedCell').should('have.subset', { columnName, rowKey });
-}
-
-function assertSelectedRange(range: { start: Range; end: Range }) {
-  cy.gridInstance().invoke('getSelectionRange').should('be.eql', range);
 }
 
 describe('editor', () => {

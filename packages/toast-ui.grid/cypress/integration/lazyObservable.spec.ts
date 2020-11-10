@@ -1,19 +1,7 @@
-import { RowKey } from '@t/store/data';
+import { cls } from '@/helper/dom';
 import { data } from '../../samples/basic';
 import { lazyObserbableTestdata as treeData } from '../../samples/tree';
-import { cls } from '@/helper/dom';
-
-function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
-  cy.getCell(rowKey, columnName).within(() => {
-    cy.getByCls('tree-extra-content').should('have.class', cls('tree-button-expand'));
-  });
-}
-
-function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
-  cy.getCell(rowKey, columnName).within(() => {
-    cy.getByCls('tree-extra-content').should('not.have.class', cls('tree-button-expand'));
-  });
-}
+import { assertToggleButtonExpanded, assertToggleButtonCollapsed } from '../helper/assert';
 
 function assertCheckedState(checked: boolean) {
   cy.get('input').should(($el) => {

@@ -5,6 +5,8 @@ import { twoDepthData, threeDepthData } from '../../samples/relations';
 import { cls, ClassNameType } from '@/helper/dom';
 import { compare } from '@/helper/sort';
 import { isBoolean } from '@/helper/common';
+import { moveToNextPage } from '../helper/util';
+import { assertLastPage, assertCurrentPage } from '../helper/assert';
 
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
@@ -111,7 +113,6 @@ function createGrid() {
   });
 }
 
-// @TODO: need to unify the duplicated assert function in sort.spec.ts, filter.spec.ts, clientPagination.spec.ts
 function assertColumnData(column: string, text: string) {
   cy.getColumnCells(column).should('have.sameColumnData', text);
 }
@@ -156,18 +157,6 @@ function assertActiveFilterBtn() {
   cy.getByCls('btn-filter').should('have.class', cls('btn-filter-active'));
 }
 
-function assertCurrentPage(page: number) {
-  cy.get('.tui-is-selected').should('have.text', String(page));
-}
-
-function assertLastPage(lastPage: number) {
-  cy.get('.tui-last-child').should('have.text', String(lastPage));
-}
-
-function moveNextPage() {
-  cy.get('.tui-page-btn.tui-next').click({ force: true });
-}
-
 before(() => {
   cy.visit('/dist');
 });
@@ -197,7 +186,7 @@ describe('pagination + sort', () => {
 
   it('should sort the data after moving the next page', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
-    moveNextPage();
+    moveToNextPage();
 
     assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
@@ -231,7 +220,7 @@ describe('pagination + filter', () => {
     createGridWithPagination(data.slice(0, 80));
 
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'contain', value: 'P' }]);
-    moveNextPage();
+    moveToNextPage();
 
     assertActiveFilterBtn();
     assertCurrentPage(2);
@@ -241,7 +230,7 @@ describe('pagination + filter', () => {
   it('should move the first page after filtering the data with movded the page', () => {
     createGridWithPagination();
 
-    moveNextPage();
+    moveToNextPage();
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
 
     assertActiveFilterBtn();
@@ -253,7 +242,7 @@ describe('pagination + filter', () => {
     createGridWithPagination(data.slice(0, 80));
 
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'contain', value: 'P' }]);
-    moveNextPage();
+    moveToNextPage();
     cy.gridInstance().invoke('unfilter', 'deliveryType');
 
     assertCurrentPage(1);

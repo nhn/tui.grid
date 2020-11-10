@@ -2,14 +2,8 @@ import { OptGrid } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
-
-function invokeFilter(columnName: string, states: any) {
-  cy.gridInstance().invoke('filter', columnName, states);
-}
-
-function applyAliasHeaderCheckbox() {
-  cy.getByCls('cell-row-header').get('input').eq(0).as('checkbox');
-}
+import { invokeFilter, applyAliasHeaderCheckbox } from '../helper/util';
+import { assertGridHasRightRowNumber, assertHeaderCheckboxStatus } from '../helper/assert';
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
   applyAliasHeaderCheckbox();
@@ -34,22 +28,6 @@ function assertCheckboxDisabledAfterClick(status: boolean[]) {
         cy.wrap($el).should('be.disabled');
       }
     });
-}
-
-function assertGridHasRightRowNumber() {
-  cy.getRowHeaderCells('_number').each(($el, idx) => {
-    cy.wrap($el).should('have.text', `${idx + 1}`);
-  });
-}
-
-function assertHeaderCheckboxStatus(checked: boolean) {
-  applyAliasHeaderCheckbox();
-
-  if (checked) {
-    cy.get('@checkbox').should('be.checked');
-  } else {
-    cy.get('@checkbox').should('not.be.checked');
-  }
 }
 
 function assertCheckboxStatus(checked: boolean) {

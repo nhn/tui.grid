@@ -1,6 +1,7 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
 import { GridEventProps } from '@t/event';
+import { clipboardType, clickFilterBtn, inputFilterValue } from '../helper/util';
 
 const data = [
   { name: 'Kim', age: 10 },
@@ -24,10 +25,6 @@ beforeEach(() => {
     rowHeaders: ['rowNum', 'checkbox'],
   });
 });
-
-function clipboardType(key: string) {
-  cy.getByCls('clipboard').type(key, { force: true });
-}
 
 it('click', () => {
   const callback = cy.stub();
@@ -464,14 +461,6 @@ describe('editing', () => {
 });
 
 describe('filter', () => {
-  function inputFilterValue(value: string) {
-    cy.getByCls('filter-container', 'filter-input').type(value);
-  }
-
-  function clickFilterBtn() {
-    cy.getByCls('btn-filter').click();
-  }
-
   function applyFilterByUI(value: string) {
     clickFilterBtn();
     inputFilterValue(value);

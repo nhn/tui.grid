@@ -1,3 +1,5 @@
+import { assertCurrentPage } from '../helper/assert';
+
 export {};
 
 const columns = [
@@ -79,7 +81,7 @@ describe('default datePicker', () => {
     cy.gridInstance().invoke('startEditing', 0, 'default');
 
     cy.get('.tui-calendar-title').should('have.text', 'November 2019');
-    cy.get('.tui-is-selected').should('have.text', '11');
+    assertCurrentPage(11);
   });
 
   it('select the date, the selected date is applied in the cell.', () => {
