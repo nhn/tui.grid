@@ -156,7 +156,7 @@ export function getRowSpanByRowKey(rowKey: RowKey, columnName: string, data: Row
  * get max rowSpan count in all columns that have rowSpan
  */
 export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
-  const { rowSpanMap } = data[rowIndex];
+  const rowSpanMap = data[rowIndex]?.rowSpanMap;
 
   if (isEmpty(rowSpanMap)) {
     return 0;

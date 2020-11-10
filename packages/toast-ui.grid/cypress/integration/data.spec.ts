@@ -1,5 +1,5 @@
 import { OptGrid } from '@t/options';
-import { Row } from '@t/store/data';
+import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
 
@@ -279,6 +279,10 @@ describe('prependRow()', () => {
 });
 
 describe('removeRow()', () => {
+  function scrollToBottom(rowKey: RowKey) {
+    cy.focusAndWait(rowKey, 'name');
+  }
+
   it('remove a row matching given rowKey', () => {
     createGrid();
     cy.gridInstance().invoke('removeRow', 0);
@@ -359,6 +363,49 @@ describe('removeRow()', () => {
     cy.gridInstance().invoke('removeRow', 1);
 
     assertCheckboxStatus(true);
+  });
+
+  it('should render the rows after removing selection data at the bottom position', () => {
+    const data = [
+      { name: 'Kim', age: 10 },
+      { name: 'Lee', age: 20 },
+      { name: 'Ryu', age: 30 },
+      { name: 'Han', age: 40 },
+      { name: 'Kwag', age: 40 },
+      { name: 'Choi', age: 40 },
+      { name: 'Lee', age: 40 },
+      { name: 'Kim', age: 60 },
+      { name: 'Park', age: 40 },
+      { name: 'Lee', age: 20 },
+      { name: 'Ryu', age: 30 },
+      { name: 'Han', age: 40 },
+      { name: 'Kwag', age: 20 },
+      { name: 'Choi', age: 10 },
+      { name: 'Lee', age: 30 },
+      { name: 'Kim', age: 40 },
+    ];
+    createGrid({ data });
+
+    scrollToBottom(14);
+
+    cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [11, 0] });
+    cy.gridInstance()
+      .invoke('getSelectionRange')
+      .then((range) => {
+        const [selectionStart] = range.start;
+        const [selectionEnd] = range.end;
+
+        for (let i = selectionStart; i <= selectionEnd; i += 1) {
+          cy.gridInstance().invoke('removeRow', i);
+        }
+      });
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Kwag', '20'],
+      ['Choi', '10'],
+      ['Lee', '30'],
+      ['Kim', '40'],
+    ]);
   });
 });
 
