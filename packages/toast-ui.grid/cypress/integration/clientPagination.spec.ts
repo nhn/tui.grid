@@ -379,6 +379,17 @@ describe('body selection', () => {
 
     assertSelectedRange({ start: [5, 0], end: [7, 1] });
   });
+
+  it('should remove the selection area data by keyMap', () => {
+    clipboardType('{del}');
+
+    cy.getCellByIdx(5, 0).should('have.text', '');
+    cy.getCellByIdx(5, 1).should('have.text', '');
+    cy.getCellByIdx(6, 0).should('have.text', '');
+    cy.getCellByIdx(6, 1).should('have.text', '');
+    cy.getCellByIdx(7, 0).should('have.text', '');
+    cy.getCellByIdx(7, 1).should('have.text', '');
+  });
 });
 
 describe('header, row header selection', () => {
