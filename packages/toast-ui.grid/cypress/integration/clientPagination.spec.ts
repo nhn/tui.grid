@@ -1,7 +1,7 @@
 import { OptRow } from '@t/options';
 import { PageOptions } from '@t/store/data';
 import { data } from '../../samples/pagination';
-import { clipboardType, moveToNextPage } from '../helper/util';
+import { clipboardType, moveToNextPage, setSelectionByUI } from '../helper/util';
 import {
   assertFocusedCell,
   assertSelectedRange,
@@ -353,13 +353,9 @@ describe('editing', () => {
 
 describe('body selection', () => {
   beforeEach(() => {
-    const range = { start: [5, 0], end: [7, 1] };
-
     createGrid();
     moveToNextPage();
-
-    cy.gridInstance().invoke('focus', 15, 'deliveryType');
-    cy.gridInstance().invoke('setSelectionRange', range);
+    setSelectionByUI([5, 0], [7, 1]);
   });
 
   it('should move the selection area by keyMap', () => {

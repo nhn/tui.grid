@@ -1,3 +1,5 @@
+type Address = [number, number];
+
 export function clipboardType(key: string) {
   cy.getByCls('clipboard').type(key, { force: true });
 }
@@ -20,4 +22,15 @@ export function clickFilterBtn() {
 
 export function inputFilterValue(value: string) {
   cy.getByCls('filter-container', 'filter-input').type(value);
+}
+
+export function setSelectionByUI(start: Address, end: Address) {
+  cy.getCellByIdx(start[0], start[1]).trigger('mousedown');
+  cy.getCellByIdx(end[0], end[1])
+    .invoke('offset')
+    .then(({ left, top }) => {
+      cy.get('body')
+        .trigger('mousemove', { pageX: left + 10, pageY: top + 10 })
+        .trigger('mouseup');
+    });
 }
