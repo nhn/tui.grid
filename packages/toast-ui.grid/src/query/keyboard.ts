@@ -4,6 +4,7 @@ import { clamp, isNull } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from './rowSpan';
 import { getSortedRange } from './selection';
+import { isClientPagination } from './data';
 
 type CellIndex = [number, number];
 
@@ -44,9 +45,12 @@ export function getNextCellIndex(
     rowCoords: { heights },
   } = store;
 
-  const { viewData, sortState, filteredRawData, filteredViewData } = data;
+  const { sortState, filteredRawData, pageRowRange } = data;
+
+  const lastRowIndex =
+    (isClientPagination(data) ? pageRowRange[1] - pageRowRange[0] : filteredRawData.length) - 1;
   const columnName = visibleColumnsWithRowHeader[columnIndex].name;
-  const lastRow = filteredRawData.length - 1 === rowIndex;
+  const lastRow = lastRowIndex === rowIndex;
   const lastColumn = visibleColumnsWithRowHeader.length - 1 === columnIndex;
   const firstRow = rowIndex === 0;
   const firstColumn = columnIndex === rowHeaderCount;
@@ -76,14 +80,14 @@ export function getNextCellIndex(
       break;
     case 'lastCell':
       columnIndex = visibleColumnsWithRowHeader.length - 1;
-      rowIndex = viewData.length - 1;
+      rowIndex = lastRowIndex;
       break;
     case 'pageUp': {
       rowIndex = 0;
       break;
     }
     case 'pageDown': {
-      rowIndex = viewData.length - 1;
+      rowIndex = lastRowIndex;
       break;
     }
     case 'firstColumn':
@@ -124,7 +128,7 @@ export function getNextCellIndex(
       break;
   }
 
-  rowIndex = clamp(rowIndex, 0, filteredViewData.length - 1);
+  rowIndex = clamp(rowIndex, 0, lastRowIndex);
   columnIndex = clamp(columnIndex, 0, visibleColumnsWithRowHeader.length - 1);
 
   return [rowIndex, columnIndex];

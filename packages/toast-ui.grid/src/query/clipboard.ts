@@ -3,7 +3,7 @@ import { CellValue, Row, CellRenderData } from '@t/store/data';
 import { ListItemOptions } from '@t/editor';
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
-import { find } from '../helper/common';
+import { find, isNull } from '../helper/common';
 
 function getCustomValue(
   customValue: CustomValue,
@@ -59,14 +59,14 @@ function getTextWithCopyOptionsApplied(
 function getValueToString(store: Store) {
   const {
     column: { visibleColumnsWithRowHeader },
-    focus: { rowIndex, columnName, totalColumnIndex },
+    focus: { originalRowIndex, columnName, totalColumnIndex },
     data: { filteredViewData, filteredRawData },
   } = store;
 
-  if (rowIndex === null || columnName === null || totalColumnIndex === null) {
+  if (isNull(originalRowIndex) || isNull(columnName) || isNull(totalColumnIndex)) {
     return '';
   }
-  const valueMap = filteredViewData[rowIndex].valueMap[columnName];
+  const valueMap = filteredViewData[originalRowIndex].valueMap[columnName];
 
   return getTextWithCopyOptionsApplied(
     valueMap,

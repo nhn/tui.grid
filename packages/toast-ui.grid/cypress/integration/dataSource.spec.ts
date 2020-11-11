@@ -6,6 +6,7 @@ import { runMockServer } from '../helper/runMockServer';
 import GridEvent from '@/event/gridEvent';
 import { deepCopy } from '@/helper/common';
 import { cls, ClassNameType } from '@/helper/dom';
+import { assertModifiedRowsLength } from '../helper/assert';
 
 const PER_PAGE = 10;
 const ROW_HEIGHT = 40;
@@ -36,10 +37,6 @@ function assertDataLength(len: number) {
 
 function assertIsModified(isModified: boolean) {
   cy.gridInstance().invoke('isModified').should('eq', isModified);
-}
-
-function assertModifiedRowsLength(type: string, len: number) {
-  cy.gridInstance().invoke('getModifiedRows').its(type).should('have.length', len);
 }
 
 function assertModifiedRowsContainsObject(type: string, obj: object) {

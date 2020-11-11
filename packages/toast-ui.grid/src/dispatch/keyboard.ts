@@ -9,7 +9,7 @@ import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../query/rowSpan';
 import { getDataManager } from '../instance';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { createChangeInfo, isEditableCell } from '../query/data';
+import { createChangeInfo, isEditableCell, getRowKeyByIndexWithPageRange } from '../query/data';
 import { forceValidateUniquenessOfColumns } from '../store/helper/validation';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
@@ -30,7 +30,6 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     column: { visibleColumnsWithRowHeader },
     id,
   } = store;
-  const { filteredViewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -41,13 +40,12 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(store, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(store, getRowKeyByIndexWithPageRange(data, nextRowIndex), nextColumnName, id);
   }
 }
 
 export function editFocus(store: Store, command: KeyboardEventCommandType) {
-  const { focus } = store;
-  const { rowKey, columnName } = focus;
+  const { rowKey, columnName } = store.focus;
 
   if (rowKey === null || columnName === null) {
     return;
@@ -71,7 +69,7 @@ export function moveTabFocus(store: Store, command: TabCommandType) {
   }
 
   const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-  const nextRowKey = data.filteredRawData[nextRowIndex].rowKey;
+  const nextRowKey = getRowKeyByIndexWithPageRange(data, nextRowIndex);
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
 
   if (!isRowHeader(nextColumnName)) {

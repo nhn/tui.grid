@@ -1,4 +1,5 @@
 import { OptColumn } from '@t/options';
+import { setSelectionUsingMouse } from '../helper/util';
 
 const columns: OptColumn[] = [
   { name: 'A', minWidth: 150 },
@@ -9,19 +10,6 @@ const data = [
   { A: 3, B: 2 },
   { A: 4, B: 2 },
 ];
-
-type Address = [number, number];
-
-function setSelectionByUI(start: Address, end: Address) {
-  cy.getCellByIdx(start[0], start[1]).trigger('mousedown');
-  cy.getCellByIdx(end[0], end[1])
-    .invoke('offset')
-    .then(({ left, top }) => {
-      cy.get('body')
-        .trigger('mousemove', { pageX: left + 10, pageY: top + 10 })
-        .trigger('mouseup');
-    });
-}
 
 before(() => {
   cy.visit('/dist');
@@ -35,7 +23,7 @@ describe('getSelectionRange', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('setSelectionRange', range);
       } else {
-        setSelectionByUI([0, 0], [1, 1]);
+        setSelectionUsingMouse([0, 0], [1, 1]);
       }
 
       cy.gridInstance().invoke('getSelectionRange').should('eql', range);

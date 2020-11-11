@@ -1,6 +1,13 @@
-import { data } from '../../samples/pagination';
 import { OptRow } from '@t/options';
 import { PageOptions } from '@t/store/data';
+import { data } from '../../samples/pagination';
+import { clipboardType, moveToNextPage, setSelectionUsingMouse } from '../helper/util';
+import {
+  assertFocusedCell,
+  assertSelectedRange,
+  assertLastPage,
+  assertCurrentPage,
+} from '../helper/assert';
 
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
@@ -9,10 +16,10 @@ const TOTAL_COUNT = 80;
 const LARGE_TOTAL_COUNT = 200;
 
 const columns = [
-  { name: 'deliveryType' },
-  { name: 'productOrderNo' },
-  { name: 'orderName' },
-  { name: 'orderId' },
+  { name: 'deliveryType', editor: 'text' },
+  { name: 'productOrderNo', editor: 'text' },
+  { name: 'orderName', editor: 'text' },
+  { name: 'orderId', editor: 'text' },
 ];
 
 const appendedData = {
@@ -30,7 +37,7 @@ function createGrid(newData?: OptRow[], pageOptions?: PageOptions) {
       perPage: PER_PAGE_COUNT,
       ...pageOptions,
     },
-    rowHeaders: ['checkbox'],
+    rowHeaders: ['rowNum', 'checkbox'],
     columns,
   });
 }
@@ -49,24 +56,12 @@ function createGridWithScrollType(newData?: OptRow[]) {
   });
 }
 
-function moveToNextPage() {
-  cy.get('.tui-page-btn.tui-next').click({ force: true });
-}
-
 function assertRowLength(length: number) {
   if (length) {
     cy.getRsideBody().find('tr').should('have.length', length);
   } else {
     cy.getRsideBody().find('tr').should('not.exist');
   }
-}
-
-function assertLastPage(page: number) {
-  cy.get('.tui-last-child').should('have.text', String(page));
-}
-
-function assertSelectedPage(page: number) {
-  cy.get('.tui-is-selected').should('have.text', String(page));
 }
 
 function assertCheckedAllRows() {
@@ -170,7 +165,7 @@ describe('type: pagination', () => {
     cy.gridInstance().invoke('removeRow', 60);
 
     assertLastPage(6);
-    assertSelectedPage(6);
+    assertCurrentPage(6);
     assertRowLength(PER_PAGE_COUNT);
   });
 
@@ -287,7 +282,7 @@ it('should apply the pageState after calling resetData with pageState option', (
 
   cy.gridInstance().invoke('resetData', data, { pageState });
 
-  assertSelectedPage(2);
+  assertCurrentPage(2);
   assertLastPage(4);
   assertRowLength(5);
 });
@@ -297,4 +292,119 @@ it('should display the pagination component with visiblePages option', () => {
 
   cy.get(`.tui-last-child`).should('have.text', '...');
   cy.get(`.tui-last-child`).prev().should('have.text', '5');
+});
+
+describe('focus', () => {
+  beforeEach(() => {
+    createGrid();
+    moveToNextPage();
+  });
+
+  it('should focus the cell considering the pagination', () => {
+    cy.getCell(17, 'deliveryType').click();
+
+    assertFocusedCell('deliveryType', 17);
+  });
+
+  it('should move the focused cell by arrow key', () => {
+    cy.gridInstance().invoke('focus', 17, 'deliveryType');
+
+    clipboardType('{uparrow}');
+
+    assertFocusedCell('deliveryType', 16);
+
+    clipboardType('{rightarrow}');
+
+    assertFocusedCell('productOrderNo', 16);
+
+    clipboardType('{downarrow}');
+
+    assertFocusedCell('productOrderNo', 17);
+
+    clipboardType('{leftarrow}');
+
+    assertFocusedCell('deliveryType', 17);
+  });
+});
+
+describe('editing', () => {
+  beforeEach(() => {
+    createGrid();
+    moveToNextPage();
+  });
+
+  ['mouse', 'keyMap'].forEach((type) => {
+    it(`should edit the cell considering the pagination by ${type}`, () => {
+      if (type === 'mouse') {
+        cy.getCell(17, 'productOrderNo').click().trigger('dblclick');
+      } else {
+        cy.gridInstance().invoke('focus', 17, 'productOrderNo');
+        clipboardType('{enter}');
+      }
+
+      cy.gridInstance()
+        .invoke('getValue', 17, 'productOrderNo')
+        .then((value) => {
+          cy.getByCls('content-text').should('have.value', value);
+        });
+    });
+  });
+});
+
+describe('body selection', () => {
+  beforeEach(() => {
+    createGrid();
+    moveToNextPage();
+    setSelectionUsingMouse([5, 0], [7, 1]);
+  });
+
+  it('should move the selection area by keyMap', () => {
+    clipboardType('{shift}{rightarrow}');
+
+    assertSelectedRange({ start: [5, 0], end: [7, 2] });
+
+    clipboardType('{shift}{downarrow}');
+
+    assertSelectedRange({ start: [5, 0], end: [8, 2] });
+
+    clipboardType('{shift}{leftarrow}');
+
+    assertSelectedRange({ start: [5, 0], end: [8, 1] });
+
+    clipboardType('{shift}{uparrow}');
+
+    assertSelectedRange({ start: [5, 0], end: [7, 1] });
+  });
+
+  it('should remove the selection area data by keyMap', () => {
+    clipboardType('{del}');
+
+    cy.getCellByIdx(5, 0).should('have.text', '');
+    cy.getCellByIdx(5, 1).should('have.text', '');
+    cy.getCellByIdx(6, 0).should('have.text', '');
+    cy.getCellByIdx(6, 1).should('have.text', '');
+    cy.getCellByIdx(7, 0).should('have.text', '');
+    cy.getCellByIdx(7, 1).should('have.text', '');
+  });
+});
+
+describe('header, row header selection', () => {
+  beforeEach(() => {
+    createGrid();
+    moveToNextPage();
+  });
+
+  it('should select the cells and focus the cell with header selection', () => {
+    cy.getHeaderCell('deliveryType').click();
+
+    assertFocusedCell('deliveryType', 10);
+    assertSelectedRange({ start: [0, 0], end: [9, 0] });
+  });
+
+  it('should select the cells and focus the cell with row header selection', () => {
+    cy.getRowHeaderCell(17, '_number').click();
+
+    assertFocusedCell('deliveryType', 17);
+    assertSelectedRange({ start: [7, 0], end: [7, 3] });
+  });
 });

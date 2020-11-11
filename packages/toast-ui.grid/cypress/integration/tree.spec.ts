@@ -3,8 +3,12 @@ import { OptColumn, OptGrid, OptRow } from '@t/options';
 import GridEvent from '@/event/gridEvent';
 import { CellRenderer, CellRendererProps } from '@t/renderer';
 import { cls } from '../../src/helper/dom';
-
-type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
+import {
+  assertGridHasRightRowNumber,
+  assertToggleButtonCollapsed,
+  assertToggleButtonExpanded,
+  assertModifiedRowsLength,
+} from '../helper/assert';
 
 const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
@@ -43,28 +47,6 @@ function assertColumnWidth(columnName: string, width: number) {
   cy.getColumnCells(columnName).each(($el) => {
     cy.wrap($el).invoke('width').should('eq', width);
   });
-}
-
-function assertGridHasRightRowNumber() {
-  cy.getRowHeaderCells('_number').each(($el, idx) => {
-    cy.wrap($el).should('have.text', `${idx + 1}`);
-  });
-}
-
-function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
-  cy.getCell(rowKey, columnName).within(() => {
-    cy.getByCls('tree-extra-content').should('have.class', cls('tree-button-expand'));
-  });
-}
-
-function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
-  cy.getCell(rowKey, columnName).within(() => {
-    cy.getByCls('tree-extra-content').should('have.class', cls('tree-button-collapse'));
-  });
-}
-
-function assertModifiedRowsLength(type: ModifiedType, length: number) {
-  cy.gridInstance().invoke('getModifiedRows').its(type).should('have.length', length);
 }
 
 function assertHasChildren(rowKey: RowKey, columnName: string, exist: boolean) {

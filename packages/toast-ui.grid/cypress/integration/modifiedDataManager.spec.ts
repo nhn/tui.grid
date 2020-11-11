@@ -1,3 +1,5 @@
+import { clipboardType } from '../helper/util';
+
 export {};
 
 interface Data {
@@ -52,10 +54,6 @@ function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
         expect(rows[type][0]).to.contain(modifiedRowsMap[type as keyof ModifiedRowsMap]![0]);
       });
     });
-}
-
-function clipboardType(key: string) {
-  cy.getByCls('clipboard').type(key, { force: true });
 }
 
 it('should add new row to createdRows property after appending a row', () => {

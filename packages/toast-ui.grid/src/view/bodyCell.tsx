@@ -9,7 +9,6 @@ import { DispatchProps } from '../dispatch/create';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { getRowIndexWithPage } from '../query/data';
 import { isFunction, shallowEqual } from '../helper/common';
 
 interface OwnProps {
@@ -201,14 +200,13 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
+  ({ id, column, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
     const { rowHeight: defaultRowHeight, cellBorderWidth } = dimension;
-    const rowIndexWithPage = getRowIndexWithPage(data, rowIndex);
 
     return {
       grid,
@@ -217,9 +215,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       defaultRowHeight,
       renderData: (valueMap && valueMap[columnName]) || { invalidStates: [] },
       ...(columnName === treeColumnName ? { treeInfo } : null),
-      selectedRow: range
-        ? rowIndexWithPage >= range.row[0] && rowIndexWithPage <= range.row[1]
-        : false,
+      selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false,
       cellBorderWidth,
     };
   }
