@@ -17,6 +17,7 @@ export type Row = Dictionary<CellValue> & {
   _attributes: RowAttributes;
   _relationListItemMap: Dictionary<ListItem[]>;
   _disabledPriority: DisabledPriority;
+  _children?: Row[];
 };
 export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
 export type DisabledPriority = Dictionary<'ROW' | 'COLUMN'>;

@@ -31,6 +31,13 @@ import {
 } from './dataSource';
 import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
 
+type InternalProp =
+  | 'sortKey'
+  | 'uniqueKey'
+  | 'rowSpanMap'
+  | '_relationListItemMap'
+  | '_disabledPriority';
+
 export interface Pagination {
   getCurrentPage(): number;
 
@@ -174,7 +181,7 @@ declare namespace tui {
 
     public getIndexOfRow(rowKey: RowKey): number;
 
-    public getData(): Row[];
+    public getData(): Omit<Row, InternalProp>[];
 
     public getRowCount(): number;
 
