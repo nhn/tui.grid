@@ -296,6 +296,6 @@ function rowToOriginRow(row: Row) {
 
 export function rawDataToOriginData(rawData: Row[]) {
   return rawData
-    .filter((row) => isNil(row._attributes!.tree?.parentRowKey))
+    .filter((row) => isNil(row._attributes?.tree?.parentRowKey))
     .map((row) => rowToOriginRow(row));
 }

@@ -53,6 +53,7 @@ import {
   findRowByRowKey,
   getRowHeight,
   getFormattedValue,
+  getOmittedInternalProp,
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -1176,7 +1177,7 @@ export default class Grid implements TuiGrid {
    * @returns {Array} - A list of all rows
    */
   public getData() {
-    return this.store.data.rawData.map((row) => getOriginObject(row as Observable<Row>));
+    return this.store.data.rawData.map((row) => getOmittedInternalProp(row));
   }
 
   /**
@@ -1515,7 +1516,7 @@ export default class Grid implements TuiGrid {
    * (Original data is set by {@link Grid#resetData|resetData}
    */
   public resetOriginData() {
-    this.dataManager.setOriginData(this.getData());
+    this.dataManager.setOriginData(this.store.data.rawData);
   }
 
   /** Remove all checked rows.
