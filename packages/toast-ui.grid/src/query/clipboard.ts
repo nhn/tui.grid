@@ -3,7 +3,7 @@ import { CellValue, Row, CellRenderData } from '@t/store/data';
 import { ListItemOptions } from '@t/editor';
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
-import { find } from '../helper/common';
+import { find, isNull } from '../helper/common';
 
 function getCustomValue(
   customValue: CustomValue,
@@ -63,7 +63,7 @@ function getValueToString(store: Store) {
     data: { filteredViewData, filteredRawData },
   } = store;
 
-  if (originalRowIndex === null || columnName === null || totalColumnIndex === null) {
+  if (isNull(originalRowIndex) || isNull(columnName) || isNull(totalColumnIndex)) {
     return '';
   }
   const valueMap = filteredViewData[originalRowIndex].valueMap[columnName];

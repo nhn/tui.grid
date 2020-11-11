@@ -1,5 +1,5 @@
 import { OptColumn } from '@t/options';
-import { setSelectionByUI } from '../helper/util';
+import { setSelectionUsingMouse } from '../helper/util';
 
 const columns: OptColumn[] = [
   { name: 'A', minWidth: 150 },
@@ -23,7 +23,7 @@ describe('getSelectionRange', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('setSelectionRange', range);
       } else {
-        setSelectionByUI([0, 0], [1, 1]);
+        setSelectionUsingMouse([0, 0], [1, 1]);
       }
 
       cy.gridInstance().invoke('getSelectionRange').should('eql', range);

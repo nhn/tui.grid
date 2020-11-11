@@ -8,11 +8,7 @@ type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 export function assertHeaderCheckboxStatus(checked: boolean) {
   applyAliasHeaderCheckbox();
 
-  if (checked) {
-    cy.get('@checkbox').should('be.checked');
-  } else {
-    cy.get('@checkbox').should('not.be.checked');
-  }
+  cy.get('@checkbox').should(checked ? 'be.checked' : 'not.be.checked');
 }
 
 export function assertGridHasRightRowNumber() {

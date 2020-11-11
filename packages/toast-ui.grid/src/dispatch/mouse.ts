@@ -277,11 +277,11 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rowIndexWithPage = getRowIndexPerPage(data, rowIndex);
+  const rowIndexPerPage = getRowIndexPerPage(data, rowIndex);
 
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
-    [rowIndexWithPage, rowIndexWithPage],
+    [rowIndexPerPage, rowIndexPerPage],
     [rowHeaderCount, endColumnIndex],
     visibleColumnsWithRowHeader,
     null,

@@ -24,7 +24,7 @@ export function inputFilterValue(value: string) {
   cy.getByCls('filter-container', 'filter-input').type(value);
 }
 
-export function setSelectionByUI(start: Address, end: Address) {
+export function setSelectionUsingMouse(start: Address, end: Address) {
   cy.getCellByIdx(start[0], start[1]).trigger('mousedown');
   cy.getCellByIdx(end[0], end[1])
     .invoke('offset')

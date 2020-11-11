@@ -1,7 +1,7 @@
 import { OptRow } from '@t/options';
 import { PageOptions } from '@t/store/data';
 import { data } from '../../samples/pagination';
-import { clipboardType, moveToNextPage, setSelectionByUI } from '../helper/util';
+import { clipboardType, moveToNextPage, setSelectionUsingMouse } from '../helper/util';
 import {
   assertFocusedCell,
   assertSelectedRange,
@@ -355,7 +355,7 @@ describe('body selection', () => {
   beforeEach(() => {
     createGrid();
     moveToNextPage();
-    setSelectionByUI([5, 0], [7, 1]);
+    setSelectionUsingMouse([5, 0], [7, 1]);
   });
 
   it('should move the selection area by keyMap', () => {

@@ -232,7 +232,7 @@ export function getRowIndexPerPage(data: Data, rowIndex: number) {
 
 export function getRowKeyByIndexWithPageRange(data: Data, rowIndex: number) {
   if (isClientPagination(data)) {
-    rowIndex = rowIndex + data.pageRowRange[0];
+    rowIndex += data.pageRowRange[0];
   }
   return data.filteredRawData[rowIndex].rowKey;
 }
