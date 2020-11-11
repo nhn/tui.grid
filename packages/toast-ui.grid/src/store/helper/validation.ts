@@ -11,7 +11,6 @@ import {
   isString,
   isBlank,
   isFunction,
-  omit,
   convertToNumber,
   isNumber,
   includes,
@@ -22,11 +21,10 @@ import {
   isObservable,
   notify,
   unobservedInvoke,
-  getOriginObject,
-  Observable,
   getRunningObservers,
 } from '../../helper/observable';
 import { getInstance } from '../../instance';
+import { getOmittedInternalProp } from '../../query/data';
 
 type UniqueInfoMap = Record<string, Record<string, RowKey[]>>;
 
@@ -180,13 +178,7 @@ function validateCustomValidator(
   validatorFn: CustomValidator,
   invalidStates: ErrorInfo[]
 ) {
-  const originRow = omit(
-    getOriginObject(row as Observable<Row>),
-    'sortKey',
-    'uniqueKey',
-    '_relationListItemMap',
-    '_disabledPriority'
-  ) as Row;
+  const originRow = getOmittedInternalProp(row);
 
   unobservedInvoke(() => {
     const result = validatorFn(value, originRow, columnName);
