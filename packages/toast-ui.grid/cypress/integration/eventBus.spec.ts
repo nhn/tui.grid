@@ -218,7 +218,7 @@ describe('scrollEnd', () => {
     cy.wrap(callback).should('not.be.called');
   });
 
-  it.only('should not occur scrollEnd event after calling resetData API', () => {
+  it('should not occur scrollEnd event after calling resetData API', () => {
     const callback = cy.stub();
 
     cy.gridInstance().invoke('on', 'scrollEnd', callback);
