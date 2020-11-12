@@ -1,5 +1,5 @@
 import { Dictionary } from '@t/options';
-import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction } from './common';
+import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction, isNull } from './common';
 import { patchArrayMethods } from './array';
 
 type BooleanSet = Dictionary<boolean>;
@@ -15,6 +15,8 @@ export type Observable<T extends Dictionary<any>> = T & {
   __storage__: T;
   __propObserverIdSetMap__: Dictionary<BooleanSet>;
 };
+
+type BatchTargetFn = () => void;
 
 const generateObserverId = (() => {
   let lastId = 0;
@@ -226,14 +228,25 @@ export function getOriginObject<T>(obj: Observable<T>) {
   return isEmpty(result) ? obj : result;
 }
 
-export function unobservedInvoke(fn: Function) {
+export function unobservedInvoke(fn: BatchTargetFn) {
   paused = true;
   fn();
   paused = false;
 }
 
-export function batchedInvokeObserver(fn: Function) {
+export function batchObserver(fn: BatchTargetFn) {
   pending = true;
   fn();
   pending = false;
+}
+
+let asyncTimer: null | number = null;
+
+export function asyncInvokeObserver(fn: BatchTargetFn) {
+  if (isNull(asyncTimer)) {
+    asyncTimer = setTimeout(() => {
+      fn();
+      asyncTimer = null;
+    });
+  }
 }
