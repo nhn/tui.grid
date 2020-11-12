@@ -218,15 +218,15 @@ describe('scrollEnd', () => {
     cy.wrap(callback).should('not.be.called');
   });
 
-  it('should not occur scrollEnd event after calling resetData API', () => {
+  it.only('should not occur scrollEnd event after calling resetData API', () => {
     const callback = cy.stub();
 
     cy.gridInstance().invoke('on', 'scrollEnd', callback);
 
-    // scroll horizontally
-    cy.focusAndWait(10, 'age');
+    // scroll at the vertically
+    cy.focusAndWait(10, 'name');
 
-    cy.gridInstance().invoke('resetData', [{ name: 'Lee', age: 20 }]);
+    cy.gridInstance().invoke('resetData', []);
 
     cy.wrap(callback).should('not.be.called');
   });
