@@ -18,6 +18,7 @@ import {
   forEachObject,
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
+import { getOmittedInternalProp, changeRawDataToOriginDataForTree } from '../../query/data';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
 
@@ -45,10 +46,7 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
     rows = rows.map((row) => omit(row, ...ignoredColumns));
   }
   if (!withRawData) {
-    // @ts-ignore
-    rows = rows.map((row) =>
-      omit(row, 'sortKey', 'uniqueKey', '_attributes', '_relationListItemMap', '_disabledPriority')
-    );
+    rows = rows.map((row) => getOmittedInternalProp(row));
   }
   if (rowKeyOnly) {
     return rows.map((row) => row.rowKey);
@@ -83,7 +81,7 @@ export function createManager(): ModifiedDataManager {
   return {
     // only for restore
     setOriginData(data: OptRow[]) {
-      originData = data.map((row) => ({ ...row }));
+      originData = changeRawDataToOriginDataForTree(data as Row[]);
     },
 
     getOriginData() {

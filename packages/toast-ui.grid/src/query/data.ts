@@ -14,6 +14,7 @@ import {
   uniqByProp,
   isEmpty,
   isNil,
+  omit,
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -22,6 +23,7 @@ import { createRawRow, generateDataCreationKey } from '../store/data';
 import { getFormattedValue as formattedValue } from '../store/helper/data';
 import { makeObservable } from '../dispatch/data';
 import { replaceColumnUniqueInfoMap } from '../store/helper/validation';
+import { getOriginObject, Observable } from '../helper/observable';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -276,4 +278,33 @@ export function createChangeInfo(
   };
 
   return { prevChange, nextChange, changeValue };
+}
+
+export function getOmittedInternalProp(row: Row, ...additaional: string[]) {
+  return omit(
+    getOriginObject(row as Observable<Row>),
+    'sortKey',
+    'uniqueKey',
+    'rowSpanMap',
+    '_relationListItemMap',
+    '_disabledPriority',
+    ...additaional
+  ) as Row;
+}
+
+function changeRowToOriginRowForTree(row: Row) {
+  const originRow = getOmittedInternalProp(row, 'rowKey', '_attributes');
+
+  if (originRow._children) {
+    originRow._children = originRow._children.map((childRow) =>
+      changeRowToOriginRowForTree(childRow)
+    );
+  }
+  return originRow;
+}
+
+export function changeRawDataToOriginDataForTree(rawData: Row[]) {
+  return rawData
+    .filter((row) => isNil(row._attributes?.tree?.parentRowKey))
+    .map((row) => changeRowToOriginRowForTree(row));
 }

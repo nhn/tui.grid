@@ -20,7 +20,10 @@ function getDataToBeObservable(
     return acc;
   }
 
-  if (!isObservable(row) || (viewRow && !isObservable(viewRow.valueMap))) {
+  if (
+    !isObservable(row) ||
+    (viewRow && row.rowKey === viewRow.rowKey && !isObservable(viewRow.valueMap))
+  ) {
     acc.rows.push(row);
     acc.targetIndexes.push(index);
   }

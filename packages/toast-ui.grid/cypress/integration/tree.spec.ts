@@ -959,3 +959,24 @@ describe('should extend the width with `width: auto` option as text length', () 
     assertColumnWidth('c1', 157);
   });
 });
+
+describe('origin data', () => {
+  beforeEach(() => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'c1' }, { name: 'c2' }],
+      treeColumnOptions: {
+        name: 'c1',
+      },
+    });
+    cy.gridInstance().invoke('expandAll');
+  });
+
+  it('should restore the data after calling resetOriginData API', () => {
+    cy.gridInstance().invoke('resetOriginData');
+    cy.gridInstance().invoke('restore');
+
+    cy.getCell(0, 'c1').should('have.text', 'foo');
+    assertToggleButtonCollapsed(0, 'c1');
+  });
+});
