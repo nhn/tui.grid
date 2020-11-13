@@ -285,17 +285,19 @@ export function getOmittedInternalProp(row: Row, ...additaional: string[]) {
   ) as Row;
 }
 
-function rowToOriginRow(row: Row) {
+function changeRowToOriginRowForTree(row: Row) {
   const originRow = getOmittedInternalProp(row, 'rowKey', '_attributes');
 
   if (originRow._children) {
-    originRow._children = originRow._children.map((childRow) => rowToOriginRow(childRow));
+    originRow._children = originRow._children.map((childRow) =>
+      changeRowToOriginRowForTree(childRow)
+    );
   }
   return originRow;
 }
 
-export function rawDataToOriginData(rawData: Row[]) {
+export function changeRawDataToOriginDataForTree(rawData: Row[]) {
   return rawData
     .filter((row) => isNil(row._attributes?.tree?.parentRowKey))
-    .map((row) => rowToOriginRow(row));
+    .map((row) => changeRowToOriginRowForTree(row));
 }

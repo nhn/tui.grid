@@ -18,7 +18,7 @@ import {
   forEachObject,
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
-import { getOmittedInternalProp, rawDataToOriginData } from '../../query/data';
+import { getOmittedInternalProp, changeRawDataToOriginDataForTree } from '../../query/data';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
 
@@ -81,7 +81,7 @@ export function createManager(): ModifiedDataManager {
   return {
     // only for restore
     setOriginData(data: OptRow[]) {
-      originData = rawDataToOriginData(data as Row[]);
+      originData = changeRawDataToOriginDataForTree(data as Row[]);
     },
 
     getOriginData() {
