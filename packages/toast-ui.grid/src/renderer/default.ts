@@ -9,6 +9,9 @@ export class DefaultRenderer implements CellRenderer {
     const { ellipsis, whiteSpace } = props.columnInfo;
 
     el.className = cls('cell-content');
+    el.setAttribute('title', `${props.formattedValue}`);
+
+    // @TODO: we should remove below options and consider common the renderer option for style, attribute and class names
     if (ellipsis) {
       el.style.textOverflow = 'ellipsis';
     }

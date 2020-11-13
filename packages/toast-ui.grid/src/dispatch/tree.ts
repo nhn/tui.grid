@@ -6,7 +6,7 @@ import { ColumnCoords } from '@t/store/columnCoords';
 import { Dimension } from '@t/store/dimension';
 import { createViewRow } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
-import { notify, batchedInvokeObserver } from '../helper/observable';
+import { notify, batchObserver } from '../helper/observable';
 import { getDataManager } from '../instance';
 import {
   isUpdatableRowAttr,
@@ -334,7 +334,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   fillMissingColumnData(column, rawRows);
 
-  batchedInvokeObserver(() => {
+  batchObserver(() => {
     rawData.splice(startIdx, 0, ...rawRows);
   });
   const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
@@ -372,7 +372,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const deleteCount = getDescendantRows(store, rowKey).length + 1;
   let removedRows: Row[] = [];
 
-  batchedInvokeObserver(() => {
+  batchObserver(() => {
     removedRows = rawData.splice(startIdx, deleteCount);
   });
   viewData.splice(startIdx, deleteCount);

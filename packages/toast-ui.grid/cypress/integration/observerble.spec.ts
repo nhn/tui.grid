@@ -1,4 +1,10 @@
-import { notify, observable, observe } from '@/helper/observable';
+import {
+  notify,
+  observable,
+  observe,
+  batchObserver,
+  asyncInvokeObserver,
+} from '@/helper/observable';
 
 it('observe() should invoke callback function whenever related props changed', () => {
   const person = observable({
@@ -300,4 +306,34 @@ describe('batch update', () => {
     expect(callback1).to.be.callCount(4);
     expect(callback2).to.be.calledTwice;
   });
+});
+
+it('batched observer should not invoke observer', () => {
+  const callback = cy.stub();
+  const obj = observable({ num: 0 });
+
+  observe(() => {
+    callback(obj.num);
+  });
+
+  batchObserver(() => {
+    obj.num = 20;
+  });
+
+  expect(callback).to.be.calledOnce;
+});
+
+it('asyncInvokeObserver API should invoke observer asynchronously', () => {
+  const callback = cy.stub();
+  const obj = observable({ num: 0 });
+
+  for (let i = 0; i < 100; i += 1) {
+    asyncInvokeObserver(() => {
+      callback();
+      obj.num = 20;
+    });
+  }
+
+  cy.wrap(callback).should('be.calledOnce');
+  cy.wrap(obj).should('eql', { num: 20 });
 });

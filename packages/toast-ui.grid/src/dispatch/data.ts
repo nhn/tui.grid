@@ -19,7 +19,7 @@ import {
   silentSplice,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
-import { notify, isObservable, batchedInvokeObserver } from '../helper/observable';
+import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
 import { initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -292,7 +292,9 @@ export function check(store: Store, rowKey: RowKey) {
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
   }
-  setCheckedAllRows(store);
+  asyncInvokeObserver(() => {
+    setCheckedAllRows(store);
+  });
 
   /**
    * Occurs when a checkbox in row header is checked
@@ -313,7 +315,9 @@ export function uncheck(store: Store, rowKey: RowKey) {
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
   }
-  setCheckedAllRows(store);
+  asyncInvokeObserver(() => {
+    setCheckedAllRows(store);
+  });
 
   /**
    * Occurs when a checkbox in row header is unchecked
@@ -469,7 +473,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   updatePageWhenRemovingRow(store, 1);
   removeUniqueInfoMap(id, rawData[rowIndex], column);
 
-  batchedInvokeObserver(() => {
+  batchObserver(() => {
     [removedRow] = rawData.splice(rowIndex, 1);
   });
   viewData.splice(rowIndex, 1);
@@ -708,7 +712,7 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   const [rawRow] = silentSplice(rawData, currentIndex, 1);
   const [viewRow] = silentSplice(viewData, currentIndex, 1);
 
-  batchedInvokeObserver(() => {
+  batchObserver(() => {
     rawData.splice(targetIndex, 0, rawRow);
   });
   viewData.splice(targetIndex, 0, viewRow);
