@@ -85,7 +85,11 @@ class BodyAreaComp extends Component<Props> {
     dispatch('setScrollTop', scrollTop);
     if (side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
-      if (scrollHeight - scrollTop === clientHeight && this.prevScrollLeft === scrollLeft) {
+      if (
+        scrollTop > 0 &&
+        scrollHeight - scrollTop === clientHeight &&
+        this.prevScrollLeft === scrollLeft
+      ) {
         const gridEvent = new GridEvent();
         /**
          * Occurs when scroll at the bottommost
