@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>22. Setting Width, Height</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <style>
+      label {
+        padding: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/setting-width-height.md"
+        target="_blank"
+        >here</a
+      >
+      Select the column width and row height on the select box below.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="contents">
+      <label for="width">Column Width</label>
+      <select id="width" style="margin-bottom:10px;">
+        <option value="150" selected="selected">150</option>
+        <option value="100">100</option>
+        <option value="40">40</option>
+      </select>
+
+      <label for="height">Row height</label>
+      <select id="height" style="margin-bottom:10px;">
+        <option value="70" selected="selected">70</option>
+        <option value="50">50</option>
+        <option value="30">30</option>
+      </select>
+
+      <div class="code-html">
+        <div id="grid" style="width: 768px"></div>
+      </div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    const columnData = [
+      {
+        header: 'Name',
+        name: 'name'
+      },
+      {
+        header: 'Artist',
+        name: 'artist'
+      },
+      {
+        header: 'Type',
+        name: 'type'
+      },
+      {
+        header: 'Release',
+        name: 'release'
+      },
+      {
+        header: 'Genre',
+        name: 'genre'
+      }
+    ];
+
+    function createGrid(width, height) {
+      return new tui.Grid({
+        el: document.getElementById('grid'),
+        data: gridData,
+        columns: createColumns(width),
+        ...createRowHeight(height)
+      });
+    }
+
+    function createColumns(width) {
+      const columns = [];
+
+      columnData.forEach(({ header, name }) => {
+        const column = {
+          header,
+          name,
+          width
+        };
+        // If the width is less than 50, minWidth should be set.
+        if (width < 50) {
+          column.minWidth = width;
+        }
+        columns.push(column);
+      });
+
+      console.log('columns option', columns);
+      return columns;
+    }
+
+    function createRowHeight(height) {
+      const option = { rowHeight: height };
+
+      // If the height is less than 40, minRowHeight should be set.
+      if (height < 40) {
+        option.minRowHeight = height;
+      }
+
+      console.log('rowHeight option', option);
+      return option;
+    }
+
+    let width = 150;
+    let height = 70;
+    let grid = createGrid(width, height);
+
+    document.getElementById('width').addEventListener('change', ev => {
+      width = Number(ev.target.value);
+
+      if (grid) {
+        grid.destroy();
+        document.getElementById('grid').style.width = `${width * 5 + 18}px`;
+      }
+
+      grid = createGrid(width, height);
+    });
+
+    document.getElementById('height').addEventListener('change', ev => {
+      height = Number(ev.target.value);
+
+      if (grid) {
+        grid.destroy();
+        document.getElementById('grid').style.height = `${height * 20 + 17}px`;
+      }
+
+      grid = createGrid(width, height);
+    });
+  </script>
+</html>
