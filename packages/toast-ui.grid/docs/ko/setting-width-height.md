@@ -107,6 +107,61 @@ const grid = new Grid({
 
 ![04-width-columns-minWidth](https://user-images.githubusercontent.com/18183560/61211933-cca84680-a73b-11e9-944f-d82b9c8232ff.png)
 
+### 컬럼 너비 자동 조정
+
+컬럼의 너비를 셀들의 콘텐츠 길이에 따라 자동으로 확장 또는 축소하고 싶은 경우. `columns[].width` 옵션에 `auto` 값을 지정한다. 셀 값을 수정하거나 로우를 추가, 삭제하는 경우 자동으로 너비가 조정된다.
+
+```js
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'name',
+      width: 'auto'
+    },
+    {
+      name: 'artist',
+      width: 50
+    },
+    {
+      name: 'type'
+    },
+    {
+      name: 'release'
+    }
+  ]
+});
+```
+
+![images](https://user-images.githubusercontent.com/37766175/90466840-ad08fc00-e14d-11ea-8231-615c441deb6d.gif)
+만약 축소되는 최소 너비를 지정하고 싶다면 `columns[].width` 옵션을 함께 사용하면 된다.
+
+```js
+const grid = new Grid({
+  // ...,
+  columns: [
+    {
+      name: 'name',
+      width: 'auto',
+      minWidth: 200,
+    },
+    {
+      name: 'artist',
+      width: 50
+    },
+    {
+      name: 'type'
+    },
+    {
+      name: 'release'
+    }
+  ]
+});
+```
+
+> **참조**
+> 컬럼 너비 자동 조정 기능은 `v4.15.0` 이상부터 사용할 수 있는 기능이다. 또한 데이터가 많은 경우 성능에 영향이 있을 수 있으니, 대량 데이터에 대해 이 옵션을 활성화하는 것은 권장하지 않는다.
+
 ### 전체 컬럼 설정
 
 `columnOptions.minWidth` 옵션을 사용하여 전체 컬럼의 넓이를 공통으로 조정할 수 있다. `columnOptions.minWidth` 옵션의 기본값은 `50px`이며 이보다 큰 값을 설정하면 전체 컬럼의 넓이가 해당 값으로 고정된다.
