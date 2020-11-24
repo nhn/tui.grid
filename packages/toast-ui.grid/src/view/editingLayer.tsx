@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { RowKey, ViewRow } from '@t/store/data';
-import { Dictionary } from '@t/options';
+import { Dictionary, Hooks } from '@t/options';
 import { ColumnInfo } from '@t/store/column';
 import { EditingAddress, Rect, Side } from '@t/store/focus';
 import { CellEditor } from '@t/editor';
@@ -23,6 +23,7 @@ interface StoreProps {
   allColumnMap: Dictionary<ColumnInfo>;
   editingAddress: EditingAddress;
   cellPosRect?: Rect | null;
+  hooks: Hooks;
 }
 
 interface OwnProps {
@@ -46,6 +47,13 @@ export class EditingLayerComp extends Component<Props> {
 
   private handleKeyDown = (ev: KeyboardEvent) => {
     const keyName = getKeyStrokeString(ev);
+
+    if (this.props.hooks.event?.beforeKeydownOnEditCell) {
+      const hookResult = this.props.hooks.event?.beforeKeydownOnEditCell(ev, this.props.grid);
+      if (!hookResult) {
+        return;
+      }
+    }
 
     switch (keyName) {
       case 'enter':
@@ -174,7 +182,7 @@ export class EditingLayerComp extends Component<Props> {
 }
 
 export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { data, column, id, focus, dimension } = store;
+  const { data, column, id, focus, dimension, hooks } = store;
   const {
     editingAddress,
     side: focusSide,
@@ -185,6 +193,7 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
   } = focus;
 
   return {
+    hooks,
     grid: getInstance(id),
     active: side === focusSide && !isNull(editingAddress),
     focusedRowKey,

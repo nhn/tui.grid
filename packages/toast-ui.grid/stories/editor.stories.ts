@@ -209,6 +209,14 @@ function createGrid() {
       frozenCount: 1,
       minWidth: 200,
     },
+
+    hooks: {
+      event: {
+        beforeKeydownOnEditCell() {
+          return true;
+        },
+      },
+    },
   });
 
   return { el, grid };

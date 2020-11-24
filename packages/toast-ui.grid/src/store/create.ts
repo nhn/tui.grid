@@ -12,6 +12,7 @@ import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
+import { create as createHooks } from './hooks';
 import { setAutoBodyHeight } from '../dispatch/dimension';
 import { createObservableData } from '../dispatch/lazyObservable';
 import { createNewValidationMap } from './helper/validation';
@@ -42,6 +43,7 @@ export function createStore(id: number, options: OptGrid): Store {
     treeColumnOptions = { name: '' },
     header = {},
     disabled = false,
+    hooks: gridHooks = {},
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -118,8 +120,11 @@ export function createStore(id: number, options: OptGrid): Store {
     rowCoords,
     data,
   });
+
   const filterLayerState = createFilterLayerState();
   const renderState = createRenderState();
+
+  const hooks = createHooks(gridHooks);
 
   const store = observable({
     id,
@@ -134,7 +139,9 @@ export function createStore(id: number, options: OptGrid): Store {
     selection,
     renderState,
     filterLayerState,
+    hooks,
   });
+
   // manual observe to resolve circular references
   observe(() => {
     setAutoBodyHeight(store);

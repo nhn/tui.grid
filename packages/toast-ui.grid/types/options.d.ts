@@ -18,6 +18,7 @@ import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary'
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass } from './renderer';
 import { CellEditorClass } from './editor';
+import Grid from "../src/grid";
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -103,6 +104,16 @@ export interface OptGrid {
   onGridMounted?: GridEventListener;
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
+  hooks?: Hooks;
+}
+
+export interface Hooks {
+  event?: EventHooks;
+}
+
+export interface EventHooks {
+  // If return false won't perform to handle about event type.
+  beforeKeydownOnEditCell?: (e?: KeyboardEvent, grid?: Grid) => boolean;
 }
 
 export interface OptRow {

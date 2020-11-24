@@ -140,7 +140,7 @@ class BodyAreaComp extends Component<Props> {
   private moveEnoughToTriggerDragEvent = (current: PagePosition) => {
     const dx = Math.abs(this.dragStartData.pageX! - current.pageX!);
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
-    const movedDistance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
+    const movedDistance = Math.round(Math.sqrt(dx ** 2 + dy ** 2));
 
     return movedDistance >= MIN_DISTANCE_FOR_DRAG;
   };
