@@ -261,6 +261,13 @@ if ((module as any).hot) {
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+ *      @param {Object} [options.hooks]
+ *          The registry of hook functions.
+ *          Basically, If a hook returns `true` will perform the next work.
+ *          If return `false` aborts the next work.
+ *          @param {Object} [options.hooks.event] - Hook functions to decide to perform event.
+ *              @param {Object} [options.hooks.event.beforeKeydownOnEditCell]
+ *                  Will be called when triggered key down on editing.
  *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
  *          If you do not want to send the hostname, this option set to false.
  *      @param {function} [options.onGridMounted] - The function that will be called after rendering the grid.
