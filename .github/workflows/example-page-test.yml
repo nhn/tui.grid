@@ -18,14 +18,12 @@ jobs:
       - name: set global error variable
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          errorVariable=`cat ./errorVariable.txt`
-          echo ::set-env name=ERROR_VARIABLE::$errorVariable
+          echo "ERROR_VARIABLE=$(head -n 1 ./errorVariable.txt)" >> $GITHUB_ENV
       - name: set url
         working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         run: |
-          url=`cat ./url.txt`
-          echo ::set-env name=URLS::$url
+          echo "URLS=$(head -n 1 ./url.txt)" >> $GITHUB_ENV
       - name: detect runtime error
         uses: nhn/toast-ui.detect-runtime-error-actions@master
         with:
