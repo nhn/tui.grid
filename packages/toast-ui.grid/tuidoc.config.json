@@ -36,7 +36,7 @@
       "tmpdoc/query/filter.js",
       "tmpdoc/view/pagination.js"
     ],
-    "fileLink": false
+    "permalink": false
   },
   "examples": {
     "filePath": "examples",
