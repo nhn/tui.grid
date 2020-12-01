@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.15.3 | Fri Nov 13 2020
+ * @version 4.15.3 | Tue Dec 01 2020
  * @author NHN. FE Development Lab
  * @license MIT
  */
