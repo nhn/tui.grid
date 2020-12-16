@@ -78,7 +78,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "tui-date-picker": "^3.3.3",
+    "tui-date-picker": "^4.1.0",
     "tui-pagination": "^3.4.0"
   }
 }
