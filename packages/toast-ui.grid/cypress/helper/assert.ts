@@ -37,11 +37,15 @@ export function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) 
   });
 }
 
-export function assertLastPage(page: number) {
+export function assertFirstPage(page: number | string) {
   cy.get('.tui-last-child').should('have.text', String(page));
 }
 
-export function assertCurrentPage(page: number) {
+export function assertLastPage(page: number | string) {
+  cy.get('.tui-last-child').should('have.text', String(page));
+}
+
+export function assertCurrentPage(page: number | string) {
   cy.get('.tui-is-selected').should('have.text', String(page));
 }
 
