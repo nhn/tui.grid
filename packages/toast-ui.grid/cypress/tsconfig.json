@@ -6,7 +6,7 @@
       "@/*": ["src/*"],
       "@t/*": ["types/*"]
     },
-    "types": ["cypress", "node", "tui-pagination", "tui-date-picker"]
+    "types": ["cypress", "node", "tui-pagination"]
   },
   "include": ["../src/**/*.ts", "../src/**/*.tsx", "../types/**/*", "**/*.ts"]
 }

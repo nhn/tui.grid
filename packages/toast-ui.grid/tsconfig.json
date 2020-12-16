@@ -17,7 +17,7 @@
     },
     "noEmit": true,
     "typeRoots": ["./types"],
-    "types": ["node", "tui-pagination", "tui-date-picker"],
+    "types": ["node", "tui-pagination"],
     "lib": ["esnext", "dom", "dom.iterable"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*"],
