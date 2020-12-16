@@ -79,6 +79,6 @@
   },
   "dependencies": {
     "tui-date-picker": "^3.3.3",
-    "tui-pagination": "^3.3.2"
+    "tui-pagination": "^3.4.0"
   }
 }
