@@ -82,6 +82,8 @@ describe('default datePicker', () => {
 
     cy.get('.tui-calendar-title').should('have.text', 'November 2019');
     assertCurrentPage(11);
+
+    cy.gridInstance().invoke('finishEditing');
   });
 
   it('select the date, the selected date is applied in the cell.', () => {
@@ -102,7 +104,6 @@ describe('timepicker', () => {
     cy.gridInstance().invoke('startEditing', 0, 'timePicker');
 
     cy.get('.tui-timepicker-hour').get('select').eq(2).select('PM');
-
     cy.gridInstance().invoke('finishEditing');
 
     cy.getCell(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');

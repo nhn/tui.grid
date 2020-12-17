@@ -923,3 +923,8 @@
 .tui-grid-editor-datepicker-layer * {
   box-sizing: border-box;
 }
+
+.tui-grid-container .tui-calendar-month .tui-calendar-body,
+.tui-grid-container .tui-calendar-year .tui-calendar-body {
+  width: 220px;
+}

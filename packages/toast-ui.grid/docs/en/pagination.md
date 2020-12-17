@@ -1,10 +1,9 @@
 # Pagination 📖
 
-TOAST UI Grid offers a pagination feature that allows users to view data in terms of pages. However, it is worth mentioning that the pagination feature has [tui-pagination](https://github.com/nhn/tui.pagination) as its dependency, so the bundle file is provided with the [tui-pagination](https://github.com/nhn/tui.pagination) and [tui-code-snippet](https://github.com/nhn/tui.code-snippet) files included. If you are using CDN to access the Grid, be sure to include the `tui-code-snippet` and `tui-pagination` dependencies. 
+TOAST UI Grid offers a pagination feature that allows users to view data in terms of pages. However, it is worth mentioning that the pagination feature has [tui-pagination](https://github.com/nhn/tui.pagination) as its dependency, so the bundle file is provided with the [tui-pagination](https://github.com/nhn/tui.pagination) file included. If you are using CDN to access the Grid, be sure to include the `tui-pagination` dependencies. 
 
 ```js
-<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
-<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
+<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.js"></script>
 ```
 
 ## Style
