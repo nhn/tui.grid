@@ -923,6 +923,24 @@ describe('editing tree cell', () => {
 
     cy.getByCls('layer-editing').should('not.be.visible');
   });
+
+  it('should not display the hidden childe nodes after editing the cell', () => {
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1',
+      },
+    });
+    cy.gridInstance().invoke('expandAll');
+    cy.gridInstance().invoke('collapse', 0);
+
+    editCell(0, 'c1', 'FOO');
+
+    cy.getCell(0, 'c1').should('have.text', 'FOO');
+    cy.getCell(1, 'c1').should('not.be.visible');
+    cy.getCell(2, 'c1').should('not.be.visible');
+    cy.getCell(3, 'c1').should('not.be.visible');
+    cy.getCell(4, 'c1').should('not.be.visible');
+  });
 });
 
 describe('should extend the width with `width: auto` option as text length', () => {
