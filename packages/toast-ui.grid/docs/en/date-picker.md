@@ -28,7 +28,7 @@ const columns = [
 
 ![default_datepicker](https://user-images.githubusercontent.com/35371660/59477678-37dad080-8e91-11e9-90d9-c99053ae83d9.gif)
 
-Using the `options` property, you can set up options to be used to create a DatePicker instance. For more information, see the [DatePicker API page](https://nhn.github.io/tui.date-picker/3.3.3/DatePicker).
+Using the `options` property, you can set up options to be used to create a DatePicker instance. For more information, see the [DatePicker API page](https://nhn.github.io/tui.date-picker/4.1.0/DatePicker).
 
 *(Although there are much more options available for the DatePicker component, other options are restricted as they might cause some integration issues.)*
 

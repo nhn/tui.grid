@@ -1,10 +1,9 @@
 # 페이지네이션 📖
 
-TOAST UI Grid는 데이터를 페이지 별로 나누어 볼 수 있도록 페이지네이션 기능을 제공한다. 단, 페이지네이션 기능은 [tui-pagination](https://github.com/nhn/tui.pagination)에 의존성을 가지고 있기 때문에 번들 파일에 [tui-pagination](https://github.com/nhn/tui.pagination)과 [tui-code-snippet](https://github.com/nhn/tui.code-snippet) 내용이 추가된다. CDN을 통해 사용하는 경우, 반드시 아래처럼 `tui-code-snippet`과 `tui-pagination` 의존성을 추가해야한다.
+TOAST UI Grid는 데이터를 페이지 별로 나누어 볼 수 있도록 페이지네이션 기능을 제공한다. 단, 페이지네이션 기능은 [tui-pagination](https://github.com/nhn/tui.pagination)에 의존성을 가지고 있기 때문에 번들 파일에 [tui-pagination](https://github.com/nhn/tui.pagination)과 [tui-code-snippet](https://github.com/nhn/tui.code-snippet) 내용이 추가된다. CDN을 통해 사용하는 경우, 반드시 아래처럼 `tui-pagination` 의존성을 추가해야한다.
 
 ```js
-<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
-<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
+<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.js"></script>
 ```
 
 ## 스타일

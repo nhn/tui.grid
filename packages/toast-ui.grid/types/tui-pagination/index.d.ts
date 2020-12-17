@@ -1,4 +1,4 @@
-// Type definitions for tui-pagination 3.3.2
+// Type definitions for tui-pagination 3.4.0
 
 declare module 'tui-pagination' {
   export default class Pagination {

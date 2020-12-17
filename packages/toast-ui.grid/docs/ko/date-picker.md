@@ -28,7 +28,7 @@ const columns = [
 
 ![default_datepicker](https://user-images.githubusercontent.com/35371660/59477678-37dad080-8e91-11e9-90d9-c99053ae83d9.gif)
 
-`options` 속성으로 DatePicker 인스턴스 생성 옵션을 설정할 수 있다. 더 많은 정보는 [DatePicker API 문서](https://nhn.github.io/tui.date-picker/3.3.3/DatePicker)에서 확인할 수 있다.
+`options` 속성으로 DatePicker 인스턴스 생성 옵션을 설정할 수 있다. 더 많은 정보는 [DatePicker API 문서](https://nhn.github.io/tui.date-picker/4.1.0/DatePicker)에서 확인할 수 있다.
 
 *(DatePicker에서 사용할 수 있는 옵션은 많지만, 다른 옵션들을 사용할 경우 Grid와의 통합에서 문제를 야기할 수 있기 때문에 제한한다.)*
 
