@@ -58,17 +58,17 @@ export interface DataForColumnCreation {
 
 export interface CellEditorOptions {
   type: CellEditorClass;
-  options?: Dictionary<any>;
+  options?: Record<string, any>;
 }
 
 export interface CellRendererOptions {
   type: CellRendererClass;
-  options?: Dictionary<any>;
+  options?: Record<string, any>;
 }
 
 export interface ColumnFilterOption {
   type: FilterOptionType;
-  options?: Dictionary<any>;
+  options?: Record<string, any>;
   operator?: OperatorType;
   showApplyBtn: boolean;
   showClearBtn: boolean;
