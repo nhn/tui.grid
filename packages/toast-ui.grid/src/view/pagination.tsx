@@ -72,12 +72,11 @@ class PaginationComp extends Component<Props> {
       paginationHolder,
       grid: { usageStatistics },
     } = this.props;
-    const { totalCount, perPage, page, visiblePages } = pageOptions;
+    const { totalCount, perPage } = pageOptions;
     const options = {
+      ...pageOptions,
       totalItems: totalCount,
       itemsPerPage: perPage,
-      page,
-      visiblePages,
       usageStatistics,
     };
     this.tuiPagination = new TuiPagination(this.el!, options);

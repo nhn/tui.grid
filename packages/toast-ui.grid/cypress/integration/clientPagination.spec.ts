@@ -7,6 +7,7 @@ import {
   assertSelectedRange,
   assertLastPage,
   assertCurrentPage,
+  assertFirstPage,
 } from '../helper/assert';
 
 const PER_PAGE_COUNT = 10;
@@ -287,11 +288,42 @@ it('should apply the pageState after calling resetData with pageState option', (
   assertRowLength(5);
 });
 
-it('should display the pagination component with visiblePages option', () => {
-  createGrid(data.slice(0, 100), { visiblePages: 5 });
+describe('with tui-pagination option', () => {
+  it('visiblePages option', () => {
+    createGrid(data.slice(0, 100), { visiblePages: 5 });
 
-  cy.get(`.tui-last-child`).should('have.text', '...');
-  cy.get(`.tui-last-child`).prev().should('have.text', '5');
+    assertLastPage('...');
+    cy.get('.tui-last-child').prev().should('have.text', '5');
+  });
+
+  it('centerAlign option', () => {
+    createGrid(data.slice(0, 100), { visiblePages: 5, centerAlign: true, page: 4 });
+
+    assertFirstPage('...');
+    assertLastPage('...');
+  });
+
+  it('firstItemClassName, lastItemClassName option', () => {
+    createGrid(data.slice(0, 100), {
+      firstItemClassName: 'my-first-item',
+      lastItemClassName: 'my-last-item',
+    });
+
+    cy.get('.my-first-item').should('have.text', '1');
+    cy.get('.my-last-item').should('have.text', '10');
+  });
+
+  it('template option', () => {
+    createGrid(data.slice(0, 100), {
+      template: {
+        page: '<a href="#" class="tui-page-btn">{{page}}p</a>',
+        currentPage: '<strong class="tui-page-btn tui-is-selected">{{page}}p</strong>',
+      },
+    });
+
+    assertCurrentPage('1p');
+    assertLastPage('10p');
+  });
 });
 
 describe('focus', () => {

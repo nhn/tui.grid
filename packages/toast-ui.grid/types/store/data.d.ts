@@ -111,6 +111,10 @@ export interface PageOptions {
   type?: 'scroll' | 'pagination';
   position?: 'top' | 'bottom';
   visiblePages?: number;
+  centerAlign?: boolean;
+  firstItemClassName?: string;
+  lastItemClassName?: string;
+  template?: Record<string, string | Function>;
 }
 
 export interface InvalidRow {
