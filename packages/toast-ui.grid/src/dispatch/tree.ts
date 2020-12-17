@@ -208,6 +208,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
       } else {
         getDescendantRows(store, childRowKey).forEach(({ rowKey: descendantRowKey }) => {
           const index = findIndexByRowKey(data, column, id, descendantRowKey);
+          changeHiddenAttr(data.filteredRawData[index], true);
           heights[index] = 0;
         });
       }
