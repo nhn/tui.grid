@@ -1,4 +1,5 @@
 import { createCustomLayerRenderer, CustomSvgRenderer } from '../helper/customRenderer';
+import { CellRendererProps } from '@t/renderer';
 
 before(() => {
   cy.visit('/dist');
@@ -43,4 +44,31 @@ it('mousedown event should be worked on svg custom renderer', () => {
   cy.getCell(0, 'age').click();
 
   cy.getByCls('layer-focus').should('exist');
+});
+
+it('should apply the options to default renderer', () => {
+  const data = [{ name: 'Lee' }];
+  const columns = [
+    {
+      name: 'name',
+      renderer: {
+        styles: {
+          fontWeight: '500',
+        },
+        attributes: {
+          myCustom: 'my-custom',
+          title: (props: CellRendererProps) => `my ${props.value}`,
+        },
+        classNames: ['my-class'],
+      },
+    },
+  ];
+
+  cy.createGrid({ data, columns });
+
+  cy.getByCls('cell-content')
+    .should('have.class', 'my-class')
+    .and('have.css', 'font-weight', '500')
+    .should('have.attr', 'myCustom', 'my-custom')
+    .should('have.attr', 'title', 'my Lee');
 });

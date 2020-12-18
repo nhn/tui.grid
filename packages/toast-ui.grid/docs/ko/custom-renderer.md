@@ -93,6 +93,61 @@ class CustomTextECustomSliderRendererditor {
 }
 ```
 
+## 디폴트 렌더러 스타일링
+
+커스텀 렌더러는 유용한 옵션이지만 셀에 간단한 스타일이나 속성을 추가하고 싶은 경우에 사용하기에는 번거롭다.
+TOAST UI Grid는 이러한 점을 보완하기 위해 디폴트 렌더러에 옵션을 지정하여 간단한 스타일링을 할 수 있게 옵션을 제공한다. `renderer` 옵션의 하위 객체로 `styles`, `attributes`, `classNames`을 설정하면 디폴트 렌더러를 통해서도 간단한 스타일링 및 속성을 추가할 수 있다. `styles`, `attributes`, `classNames` 각 옵션들의 특징은 아래와 같다.
+
+* `styles`
+  셀의 스타일을 추가하는데 사용한다. 이 옵션 객체는 CSS 프로퍼티 명을 키 값으로 가지며, 프로퍼티 값으로 CSS 프로퍼티의 값 또는 CSS 프로퍼티의 값을 반환하는 함수를 가진다. 만약 함수의 값을 가지는 경우 `props` 매개 변수를 통해 셀의 값이나 컬럼 정보에 접근할 수 있다.
+  ```js
+  styles: {
+    fontWeight: 'bold',
+    color: (props) => props.value.length > 3 ? '#ccc' : '#222';
+  },
+  ```
+* `attributes`
+  셀에 원하는 속성을 추가하는데 사용한다. 이 옵션 객체는 속성 명을 키 값으로 가지며, 값으로 문자열 값 또는 문자열 값을 반환하는 함수를 가진다. 만약 함수의 값을 가지는 경우 `props` 매개 변수를 통해 셀의 값이나 컬럼 정보에 접근할 수 있다.
+  ```js
+  attributes: {
+    'data-type': 'default'
+    title: (props) => `title: ${props.formattedValue}`
+  },
+  ```
+* `classNames`
+  셀에 원하는 class를 지정한다. 문자열 배열 형태의 데이터로 옵션을 설정한다.
+  ```js
+  classNames: ['my-styled-cell'],
+  ```
+
+위의 옵션들은 디폴트 렌더러에 아래처럼 적용할 수 있다.
+
+```js
+const columns = [
+  {
+    name: 'name',
+    renderer: {
+      styles: {
+        fontWeight: 'bold',
+        color: (props) => props.value.length > 3 ? '#ccc' : '#222';
+      },
+      attributes: {
+        'data-type': 'default'
+        title: (props) => `title: ${props.formattedValue}`
+      },
+      classNames: ['my-styled-cell'],
+    },
+  },
+];
+const grid = new Grid({
+  // ...,
+  columns
+});
+```
+
+> **참조**
+> 디폴트 렌더러의 `styles`, `attributes`, `classNames` 옵션들은 `v4.16.1` 이상부터 사용할 수 있다.
+
 ## 예제
 
 커스텀 렌더러를 사용하는 예제는 [여기](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer)서 확인할 수 있다.
