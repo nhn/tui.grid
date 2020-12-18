@@ -92,6 +92,61 @@ class CustomTextECustomSliderRendererditor {
 }
 ```
 
+## Default Renderer styling
+
+The Custom Renderers are useful options, but are cumbersome to use when you want to add simple styles or attributes to the cell.
+For these cases, TOAST UI Grid provides options for simple styling in the default renderer. If `styles`, `attributes`, and `classNames` are set as child objects of `renderer` option, the styles and attributes can be added through default renderer. The features of each option are as follows.
+
+* `styles`
+  Add styles of cell. This object has the CSS property name as the key and a function that returns the value of the CSS property or the value of the CSS property as the value. If the value is the function type, the value of the cell or column information can be accessed through the `props` parameter.
+  ```js
+  styles: {
+    fontWeight: 'bold',
+    color: (props) => props.value.length > 3 ? '#ccc' : '#222';
+  },
+  ```
+* `attributes`
+  Add attributes of cell. This object has the attribute name as the key and a function that returns the value of string type or the value of string type as the value. If the value is the function type, the value of the cell or column information can be accessed through the `props` parameter.
+  ```js
+  attributes: {
+    'data-type': 'default'
+    title: (props) => `title: ${props.formattedValue}`
+  },
+  ```
+* `classNames`
+  Add class of cell. The option is configured as string array type.
+  ```js
+  classNames: ['my-styled-cell'],
+  ```
+
+The configuration of the above options is as below.
+
+```js
+const columns = [
+  {
+    name: 'name',
+    renderer: {
+      styles: {
+        fontWeight: 'bold',
+        color: (props) => props.value.length > 3 ? '#ccc' : '#222';
+      },
+      attributes: {
+        'data-type': 'default'
+        title: (props) => `title: ${props.formattedValue}`
+      },
+      classNames: ['my-styled-cell'],
+    },
+  },
+];
+const grid = new Grid({
+  // ...,
+  columns
+});
+```
+
+> **Note**
+> The `styles`, `attributes`, `classNames` options can only be used with `v4.16.1` and above. 
+
 ## Example
 
 More examples with Custom Renderer can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer).
