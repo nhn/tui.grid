@@ -28,9 +28,13 @@ export class DefaultRenderer implements CellRenderer {
 
     if (renderer) {
       const { attributes, styles, classNames } = renderer;
-      this.setAttrsOrStyles('attrs', attributes);
-      this.setAttrsOrStyles('styles', styles);
 
+      if (attributes) {
+        this.setAttrsOrStyles('attrs', attributes);
+      }
+      if (styles) {
+        this.setAttrsOrStyles('styles', styles);
+      }
       if (classNames) {
         className = ` ${classNames.join(' ')}`;
       }
@@ -49,17 +53,15 @@ export class DefaultRenderer implements CellRenderer {
     this.render(props);
   }
 
-  private setAttrsOrStyles(type: TargetType, targets?: Record<string, any>) {
-    if (targets) {
-      Object.keys(targets).forEach((name) => {
-        const value = isFunction(targets[name]) ? targets[name](this.props) : targets[name];
-        if (type === 'attrs') {
-          this.el.setAttribute(name, value);
-        } else {
-          this.el.style[name as StyleProps] = value;
-        }
-      });
-    }
+  private setAttrsOrStyles(type: TargetType, targets: Record<string, any>) {
+    Object.keys(targets).forEach((name) => {
+      const value = isFunction(targets[name]) ? targets[name](this.props) : targets[name];
+      if (type === 'attrs') {
+        this.el.setAttribute(name, value);
+      } else {
+        this.el.style[name as StyleProps] = value;
+      }
+    });
   }
 
   public getElement() {

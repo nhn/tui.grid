@@ -156,6 +156,7 @@ if ((module as any).hot) {
  *          @param {function} [options.rowHeaders.renderer] - Sets the custom renderer to customize the header content.
  *      @param {Array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
+ *          @deprecated
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
  *              for overflowing content.
  *          @param {string} [options.columns.align=left] - Horizontal alignment of the column content.
@@ -232,6 +233,7 @@ if ((module as any).hot) {
  *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
+ *          @deprecated
  *          @param {string} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
  *              by fitting to the column's width. If set to 'pre', spaces are preserved and the text is braken by
  *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
