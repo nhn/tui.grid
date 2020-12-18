@@ -924,7 +924,7 @@ describe('editing tree cell', () => {
     cy.getByCls('layer-editing').should('not.be.visible');
   });
 
-  it('should not display the hidden childe nodes after editing the cell', () => {
+  it('should not display the hidden child nodes after editing the cell', () => {
     createGrid({
       treeColumnOptions: {
         name: 'c1',
