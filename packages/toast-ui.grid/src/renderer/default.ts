@@ -11,11 +11,7 @@ type WritableKeys<T> = {
   [P in keyof T]-?: IfEquals<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, P>;
 }[keyof T];
 type StyleProps = Exclude<WritableKeys<CSSStyleDeclaration>, number | Function>;
-interface DefaultOptions {
-  styles?: Record<string, string>;
-  attributes?: Record<string, string>;
-  classNames?: string[];
-}
+type TargetType = 'attrs' | 'styles';
 
 export class DefaultRenderer implements CellRenderer {
   private el: HTMLDivElement;
@@ -30,10 +26,10 @@ export class DefaultRenderer implements CellRenderer {
     this.props = props;
     this.el = el;
 
-    if (renderer.options) {
-      const { attributes, styles, classNames }: DefaultOptions = renderer.options;
-      this.setAttributes(attributes);
-      this.setStyles(styles);
+    if (renderer) {
+      const { attributes, styles, classNames } = renderer;
+      this.setAttrsOrStyles('attrs', attributes);
+      this.setAttrsOrStyles('styles', styles);
 
       if (classNames) {
         className = ` ${classNames.join(' ')}`;
@@ -53,20 +49,15 @@ export class DefaultRenderer implements CellRenderer {
     this.render(props);
   }
 
-  private setStyles(styles?: Record<string, any>) {
-    if (styles) {
-      Object.keys(styles).forEach((name) => {
-        const value = styles[name];
-        this.el.style[name as StyleProps] = isFunction(value) ? value(this.props) : value;
-      });
-    }
-  }
-
-  private setAttributes(attributes?: Record<string, any>) {
-    if (attributes) {
-      Object.keys(attributes).forEach((name) => {
-        const value = attributes[name];
-        this.el.setAttribute(name, isFunction(value) ? value(this.props) : value);
+  private setAttrsOrStyles(type: TargetType, targets?: Record<string, any>) {
+    if (targets) {
+      Object.keys(targets).forEach((name) => {
+        const value = isFunction(targets[name]) ? targets[name](this.props) : targets[name];
+        if (type === 'attrs') {
+          this.el.setAttribute(name, value);
+        } else {
+          this.el.style[name as StyleProps] = value;
+        }
       });
     }
   }

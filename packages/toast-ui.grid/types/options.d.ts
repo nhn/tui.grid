@@ -16,7 +16,7 @@ import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
-import { HeaderRendererClass, CellRendererClass } from './renderer';
+import { HeaderRendererClass, CellRendererClass, CellRendererProps } from './renderer';
 import { CellEditorClass } from './editor';
 
 export interface Dictionary<T> {
@@ -26,8 +26,11 @@ export interface Dictionary<T> {
 export type TypeObjectOptions<T> =
   | T
   | {
-      type: T;
+      type?: T;
       options?: Dictionary<any>;
+      styles?: Record<string, string | ((props: CellRendererProps) => string)>;
+      attributes?: Record<string, string | ((props: CellRendererProps) => string)>;
+      classNames?: string[];
     };
 
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };

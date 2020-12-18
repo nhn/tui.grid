@@ -113,9 +113,12 @@ function createRendererOptions(renderer?: OptCellRenderer): CellRendererOptions 
   if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
     return renderer as CellRendererOptions;
   }
+
   const defaultRenderer = { type: DefaultRenderer };
 
-  return isObject(renderer) ? { ...defaultRenderer, options: renderer.options } : defaultRenderer;
+  return isObject(renderer)
+    ? ({ ...defaultRenderer, ...renderer } as CellRendererOptions)
+    : defaultRenderer;
 }
 
 function createTreeInfo(treeColumnOptions: OptTree, name: string) {

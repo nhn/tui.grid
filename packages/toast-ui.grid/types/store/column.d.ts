@@ -1,7 +1,7 @@
 import { Side } from './focus';
 import { CellValue, Row } from './data';
 import { OptTree, Dictionary, OptColumnHeaderInfo, GridEventListener } from '../options';
-import { HeaderRendererClass, CellRendererClass } from '../renderer';
+import { HeaderRendererClass, CellRendererClass, CellRendererProps } from '../renderer';
 import { CellEditorClass } from '../editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
 
@@ -64,6 +64,9 @@ export interface CellEditorOptions {
 export interface CellRendererOptions {
   type: CellRendererClass;
   options?: Record<string, any>;
+  styles?: Record<string, string | ((props: CellRendererProps) => string)>;
+  attributes?: Record<string, string | ((props: CellRendererProps) => string)>;
+  classNames?: string[];
 }
 
 export interface ColumnFilterOption {

@@ -52,16 +52,14 @@ it('should apply the options to default renderer', () => {
     {
       name: 'name',
       renderer: {
-        options: {
-          styles: {
-            fontWeight: '500',
-          },
-          attributes: {
-            myCustom: 'my-custom',
-            title: (props: CellRendererProps) => `my ${props.value}`,
-          },
-          classNames: ['my-class'],
+        styles: {
+          fontWeight: '500',
         },
+        attributes: {
+          myCustom: 'my-custom',
+          title: (props: CellRendererProps) => `my ${props.value}`,
+        },
+        classNames: ['my-class'],
       },
     },
   ];
