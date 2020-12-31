@@ -1305,6 +1305,25 @@ export default class Grid implements TuiGrid {
   }
 
   /**
+   * Set number of rows per page with data and reload current page
+   * @param {number} perPage - Number of rows per page
+   * @param {Params} data - Data(parameters) to send to the server
+   */
+  public setPerPageWithData(perPage: number, data: Params) {
+    const pagination = this.getPagination();
+    if (pagination) {
+      const { pageOptions } = this.store.data;
+      if (pageOptions.useClient) {
+        this.dispatch('updatePageOptions', { perPage, page: 1 });
+        this.dispatch('updateHeights');
+      } else {
+        data['perPage'] = perPage;
+        this.readData(1, data);
+      }
+    }
+  }
+
+  /**
    * Return true if there are at least one row modified.
    * @returns {boolean} - True if there are at least one row modified.
    */
