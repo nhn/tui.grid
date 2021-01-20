@@ -1299,13 +1299,11 @@ export default class Grid implements TuiGrid {
       if (pageOptions.useClient) {
         this.dispatch('updatePageOptions', { perPage, page: 1 });
         this.dispatch('updateHeights');
+      } else if (data) {
+        data.perPage = perPage;
+        this.readData(1, data);
       } else {
-        if (data) {
-          data.perPage = perPage;
-          this.readData(1, data);
-        } else {
-          this.readData(1, { perPage });
-        }
+        this.readData(1, { perPage });
       }
     }
   }
