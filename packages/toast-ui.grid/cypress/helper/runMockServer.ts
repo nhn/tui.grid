@@ -85,6 +85,21 @@ export function runMockServer() {
 
   cy.route({
     method: 'GET',
+    url: 'api/read?perPage=8&page=1&id=5',
+    response: {
+      result: true,
+      data: {
+        contents: data.slice(0, 8).filter(({ id }) => id > 5),
+        pagination: {
+          page: 1,
+          totalCount: 20,
+        },
+      },
+    },
+  }).as('perPage8');
+
+  cy.route({
+    method: 'GET',
     url: '/api/read?perPage=10&a=1&page=1',
     delay: 1000,
     response: {

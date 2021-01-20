@@ -392,6 +392,16 @@ describe('API', () => {
     assertPagingData('id', 1, 5);
   });
 
+  it('setPerPageWithData()', () => {
+    const params = { id: 5 };
+    cy.gridInstance().invoke('setPerPage', 8, params);
+    cy.wait('@perPage8').its('status').should('eq', 200);
+
+    getPageBtn().should('have.length', 7);
+    assertDataLength(8);
+    cy.gridInstance().invoke('getRowCount').should('eq', 8);
+  });
+
   context('setRequestParams()', () => {
     it('with readData API', () => {
       cy.gridInstance().invoke('setRequestParams', { a: 2 });
