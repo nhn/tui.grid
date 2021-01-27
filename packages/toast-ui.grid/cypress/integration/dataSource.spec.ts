@@ -380,26 +380,31 @@ describe('API', () => {
     assertModifiedRowsLength('deletedRows', 0);
   });
 
-  it('setPerPage()', () => {
-    getPageBtn().should('have.length', 6);
-    assertPagingData('id', 1, 10);
+  context('setPerPage()', () => {
+    // original setPerPage test case
+    it('basic', () => {
+      getPageBtn().should('have.length', 6);
+      assertPagingData('id', 1, 10);
+  
+      cy.gridInstance().invoke('setPerPage', 5);
+  
+      cy.wait('@perPage5');
+  
+      getPageBtn().should('have.length', 8);
+      assertPagingData('id', 1, 5);
+    });
 
-    cy.gridInstance().invoke('setPerPage', 5);
-
-    cy.wait('@perPage5');
-
-    getPageBtn().should('have.length', 8);
-    assertPagingData('id', 1, 5);
-  });
-
-  it('setPerPageWithData()', () => {
-    const params = { id: 5 };
-    cy.gridInstance().invoke('setPerPage', 8, params);
-    cy.wait('@perPage8').its('status').should('eq', 200);
-
-    getPageBtn().should('have.length', 7);
-    assertDataLength(8);
-    cy.gridInstance().invoke('getRowCount').should('eq', 8);
+    // added setPerPage test case with params
+    it('with params', () => {
+      const params = { id: 5 };
+      cy.gridInstance().invoke('setPerPage', 8, params);
+      
+      cy.wait('@perPage8').its('status');
+  
+      getPageBtn().should('have.length', 7);
+      assertDataLength(8);
+      cy.gridInstance().invoke('getRowCount').should('eq', 8);
+    });
   });
 
   context('setRequestParams()', () => {
