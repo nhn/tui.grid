@@ -56,9 +56,10 @@ class SelectFilterComp extends Component<Props> {
   public render() {
     const { columnData, isAllSelected } = this.props;
     const { searchInput } = this.state;
+    const preFilteredColumnData = columnData.filter((data) => data.value);
     const data = searchInput.length
-      ? columnData.filter((item) => String(item.value).indexOf(searchInput) !== -1)
-      : columnData;
+      ? preFilteredColumnData.filter((item) => String(item.value).indexOf(searchInput) !== -1)
+      : preFilteredColumnData;
 
     return (
       <div className={cls('filter-list-container')}>
