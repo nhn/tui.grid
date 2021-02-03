@@ -56,10 +56,9 @@ class SelectFilterComp extends Component<Props> {
   public render() {
     const { columnData, isAllSelected } = this.props;
     const { searchInput } = this.state;
-    const preFilteredColumnData = columnData.filter((data) => data.value);
     const data = searchInput.length
-      ? preFilteredColumnData.filter((item) => String(item.value).indexOf(searchInput) !== -1)
-      : preFilteredColumnData;
+      ? columnData.filter((item) => String(item.value).indexOf(searchInput) !== -1)
+      : columnData;
 
     return (
       <div className={cls('filter-list-container')}>
@@ -116,10 +115,12 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
     const { name: columnName } = columnAddress;
 
     const uniqueColumnData = getUniqColumnData(rawData, column, columnName);
-    const columnData = uniqueColumnData.map((value) => ({
-      value,
-      checked: some((item) => value === item.value, state),
-    }));
+    const columnData = uniqueColumnData
+      .filter((value) => value)
+      .map((value) => ({
+        value,
+        checked: some((item) => value === item.value, state),
+      }));
 
     return {
       grid: getInstance(id),
