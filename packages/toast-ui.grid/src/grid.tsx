@@ -1290,8 +1290,9 @@ export default class Grid implements TuiGrid {
   /**
    * Set number of rows per page and reload current page
    * @param {number} perPage - Number of rows per page
+   * @param {Params} data - Data(parameters) to send to the server
    */
-  public setPerPage(perPage: number) {
+  public setPerPage(perPage: number, data?: Params) {
     const pagination = this.getPagination();
     if (pagination) {
       const { pageOptions } = this.store.data;
@@ -1299,7 +1300,7 @@ export default class Grid implements TuiGrid {
         this.dispatch('updatePageOptions', { perPage, page: 1 });
         this.dispatch('updateHeights');
       } else {
-        this.readData(1, { perPage });
+        this.readData(1, { ...data, perPage });
       }
     }
   }
