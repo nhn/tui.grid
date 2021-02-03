@@ -30,7 +30,11 @@ type EventMaps = {
   [K in keyof EventNameMapping]?: GridEventListener;
 };
 
-type Props = Omit<GridOptions, 'el'> & EventMaps & HTMLAttributes<HTMLElement>;
+type Props = Omit<GridOptions, 'el'> &
+  EventMaps &
+  HTMLAttributes<HTMLElement> & {
+    oneTimeBindingProps?: Array<'data' | 'columns' | 'bodyHeight' | 'frozenColumnCount'>;
+  };
 
 export default class Grid extends Component<Props> {
   public getInstance(): TuiGrid;
