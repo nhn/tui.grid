@@ -14,6 +14,7 @@ const messages: OptI18nLanguage = {
       loadingData: 'Loading data.',
       resizeHandleGuide:
         'You can change the width of the column by mouse drag, and initialize the width by double-clicking.',
+      filterEmptyValue: 'Empty Value',
     },
     net: {
       confirmCreate: 'Are you sure you want to create {{count}} data?',
@@ -47,6 +48,7 @@ const messages: OptI18nLanguage = {
       loadingData: '데이터를 불러오는 중입니다.',
       resizeHandleGuide:
         '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.',
+      filterEmptyValue: '필드 값 없음',
     },
     net: {
       confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',

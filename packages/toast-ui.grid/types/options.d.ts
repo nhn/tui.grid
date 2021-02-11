@@ -426,6 +426,7 @@ export interface OptI18nData {
     noData?: string;
     loadingData?: string;
     resizeHandleGuide?: string;
+    filterEmptyValue?: string;
   };
   net?: {
     confirmCreate?: string;

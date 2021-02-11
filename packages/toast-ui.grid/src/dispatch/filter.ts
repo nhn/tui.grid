@@ -124,14 +124,13 @@ export function applyActiveFilterState(store: Store) {
   const { filterLayerState, data, column } = store;
   const columnName = filterLayerState.activeColumnAddress!.name;
   const { state, type, operator } = filterLayerState.activeFilterState!;
-  const validState = state.filter((item) => String(item.value).length);
 
-  if (type !== 'select' && !validState.length) {
+  if (type !== 'select' && !state.length) {
     unfilter(store, columnName);
     return;
   }
 
-  filterLayerState.activeFilterState!.state = validState;
+  filterLayerState.activeFilterState!.state = state;
 
   if (type === 'select') {
     const columnData = getUniqColumnData(data.rawData, column, columnName);
@@ -141,7 +140,7 @@ export function applyActiveFilterState(store: Store) {
     }
   }
 
-  const fns = validState.map(({ code, value }) => getFilterConditionFn(code!, value, type));
+  const fns = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
 
   filter(store, columnName, composeConditionFn(fns, operator), state);
 }
