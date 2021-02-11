@@ -130,7 +130,13 @@ export function findRowByRowKey(
 
 export function getUniqColumnData(targetData: Row[], column: Column, columnName: string) {
   const columnInfo = column.allColumnMap[columnName];
-  const uniqColumnData = uniqByProp(columnName, targetData);
+  const uniqColumnData = uniqByProp(
+    columnName,
+    targetData.map((data) => ({
+      ...data,
+      [columnName]: isNil(data[columnName]) ? '' : data[columnName],
+    }))
+  );
 
   return uniqColumnData.map((row) => {
     const value = row[columnName];
