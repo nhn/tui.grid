@@ -82,7 +82,7 @@ class ClipboardComp extends Component<Props> {
           return;
         }
         const { store } = this.context;
-        this.el.innerHTML = getText(store);
+        this.el.textContent = getText(store);
 
         if (isSupportWindowClipboardData()) {
           setClipboardSelection(this.el.childNodes[0]);
@@ -175,7 +175,7 @@ class ClipboardComp extends Component<Props> {
     if (!this.el) {
       return;
     }
-    const text = this.el.innerHTML;
+    const text = this.el.textContent!;
     if (isSupportWindowClipboardData()) {
       (window as WindowWithClipboard).clipboardData!.setData('Text', text);
     } else if (ev.clipboardData) {
