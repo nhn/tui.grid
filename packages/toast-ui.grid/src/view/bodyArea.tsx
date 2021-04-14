@@ -213,8 +213,8 @@ class BodyAreaComp extends Component<Props> {
       areaStyle.overflowY = 'hidden';
     }
     const tableContainerStyle = {
-      top: totalRowHeight ? offsetTop : 0,
-      left: totalRowHeight ? offsetLeft : 0,
+      top: offsetTop,
+      left: offsetLeft,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible',
     };
