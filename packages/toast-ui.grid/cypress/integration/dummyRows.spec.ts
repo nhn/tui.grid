@@ -18,7 +18,7 @@ describe('basic case', () => {
     cy.getByCls('cell-dummy').should('exist');
   });
 
-  it('should inialize focus and selection layer', () => {
+  it('should initialize focus and selection layer', () => {
     cy.gridInstance().invoke('focusAt', 0, 0);
     cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [0, 0] });
 
@@ -60,9 +60,11 @@ describe('The grid with filters', () => {
     cy.getRsideBody()
       .scrollTo('right')
       .should(($el) => {
-        const leftPos = $el.find(`.${cls('table-container')}`).css('left');
+        setTimeout(() => {
+          const leftPos = $el.find(`.${cls('table-container')}`).css('left');
 
-        expect(leftPos).eq('200px');
+          expect(leftPos).eq('200px');
+        });
       });
   });
 });
