@@ -1,5 +1,5 @@
 export function isRowHeader(columnName: string) {
-  return ['_number', '_checked'].indexOf(columnName) > -1;
+  return ['_number', '_checked', '_draggable'].indexOf(columnName) > -1;
 }
 
 export function isRowNumColumn(columnName: string) {

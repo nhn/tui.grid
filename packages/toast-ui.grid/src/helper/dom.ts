@@ -128,7 +128,8 @@ export type ClassNameType =
   | 'editor-label-icon-checkbox-checked'
   | 'editor-label-icon-radio'
   | 'editor-label-icon-radio-checked'
-  | 'editor-datepicker-layer';
+  | 'editor-datepicker-layer'
+  | 'row-header-draggable';
 
 const CLS_PREFIX = 'tui-grid-';
 
