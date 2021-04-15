@@ -27,8 +27,8 @@ function getTextWithCopyOptionsApplied(
   if (copyOptions) {
     if (copyOptions.customValue) {
       text = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
-    } else if (copyOptions.useListItemText && editorOptions) {
-      const { listItems } = (editorOptions as unknown) as ListItemOptions;
+    } else if (copyOptions.useListItemText && editorOptions?.listItems) {
+      const { listItems } = editorOptions as ListItemOptions;
       const { value } = valueMap;
       let valueList = [value];
       const result: CellValue[] = [];
@@ -94,12 +94,8 @@ function getValuesToString(store: Store) {
   return rowList
     .map(({ valueMap }) =>
       columnInRange
-        .map(({ name }, index) =>
-          getTextWithCopyOptionsApplied(
-            valueMap[name],
-            filteredRawData,
-            visibleColumnsWithRowHeader[index]
-          )
+        .map((targetColumn) =>
+          getTextWithCopyOptionsApplied(valueMap[targetColumn.name], filteredRawData, targetColumn)
         )
         .join('\t')
     )

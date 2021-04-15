@@ -82,7 +82,7 @@ class ClipboardComp extends Component<Props> {
           return;
         }
         const { store } = this.context;
-        this.el.innerHTML = getText(store);
+        this.el.textContent = getText(store);
 
         if (isSupportWindowClipboardData()) {
           setClipboardSelection(this.el.childNodes[0]);
@@ -109,12 +109,12 @@ class ClipboardComp extends Component<Props> {
     let data;
     if (html && html.indexOf('table') !== -1) {
       // step 1: Append copied data on contenteditable element to parsing correctly table data.
-      el.innerHTML = html;
+      el.textContent = html;
       // step 2: Make grid data from cell data of appended table element.
       const { rows } = el.querySelector('tbody')!;
       data = convertTableToData(rows);
       // step 3: Empty contenteditable element to reset.
-      el.innerHTML = '';
+      el.textContent = '';
     } else {
       data = convertTextToData(clipboardData.getData('text/plain'));
     }
@@ -175,7 +175,7 @@ class ClipboardComp extends Component<Props> {
     if (!this.el) {
       return;
     }
-    const text = this.el.innerHTML;
+    const text = this.el.textContent!;
     if (isSupportWindowClipboardData()) {
       (window as WindowWithClipboard).clipboardData!.setData('Text', text);
     } else if (ev.clipboardData) {
