@@ -94,13 +94,9 @@ function getValuesToString(store: Store) {
   return rowList
     .map(({ valueMap }) =>
       columnInRange
-        .map((targetColumn) => {
-          return getTextWithCopyOptionsApplied(
-            valueMap[targetColumn.name],
-            filteredRawData,
-            targetColumn
-          );
-        })
+        .map((targetColumn) =>
+          getTextWithCopyOptionsApplied(valueMap[targetColumn.name], filteredRawData, targetColumn)
+        )
         .join('\t')
     )
     .join('\n');
