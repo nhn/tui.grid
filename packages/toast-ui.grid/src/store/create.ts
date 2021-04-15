@@ -42,6 +42,7 @@ export function createStore(id: number, options: OptGrid): Store {
     treeColumnOptions = { name: '' },
     header = {},
     disabled = false,
+    draggableRow = false,
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -64,6 +65,7 @@ export function createStore(id: number, options: OptGrid): Store {
     valign,
     columnHeaders,
     disabled,
+    draggableRow,
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],

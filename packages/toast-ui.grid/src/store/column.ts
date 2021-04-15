@@ -41,6 +41,7 @@ import {
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
+import { RowHeaderDraggableRenderer } from '../renderer/rowHeaderDraggable';
 
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 const ROW_HEADER = 40;
@@ -345,6 +346,27 @@ function createComplexColumnHeaders(
   });
 }
 
+function createDraggableRowHeader() {
+  const draggebleColumn: ColumnInfo = {
+    name: '_draggable',
+    header: '',
+    hidden: false,
+    resizable: false,
+    align: 'center',
+    valign: 'middle',
+    renderer: createRendererOptions({ type: RowHeaderDraggableRenderer }),
+    baseWidth: ROW_HEADER,
+    minWidth: ROW_HEADER,
+    fixedWidth: true,
+    autoResizing: false,
+    escapeHTML: false,
+    headerAlign: 'center',
+    headerVAlign: 'middle',
+  };
+
+  return draggebleColumn;
+}
+
 interface ColumnOption {
   columns: OptColumn[];
   columnOptions: ColumnOptions;
@@ -357,6 +379,7 @@ interface ColumnOption {
   valign: VAlignType;
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
+  draggableRow: boolean;
 }
 
 export function create({
@@ -371,6 +394,7 @@ export function create({
   valign,
   columnHeaders,
   disabled,
+  draggableRow,
 }: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -381,6 +405,10 @@ export function create({
   const rowHeaderInfos = rowHeaders.map((rowHeader) =>
     createRowHeader(rowHeader, columnHeaderInfo)
   );
+
+  if (draggableRow) {
+    rowHeaderInfos.unshift(createDraggableRowHeader());
+  }
 
   const columnInfos = columns.map((column) =>
     createColumn(
