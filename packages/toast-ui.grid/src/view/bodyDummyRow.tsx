@@ -25,7 +25,7 @@ const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
         return (
           <td
             {...attrs}
-            key={index}
+            key={`${name}-${index}`}
             class={cls('cell', 'cell-dummy', [isRowHeader(name), 'cell-row-header'])}
           />
         );
