@@ -15,7 +15,9 @@ export interface DraggableInfo {
   rowKey: RowKey;
 }
 
-function createFloatingDraggableRow(cells: Element[]) {
+const EXCEED_RATIO = 0.7;
+
+function createFloatingDraggableRow(offsetTop: number, cells: Element[]) {
   const row = document.createElement('div');
   // get original table row height
   const height = `${cells[0].parentElement!.clientHeight}px`;
@@ -23,6 +25,7 @@ function createFloatingDraggableRow(cells: Element[]) {
   row.className = cls('floating-row');
   row.style.height = height;
   row.style.lineHeight = height;
+  row.style.top = `${offsetTop}px`;
 
   cells.forEach((cell) => {
     const el = document.createElement('div');
@@ -40,11 +43,8 @@ function createFloatingDraggableRow(cells: Element[]) {
   return row;
 }
 
-export function createDraggableInfo(
-  store: Store,
-  { pageY, top, scrollTop, container }: PosInfo
-): DraggableInfo | null {
-  const { data, rowCoords } = store;
+export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableInfo | null {
+  const { data } = store;
   const { rawData, filters } = data;
 
   // if there is any filter condition, cannot drag the row
@@ -52,19 +52,21 @@ export function createDraggableInfo(
     return null;
   }
 
-  const offsetTop = pageY - top + scrollTop;
-  const index = findOffsetIndex(rowCoords.offsets, offsetTop);
-
+  const { offsetTop, index } = getMovedPosAndIndex(store, posInfo);
   const { rowKey } = rawData[index];
-  const cells = fromArray(container!.querySelectorAll(`[data-row-key="${rowKey}"]`));
+  const cells = fromArray(posInfo.container!.querySelectorAll(`[data-row-key="${rowKey}"]`));
 
-  return { row: createFloatingDraggableRow(cells), rowKey };
+  return { row: createFloatingDraggableRow(offsetTop, cells), rowKey };
 }
 
 export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: PosInfo) {
   const { rowCoords, dimension } = store;
   const offsetTop = pageY - top + scrollTop;
-  const index = findOffsetIndex(rowCoords.offsets, offsetTop);
+  let index = findOffsetIndex(rowCoords.offsets, offsetTop);
+
+  if (offsetTop - rowCoords.offsets[index] > rowCoords.heights[index] * EXCEED_RATIO) {
+    index += 1;
+  }
 
   return { offsetTop: offsetTop + dimension.headerHeight, index };
 }

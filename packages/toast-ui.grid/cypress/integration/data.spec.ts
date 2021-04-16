@@ -997,3 +997,77 @@ describe('getFormattedValue()', () => {
     cy.gridInstance().invoke('getFormattedValue', 0, 'none').should('eq', null);
   });
 });
+
+describe('D&D', () => {
+  function getActiveFocusLayer() {
+    return cy.getByCls('layer-focus');
+  }
+
+  beforeEach(() => {
+    const largeData = [
+      { name: 'Kim', age: 10 },
+      { name: 'Lee', age: 20 },
+      { name: 'Ryu', age: 30 },
+      { name: 'Han', age: 40 },
+    ];
+    const columns = [
+      { name: 'name', editor: 'text', sortable: true, filter: 'text' },
+      { name: 'age', editor: 'text', sortable: true },
+    ];
+
+    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggableRow: true });
+  });
+
+  it('should move the row by dragging the row(bottom direction)', () => {
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Lee', '20'],
+      ['Ryu', '30'],
+      ['Han', '40'],
+    ]);
+
+    cy.getCell(1, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 140, force: true })
+      .trigger('mouseup', { force: true });
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Ryu', '30'],
+      ['Lee', '20'],
+      ['Han', '40'],
+    ]);
+  });
+
+  it('should move the row by dragging the row(top direction)', () => {
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Lee', '20'],
+      ['Ryu', '30'],
+      ['Han', '40'],
+    ]);
+
+    cy.getCell(1, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 40, force: true })
+      .trigger('mouseup', { force: true });
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Lee', '20'],
+      ['Kim', '10'],
+      ['Ryu', '30'],
+      ['Han', '40'],
+    ]);
+  });
+
+  it('should remove the focus when triggering mousedown to drag element', () => {
+    cy.gridInstance().invoke('focus', 1, 'name');
+
+    cy.getCell(1, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 40, force: true })
+      .trigger('mouseup', { force: true });
+
+    getActiveFocusLayer().should('not.exist');
+  });
+});

@@ -127,7 +127,6 @@ class BodyAreaComp extends Component<Props> {
 
       this.movedIndex = index;
       this.props.dispatch('moveRow', rowKey, this.movedIndex);
-      this.props.dispatch('addRowClassName', rowKey, 'dragging');
     }
   };
 
@@ -143,6 +142,9 @@ class BodyAreaComp extends Component<Props> {
     if (draggableInfo) {
       this.draggableInfo = draggableInfo;
       container.appendChild(draggableInfo.row);
+
+      this.props.dispatch('addRowClassName', draggableInfo.rowKey, 'dragging');
+      this.props.dispatch('setFocusInfo', null, null, false);
 
       document.addEventListener('mousemove', this.dragRow);
       document.addEventListener('mouseup', this.clearDraggableInfo);
