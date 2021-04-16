@@ -19,6 +19,7 @@ import { some, debounce } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
+import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
 
 interface OwnProps {
   side: Side;
@@ -74,6 +75,12 @@ class BodyAreaComp extends Component<Props> {
 
   private prevScrollLeft = 0;
 
+  // draggable info when start to move the row
+  private draggableInfo: DraggableInfo | null = null;
+
+  // the index to move row through drag
+  private movedIndex: number | null = null;
+
   private scrollToNextDebounced = debounce(() => {
     this.props.dispatch('scrollToNext');
   }, 200);
@@ -104,6 +111,45 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
+  private dragRow = (ev: MouseEvent) => {
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+
+    if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
+      const { el, boundingRect } = this;
+      const { index, offsetTop } = getMovedPosAndIndex(this.context.store, {
+        scrollTop: el!.scrollTop,
+        top: boundingRect!.top,
+        pageY,
+      });
+      const { row, rowKey } = this.draggableInfo!;
+
+      row.style.top = `${offsetTop}px`;
+
+      this.movedIndex = index;
+      this.props.dispatch('moveRow', rowKey, this.movedIndex);
+      this.props.dispatch('addRowClassName', rowKey, 'dragging');
+    }
+  };
+
+  private startToDragRow = (pageY: number, top: number, scrollTop: number) => {
+    const container = this.el!.parentElement!.parentElement!;
+    const draggableInfo = createDraggableInfo(this.context.store, {
+      pageY,
+      top,
+      scrollTop,
+      container,
+    });
+
+    if (draggableInfo) {
+      this.draggableInfo = draggableInfo;
+      container.appendChild(draggableInfo.row);
+
+      document.addEventListener('mousemove', this.dragRow);
+      document.addEventListener('mouseup', this.clearDraggableInfo);
+      document.addEventListener('selectstart', this.handleSelectStart);
+    }
+  };
+
   private handleMouseDown = (ev: MouseEvent) => {
     const targetElement = ev.target as HTMLElement;
     if (!this.el || targetElement === this.el) {
@@ -125,6 +171,11 @@ class BodyAreaComp extends Component<Props> {
     const { scrollTop, scrollLeft } = el;
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
+
+    if (findParent(targetElement, 'row-header-draggable')) {
+      this.startToDragRow(pageY, top, scrollTop);
+      return;
+    }
 
     if (!isDatePickerElement(targetElement) && !findParent(targetElement, 'layer-editing')) {
       dispatch(
@@ -167,6 +218,22 @@ class BodyAreaComp extends Component<Props> {
         { scrollTop, scrollLeft, side, ...boundingRect! }
       );
     }
+  };
+
+  private clearDraggableInfo = () => {
+    const { row, rowKey } = this.draggableInfo!;
+
+    this.props.dispatch('moveRow', rowKey, this.movedIndex!);
+    this.props.dispatch('removeRowClassName', rowKey, 'dragging');
+
+    // clear floating row and draggable info
+    row.parentElement!.removeChild(row);
+    this.draggableInfo = null;
+    this.movedIndex = null;
+
+    document.removeEventListener('mousemove', this.dragRow);
+    document.removeEventListener('mouseup', this.clearDraggableInfo);
+    document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
   private clearDocumentEvents = () => {
