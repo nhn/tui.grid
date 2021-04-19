@@ -968,5 +968,5 @@
 }
 
 .tui-grid-cell.dragging {
-  visibility: hidden;
+  opacity: 0.3;
 }

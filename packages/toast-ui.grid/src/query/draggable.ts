@@ -15,7 +15,7 @@ export interface DraggableInfo {
   rowKey: RowKey;
 }
 
-const EXCEED_RATIO = 0.7;
+const EXCEED_RATIO = 0.8;
 
 function createFloatingDraggableRow(offsetTop: number, cells: Element[]) {
   const row = document.createElement('div');
