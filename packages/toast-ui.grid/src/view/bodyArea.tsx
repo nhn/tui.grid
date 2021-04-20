@@ -39,6 +39,7 @@ interface StoreProps {
   scrollY: boolean;
   cellBorderWidth: number;
   eventBus: EventBus;
+  hasTreeColumn: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -49,6 +50,11 @@ interface AreaStyle {
   height: number;
   overflowX?: Overflow;
   overflowY?: Overflow;
+}
+
+interface MovedIndexInfo {
+  index: number;
+  appended?: boolean;
 }
 
 // only updates when these props are changed
@@ -78,8 +84,8 @@ class BodyAreaComp extends Component<Props> {
   // draggable info when start to move the row
   private draggableInfo: DraggableInfo | null = null;
 
-  // the index to move row through drag
-  private movedIndex: number | null = null;
+  // the index info to move row through drag
+  private movedIndexInfo: MovedIndexInfo | null = null;
 
   private scrollToNextDebounced = debounce(() => {
     this.props.dispatch('scrollToNext');
@@ -115,18 +121,30 @@ class BodyAreaComp extends Component<Props> {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
 
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      const { el, boundingRect } = this;
-      const { index, offsetTop } = getMovedPosAndIndex(this.context.store, {
+      const { el, boundingRect, props } = this;
+      const { index, offsetTop, height } = getMovedPosAndIndex(this.context.store, {
         scrollTop: el!.scrollTop,
         top: boundingRect!.top,
         pageY,
       });
-      const { row, rowKey } = this.draggableInfo!;
+      const { row, rowKey, line } = this.draggableInfo!;
 
       row.style.top = `${offsetTop}px`;
 
-      this.movedIndex = index;
-      this.props.dispatch('moveRow', rowKey, this.movedIndex);
+      if (props.hasTreeColumn) {
+        if (Math.abs(height - offsetTop) < 5) {
+          line.style.top = `${height}px`;
+          line.style.display = 'block';
+
+          this.movedIndexInfo = { index };
+        } else {
+          line.style.display = 'none';
+          this.movedIndexInfo = { index, appended: true };
+        }
+      } else {
+        this.movedIndexInfo = { index };
+        this.props.dispatch('moveRow', rowKey, index);
+      }
     }
   };
 
@@ -140,10 +158,14 @@ class BodyAreaComp extends Component<Props> {
     });
 
     if (draggableInfo) {
+      const { row, rowKey, line } = draggableInfo;
       this.draggableInfo = draggableInfo;
-      container.appendChild(draggableInfo.row);
+      container.appendChild(row);
+      if (this.props.hasTreeColumn) {
+        container!.appendChild(line);
+      }
 
-      this.props.dispatch('addRowClassName', draggableInfo.rowKey, 'dragging');
+      this.props.dispatch('addRowClassName', rowKey, 'dragging');
       this.props.dispatch('setFocusInfo', null, null, false);
 
       document.addEventListener('mousemove', this.dragRow);
@@ -223,15 +245,24 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private clearDraggableInfo = () => {
-    const { row, rowKey } = this.draggableInfo!;
+    const { row, rowKey, line } = this.draggableInfo!;
 
-    this.props.dispatch('moveRow', rowKey, this.movedIndex!);
+    if (this.movedIndexInfo) {
+      const { index, appended } = this.movedIndexInfo;
+
+      if (this.props.hasTreeColumn) {
+        this.props.dispatch('moveTreeRow', rowKey, index, !!appended);
+      } else {
+        this.props.dispatch('moveRow', rowKey, index);
+      }
+    }
     this.props.dispatch('removeRowClassName', rowKey, 'dragging');
 
     // clear floating row and draggable info
     row.parentElement!.removeChild(row);
+    line.parentElement!.removeChild(line);
     this.draggableInfo = null;
-    this.movedIndex = null;
+    this.movedIndexInfo = null;
 
     document.removeEventListener('mousemove', this.dragRow);
     document.removeEventListener('mouseup', this.clearDraggableInfo);
@@ -319,7 +350,7 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { columnCoords, rowCoords, dimension, viewport, id } = store;
+  const { columnCoords, rowCoords, dimension, viewport, id, column } = store;
   const { totalRowHeight } = rowCoords;
   const { totalColumnWidth } = columnCoords;
   const { bodyHeight, scrollXHeight, scrollX, scrollY, cellBorderWidth } = dimension;
@@ -339,5 +370,6 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollY,
     cellBorderWidth,
     eventBus: getEventBus(id),
+    hasTreeColumn: !!column.treeColumnName,
   };
 })(BodyAreaComp);
