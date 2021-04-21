@@ -9,6 +9,7 @@ import {
   assertToggleButtonExpanded,
   assertModifiedRowsLength,
 } from '../helper/assert';
+import { dragAndDrop } from '../helper/util';
 
 const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
@@ -996,5 +997,148 @@ describe('origin data', () => {
 
     cy.getCell(0, 'c1').should('have.text', 'foo');
     assertToggleButtonCollapsed(0, 'c1');
+  });
+});
+
+describe('move tree row', () => {
+  beforeEach(() => {
+    const treeData = [
+      {
+        c1: 'foo',
+        _children: [
+          {
+            c1: 'bar',
+            _attributes: {
+              expanded: true,
+            },
+            _children: [
+              {
+                c1: 'baz',
+                _attributes: {
+                  expanded: false,
+                },
+                _children: [
+                  {
+                    c1: 'qux',
+                  },
+                  {
+                    c1: 'quxx',
+                    _children: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        c1: 'foo_2',
+        _children: [
+          {
+            c1: 'bar_2',
+          },
+        ],
+      },
+    ];
+
+    cy.createGrid({
+      data: treeData,
+      draggableRow: true,
+      columns: [{ name: 'c1' }],
+      treeColumnOptions: {
+        name: 'c1',
+      },
+    });
+    cy.gridInstance().invoke('expandAll');
+  });
+
+  ['UI(D&D)', 'API'].forEach((type) => {
+    it(`should move the row as the child of an another row by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 1, 5, { appended: true });
+      } else {
+        // move 'bar' row to 'foo_2' first child
+        dragAndDrop(1, 280);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['foo_2'],
+        ['bar_2'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+      ]);
+      // 'foo' row
+      assertHasChildren(0, 'c1', false);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', true);
+    });
+
+    it(`should move the row to an another row's index by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 1);
+      } else {
+        // move 'bar_2' row to first index of 'foo' row
+        dragAndDrop(6, 90);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar_2'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+      ]);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', false);
+    });
+
+    it(`should move the row to root index by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 0);
+      } else {
+        // move 'bar' row to first index of root
+        dragAndDrop(6, 48);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['bar_2'],
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+      ]);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', false);
+    });
+
+    it(`should move the row to an another leaf node by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 3, { appended: true });
+      } else {
+        // move 'bar_2' row to leaf node(qux row)
+        dragAndDrop(6, 180);
+      }
+
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['bar_2'],
+        ['quxx'],
+        ['foo_2'],
+      ]);
+      // 'qux' row
+      assertHasChildren(3, 'c1', true);
+    });
   });
 });
