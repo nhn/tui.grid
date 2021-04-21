@@ -1,6 +1,6 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
-import { OptRow, OptAppendTreeRow } from '@t/options';
+import { OptRow, OptAppendTreeRow, OptMoveRow } from '@t/options';
 import { Column, ColumnInfo } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { Dimension } from '@t/store/dimension';
@@ -271,6 +271,15 @@ function removeChildRowKey(row: Row, rowKey: RowKey) {
 
   if (tree) {
     removeArrayItem(rowKey, tree.childRowKeys);
+    if (row._children) {
+      const index = findPropIndex('rowKey', rowKey, row._children);
+      if (index !== -1) {
+        row._children.splice(index, 1);
+      }
+    }
+    if (!tree.childRowKeys.length) {
+      row._leaf = true;
+    }
     notify(tree, 'childRowKeys');
   }
 }
@@ -400,7 +409,12 @@ function postUpdateAfterManipulation(store: Store, rowIndex: number, rows?: Row[
   setAutoResizingColumnWidths(store, rows);
 }
 
-export function moveTreeRow(store: Store, rowKey: RowKey, targetIndex: number, appended?: boolean) {
+export function moveTreeRow(
+  store: Store,
+  rowKey: RowKey,
+  targetIndex: number,
+  options: OptMoveRow
+) {
   const { data, column, id } = store;
   const { rawData } = data;
   const targetRow = rawData[targetIndex];
@@ -427,7 +441,7 @@ export function moveTreeRow(store: Store, rowKey: RowKey, targetIndex: number, a
     getDataManager(id).push('UPDATE', targetRow, true);
     getDataManager(id).push('UPDATE', row, true);
 
-    if (appended) {
+    if (options.appended) {
       appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey });
     } else {
       const { parentRowKey } = targetRow._attributes.tree!;

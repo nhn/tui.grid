@@ -140,6 +140,10 @@ export interface OptAppendTreeRow {
   focus?: boolean;
 }
 
+export interface OptMoveRow {
+  appended?: boolean;
+}
+
 export interface OptTree {
   name: string;
   useIcon?: boolean;

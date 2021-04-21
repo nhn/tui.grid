@@ -18,6 +18,7 @@ export type Row = Dictionary<CellValue> & {
   _relationListItemMap: Dictionary<ListItem[]>;
   _disabledPriority: DisabledPriority;
   _children?: Row[];
+  _leaf?: boolean;
 };
 export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
 export type DisabledPriority = Dictionary<'ROW' | 'COLUMN'>;
@@ -34,7 +35,7 @@ export interface RawRowOptions {
 export interface TreeRowInfo {
   parentRowKey: RowKey | null;
   childRowKeys: RowKey[];
-  expanded?: boolean;
+  expanded?: boolean | null;
   hidden: boolean;
 }
 

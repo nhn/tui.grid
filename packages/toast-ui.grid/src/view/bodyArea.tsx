@@ -296,7 +296,7 @@ class BodyAreaComp extends Component<Props> {
 
       if (!gridEvent.isStopped()) {
         if (hasTreeColumn) {
-          this.props.dispatch('moveTreeRow', rowKey, index, !!appended);
+          this.props.dispatch('moveTreeRow', rowKey, index, { appended: !!appended });
         } else {
           this.props.dispatch('moveRow', rowKey, index);
         }
