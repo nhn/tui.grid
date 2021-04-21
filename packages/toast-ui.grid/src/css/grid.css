@@ -977,3 +977,7 @@
 .tui-grid-cell.dragging {
   opacity: 0.5;
 }
+
+.tui-grid-cell.parent-cell {
+  background-color: rgba(0, 169, 255, 0.15)
+}

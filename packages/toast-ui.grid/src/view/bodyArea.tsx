@@ -1,5 +1,7 @@
 import { h, Component } from 'preact';
 import { Side } from '@t/store/focus';
+import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
+import { RowKey } from '@t/store/data';
 import { PagePosition, DragStartData } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
@@ -19,7 +21,6 @@ import { some, debounce } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
-import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
 
 interface OwnProps {
   side: Side;
@@ -54,6 +55,7 @@ interface AreaStyle {
 
 interface MovedIndexInfo {
   index: number;
+  rowKey: RowKey;
   appended?: boolean;
 }
 
@@ -70,6 +72,9 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 const MIN_DISTANCE_FOR_DRAG = 10;
 
 const ADDITIONAL_RANGE = 3;
+
+const DRAGGING_CLASS = 'dragging';
+const PARENT_CELL_CLASS = 'parent-cell';
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
@@ -124,27 +129,32 @@ class BodyAreaComp extends Component<Props> {
 
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const { el, boundingRect, props } = this;
-      const { index, offsetTop, height } = getMovedPosAndIndex(this.context.store, {
+      const { index, offsetTop, height, targetRow } = getMovedPosAndIndex(this.context.store, {
         scrollTop: el!.scrollTop,
         top: boundingRect!.top,
         pageY,
       });
+      const rowKeyToMove = targetRow.rowKey;
       const { row, rowKey, line } = this.draggableInfo!;
 
       row.style.top = `${offsetTop}px`;
 
       if (props.hasTreeColumn) {
+        if (this.movedIndexInfo) {
+          this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
+        }
         if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
           line.style.top = `${height}px`;
           line.style.display = 'block';
 
-          this.movedIndexInfo = { index };
+          this.movedIndexInfo = { index, rowKey: rowKeyToMove };
         } else {
           line.style.display = 'none';
-          this.movedIndexInfo = { index, appended: true };
+          this.movedIndexInfo = { index, appended: true, rowKey: rowKeyToMove };
+          this.props.dispatch('addRowClassName', rowKeyToMove, PARENT_CELL_CLASS);
         }
       } else {
-        this.movedIndexInfo = { index };
+        this.movedIndexInfo = { index, rowKey: rowKeyToMove };
         this.props.dispatch('moveRow', rowKey, index);
       }
     }
@@ -167,7 +177,7 @@ class BodyAreaComp extends Component<Props> {
         container!.appendChild(line);
       }
 
-      this.props.dispatch('addRowClassName', rowKey, 'dragging');
+      this.props.dispatch('addRowClassName', rowKey, DRAGGING_CLASS);
       this.props.dispatch('setFocusInfo', null, null, false);
 
       document.addEventListener('mousemove', this.dragRow);
@@ -259,13 +269,17 @@ class BodyAreaComp extends Component<Props> {
         this.props.dispatch('moveRow', rowKey, index);
       }
     }
-    this.props.dispatch('removeRowClassName', rowKey, 'dragging');
+    this.props.dispatch('removeRowClassName', rowKey, DRAGGING_CLASS);
+    if (this.movedIndexInfo) {
+      this.props.dispatch('removeRowClassName', this.movedIndexInfo.rowKey, PARENT_CELL_CLASS);
+    }
     // clear floating element and draggable info
     this.clearDraggableInfo();
   };
 
   private clearDraggableInfo() {
     const { row, line } = this.draggableInfo!;
+
     row.parentElement!.removeChild(row);
 
     if (this.props.hasTreeColumn) {

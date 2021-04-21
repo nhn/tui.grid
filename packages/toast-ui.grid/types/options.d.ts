@@ -118,7 +118,7 @@ export interface OptRow {
 export interface OptAppendRow {
   at?: number;
   focus?: boolean;
-  parentRowKey?: RowKey;
+  parentRowKey?: RowKey | null;
   extendPrevRowSpan?: boolean;
 }
 
@@ -132,7 +132,7 @@ export interface OptRemoveRow {
 }
 
 export interface OptAppendTreeRow {
-  parentRowKey?: RowKey;
+  parentRowKey?: RowKey | null;
   offset?: number;
   focus?: boolean;
 }

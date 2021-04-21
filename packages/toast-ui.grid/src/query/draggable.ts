@@ -1,5 +1,5 @@
 import { Store } from '@t/store';
-import { RowKey, ViewRow } from '@t/store/data';
+import { RowKey, ViewRow, Row } from '@t/store/data';
 import { findOffsetIndex, fromArray } from '../helper/common';
 import { cls } from '../helper/dom';
 import { findIndexByRowKey } from './data';
@@ -15,6 +15,7 @@ export interface DraggableInfo {
   row: HTMLElement;
   rowKey: RowKey;
   line: HTMLElement;
+  targetRow?: Row;
 }
 
 const EXCEED_RATIO = 0.8;
@@ -112,7 +113,7 @@ export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableIn
 }
 
 export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: PosInfo) {
-  const { rowCoords, dimension, column } = store;
+  const { rowCoords, dimension, column, data } = store;
   const { headerHeight } = dimension;
   const offsetTop = pageY - top + scrollTop;
   let index = findOffsetIndex(rowCoords.offsets, offsetTop);
@@ -127,6 +128,7 @@ export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: Pos
     index,
     offsetTop: offsetTop - scrollTop + headerHeight,
     height: rowCoords.offsets[index] - scrollTop + headerHeight,
+    targetRow: data.rawData[index],
   };
 }
 
