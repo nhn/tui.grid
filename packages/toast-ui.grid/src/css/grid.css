@@ -843,6 +843,10 @@
   outline: none;
 }
 
+.tui-grid-container .tui-select-box-dropdown {
+  max-height: 180px;
+}
+
 .tui-grid-editor-checkbox-list-layer {
   position: absolute;
   background-color: #fff;
