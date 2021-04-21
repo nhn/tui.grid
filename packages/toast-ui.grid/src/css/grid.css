@@ -951,12 +951,29 @@
   color: #5a6268;
   width: 100%;
   position: absolute;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
 }
 
 .tui-grid-floating-cell {
   display: inline-block;
 }
 
+.tui-grid-floating-tree-cell {
+  padding: 0 10px;
+}
+
+.tui-grid-floating-tree-cell-content {
+  margin-left: 10px;
+  vertical-align: middle
+}
+
+.tui-grid-floating-tree-cell .tui-grid-tree-icon {
+  position: relative;
+  margin-top: -14px;
+  display: inline-block;
+}
+
 .tui-grid-cell.dragging {
-  opacity: 0.3;
+  opacity: 0.5;
 }

@@ -69,6 +69,8 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISTANCE_FOR_DRAG = 10;
 
+const ADDITIONAL_RANGE = 3;
+
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
@@ -132,7 +134,7 @@ class BodyAreaComp extends Component<Props> {
       row.style.top = `${offsetTop}px`;
 
       if (props.hasTreeColumn) {
-        if (Math.abs(height - offsetTop) < 5) {
+        if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
           line.style.top = `${height}px`;
           line.style.display = 'block';
 
@@ -169,7 +171,7 @@ class BodyAreaComp extends Component<Props> {
       this.props.dispatch('setFocusInfo', null, null, false);
 
       document.addEventListener('mousemove', this.dragRow);
-      document.addEventListener('mouseup', this.clearDraggableInfo);
+      document.addEventListener('mouseup', this.dropRow);
       document.addEventListener('selectstart', this.handleSelectStart);
     }
   };
@@ -244,30 +246,39 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
-  private clearDraggableInfo = () => {
-    const { row, rowKey, line } = this.draggableInfo!;
+  private dropRow = () => {
+    const { hasTreeColumn } = this.props;
+    const { rowKey } = this.draggableInfo!;
 
     if (this.movedIndexInfo) {
       const { index, appended } = this.movedIndexInfo;
 
-      if (this.props.hasTreeColumn) {
+      if (hasTreeColumn) {
         this.props.dispatch('moveTreeRow', rowKey, index, !!appended);
       } else {
         this.props.dispatch('moveRow', rowKey, index);
       }
     }
     this.props.dispatch('removeRowClassName', rowKey, 'dragging');
+    // clear floating element and draggable info
+    this.clearDraggableInfo();
+  };
 
-    // clear floating row and draggable info
+  private clearDraggableInfo() {
+    const { row, line } = this.draggableInfo!;
     row.parentElement!.removeChild(row);
-    line.parentElement!.removeChild(line);
+
+    if (this.props.hasTreeColumn) {
+      line.parentElement!.removeChild(line);
+    }
+
     this.draggableInfo = null;
     this.movedIndexInfo = null;
 
     document.removeEventListener('mousemove', this.dragRow);
-    document.removeEventListener('mouseup', this.clearDraggableInfo);
+    document.removeEventListener('mouseup', this.dropRow);
     document.removeEventListener('selectstart', this.handleSelectStart);
-  };
+  }
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: null, pageY: null };

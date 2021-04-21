@@ -1,7 +1,8 @@
 import { Store } from '@t/store';
-import { RowKey } from '@t/store/data';
+import { RowKey, ViewRow } from '@t/store/data';
 import { findOffsetIndex, fromArray } from '../helper/common';
-import { cls, dataAttr } from '../helper/dom';
+import { cls } from '../helper/dom';
+import { findIndexByRowKey } from './data';
 
 interface PosInfo {
   pageY: number;
@@ -18,6 +19,17 @@ export interface DraggableInfo {
 
 const EXCEED_RATIO = 0.8;
 
+function createRow(height: string) {
+  const row = document.createElement('div');
+
+  row.className = cls('floating-row');
+  row.style.height = height;
+  row.style.lineHeight = height;
+  row.style.width = 'auto';
+
+  return row;
+}
+
 function createCells(cell: Element) {
   const el = document.createElement('div');
   el.className = cls('floating-cell');
@@ -31,29 +43,57 @@ function createCells(cell: Element) {
   return el;
 }
 
-function createFloatingDraggableRow(offsetTop: number, cells: Element[], treeColumnName?: string) {
-  const cellElements = treeColumnName
-    ? cells.filter((cell) => cell.getAttribute(dataAttr.COLUMN_NAME) === treeColumnName)
-    : cells;
+function createTreeCell(treeColumnName: string, viewRow: ViewRow) {
+  const cell = document.createElement('div');
+  const iconStyle = viewRow.treeInfo!.leaf ? '' : 'background-position: -39px -35px';
+
+  const span = document.createElement('span');
+  span.className = cls('floating-tree-cell-content');
+  span.textContent = String(viewRow.valueMap[treeColumnName].value);
+
+  cell.className = cls('floating-tree-cell');
+  cell.innerHTML = `
+    <span class="${cls('tree-icon')}">
+      <i style="${iconStyle}"></i>
+    </span>
+  `;
+  cell.appendChild(span);
+
+  return cell;
+}
+
+function createFloatingDraggableRow(
+  store: Store,
+  rowKey: RowKey,
+  offsetTop: number,
+  posInfo: PosInfo
+) {
+  const { data, column, id } = store;
+  const { treeColumnName } = column;
+  const cells = fromArray(posInfo.container!.querySelectorAll(`[data-row-key="${rowKey}"]`));
+
   // get original table row height
   const height = `${cells[0].parentElement!.clientHeight}px`;
-  const row = document.createElement('div');
+  const row = createRow(height);
 
-  row.className = cls('floating-row');
-  row.style.height = height;
-  row.style.lineHeight = height;
   row.style.top = `${offsetTop}px`;
-  row.style.width = 'auto';
 
-  cellElements.forEach((cell) => {
-    row.appendChild(createCells(cell));
-  });
+  if (treeColumnName) {
+    const index = findIndexByRowKey(data, column, id, rowKey);
+    const viewRow = data.viewData[index];
+
+    row.appendChild(createTreeCell(treeColumnName, viewRow));
+  } else {
+    cells.forEach((cell) => {
+      row.appendChild(createCells(cell));
+    });
+  }
 
   return row;
 }
 
 export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableInfo | null {
-  const { data, column } = store;
+  const { data, dimension } = store;
   const { rawData, filters } = data;
 
   // if there is any filter condition, cannot drag the row
@@ -63,12 +103,11 @@ export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableIn
 
   const { offsetTop, index } = getMovedPosAndIndex(store, posInfo);
   const { rowKey } = rawData[index];
-  const cells = fromArray(posInfo.container!.querySelectorAll(`[data-row-key="${rowKey}"]`));
 
   return {
-    row: createFloatingDraggableRow(offsetTop, cells, column.treeColumnName),
+    row: createFloatingDraggableRow(store, rowKey, offsetTop, posInfo),
     rowKey,
-    line: createFloatingLine(),
+    line: createFloatingLine(dimension.scrollYWidth),
   };
 }
 
@@ -85,19 +124,20 @@ export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: Pos
   }
 
   return {
-    offsetTop: offsetTop - scrollTop + headerHeight,
     index,
-    height: rowCoords.offsets[index] + headerHeight,
+    offsetTop: offsetTop - scrollTop + headerHeight,
+    height: rowCoords.offsets[index] - scrollTop + headerHeight,
   };
 }
 
-export function createFloatingLine() {
+export function createFloatingLine(scrollYWidth: number) {
   const line = document.createElement('div');
 
   line.style.position = 'absolute';
   line.style.height = '1px';
-  line.style.width = 'calc(100% - 17px)';
   line.style.background = '#00a9ff';
+  line.style.display = 'none';
+  line.style.width = `calc(100% - ${scrollYWidth}px)`;
 
   return line;
 }
