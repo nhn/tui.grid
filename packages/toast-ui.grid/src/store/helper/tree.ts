@@ -95,9 +95,7 @@ export function createTreeRawRow(
 
   const tree = {
     ...defaultAttributes,
-    ...((Array.isArray(row._children) || childRowKeys.length) && {
-      expanded: !!row._attributes!.expanded,
-    }),
+    expanded: !!row._attributes!.expanded,
   };
 
   rawRow._attributes.tree = lazyObservable ? tree : observable(tree);

@@ -114,7 +114,7 @@ export function isHidden(row: Row) {
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && !tree.childRowKeys.length && isUndefined(tree.expanded);
+  return !!tree && !tree.childRowKeys.length;
 }
 
 export function isExpanded(row: Row) {
