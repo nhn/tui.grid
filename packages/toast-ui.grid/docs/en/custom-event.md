@@ -119,6 +119,9 @@ grid.on('mousedown', function(ev) {
 - `scrollEnd` : When scrolling at the bottommost
 - `beforeChange`: Before one or more cells is changed
 - `afterChange`: After one or more cells is changed
+- `dragStart`: Drag to start the movement of the row (only occurs if the `dragableRow` option is enabled)
+- `drag`: Dragging to move row (only occurs if the `dragableRow` option is enabled)
+- `drop`: When the drag is over and the row movement is complete. (only occurs if the `dragableRow` option is enabled)
 
 There are other events that can be used when using `DataSource`.
 
