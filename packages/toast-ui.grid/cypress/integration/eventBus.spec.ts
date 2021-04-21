@@ -171,10 +171,10 @@ it('onGridBeforeDestroy', () => {
   cy.wrap(callback).should('be.calledOnce');
 });
 
-it('columnResize', () => {
-  const callback = cy.stub();
+it.only('columnResize', () => {
+  const stub = cy.stub();
 
-  cy.gridInstance().invoke('on', 'columnResize', callback);
+  cy.gridInstance().invoke('on', 'columnResize', stub);
 
   cy.getByCls('column-resize-handle')
     .first()
@@ -182,8 +182,8 @@ it('columnResize', () => {
     .trigger('mousemove', { pageX: 400 })
     .trigger('mouseup');
 
-  cy.wrap(callback).should('be.calledWithMatch', {
-    resizedColumns: [{ columnName: 'name', width: 311 }],
+  cy.wrap(stub).should('be.calledWithMatch', {
+    resizedColumns: [{ columnName: 'name', width: 271 }],
   });
 });
 
