@@ -337,13 +337,13 @@ class BodyAreaComp extends Component<Props> {
     document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
-  public shouldComponentUpdate(nextProps: Props) {
+  shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
     return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
-  public componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const { scrollTop, scrollLeft } = nextProps;
 
     this.el!.scrollTop = scrollTop;

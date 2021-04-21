@@ -171,7 +171,7 @@ it('onGridBeforeDestroy', () => {
   cy.wrap(callback).should('be.calledOnce');
 });
 
-it.only('columnResize', () => {
+it('columnResize', () => {
   const stub = cy.stub();
 
   cy.gridInstance().invoke('on', 'columnResize', stub);
