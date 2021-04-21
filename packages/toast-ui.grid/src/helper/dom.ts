@@ -133,7 +133,8 @@ export type ClassNameType =
   | 'floating-row'
   | 'floating-cell'
   | 'floating-tree-cell'
-  | 'floating-tree-cell-content';
+  | 'floating-tree-cell-content'
+  | 'floating-line';
 
 const CLS_PREFIX = 'tui-grid-';
 

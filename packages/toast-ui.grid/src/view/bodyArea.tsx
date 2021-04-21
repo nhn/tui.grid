@@ -139,6 +139,16 @@ class BodyAreaComp extends Component<Props> {
 
       row.style.top = `${offsetTop}px`;
 
+      const gridEvent = new GridEvent({ rowKey, currentRowKey: this.movedIndexInfo?.rowKey });
+      /**
+       * Occurs when dragging the row
+       * @event Grid#drag
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the dragging row
+       * @property {RowKey} currentRowKey - The rowKey of the row at current dragging position
+       */
+      this.props.eventBus.trigger('drag', gridEvent);
+
       if (props.hasTreeColumn) {
         if (this.movedIndexInfo) {
           this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
@@ -171,18 +181,29 @@ class BodyAreaComp extends Component<Props> {
 
     if (draggableInfo) {
       const { row, rowKey, line } = draggableInfo;
-      this.draggableInfo = draggableInfo;
-      container.appendChild(row);
-      if (this.props.hasTreeColumn) {
-        container!.appendChild(line);
+      const gridEvent = new GridEvent({ rowKey, floatingRow: row });
+      /**
+       * Occurs when starting to drag the row
+       * @event Grid#dragStart
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the row to drag
+       */
+      this.props.eventBus.trigger('dragStart', gridEvent);
+
+      if (!gridEvent.isStopped()) {
+        this.draggableInfo = draggableInfo;
+        container.appendChild(row);
+        if (this.props.hasTreeColumn) {
+          container!.appendChild(line);
+        }
+
+        this.props.dispatch('addRowClassName', rowKey, DRAGGING_CLASS);
+        this.props.dispatch('setFocusInfo', null, null, false);
+
+        document.addEventListener('mousemove', this.dragRow);
+        document.addEventListener('mouseup', this.dropRow);
+        document.addEventListener('selectstart', this.handleSelectStart);
       }
-
-      this.props.dispatch('addRowClassName', rowKey, DRAGGING_CLASS);
-      this.props.dispatch('setFocusInfo', null, null, false);
-
-      document.addEventListener('mousemove', this.dragRow);
-      document.addEventListener('mouseup', this.dropRow);
-      document.addEventListener('selectstart', this.handleSelectStart);
     }
   };
 
@@ -263,10 +284,22 @@ class BodyAreaComp extends Component<Props> {
     if (this.movedIndexInfo) {
       const { index, appended } = this.movedIndexInfo;
 
-      if (hasTreeColumn) {
-        this.props.dispatch('moveTreeRow', rowKey, index, !!appended);
-      } else {
-        this.props.dispatch('moveRow', rowKey, index);
+      const gridEvent = new GridEvent({ rowKey, currentRowKey: this.movedIndexInfo.rowKey });
+      /**
+       * Occurs when droppring the row
+       * @event Grid#drop
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the dragging row
+       * @property {RowKey} currentRowKey - The rowKey of the row at current dragging position
+       */
+      this.props.eventBus.trigger('drop', gridEvent);
+
+      if (!gridEvent.isStopped()) {
+        if (hasTreeColumn) {
+          this.props.dispatch('moveTreeRow', rowKey, index, !!appended);
+        } else {
+          this.props.dispatch('moveRow', rowKey, index);
+        }
       }
     }
     this.props.dispatch('removeRowClassName', rowKey, DRAGGING_CLASS);

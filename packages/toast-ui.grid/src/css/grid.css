@@ -974,6 +974,13 @@
   display: inline-block;
 }
 
+.tui-grid-floating-line {
+  position: absolute;
+  height: 1px;
+  background: #00a9ff;
+  display: none;
+}
+
 .tui-grid-cell.dragging {
   opacity: 0.5;
 }

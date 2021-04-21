@@ -135,10 +135,7 @@ export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: Pos
 export function createFloatingLine(scrollYWidth: number) {
   const line = document.createElement('div');
 
-  line.style.position = 'absolute';
-  line.style.height = '1px';
-  line.style.background = '#00a9ff';
-  line.style.display = 'none';
+  line.className = cls('floating-line');
   line.style.width = `calc(100% - ${scrollYWidth}px)`;
 
   return line;

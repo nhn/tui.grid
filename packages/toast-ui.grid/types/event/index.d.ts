@@ -37,6 +37,8 @@ export interface GridEventProps {
   page?: number;
   origin?: Origin;
   changes?: CellChange[];
+  floatingRow?: HTMLElement;
+  currentRowKey?: RowKey | null;;
 }
 
 export class TuiGridEvent {
