@@ -20,6 +20,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
+    draggableRow: true,
     bodyHeight: 150,
     width: 500,
     rowHeaders: ['rowNum', 'checkbox'],
@@ -678,4 +679,51 @@ describe('beforeChange, afterChange', () => {
     ]);
   });
   // @TODO: add test case when pasting the data
+});
+
+describe('D&D', () => {
+  it('dragStart event', () => {
+    const stub = cy.stub();
+
+    cy.gridInstance().invoke('on', 'dragStart', stub);
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .then(() => {
+        cy.getByCls('floating-row').then((floatingRow) => {
+          cy.wrap(stub).should('be.calledWithMatch', {
+            rowKey: 0,
+            floatingRow: floatingRow[0],
+          });
+        });
+      });
+  });
+
+  it('drag event', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drag', stub);
+
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 100, force: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 0,
+      currentRowKey: 1,
+    });
+  });
+
+  it('drop event', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 100, force: true })
+      .trigger('mouseup', { force: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 0,
+      currentRowKey: 1,
+    });
+  });
 });

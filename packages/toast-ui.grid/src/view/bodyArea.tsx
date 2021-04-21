@@ -139,7 +139,7 @@ class BodyAreaComp extends Component<Props> {
 
       row.style.top = `${offsetTop}px`;
 
-      const gridEvent = new GridEvent({ rowKey, currentRowKey: this.movedIndexInfo?.rowKey });
+      const gridEvent = new GridEvent({ rowKey, currentRowKey: rowKeyToMove });
       /**
        * Occurs when dragging the row
        * @event Grid#drag
