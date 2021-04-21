@@ -17,6 +17,7 @@ import {
   OptFilter,
   LifeCycleEventName,
   ResetOptions,
+  OptMoveRow,
 } from '@t/options';
 import { Store } from '@t/store';
 import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
@@ -1634,10 +1635,18 @@ export default class Grid implements TuiGrid {
    * Move the row identified by the specified rowKey to target index.
    * If data is sorted or filtered, this couldn't be used.
    * @param {number|string} rowKey - The unique key of the row
-   * @param {number} targetIndex - target index for moving
+   * @param {number} targetIndex - Target index for moving
+   * @param {Object} [options] - Options
+   * @param {number} [options.appended] - This option for only tree data. Whether the row is appended to other row as the child.
    */
-  public moveRow(rowKey: RowKey, targetIndex: number) {
-    this.dispatch('moveRow', rowKey, targetIndex);
+  public moveRow(rowKey: RowKey, targetIndex: number, options: OptMoveRow = { appended: false }) {
+    const { column } = this.store;
+
+    if (column.treeColumnName) {
+      this.dispatch('moveTreeRow', rowKey, targetIndex, options);
+    } else {
+      this.dispatch('moveRow', rowKey, targetIndex);
+    }
   }
 
   /**
