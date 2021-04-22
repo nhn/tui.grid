@@ -9,6 +9,7 @@ import { DatePickerFilter } from './datePickerFilter';
 import { FilterOperator } from './filterOperator';
 import { SelectFilter } from './selectFilter';
 import { some } from '../helper/common';
+import i18n from '../i18n';
 
 interface StoreProps {
   filters: Filter[] | null;
@@ -86,7 +87,7 @@ export class FilterLayerInnerComp extends Component<Props> {
                 dispatch('clearActiveFilterState');
               }}
             >
-              Clear
+              {i18n.get('filter.clear')}
             </button>
           )}
           {showApplyBtn && (
@@ -96,7 +97,7 @@ export class FilterLayerInnerComp extends Component<Props> {
                 dispatch('applyActiveFilterState');
               }}
             >
-              Apply
+              {i18n.get('filter.apply')}
             </button>
           )}
         </div>

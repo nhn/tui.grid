@@ -13,7 +13,7 @@ import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import { filterSelectOption } from '../helper/filter';
+import { createFilterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
 import { keyNameMap, isNonPrintableKey, KeyNameMap } from '../helper/keyboard';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
@@ -132,7 +132,8 @@ class DatePickerFilterComp extends Component<Props> {
     const { columnInfo } = this.props;
     const { options } = columnInfo.filter!;
     const showIcon = !(options && options.showIcon === false);
-    const selectOption = filterSelectOption.date;
+    const filterSelectOptions = createFilterSelectOption();
+    const selectOption = filterSelectOptions.date;
     const { value, code } = this.getPreviousValue();
 
     return (

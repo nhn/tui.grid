@@ -7,6 +7,7 @@ import {
 } from '@t/store/filterLayerState';
 import { CellValue } from '@t/store/data';
 import { isString, endsWith, startsWith } from './common';
+import i18n from '../i18n';
 
 interface FilterSelectOption {
   number: { [key in NumberFilterCode]: string };
@@ -14,31 +15,38 @@ interface FilterSelectOption {
   date: { [key in DateFilterCode]: string };
 }
 
-export const filterSelectOption: FilterSelectOption = {
-  number: {
-    eq: '=',
-    lt: '<',
-    gt: '>',
-    lte: '<=',
-    gte: '>=',
-    ne: '!=',
-  },
-  text: {
-    contain: 'Contains',
-    eq: 'Equals',
-    ne: 'Not equals',
-    start: 'Starts with',
-    end: 'Ends with',
-  },
-  date: {
-    eq: 'Equals',
-    ne: 'Not equals',
-    after: 'After',
-    afterEq: 'After or Equal',
-    before: 'Before',
-    beforeEq: 'Before or Equal',
-  },
-};
+let filterSelectOption: FilterSelectOption;
+
+export function createFilterSelectOption(): FilterSelectOption {
+  if (!filterSelectOption) {
+    filterSelectOption = {
+      number: {
+        eq: '=',
+        lt: '<',
+        gt: '>',
+        lte: '<=',
+        gte: '>=',
+        ne: '!=',
+      },
+      text: {
+        contain: i18n.get('filter.contains'),
+        eq: i18n.get('filter.eq'),
+        ne: i18n.get('filter.ne'),
+        start: i18n.get('filter.start'),
+        end: i18n.get('filter.end'),
+      },
+      date: {
+        eq: i18n.get('filter.eq'),
+        ne: i18n.get('filter.ne'),
+        after: i18n.get('filter.after'),
+        afterEq: i18n.get('filter.afterEq'),
+        before: i18n.get('filter.before'),
+        beforeEq: i18n.get('filter.beforeEq'),
+      },
+    };
+  }
+  return filterSelectOption;
+}
 
 export function getUnixTime(value: CellValue) {
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
