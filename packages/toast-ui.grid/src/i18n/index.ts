@@ -71,7 +71,6 @@ const messages: OptI18nLanguage = {
       beforeEq: 'Before or Equal',
       apply: 'Apply',
       clear: 'Clear',
-
       selectAll: 'Select All',
     },
   },
