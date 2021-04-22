@@ -843,11 +843,17 @@
   outline: none;
 }
 
+.tui-grid-container .tui-select-box-dropdown {
+  max-height: 180px;
+}
+
 .tui-grid-editor-checkbox-list-layer {
   position: absolute;
   background-color: #fff;
   border: 1px solid #aaa;
   z-index: 100;
+  max-height: 180px;
+  overflow: hidden auto;
 }
 
 .tui-grid-editor-checkbox-list-layer * {
@@ -855,8 +861,12 @@
 }
 
 .tui-grid-editor-checkbox-list-layer .tui-grid-editor-checkbox {
-  height: 32px;
   line-height: 32px;
+  height: 32px;
+}
+
+.tui-grid-editor-checkbox-list-layer .tui-grid-editor-checkbox:last-child {
+  margin-bottom: 1px;
 }
 
 .tui-grid-editor-checkbox-hovered {
