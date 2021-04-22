@@ -12,7 +12,7 @@ export type CustomValue =
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
 export type Formatter = ((props: FormatterProps) => string) | string;
-export type RowHeaderType = 'rowNum' | 'checkbox';
+export type RowHeaderType = 'rowNum' | 'checkbox' | 'draggable';
 export type SortingType = 'asc' | 'desc';
 export type ErrorCode =
   | 'REQUIRED'

@@ -12,6 +12,7 @@ import {
   hasClass,
   isDatePickerElement,
   findParent,
+  getCellAddress,
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -70,11 +71,10 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 ];
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISTANCE_FOR_DRAG = 10;
-
 const ADDITIONAL_RANGE = 3;
-
 const DRAGGING_CLASS = 'dragging';
 const PARENT_CELL_CLASS = 'parent-cell';
+const DRAGGABLE_COLUMN_NAME = '_draggable';
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
@@ -229,7 +229,7 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    if (findParent(targetElement, 'row-header-draggable')) {
+    if (getCellAddress(targetElement)?.columnName === DRAGGABLE_COLUMN_NAME) {
       this.startToDragRow(pageY, top, scrollTop);
       return;
     }
