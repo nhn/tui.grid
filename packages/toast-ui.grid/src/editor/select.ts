@@ -98,7 +98,7 @@ export class SelectEditor implements CellEditor {
   }
 
   public getValue() {
-    return this.selectBoxEl.getSelectedItem().getValue();
+    return this.selectBoxEl.getSelectedItem()?.getValue() ?? '';
   }
 
   public mounted() {
