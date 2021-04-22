@@ -135,7 +135,7 @@ class BodyAreaComp extends Component<Props> {
         pageY,
       });
       const rowKeyToMove = targetRow.rowKey;
-      const { row, rowKey, line } = this.draggableInfo!;
+      const { row, rowKey } = this.draggableInfo!;
 
       row.style.top = `${offsetTop}px`;
 
@@ -150,25 +150,34 @@ class BodyAreaComp extends Component<Props> {
       this.props.eventBus.trigger('drag', gridEvent);
 
       if (props.hasTreeColumn) {
-        if (this.movedIndexInfo) {
-          this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
-        }
-        if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
-          line.style.top = `${height}px`;
-          line.style.display = 'block';
-
-          this.movedIndexInfo = { index, rowKey: rowKeyToMove };
-        } else {
-          line.style.display = 'none';
-          this.movedIndexInfo = { index, appended: true, rowKey: rowKeyToMove };
-          this.props.dispatch('addRowClassName', rowKeyToMove, PARENT_CELL_CLASS);
-        }
+        this.setTreeMovedIndexInfo(rowKeyToMove, index, offsetTop, height);
       } else {
+        // move the row to next index
         this.movedIndexInfo = { index, rowKey: rowKeyToMove };
         this.props.dispatch('moveRow', rowKey, index);
       }
     }
   };
+
+  private setTreeMovedIndexInfo(rowKey: RowKey, index: number, offsetTop: number, height: number) {
+    const { line } = this.draggableInfo!;
+
+    if (this.movedIndexInfo) {
+      this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
+    }
+    // display line border to mark the index to move
+    if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
+      line.style.top = `${height}px`;
+      line.style.display = 'block';
+
+      this.movedIndexInfo = { index, rowKey };
+      // show the background color to mark parent row
+    } else {
+      line.style.display = 'none';
+      this.movedIndexInfo = { index, appended: true, rowKey };
+      this.props.dispatch('addRowClassName', rowKey, PARENT_CELL_CLASS);
+    }
+  }
 
   private startToDragRow = (pageY: number, top: number, scrollTop: number) => {
     const container = this.el!.parentElement!.parentElement!;
@@ -192,7 +201,9 @@ class BodyAreaComp extends Component<Props> {
 
       if (!gridEvent.isStopped()) {
         this.draggableInfo = draggableInfo;
+
         container.appendChild(row);
+
         if (this.props.hasTreeColumn) {
           container!.appendChild(line);
         }
@@ -283,10 +294,9 @@ class BodyAreaComp extends Component<Props> {
 
     if (this.movedIndexInfo) {
       const { index, appended, rowKey: targetRowKey } = this.movedIndexInfo;
-
       const gridEvent = new GridEvent({ rowKey, targetRowKey });
       /**
-       * Occurs when droppring the row
+       * Occurs when dropping the row
        * @event Grid#drop
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the dragging row

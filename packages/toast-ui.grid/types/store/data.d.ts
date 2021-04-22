@@ -35,7 +35,7 @@ export interface RawRowOptions {
 export interface TreeRowInfo {
   parentRowKey: RowKey | null;
   childRowKeys: RowKey[];
-  expanded?: boolean | null;
+  expanded?: boolean;
   hidden: boolean;
 }
 

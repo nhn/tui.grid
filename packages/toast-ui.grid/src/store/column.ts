@@ -354,7 +354,7 @@ function createDraggableRowHeader(rowHeaderColumn: OptRowHeader | null) {
     ? rowHeaderColumn.renderer
     : { type: RowHeaderDraggableRenderer };
 
-  const draggebleColumn: ColumnInfo = {
+  const draggableColumn: ColumnInfo = {
     name: '_draggable',
     header: '',
     hidden: false,
@@ -371,7 +371,7 @@ function createDraggableRowHeader(rowHeaderColumn: OptRowHeader | null) {
     headerVAlign: 'middle',
   };
 
-  return draggebleColumn;
+  return draggableColumn;
 }
 
 interface ColumnOption {

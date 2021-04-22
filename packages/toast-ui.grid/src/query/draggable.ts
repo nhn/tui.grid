@@ -32,11 +32,12 @@ function createRow(height: string) {
 }
 
 function createCells(cell: Element) {
+  const childLen = cell.childNodes.length;
   const el = document.createElement('div');
   el.className = cls('floating-cell');
   el.style.width = window.getComputedStyle(cell).width;
 
-  for (let i = 0; i < cell.childNodes.length; i += 1) {
+  for (let i = 0; i < childLen; i += 1) {
     // the cell is not complex structure, so there is no the performance problem
     el.appendChild(cell.childNodes[i].cloneNode(true));
   }

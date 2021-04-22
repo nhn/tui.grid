@@ -424,12 +424,12 @@ export function moveTreeRow(
   }
 
   const currentIndex = findIndexByRowKey(data, column, id, rowKey, false);
-  const row = rawData[currentIndex];
 
   if (currentIndex === -1 || currentIndex === targetIndex) {
     return;
   }
 
+  const row = rawData[currentIndex];
   const childRows = getDescendantRows(store, rowKey);
   const minIndex = Math.min(currentIndex, targetIndex);
   const moveToChild = some((childRow) => childRow.rowKey === targetRow.rowKey, childRows);
@@ -446,7 +446,7 @@ export function moveTreeRow(
     } else {
       const { parentRowKey } = targetRow._attributes.tree!;
       const parentIndex = findIndexByRowKey(data, column, id, parentRowKey);
-      let offset = targetIndex;
+      let offset: number;
 
       // calculate the moving index for considering removed rows
       if (targetIndex > currentIndex) {

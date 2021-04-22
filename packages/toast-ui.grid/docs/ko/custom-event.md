@@ -119,9 +119,9 @@ grid.on('mousedown', (ev) => {
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 - `beforeChange`: 하나 또는 여러 개의 셀 값이 변경되기 전
 - `afterChange`: 하나 또는 여러 개의 셀 값이 변경된 후
-- `dragStart`: 드래그하여 로우의 이동을 시작했을 때(`draggableRow` 옵션이 활성화된 경우만 발생)
-- `drag`: 드래그하여 로우를 이동하는 중(`draggableRow` 옵션이 활성화된 경우만 발생)
-- `drop`: 드래그가 끝나고 로우 이동을 완료하였을 때(`draggableRow` 옵션이 활성화된 경우만 발생)
+- `dragStart`: 드래그하여 로우의 이동을 시작했을 때(`draggable` 옵션이 활성화된 경우만 발생)
+- `drag`: 드래그하여 로우를 이동하는 중(`draggable` 옵션이 활성화된 경우만 발생)
+- `drop`: 드래그가 끝나고 로우 이동을 완료하였을 때(`draggable` 옵션이 활성화된 경우만 발생)
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.
 
