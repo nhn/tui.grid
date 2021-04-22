@@ -386,7 +386,7 @@ interface ColumnOption {
   valign: VAlignType;
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
-  draggableRow: boolean;
+  draggable: boolean;
 }
 
 export function create({
@@ -401,7 +401,7 @@ export function create({
   valign,
   columnHeaders,
   disabled,
-  draggableRow,
+  draggable,
 }: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -411,7 +411,7 @@ export function create({
   const columnHeaderInfo = { columnHeaders, align, valign };
   const rowHeaderInfos = [];
 
-  if (draggableRow) {
+  if (draggable) {
     let rowHeaderColumn: OptRowHeader | null = null;
     const index = findIndex(
       (rowHeader) =>

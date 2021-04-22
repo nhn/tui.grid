@@ -109,7 +109,7 @@ export interface OptGrid {
   onGridMounted?: GridEventListener;
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
-  draggableRow?: boolean;
+  draggable?: boolean;
 }
 
 export interface OptRow {

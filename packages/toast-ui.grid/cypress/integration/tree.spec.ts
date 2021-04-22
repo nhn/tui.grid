@@ -1043,7 +1043,7 @@ describe('move tree row', () => {
 
     cy.createGrid({
       data: treeData,
-      draggableRow: true,
+      draggable: true,
       columns: [{ name: 'c1' }],
       treeColumnOptions: {
         name: 'c1',

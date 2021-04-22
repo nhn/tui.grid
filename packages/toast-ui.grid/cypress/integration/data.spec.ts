@@ -1015,7 +1015,7 @@ describe('D&D', () => {
       { name: 'age', editor: 'text', sortable: true },
     ];
 
-    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggableRow: true });
+    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
   });
 
   it('should move the row by dragging the row(bottom direction)', () => {

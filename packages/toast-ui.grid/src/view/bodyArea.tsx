@@ -139,13 +139,13 @@ class BodyAreaComp extends Component<Props> {
 
       row.style.top = `${offsetTop}px`;
 
-      const gridEvent = new GridEvent({ rowKey, currentRowKey: rowKeyToMove });
+      const gridEvent = new GridEvent({ rowKey, targetRowKey: rowKeyToMove });
       /**
        * Occurs when dragging the row
        * @event Grid#drag
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the dragging row
-       * @property {RowKey} currentRowKey - The rowKey of the row at current dragging position
+       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
        */
       this.props.eventBus.trigger('drag', gridEvent);
 
@@ -282,15 +282,15 @@ class BodyAreaComp extends Component<Props> {
     const { rowKey } = this.draggableInfo!;
 
     if (this.movedIndexInfo) {
-      const { index, appended } = this.movedIndexInfo;
+      const { index, appended, rowKey: targetRowKey } = this.movedIndexInfo;
 
-      const gridEvent = new GridEvent({ rowKey, currentRowKey: this.movedIndexInfo.rowKey });
+      const gridEvent = new GridEvent({ rowKey, targetRowKey });
       /**
        * Occurs when droppring the row
        * @event Grid#drop
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the dragging row
-       * @property {RowKey} currentRowKey - The rowKey of the row at current dragging position
+       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
        */
       this.props.eventBus.trigger('drop', gridEvent);
 

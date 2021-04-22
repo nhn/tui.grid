@@ -20,7 +20,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
-    draggableRow: true,
+    draggable: true,
     bodyHeight: 150,
     width: 500,
     rowHeaders: ['rowNum', 'checkbox'],
@@ -708,7 +708,7 @@ describe('D&D', () => {
 
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 0,
-      currentRowKey: 1,
+      targetRowKey: 1,
     });
   });
 
@@ -723,7 +723,7 @@ describe('D&D', () => {
 
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 0,
-      currentRowKey: 1,
+      targetRowKey: 1,
     });
   });
 });
