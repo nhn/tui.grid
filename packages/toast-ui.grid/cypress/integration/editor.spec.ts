@@ -334,7 +334,7 @@ it('should do synchronous rendering of the editing cell', () => {
 
 describe('select, checkbox, radio editor', () => {
   function createGridWithType(type: string) {
-    const data = [{ name: '1' }, { name: '2' }, { name: '3' }];
+    const data = [{ name: '1' }, { name: '2' }, { name: '3' }, { name: '4' }];
     const columns = [
       {
         name: 'name',
@@ -390,6 +390,16 @@ describe('select, checkbox, radio editor', () => {
           }
         }
       });
+    });
+
+    it('should return a empty string when selecting a value that is not in the select box', () => {
+      createGridWithType('select');
+
+      cy.gridInstance().invoke('startEditing', 3, 'name');
+      // finish editing by clicking the another cell
+      cy.getCell(0, 'name').click();
+
+      cy.getCell(3, 'name').should('have.text', '');
     });
   });
 
