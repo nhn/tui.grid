@@ -438,6 +438,17 @@ export interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
+  filter?: {
+    contains?: string;
+    eq?: string;
+    ne?: string;
+    start?: string;
+    end?: string;
+    after?: string;
+    afterEq?: string;
+    before?: string;
+    beforeEq?: string;
+  };
 }
 
 export interface SortStateResetOption {

@@ -9,7 +9,7 @@ import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import { filterSelectOption } from '../helper/filter';
+import { createFilterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
 import { keyNameMap, isNonPrintableKey, KeyNameMap } from '../helper/keyboard';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
@@ -74,7 +74,8 @@ class TextFilterComp extends Component<Props> {
   public render() {
     const { columnInfo } = this.props;
     const { code, value } = this.getPreviousValue();
-    const selectOption = filterSelectOption[
+    const filterSelectOptions = createFilterSelectOption();
+    const selectOption = filterSelectOptions[
       columnInfo.filter!.type as 'number' | 'text'
     ] as SelectOption;
 
