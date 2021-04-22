@@ -1,3 +1,5 @@
+import { RowKey } from '@t/store/data';
+
 type Address = [number, number];
 
 export function clipboardType(key: string) {
@@ -33,4 +35,11 @@ export function setSelectionUsingMouse(start: Address, end: Address) {
         .trigger('mousemove', { pageX: left + 10, pageY: top + 10 })
         .trigger('mouseup');
     });
+}
+
+export function dragAndDrop(rowKey: RowKey, position: number) {
+  cy.getCell(rowKey, '_draggable')
+    .trigger('mousedown')
+    .trigger('mousemove', { pageY: position, force: true })
+    .trigger('mouseup', { force: true });
 }

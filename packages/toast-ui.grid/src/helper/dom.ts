@@ -131,7 +131,10 @@ export type ClassNameType =
   | 'editor-datepicker-layer'
   | 'row-header-draggable'
   | 'floating-row'
-  | 'floating-cell';
+  | 'floating-cell'
+  | 'floating-tree-cell'
+  | 'floating-tree-cell-content'
+  | 'floating-line';
 
 const CLS_PREFIX = 'tui-grid-';
 

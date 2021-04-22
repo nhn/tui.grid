@@ -20,6 +20,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
+    draggable: true,
     bodyHeight: 150,
     width: 500,
     rowHeaders: ['rowNum', 'checkbox'],
@@ -171,9 +172,9 @@ it('onGridBeforeDestroy', () => {
 });
 
 it('columnResize', () => {
-  const callback = cy.stub();
+  const stub = cy.stub();
 
-  cy.gridInstance().invoke('on', 'columnResize', callback);
+  cy.gridInstance().invoke('on', 'columnResize', stub);
 
   cy.getByCls('column-resize-handle')
     .first()
@@ -181,8 +182,8 @@ it('columnResize', () => {
     .trigger('mousemove', { pageX: 400 })
     .trigger('mouseup');
 
-  cy.wrap(callback).should('be.calledWithMatch', {
-    resizedColumns: [{ columnName: 'name', width: 311 }],
+  cy.wrap(stub).should('be.calledWithMatch', {
+    resizedColumns: [{ columnName: 'name', width: 271 }],
   });
 });
 
@@ -678,4 +679,51 @@ describe('beforeChange, afterChange', () => {
     ]);
   });
   // @TODO: add test case when pasting the data
+});
+
+describe('D&D', () => {
+  it('dragStart event', () => {
+    const stub = cy.stub();
+
+    cy.gridInstance().invoke('on', 'dragStart', stub);
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .then(() => {
+        cy.getByCls('floating-row').then((floatingRow) => {
+          cy.wrap(stub).should('be.calledWithMatch', {
+            rowKey: 0,
+            floatingRow: floatingRow[0],
+          });
+        });
+      });
+  });
+
+  it('drag event', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drag', stub);
+
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 100, force: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 0,
+      targetRowKey: 1,
+    });
+  });
+
+  it('drop event', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    cy.getCell(0, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 100, force: true })
+      .trigger('mouseup', { force: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 0,
+      targetRowKey: 1,
+    });
+  });
 });

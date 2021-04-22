@@ -1,5 +1,7 @@
 import { h, Component } from 'preact';
 import { Side } from '@t/store/focus';
+import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
+import { RowKey } from '@t/store/data';
 import { PagePosition, DragStartData } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
@@ -10,6 +12,7 @@ import {
   hasClass,
   isDatePickerElement,
   findParent,
+  getCellAddress,
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -19,7 +22,6 @@ import { some, debounce } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
-import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
 
 interface OwnProps {
   side: Side;
@@ -39,6 +41,7 @@ interface StoreProps {
   scrollY: boolean;
   cellBorderWidth: number;
   eventBus: EventBus;
+  hasTreeColumn: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -49,6 +52,12 @@ interface AreaStyle {
   height: number;
   overflowX?: Overflow;
   overflowY?: Overflow;
+}
+
+interface MovedIndexInfo {
+  index: number;
+  rowKey: RowKey;
+  appended?: boolean;
 }
 
 // only updates when these props are changed
@@ -62,6 +71,10 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 ];
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISTANCE_FOR_DRAG = 10;
+const ADDITIONAL_RANGE = 3;
+const DRAGGING_CLASS = 'dragging';
+const PARENT_CELL_CLASS = 'parent-cell';
+const DRAGGABLE_COLUMN_NAME = '_draggable';
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
@@ -78,8 +91,8 @@ class BodyAreaComp extends Component<Props> {
   // draggable info when start to move the row
   private draggableInfo: DraggableInfo | null = null;
 
-  // the index to move row through drag
-  private movedIndex: number | null = null;
+  // the index info to move row through drag
+  private movedIndexInfo: MovedIndexInfo | null = null;
 
   private scrollToNextDebounced = debounce(() => {
     this.props.dispatch('scrollToNext');
@@ -115,20 +128,56 @@ class BodyAreaComp extends Component<Props> {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
 
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      const { el, boundingRect } = this;
-      const { index, offsetTop } = getMovedPosAndIndex(this.context.store, {
+      const { el, boundingRect, props } = this;
+      const { index, offsetTop, height, targetRow } = getMovedPosAndIndex(this.context.store, {
         scrollTop: el!.scrollTop,
         top: boundingRect!.top,
         pageY,
       });
+      const rowKeyToMove = targetRow.rowKey;
       const { row, rowKey } = this.draggableInfo!;
 
       row.style.top = `${offsetTop}px`;
 
-      this.movedIndex = index;
-      this.props.dispatch('moveRow', rowKey, this.movedIndex);
+      const gridEvent = new GridEvent({ rowKey, targetRowKey: rowKeyToMove });
+      /**
+       * Occurs when dragging the row
+       * @event Grid#drag
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the dragging row
+       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
+       */
+      this.props.eventBus.trigger('drag', gridEvent);
+
+      if (props.hasTreeColumn) {
+        this.setTreeMovedIndexInfo(rowKeyToMove, index, offsetTop, height);
+      } else {
+        // move the row to next index
+        this.movedIndexInfo = { index, rowKey: rowKeyToMove };
+        this.props.dispatch('moveRow', rowKey, index);
+      }
     }
   };
+
+  private setTreeMovedIndexInfo(rowKey: RowKey, index: number, offsetTop: number, height: number) {
+    const { line } = this.draggableInfo!;
+
+    if (this.movedIndexInfo) {
+      this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
+    }
+    // display line border to mark the index to move
+    if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
+      line.style.top = `${height}px`;
+      line.style.display = 'block';
+
+      this.movedIndexInfo = { index, rowKey };
+      // show the background color to mark parent row
+    } else {
+      line.style.display = 'none';
+      this.movedIndexInfo = { index, appended: true, rowKey };
+      this.props.dispatch('addRowClassName', rowKey, PARENT_CELL_CLASS);
+    }
+  }
 
   private startToDragRow = (pageY: number, top: number, scrollTop: number) => {
     const container = this.el!.parentElement!.parentElement!;
@@ -140,15 +189,32 @@ class BodyAreaComp extends Component<Props> {
     });
 
     if (draggableInfo) {
-      this.draggableInfo = draggableInfo;
-      container.appendChild(draggableInfo.row);
+      const { row, rowKey, line } = draggableInfo;
+      const gridEvent = new GridEvent({ rowKey, floatingRow: row });
+      /**
+       * Occurs when starting to drag the row
+       * @event Grid#dragStart
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the row to drag
+       */
+      this.props.eventBus.trigger('dragStart', gridEvent);
 
-      this.props.dispatch('addRowClassName', draggableInfo.rowKey, 'dragging');
-      this.props.dispatch('setFocusInfo', null, null, false);
+      if (!gridEvent.isStopped()) {
+        this.draggableInfo = draggableInfo;
 
-      document.addEventListener('mousemove', this.dragRow);
-      document.addEventListener('mouseup', this.clearDraggableInfo);
-      document.addEventListener('selectstart', this.handleSelectStart);
+        container.appendChild(row);
+
+        if (this.props.hasTreeColumn) {
+          container!.appendChild(line);
+        }
+
+        this.props.dispatch('addRowClassName', rowKey, DRAGGING_CLASS);
+        this.props.dispatch('setFocusInfo', null, null, false);
+
+        document.addEventListener('mousemove', this.dragRow);
+        document.addEventListener('mouseup', this.dropRow);
+        document.addEventListener('selectstart', this.handleSelectStart);
+      }
     }
   };
 
@@ -174,7 +240,7 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    if (findParent(targetElement, 'row-header-draggable')) {
+    if (getCellAddress(targetElement)?.columnName === DRAGGABLE_COLUMN_NAME) {
       this.startToDragRow(pageY, top, scrollTop);
       return;
     }
@@ -222,21 +288,54 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
-  private clearDraggableInfo = () => {
-    const { row, rowKey } = this.draggableInfo!;
+  private dropRow = () => {
+    const { hasTreeColumn } = this.props;
+    const { rowKey } = this.draggableInfo!;
 
-    this.props.dispatch('moveRow', rowKey, this.movedIndex!);
-    this.props.dispatch('removeRowClassName', rowKey, 'dragging');
+    if (this.movedIndexInfo) {
+      const { index, appended, rowKey: targetRowKey } = this.movedIndexInfo;
+      const gridEvent = new GridEvent({ rowKey, targetRowKey });
+      /**
+       * Occurs when dropping the row
+       * @event Grid#drop
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the dragging row
+       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
+       */
+      this.props.eventBus.trigger('drop', gridEvent);
 
-    // clear floating row and draggable info
+      if (!gridEvent.isStopped()) {
+        if (hasTreeColumn) {
+          this.props.dispatch('moveTreeRow', rowKey, index, { appended: !!appended });
+        } else {
+          this.props.dispatch('moveRow', rowKey, index);
+        }
+      }
+    }
+    this.props.dispatch('removeRowClassName', rowKey, DRAGGING_CLASS);
+    if (this.movedIndexInfo) {
+      this.props.dispatch('removeRowClassName', this.movedIndexInfo.rowKey, PARENT_CELL_CLASS);
+    }
+    // clear floating element and draggable info
+    this.clearDraggableInfo();
+  };
+
+  private clearDraggableInfo() {
+    const { row, line } = this.draggableInfo!;
+
     row.parentElement!.removeChild(row);
+
+    if (this.props.hasTreeColumn) {
+      line.parentElement!.removeChild(line);
+    }
+
     this.draggableInfo = null;
-    this.movedIndex = null;
+    this.movedIndexInfo = null;
 
     document.removeEventListener('mousemove', this.dragRow);
-    document.removeEventListener('mouseup', this.clearDraggableInfo);
+    document.removeEventListener('mouseup', this.dropRow);
     document.removeEventListener('selectstart', this.handleSelectStart);
-  };
+  }
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: null, pageY: null };
@@ -248,13 +347,13 @@ class BodyAreaComp extends Component<Props> {
     document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
-  public shouldComponentUpdate(nextProps: Props) {
+  shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
     return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
-  public componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const { scrollTop, scrollLeft } = nextProps;
 
     this.el!.scrollTop = scrollTop;
@@ -319,7 +418,7 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { columnCoords, rowCoords, dimension, viewport, id } = store;
+  const { columnCoords, rowCoords, dimension, viewport, id, column } = store;
   const { totalRowHeight } = rowCoords;
   const { totalColumnWidth } = columnCoords;
   const { bodyHeight, scrollXHeight, scrollX, scrollY, cellBorderWidth } = dimension;
@@ -339,5 +438,6 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollY,
     cellBorderWidth,
     eventBus: getEventBus(id),
+    hasTreeColumn: !!column.treeColumnName,
   };
 })(BodyAreaComp);

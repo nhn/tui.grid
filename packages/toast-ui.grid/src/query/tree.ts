@@ -105,16 +105,16 @@ export function getChildRowKeys(row: Row) {
   return tree ? tree.childRowKeys.slice() : [];
 }
 
-export function isHidden(row: Row) {
-  const { tree } = row._attributes;
+export function isHidden({ _attributes }: Row) {
+  const { tree } = _attributes;
 
   return !!(tree && tree.hidden);
 }
 
-export function isLeaf(row: Row) {
-  const { tree } = row._attributes;
+export function isLeaf({ _attributes, _leaf }: Row) {
+  const { tree } = _attributes;
 
-  return !!tree && !tree.childRowKeys.length && isUndefined(tree.expanded);
+  return !!tree && !tree.childRowKeys.length && !!_leaf;
 }
 
 export function isExpanded(row: Row) {

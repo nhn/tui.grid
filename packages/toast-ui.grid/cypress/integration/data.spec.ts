@@ -2,7 +2,7 @@ import { OptGrid } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
-import { invokeFilter, applyAliasHeaderCheckbox } from '../helper/util';
+import { invokeFilter, applyAliasHeaderCheckbox, dragAndDrop } from '../helper/util';
 import { assertGridHasRightRowNumber, assertHeaderCheckboxStatus } from '../helper/assert';
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
@@ -1015,7 +1015,7 @@ describe('D&D', () => {
       { name: 'age', editor: 'text', sortable: true },
     ];
 
-    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggableRow: true });
+    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
   });
 
   it('should move the row by dragging the row(bottom direction)', () => {
@@ -1026,10 +1026,7 @@ describe('D&D', () => {
       ['Han', '40'],
     ]);
 
-    cy.getCell(1, '_draggable')
-      .trigger('mousedown')
-      .trigger('mousemove', { pageY: 140, force: true })
-      .trigger('mouseup', { force: true });
+    dragAndDrop(1, 140);
 
     cy.getRsideBody().should('have.cellData', [
       ['Kim', '10'],
@@ -1047,10 +1044,7 @@ describe('D&D', () => {
       ['Han', '40'],
     ]);
 
-    cy.getCell(1, '_draggable')
-      .trigger('mousedown')
-      .trigger('mousemove', { pageY: 40, force: true })
-      .trigger('mouseup', { force: true });
+    dragAndDrop(1, 40);
 
     cy.getRsideBody().should('have.cellData', [
       ['Lee', '20'],
@@ -1063,10 +1057,7 @@ describe('D&D', () => {
   it('should remove the focus when triggering mousedown to drag element', () => {
     cy.gridInstance().invoke('focus', 1, 'name');
 
-    cy.getCell(1, '_draggable')
-      .trigger('mousedown')
-      .trigger('mousemove', { pageY: 40, force: true })
-      .trigger('mouseup', { force: true });
+    dragAndDrop(1, 40);
 
     getActiveFocusLayer().should('not.exist');
   });
