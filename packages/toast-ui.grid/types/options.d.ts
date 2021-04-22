@@ -448,6 +448,9 @@ export interface OptI18nData {
     afterEq?: string;
     before?: string;
     beforeEq?: string;
+    apply?: string;
+    clear?: string;
+    selectAll?: string;
   };
 }
 

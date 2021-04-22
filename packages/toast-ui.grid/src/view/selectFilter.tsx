@@ -10,6 +10,7 @@ import { cls } from '../helper/dom';
 import { some, debounce } from '../helper/common';
 import { getUniqColumnData } from '../query/data';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
+import i18n from '../i18n';
 
 interface ColumnData {
   value: CellValue;
@@ -76,7 +77,7 @@ class SelectFilterComp extends Component<Props> {
               onChange={this.toggleAllColumnCheckbox}
               checked={isAllSelected}
             />
-            <span>Select All</span>
+            <span>{i18n.get('filter.selectAll')}</span>
           </label>
         </li>
         <ul className={cls('filter-list')}>

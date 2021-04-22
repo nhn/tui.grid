@@ -36,6 +36,9 @@ const messages: OptI18nLanguage = {
       afterEq: 'After or Equal',
       before: 'Before',
       beforeEq: 'Before or Equal',
+      apply: 'Apply',
+      clear: 'Clear',
+      selectAll: 'Select All',
     },
   },
   ko: {
@@ -66,6 +69,10 @@ const messages: OptI18nLanguage = {
       afterEq: 'After or Equal',
       before: 'Before',
       beforeEq: 'Before or Equal',
+      apply: 'Apply',
+      clear: 'Clear',
+
+      selectAll: 'Select All',
     },
   },
 };
