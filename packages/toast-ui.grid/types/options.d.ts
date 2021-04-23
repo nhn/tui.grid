@@ -426,7 +426,6 @@ export interface OptI18nData {
     noData?: string;
     loadingData?: string;
     resizeHandleGuide?: string;
-    filterEmptyValue?: string;
   };
   net?: {
     confirmCreate?: string;
@@ -452,6 +451,7 @@ export interface OptI18nData {
     apply?: string;
     clear?: string;
     selectAll?: string;
+    emptyValue?: string;
   };
 }
 

@@ -38,11 +38,11 @@ class SelectFilterComp extends Component<Props> {
     searchInput: '',
   };
 
-  private handleChange = debounce((ev: Event, id: string) => {
+  private handleChange = debounce((ev: Event, value: string) => {
     const { dispatch } = this.props;
     const { checked } = ev.target as HTMLInputElement;
 
-    dispatch('setActiveSelectFilterState', id, checked);
+    dispatch('setActiveSelectFilterState', value, checked);
   }, FILTER_DEBOUNCE_TIME);
 
   private toggleAllColumnCheckbox = debounce((ev: Event) => {
@@ -127,7 +127,7 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
     if (isExistEmptyValue) {
       columnData.push({
         value: '',
-        text: i18n.get('display.filterEmptyValue'),
+        text: i18n.get('filter.emptyValue'),
         checked: some((item) => isEmpty(item.value), state),
       });
     }

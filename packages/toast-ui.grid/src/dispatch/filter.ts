@@ -124,8 +124,9 @@ export function applyActiveFilterState(store: Store) {
   const { filterLayerState, data, column } = store;
   const columnName = filterLayerState.activeColumnAddress!.name;
   const { state, type, operator } = filterLayerState.activeFilterState!;
+  const validState = state.filter((item) => String(item.value).length);
 
-  if (type !== 'select' && !state.length) {
+  if (type !== 'select' && !validState.length) {
     unfilter(store, columnName);
     return;
   }

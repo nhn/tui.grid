@@ -395,6 +395,68 @@ describe('apply filter (type: select)', () => {
   });
 });
 
+describe('apply filter (type: select) with nil(null, undefined) or empty string value', () => {
+  const columns = [{ name: 'id', filter: 'select' }, { name: 'name' }];
+  const data = [
+    { id: 'player1', name: 'Choi' },
+    { id: 'player2', name: 'Kim' },
+    { id: 'player3', name: 'Ryu' },
+    { id: null, name: 'Pyo' },
+    { id: '', name: 'Oh' },
+    // eslint-disable-next-line no-undefined
+    { id: undefined, name: 'Kwag' },
+  ];
+
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
+  it(`should display 'Empty value' in select filter`, () => {
+    clickFilterBtn();
+
+    const selectFilterList = getFilterListItem();
+    const expected = ['Select All', 'player1', 'player2', 'player3', 'Empty Value'];
+
+    selectFilterList.each(($el, index) => {
+      cy.wrap($el).should('have.text', expected[index]);
+    });
+  });
+
+  ['API', 'UI'].forEach((method) => {
+    it(`should filter all empty values(null, undefined, empty string) by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('id', [
+          { code: 'eq', value: 'player1' },
+          { code: 'eq', value: 'player2' },
+          { code: 'eq', value: 'player3' },
+        ]);
+      } else {
+        applyFilterBySelectUI(4);
+      }
+      cy.getRsideBody().should('have.cellData', [
+        ['player1', 'Choi'],
+        ['player2', 'Kim'],
+        ['player3', 'Ryu'],
+      ]);
+    });
+  });
+
+  it(`should toggle all empty values(null, undefined, empty string)`, () => {
+    applyFilterBySelectUI(4);
+
+    toggleSelectFilter(4);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['player1', 'Choi'],
+      ['player2', 'Kim'],
+      ['player3', 'Ryu'],
+      ['', 'Pyo'],
+      ['', 'Oh'],
+      ['', 'Kwag'],
+    ]);
+  });
+});
+
 describe('apply filter (type: datepicker)', () => {
   const columns = [{ name: 'id' }, { name: 'date', filter: 'date' }];
   const data = [
