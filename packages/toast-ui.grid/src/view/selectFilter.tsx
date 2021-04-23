@@ -7,13 +7,14 @@ import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import { some, debounce } from '../helper/common';
+import { some, debounce, isEmpty } from '../helper/common';
 import { getUniqColumnData } from '../query/data';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 import i18n from '../i18n';
 
 interface ColumnData {
   value: CellValue;
+  text: string;
   checked: boolean;
 }
 
@@ -37,11 +38,11 @@ class SelectFilterComp extends Component<Props> {
     searchInput: '',
   };
 
-  private handleChange = debounce((ev: Event, id: string) => {
+  private handleChange = debounce((ev: Event, value: string) => {
     const { dispatch } = this.props;
     const { checked } = ev.target as HTMLInputElement;
 
-    dispatch('setActiveSelectFilterState', id, checked);
+    dispatch('setActiveSelectFilterState', value, checked);
   }, FILTER_DEBOUNCE_TIME);
 
   private toggleAllColumnCheckbox = debounce((ev: Event) => {
@@ -82,8 +83,7 @@ class SelectFilterComp extends Component<Props> {
         </li>
         <ul className={cls('filter-list')}>
           {data.map((item) => {
-            const { value, checked } = item;
-            const text = String(value);
+            const { value, text, checked } = item;
 
             return (
               <li
@@ -94,9 +94,9 @@ class SelectFilterComp extends Component<Props> {
                   <input
                     type="checkbox"
                     checked={checked}
-                    onChange={(ev) => this.handleChange(ev, text)}
+                    onChange={(ev) => this.handleChange(ev, value)}
                   />
-                  <span>{value}</span>
+                  <span>{text}</span>
                 </label>
               </li>
             );
@@ -116,10 +116,21 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
     const { name: columnName } = columnAddress;
 
     const uniqueColumnData = getUniqColumnData(rawData, column, columnName);
-    const columnData = uniqueColumnData.map((value) => ({
-      value,
-      checked: some((item) => value === item.value, state),
-    }));
+    const columnData = uniqueColumnData
+      .filter((value) => value)
+      .map((value) => ({
+        value,
+        text: String(value),
+        checked: some((item) => value === item.value, state),
+      }));
+    const isExistEmptyValue = uniqueColumnData.some((value) => isEmpty(value));
+    if (isExistEmptyValue) {
+      columnData.push({
+        value: '',
+        text: i18n.get('filter.emptyValue'),
+        checked: some((item) => isEmpty(item.value), state),
+      });
+    }
 
     return {
       grid: getInstance(id),

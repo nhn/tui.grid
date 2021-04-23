@@ -451,6 +451,7 @@ export interface OptI18nData {
     apply?: string;
     clear?: string;
     selectAll?: string;
+    emptyValue?: string;
   };
 }
 

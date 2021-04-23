@@ -131,7 +131,7 @@ export function applyActiveFilterState(store: Store) {
     return;
   }
 
-  filterLayerState.activeFilterState!.state = validState;
+  filterLayerState.activeFilterState!.state = state;
 
   if (type === 'select') {
     const columnData = getUniqColumnData(data.rawData, column, columnName);
@@ -141,7 +141,7 @@ export function applyActiveFilterState(store: Store) {
     }
   }
 
-  const fns = validState.map(({ code, value }) => getFilterConditionFn(code!, value, type));
+  const fns = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
 
   filter(store, columnName, composeConditionFn(fns, operator), state);
 }

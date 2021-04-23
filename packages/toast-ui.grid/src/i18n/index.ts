@@ -39,6 +39,7 @@ const messages: OptI18nLanguage = {
       apply: 'Apply',
       clear: 'Clear',
       selectAll: 'Select All',
+      emptyValue: 'Empty Value',
     },
   },
   ko: {
@@ -72,6 +73,7 @@ const messages: OptI18nLanguage = {
       apply: 'Apply',
       clear: 'Clear',
       selectAll: 'Select All',
+      emptyValue: 'Empty Value',
     },
   },
 };
