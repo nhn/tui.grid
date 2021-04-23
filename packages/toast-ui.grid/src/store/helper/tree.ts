@@ -41,7 +41,7 @@ function addChildRowKey(row: Row, childRow: Row) {
   if (!someProp('rowKey', rowKey, row._children!)) {
     row._children!.push(childRow);
   }
-  row._isLeaf = false;
+  row._leaf = false;
 }
 
 function insertChildRowKey(row: Row, childRow: Row, offset: number) {
@@ -54,7 +54,7 @@ function insertChildRowKey(row: Row, childRow: Row, offset: number) {
   if (!someProp('rowKey', rowKey, row._children!)) {
     row._children!.splice(offset, 0, childRow);
   }
-  row._isLeaf = false;
+  row._leaf = false;
 }
 
 function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
