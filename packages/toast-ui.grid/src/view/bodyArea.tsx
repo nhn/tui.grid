@@ -293,20 +293,21 @@ class BodyAreaComp extends Component<Props> {
     const { rowKey } = this.draggableInfo!;
 
     if (this.movedIndexInfo) {
-      const { index, appended, rowKey: targetRowKey } = this.movedIndexInfo;
-      const gridEvent = new GridEvent({ rowKey, targetRowKey });
+      const { index, appended = false, rowKey: targetRowKey } = this.movedIndexInfo;
+      const gridEvent = new GridEvent({ rowKey, targetRowKey, appended });
       /**
        * Occurs when dropping the row
        * @event Grid#drop
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the dragging row
        * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
+       * @property {boolean} appended - Whether the row is appended to other row as the child in tree data.
        */
       this.props.eventBus.trigger('drop', gridEvent);
 
       if (!gridEvent.isStopped()) {
         if (hasTreeColumn) {
-          this.props.dispatch('moveTreeRow', rowKey, index, { appended: !!appended });
+          this.props.dispatch('moveTreeRow', rowKey, index, { appended });
         } else {
           this.props.dispatch('moveRow', rowKey, index);
         }

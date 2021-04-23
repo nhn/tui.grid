@@ -39,6 +39,7 @@ export interface GridEventProps {
   changes?: CellChange[];
   floatingRow?: HTMLElement;
   targetRowKey?: RowKey | null;
+  appended?: boolean;
 }
 
 export class TuiGridEvent {

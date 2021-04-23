@@ -1141,4 +1141,32 @@ describe('move tree row', () => {
       assertHasChildren(3, 'c1', true);
     });
   });
+
+  it('should pass the `appended: false` prop when triggering drop event on moving index', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    // move 'bar' row to first index of root
+    dragAndDrop(6, 48);
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 6,
+      targetRowKey: 0,
+      appended: false,
+    });
+  });
+
+  it('should pass the `appended: true` prop when triggering drop event on appending to an another node', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    // move 'bar_2' row to leaf node(qux row)
+    dragAndDrop(6, 180);
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 6,
+      targetRowKey: 3,
+      appended: true,
+    });
+  });
 });
