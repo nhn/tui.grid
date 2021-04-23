@@ -1039,6 +1039,7 @@ describe('move tree row', () => {
           },
         ],
       },
+      { c1: 'baz_2' },
     ];
 
     cy.createGrid({
@@ -1069,6 +1070,7 @@ describe('move tree row', () => {
         ['baz'],
         ['qux'],
         ['quxx'],
+        ['baz_2'],
       ]);
       // 'foo' row
       assertHasChildren(0, 'c1', false);
@@ -1092,6 +1094,7 @@ describe('move tree row', () => {
         ['qux'],
         ['quxx'],
         ['foo_2'],
+        ['baz_2'],
       ]);
       // 'foo_2' row
       assertHasChildren(5, 'c1', false);
@@ -1113,6 +1116,7 @@ describe('move tree row', () => {
         ['qux'],
         ['quxx'],
         ['foo_2'],
+        ['baz_2'],
       ]);
       // 'foo_2' row
       assertHasChildren(5, 'c1', false);
@@ -1136,9 +1140,74 @@ describe('move tree row', () => {
         ['bar_2'],
         ['quxx'],
         ['foo_2'],
+        ['baz_2'],
       ]);
       // 'qux' row
       assertHasChildren(3, 'c1', true);
+    });
+
+    it(`should move the row to last node by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7);
+      } else {
+        // move 'foo' row to last node(baz_2 row)
+        dragAndDrop(0, 600);
+      }
+
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+      ]);
+    });
+
+    it(`should not move the disabled row by ${type}`, () => {
+      cy.gridInstance().invoke('disableRow', 0);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7);
+      } else {
+        dragAndDrop(0, 600);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+      ]);
+    });
+
+    it(`should not append the row to disabled row by ${type}`, () => {
+      cy.gridInstance().invoke('disableRow', 7);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7, { appended: true });
+      } else {
+        dragAndDrop(0, 340);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+      ]);
     });
   });
 

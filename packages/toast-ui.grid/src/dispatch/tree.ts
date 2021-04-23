@@ -413,7 +413,7 @@ export function moveTreeRow(
   store: Store,
   rowKey: RowKey,
   targetIndex: number,
-  options: OptMoveRow
+  options: OptMoveRow & { moveToLast?: boolean }
 ) {
   const { data, column, id } = store;
   const { rawData } = data;
@@ -424,12 +424,17 @@ export function moveTreeRow(
   }
 
   const currentIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const row = rawData[currentIndex];
 
-  if (currentIndex === -1 || currentIndex === targetIndex) {
+  if (
+    currentIndex === -1 ||
+    currentIndex === targetIndex ||
+    row._attributes.disabled ||
+    (targetRow._attributes.disabled && options.appended)
+  ) {
     return;
   }
 
-  const row = rawData[currentIndex];
   const childRows = getDescendantRows(store, rowKey);
   const minIndex = Math.min(currentIndex, targetIndex);
   const moveToChild = some((childRow) => childRow.rowKey === targetRow.rowKey, childRows);
@@ -457,6 +462,10 @@ export function moveTreeRow(
         offset = parentIndex === -1 ? targetIndex : targetIndex - parentIndex - 1;
       }
 
+      // to resolve the index for moving last index
+      if (options.moveToLast) {
+        offset += 1;
+      }
       appendTreeRow(store, originRow, { parentRowKey, offset });
     }
     postUpdateAfterManipulation(store, minIndex);

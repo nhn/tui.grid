@@ -1,6 +1,11 @@
 import { h, Component } from 'preact';
 import { Side } from '@t/store/focus';
-import { createDraggableInfo, DraggableInfo, getMovedPosAndIndex } from '../query/draggable';
+import {
+  createDraggableInfo,
+  DraggableInfo,
+  getMovedPosAndIndex,
+  MovedIndexAndPosInfo,
+} from '../query/draggable';
 import { RowKey } from '@t/store/data';
 import { PagePosition, DragStartData } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
@@ -57,6 +62,7 @@ interface AreaStyle {
 interface MovedIndexInfo {
   index: number;
   rowKey: RowKey;
+  moveToLast?: boolean;
   appended?: boolean;
 }
 
@@ -129,11 +135,12 @@ class BodyAreaComp extends Component<Props> {
 
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const { el, boundingRect, props } = this;
-      const { index, offsetTop, height, targetRow } = getMovedPosAndIndex(this.context.store, {
+      const movedPosAndIndex = getMovedPosAndIndex(this.context.store, {
         scrollTop: el!.scrollTop,
         top: boundingRect!.top,
         pageY,
       });
+      const { index, offsetTop, targetRow } = movedPosAndIndex;
       const rowKeyToMove = targetRow.rowKey;
       const { row, rowKey } = this.draggableInfo!;
 
@@ -150,7 +157,7 @@ class BodyAreaComp extends Component<Props> {
       this.props.eventBus.trigger('drag', gridEvent);
 
       if (props.hasTreeColumn) {
-        this.setTreeMovedIndexInfo(rowKeyToMove, index, offsetTop, height);
+        this.setTreeMovedIndexInfo(movedPosAndIndex);
       } else {
         // move the row to next index
         this.movedIndexInfo = { index, rowKey: rowKeyToMove };
@@ -159,22 +166,23 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
-  private setTreeMovedIndexInfo(rowKey: RowKey, index: number, offsetTop: number, height: number) {
+  private setTreeMovedIndexInfo(movedPosAndIndex: MovedIndexAndPosInfo) {
     const { line } = this.draggableInfo!;
+    const { index, offsetTop, height, targetRow, moveToLast } = movedPosAndIndex;
+    const { rowKey } = targetRow;
 
     if (this.movedIndexInfo) {
       this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
     }
     // display line border to mark the index to move
-    if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE) {
+    if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE || moveToLast) {
       line.style.top = `${height}px`;
       line.style.display = 'block';
-
-      this.movedIndexInfo = { index, rowKey };
+      this.movedIndexInfo = { index, rowKey, moveToLast };
       // show the background color to mark parent row
     } else {
       line.style.display = 'none';
-      this.movedIndexInfo = { index, appended: true, rowKey };
+      this.movedIndexInfo = { index, rowKey, appended: true };
       this.props.dispatch('addRowClassName', rowKey, PARENT_CELL_CLASS);
     }
   }
@@ -293,7 +301,12 @@ class BodyAreaComp extends Component<Props> {
     const { rowKey } = this.draggableInfo!;
 
     if (this.movedIndexInfo) {
-      const { index, appended = false, rowKey: targetRowKey } = this.movedIndexInfo;
+      const {
+        index,
+        rowKey: targetRowKey,
+        appended = false,
+        moveToLast = false,
+      } = this.movedIndexInfo;
       const gridEvent = new GridEvent({ rowKey, targetRowKey, appended });
       /**
        * Occurs when dropping the row
@@ -307,7 +320,7 @@ class BodyAreaComp extends Component<Props> {
 
       if (!gridEvent.isStopped()) {
         if (hasTreeColumn) {
-          this.props.dispatch('moveTreeRow', rowKey, index, { appended });
+          this.props.dispatch('moveTreeRow', rowKey, index, { appended, moveToLast });
         } else {
           this.props.dispatch('moveRow', rowKey, index);
         }

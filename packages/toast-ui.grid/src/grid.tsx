@@ -1641,10 +1641,19 @@ export default class Grid implements TuiGrid {
    * @param {number} [options.appended] - This option for only tree data. Whether the row is appended to other row as the child.
    */
   public moveRow(rowKey: RowKey, targetIndex: number, options: OptMoveRow = { appended: false }) {
-    const { column } = this.store;
+    const { column, data } = this.store;
 
     if (column.treeColumnName) {
-      this.dispatch('moveTreeRow', rowKey, targetIndex, options);
+      let moveToLast = false;
+
+      if (!options.appended) {
+        if (targetIndex === data.rawData.length - 1) {
+          moveToLast = true;
+        } else if (this.getIndexOfRow(rowKey) < targetIndex) {
+          targetIndex += 1;
+        }
+      }
+      this.dispatch('moveTreeRow', rowKey, targetIndex, { ...options, moveToLast });
     } else {
       this.dispatch('moveRow', rowKey, targetIndex);
     }

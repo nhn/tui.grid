@@ -18,6 +18,14 @@ export interface DraggableInfo {
   targetRow?: Row;
 }
 
+export interface MovedIndexAndPosInfo {
+  index: number;
+  height: number;
+  offsetTop: number;
+  targetRow: Row;
+  moveToLast: boolean;
+}
+
 const EXCEED_RATIO = 0.8;
 
 function createRow(height: string) {
@@ -104,32 +112,51 @@ export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableIn
   }
 
   const { offsetTop, index } = getMovedPosAndIndex(store, posInfo);
-  const { rowKey } = rawData[index];
+  const { rowKey, _attributes } = rawData[index];
 
-  return {
-    row: createFloatingDraggableRow(store, rowKey, offsetTop, posInfo),
-    rowKey,
-    line: createFloatingLine(dimension.scrollYWidth),
-  };
+  return _attributes.disabled
+    ? null
+    : {
+        row: createFloatingDraggableRow(store, rowKey, offsetTop, posInfo),
+        rowKey,
+        line: createFloatingLine(dimension.scrollYWidth),
+      };
 }
 
-export function getMovedPosAndIndex(store: Store, { pageY, top, scrollTop }: PosInfo) {
+export function getMovedPosAndIndex(
+  store: Store,
+  { pageY, top, scrollTop }: PosInfo
+): MovedIndexAndPosInfo {
   const { rowCoords, dimension, column, data } = store;
+  const { heights, offsets } = rowCoords;
+  const { rawData } = data;
   const { headerHeight } = dimension;
   const offsetTop = pageY - top + scrollTop;
   let index = findOffsetIndex(rowCoords.offsets, offsetTop);
 
+  // move to next index when exceeding the height with ratio
   if (!column.treeColumnName) {
-    if (offsetTop - rowCoords.offsets[index] > rowCoords.heights[index] * EXCEED_RATIO) {
+    if (offsetTop - offsets[index] > heights[index] * EXCEED_RATIO) {
       index += 1;
+    }
+  }
+
+  let height = offsets[index] - scrollTop + headerHeight;
+  let moveToLast = false;
+  // resolve the height for moving to last index with tree data
+  if (column.treeColumnName) {
+    if (rawData.length - 1 === index && offsetTop > offsets[index] + heights[index]) {
+      height += heights[index];
+      moveToLast = true;
     }
   }
 
   return {
     index,
+    height,
     offsetTop: offsetTop - scrollTop + headerHeight,
-    height: rowCoords.offsets[index] - scrollTop + headerHeight,
-    targetRow: data.rawData[index],
+    targetRow: rawData[index],
+    moveToLast,
   };
 }
 
