@@ -990,6 +990,7 @@
   height: 1px;
   background: #00a9ff;
   display: none;
+  z-Index: 15;
 }
 
 .tui-grid-cell.dragging {
