@@ -26,6 +26,10 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
+  private el!: HTMLElement;
+
+  state = { left: this.props.columnAddress.left };
+
   private renderFilter = (index: number) => {
     const { columnAddress, filterState, columnInfo } = this.props;
     const type = columnInfo.filter!.type;
@@ -51,9 +55,19 @@ export class FilterLayerInnerComp extends Component<Props> {
     }
   };
 
+  componentDidMount() {
+    const { left } = this.el.getBoundingClientRect();
+    const { clientWidth } = this.el;
+    const { innerWidth } = window;
+
+    if (innerWidth < left + clientWidth) {
+      const orgLeft = this.state.left;
+      this.setState({ left: orgLeft - (left + clientWidth - innerWidth) });
+    }
+  }
+
   public render() {
     const {
-      columnAddress,
       columnInfo,
       renderSecondFilter,
       dispatch,
@@ -61,10 +75,16 @@ export class FilterLayerInnerComp extends Component<Props> {
       filterState,
     } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
-    const { left } = columnAddress;
+    const { left } = this.state;
 
     return (
-      <div className={cls('filter-container')} style={{ left }}>
+      <div
+        className={cls('filter-container')}
+        style={{ left }}
+        ref={(el) => {
+          this.el = el;
+        }}
+      >
         <div>
           <span
             className={cls('btn-filter', [currentColumnActive, 'btn-filter-active'], 'filter-icon')}
