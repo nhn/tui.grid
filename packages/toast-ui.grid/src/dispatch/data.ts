@@ -87,7 +87,7 @@ export function updateHeights(store: Store) {
     : filteredRawData.map((row) => getRowHeight(row, rowHeight));
 }
 
-export function makeObservable(store: Store, rowIndex: number, silent?: boolean) {
+export function makeObservable(store: Store, rowIndex: number, silent = false) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { treeColumnName } = column;
