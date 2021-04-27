@@ -5,6 +5,9 @@ import {
   DraggableInfo,
   getMovedPosAndIndex,
   MovedIndexAndPosInfo,
+  PosInfo,
+  getResolvedOffsets,
+  FloatingRowSize,
 } from '../query/draggable';
 import { RowKey } from '@t/store/data';
 import { PagePosition, DragStartData } from '@t/store/selection';
@@ -97,6 +100,9 @@ class BodyAreaComp extends Component<Props> {
   // draggable info when start to move the row
   private draggableInfo: DraggableInfo | null = null;
 
+  // floating row width and height for dragging
+  private floatingRowSize: FloatingRowSize | null = null;
+
   // the index info to move row through drag
   private movedIndexInfo: MovedIndexInfo | null = null;
 
@@ -135,15 +141,25 @@ class BodyAreaComp extends Component<Props> {
 
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const { el, boundingRect, props } = this;
+      const { scrollTop, scrollLeft } = el!;
       const movedPosAndIndex = getMovedPosAndIndex(this.context.store, {
-        scrollTop: el!.scrollTop,
+        scrollLeft,
+        scrollTop,
+        left: boundingRect!.left,
         top: boundingRect!.top,
+        pageX,
         pageY,
       });
-      const { index, offsetTop, targetRow } = movedPosAndIndex;
+      const { index, targetRow } = movedPosAndIndex;
       const rowKeyToMove = targetRow.rowKey;
       const { row, rowKey } = this.draggableInfo!;
+      const { offsetLeft, offsetTop } = getResolvedOffsets(
+        this.context.store,
+        movedPosAndIndex,
+        this.floatingRowSize!
+      );
 
+      row.style.left = `${offsetLeft}px`;
       row.style.top = `${offsetTop}px`;
 
       const gridEvent = new GridEvent({ rowKey, targetRowKey: rowKeyToMove });
@@ -187,14 +203,10 @@ class BodyAreaComp extends Component<Props> {
     }
   }
 
-  private startToDragRow = (pageY: number, top: number, scrollTop: number) => {
+  private startToDragRow = (posInfo: PosInfo) => {
     const container = this.el!.parentElement!.parentElement!;
-    const draggableInfo = createDraggableInfo(this.context.store, {
-      pageY,
-      top,
-      scrollTop,
-      container,
-    });
+    posInfo.container = container;
+    const draggableInfo = createDraggableInfo(this.context.store, posInfo);
 
     if (draggableInfo) {
       const { row, rowKey, line } = draggableInfo;
@@ -204,13 +216,17 @@ class BodyAreaComp extends Component<Props> {
        * @event Grid#dragStart
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the row to drag
+       * @property {HTMLElement} floatingRow - The floating row DOM element
        */
       this.props.eventBus.trigger('dragStart', gridEvent);
 
       if (!gridEvent.isStopped()) {
-        this.draggableInfo = draggableInfo;
-
         container.appendChild(row);
+
+        const { clientWidth, clientHeight } = row;
+
+        this.floatingRowSize = { width: clientWidth, height: clientHeight };
+        this.draggableInfo = draggableInfo;
 
         if (this.props.hasTreeColumn) {
           container!.appendChild(line);
@@ -249,7 +265,7 @@ class BodyAreaComp extends Component<Props> {
     this.boundingRect = { top, left };
 
     if (getCellAddress(targetElement)?.columnName === DRAGGABLE_COLUMN_NAME) {
-      this.startToDragRow(pageY, top, scrollTop);
+      this.startToDragRow({ pageX, pageY, left, top, scrollLeft, scrollTop });
       return;
     }
 
