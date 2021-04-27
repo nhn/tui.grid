@@ -938,3 +938,65 @@
 .tui-grid-container .tui-calendar-year .tui-calendar-body {
   width: 220px;
 }
+
+.tui-grid-row-header-draggable {
+  text-align: center;
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+}
+
+.tui-grid-row-header-draggable span {
+  display: inline-block;
+  width: 1px;
+  height: 1px;
+  margin: 1px;
+  line-height: 0;
+  background: #5a6268;
+}
+
+.tui-grid-floating-row {
+  z-Index: 15;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #5a6268;
+  min-width: 200px;
+  position: absolute;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tui-grid-floating-cell {
+  display: inline-block;
+}
+
+.tui-grid-floating-tree-cell {
+  padding: 0 10px;
+}
+
+.tui-grid-floating-tree-cell-content {
+  margin-left: 10px;
+  vertical-align: middle
+}
+
+.tui-grid-floating-tree-cell .tui-grid-tree-icon {
+  position: relative;
+  margin-top: -14px;
+  display: inline-block;
+}
+
+.tui-grid-floating-line {
+  position: absolute;
+  height: 1px;
+  background: #00a9ff;
+  display: none;
+  z-Index: 15;
+}
+
+.tui-grid-cell.dragging {
+  opacity: 0.5;
+}
+
+.tui-grid-cell.parent-cell {
+  background-color: rgba(0, 169, 255, 0.15)
+}

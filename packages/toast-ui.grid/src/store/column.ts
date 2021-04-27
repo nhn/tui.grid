@@ -8,6 +8,7 @@ import {
   OptComplexColumnInfo,
   Dictionary,
   OptFilter,
+  OptRowHeaderColumn,
 } from '@t/options';
 import {
   ColumnOptions,
@@ -37,10 +38,12 @@ import {
   findProp,
   uniq,
   isEmpty,
+  findIndex,
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
+import { RowHeaderDraggableRenderer } from '../renderer/rowHeaderDraggable';
 
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 const ROW_HEADER = 40;
@@ -48,6 +51,7 @@ const COLUMN = 50;
 const rowHeadersMap = {
   rowNum: '_number',
   checkbox: '_checked',
+  draggable: '_draggable',
 };
 
 export function validateRelationColumn(columnInfos: ColumnInfo[]) {
@@ -345,6 +349,31 @@ function createComplexColumnHeaders(
   });
 }
 
+function createDraggableRowHeader(rowHeaderColumn: OptRowHeader | null) {
+  const renderer = isObject(rowHeaderColumn)
+    ? rowHeaderColumn.renderer
+    : { type: RowHeaderDraggableRenderer };
+
+  const draggableColumn: ColumnInfo = {
+    name: '_draggable',
+    header: '',
+    hidden: false,
+    resizable: false,
+    align: 'center',
+    valign: 'middle',
+    renderer: createRendererOptions(renderer),
+    baseWidth: ROW_HEADER,
+    minWidth: ROW_HEADER,
+    fixedWidth: true,
+    autoResizing: false,
+    escapeHTML: false,
+    headerAlign: 'center',
+    headerVAlign: 'middle',
+  };
+
+  return draggableColumn;
+}
+
 interface ColumnOption {
   columns: OptColumn[];
   columnOptions: ColumnOptions;
@@ -357,6 +386,7 @@ interface ColumnOption {
   valign: VAlignType;
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
+  draggable: boolean;
 }
 
 export function create({
@@ -371,6 +401,7 @@ export function create({
   valign,
   columnHeaders,
   disabled,
+  draggable,
 }: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -378,8 +409,24 @@ export function create({
   }, []);
 
   const columnHeaderInfo = { columnHeaders, align, valign };
-  const rowHeaderInfos = rowHeaders.map((rowHeader) =>
-    createRowHeader(rowHeader, columnHeaderInfo)
+  const rowHeaderInfos = [];
+
+  if (draggable) {
+    let rowHeaderColumn: OptRowHeader | null = null;
+    const index = findIndex(
+      (rowHeader) =>
+        (isString(rowHeader) && rowHeader === 'draggable') ||
+        (rowHeader as OptRowHeaderColumn).type === 'draggable',
+      rowHeaders
+    );
+    if (index !== -1) {
+      [rowHeaderColumn] = rowHeaders.splice(index, 1);
+    }
+    rowHeaderInfos.push(createDraggableRowHeader(rowHeaderColumn));
+  }
+
+  rowHeaders.forEach((rowHeader) =>
+    rowHeaderInfos.push(createRowHeader(rowHeader, columnHeaderInfo))
   );
 
   const columnInfos = columns.map((column) =>

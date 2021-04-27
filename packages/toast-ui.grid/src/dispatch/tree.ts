@@ -1,12 +1,19 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
-import { OptRow, OptAppendTreeRow } from '@t/options';
+import { OptRow, OptAppendTreeRow, OptMoveRow } from '@t/options';
 import { Column, ColumnInfo } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { Dimension } from '@t/store/dimension';
 import { createViewRow } from '../store/data';
-import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
-import { notify, batchObserver } from '../helper/observable';
+import {
+  getRowHeight,
+  findIndexByRowKey,
+  findRowByRowKey,
+  getLoadingState,
+  isSorted,
+  isFiltered,
+} from '../query/data';
+import { notify, batchObserver, getOriginObject, Observable } from '../helper/observable';
 import { getDataManager } from '../instance';
 import {
   isUpdatableRowAttr,
@@ -30,7 +37,7 @@ import {
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
-import { findProp, findPropIndex, removeArrayItem } from '../helper/common';
+import { findProp, findPropIndex, removeArrayItem, some } from '../helper/common';
 import { getComputedFontStyle, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
@@ -264,6 +271,15 @@ function removeChildRowKey(row: Row, rowKey: RowKey) {
 
   if (tree) {
     removeArrayItem(rowKey, tree.childRowKeys);
+    if (row._children) {
+      const index = findPropIndex('rowKey', rowKey, row._children);
+      if (index !== -1) {
+        row._children.splice(index, 1);
+      }
+    }
+    if (!tree.childRowKeys.length) {
+      row._leaf = true;
+    }
     notify(tree, 'childRowKeys');
   }
 }
@@ -335,10 +351,11 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   fillMissingColumnData(column, rawRows);
 
+  const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
+
   batchObserver(() => {
     rawData.splice(startIdx, 0, ...rawRows);
   });
-  const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
   viewData.splice(startIdx, 0, ...viewRows);
 
   const rowHeights = rawRows.map((rawRow) => {
@@ -390,4 +407,67 @@ function postUpdateAfterManipulation(store: Store, rowIndex: number, rows?: Row[
   updateRowNumber(store, rowIndex);
   setCheckedAllRows(store);
   setAutoResizingColumnWidths(store, rows);
+}
+
+export function moveTreeRow(
+  store: Store,
+  rowKey: RowKey,
+  targetIndex: number,
+  options: OptMoveRow & { moveToLast?: boolean }
+) {
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const targetRow = rawData[targetIndex];
+
+  if (!targetRow || isSorted(data) || isFiltered(data)) {
+    return;
+  }
+
+  const currentIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const row = rawData[currentIndex];
+
+  if (
+    currentIndex === -1 ||
+    currentIndex === targetIndex ||
+    row._attributes.disabled ||
+    (targetRow._attributes.disabled && options.appended)
+  ) {
+    return;
+  }
+
+  const childRows = getDescendantRows(store, rowKey);
+  const minIndex = Math.min(currentIndex, targetIndex);
+  const moveToChild = some((childRow) => childRow.rowKey === targetRow.rowKey, childRows);
+
+  if (!moveToChild) {
+    removeTreeRow(store, rowKey);
+    const originRow = getOriginObject(row as Observable<Row>);
+
+    getDataManager(id).push('UPDATE', targetRow, true);
+    getDataManager(id).push('UPDATE', row, true);
+
+    if (options.appended) {
+      appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey });
+    } else {
+      const { parentRowKey } = targetRow._attributes.tree!;
+      const parentIndex = findIndexByRowKey(data, column, id, parentRowKey);
+      let offset: number;
+
+      // calculate the moving index for considering removed rows
+      if (targetIndex > currentIndex) {
+        const indexWithoutRemovedRows = targetIndex - (childRows.length + 1);
+        offset =
+          parentIndex === -1 ? indexWithoutRemovedRows : indexWithoutRemovedRows - parentIndex - 1;
+      } else {
+        offset = parentIndex === -1 ? targetIndex : targetIndex - parentIndex - 1;
+      }
+
+      // to resolve the index for moving last index
+      if (options.moveToLast) {
+        offset += 1;
+      }
+      appendTreeRow(store, originRow, { parentRowKey, offset });
+    }
+    postUpdateAfterManipulation(store, minIndex);
+  }
 }

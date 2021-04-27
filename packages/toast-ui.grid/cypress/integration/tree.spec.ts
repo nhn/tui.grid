@@ -9,6 +9,7 @@ import {
   assertToggleButtonExpanded,
   assertModifiedRowsLength,
 } from '../helper/assert';
+import { dragAndDrop } from '../helper/util';
 
 const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
@@ -996,5 +997,245 @@ describe('origin data', () => {
 
     cy.getCell(0, 'c1').should('have.text', 'foo');
     assertToggleButtonCollapsed(0, 'c1');
+  });
+});
+
+describe('move tree row', () => {
+  beforeEach(() => {
+    const treeData = [
+      {
+        c1: 'foo',
+        _children: [
+          {
+            c1: 'bar',
+            _attributes: {
+              expanded: true,
+            },
+            _children: [
+              {
+                c1: 'baz',
+                _attributes: {
+                  expanded: false,
+                },
+                _children: [
+                  {
+                    c1: 'qux',
+                  },
+                  {
+                    c1: 'quxx',
+                    _children: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        c1: 'foo_2',
+        _children: [
+          {
+            c1: 'bar_2',
+          },
+        ],
+      },
+      { c1: 'baz_2' },
+    ];
+
+    cy.createGrid({
+      data: treeData,
+      draggable: true,
+      columns: [{ name: 'c1' }],
+      treeColumnOptions: {
+        name: 'c1',
+      },
+    });
+    cy.gridInstance().invoke('expandAll');
+  });
+
+  ['UI(D&D)', 'API'].forEach((type) => {
+    it(`should move the row as the child of an another row by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 1, 5, { appended: true });
+      } else {
+        // move 'bar' row to 'foo_2' first child
+        dragAndDrop(1, 280);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['foo_2'],
+        ['bar_2'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['baz_2'],
+      ]);
+      // 'foo' row
+      assertHasChildren(0, 'c1', false);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', true);
+    });
+
+    it(`should move the row to an another row's index by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 1);
+      } else {
+        // move 'bar_2' row to first index of 'foo' row
+        dragAndDrop(6, 90);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar_2'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['baz_2'],
+      ]);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', false);
+    });
+
+    it(`should move the row to root index by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 0);
+      } else {
+        // move 'bar' row to first index of root
+        dragAndDrop(6, 48);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['bar_2'],
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['baz_2'],
+      ]);
+      // 'foo_2' row
+      assertHasChildren(5, 'c1', false);
+    });
+
+    it(`should move the row to an another leaf node by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 6, 3, { appended: true });
+      } else {
+        // move 'bar_2' row to leaf node(qux row)
+        dragAndDrop(6, 180);
+      }
+
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['bar_2'],
+        ['quxx'],
+        ['foo_2'],
+        ['baz_2'],
+      ]);
+      // 'qux' row
+      assertHasChildren(3, 'c1', true);
+    });
+
+    it(`should move the row to last node by ${type}`, () => {
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7);
+      } else {
+        // move 'foo' row to last node(baz_2 row)
+        dragAndDrop(0, 600);
+      }
+
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+      ]);
+    });
+
+    it(`should not move the disabled row by ${type}`, () => {
+      cy.gridInstance().invoke('disableRow', 0);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7);
+      } else {
+        dragAndDrop(0, 600);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+      ]);
+    });
+
+    it(`should not append the row to disabled row by ${type}`, () => {
+      cy.gridInstance().invoke('disableRow', 7);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveRow', 0, 7, { appended: true });
+      } else {
+        dragAndDrop(0, 340);
+      }
+
+      cy.getRsideBody().should('have.cellData', [
+        ['foo'],
+        ['bar'],
+        ['baz'],
+        ['qux'],
+        ['quxx'],
+        ['foo_2'],
+        ['bar_2'],
+        ['baz_2'],
+      ]);
+    });
+  });
+
+  it('should pass the `appended: false` prop when triggering drop event on moving index', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    // move 'bar' row to first index of root
+    dragAndDrop(6, 48);
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 6,
+      targetRowKey: 0,
+      appended: false,
+    });
+  });
+
+  it('should pass the `appended: true` prop when triggering drop event on appending to an another node', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drop', stub);
+
+    // move 'bar_2' row to leaf node(qux row)
+    dragAndDrop(6, 180);
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 6,
+      targetRowKey: 3,
+      appended: true,
+    });
   });
 });

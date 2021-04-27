@@ -17,6 +17,7 @@ import {
   OptFilter,
   LifeCycleEventName,
   ResetOptions,
+  OptMoveRow,
 } from '@t/options';
 import { Store } from '@t/store';
 import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
@@ -156,9 +157,8 @@ if ((module as any).hot) {
  *          @param {function} [options.rowHeaders.renderer] - Sets the custom renderer to customize the header content.
  *      @param {Array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
- *          @deprecated
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
- *              for overflowing content.
+ *              for overflowing content.(This option will be deprecated)
  *          @param {string} [options.columns.align=left] - Horizontal alignment of the column content.
  *              Available values are 'left', 'center', 'right'.
  *          @param {string} [options.columns.valign=middle] - Vertical alignment of the column content.
@@ -233,12 +233,11 @@ if ((module as any).hot) {
  *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
- *          @deprecated
  *          @param {string} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
  *              by fitting to the column's width. If set to 'pre', spaces are preserved and the text is braken by
  *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
  *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
- *              the text line is broken by fitting to the column's width and new line characters.
+ *              the text line is broken by fitting to the column's width and new line characters.(This option will be deprecated)
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
  *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
@@ -269,6 +268,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridMounted] - The function that will be called after rendering the grid.
  *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
+ *      @param {boolean} [options.draggable] - Whether to enable to drag the row for changing the order of rows.
  */
 export default class Grid implements TuiGrid {
   private el: HTMLElement;
@@ -1636,10 +1636,27 @@ export default class Grid implements TuiGrid {
    * Move the row identified by the specified rowKey to target index.
    * If data is sorted or filtered, this couldn't be used.
    * @param {number|string} rowKey - The unique key of the row
-   * @param {number} targetIndex - target index for moving
+   * @param {number} targetIndex - Target index for moving
+   * @param {Object} [options] - Options
+   * @param {number} [options.appended] - This option for only tree data. Whether the row is appended to other row as the child.
    */
-  public moveRow(rowKey: RowKey, targetIndex: number) {
-    this.dispatch('moveRow', rowKey, targetIndex);
+  public moveRow(rowKey: RowKey, targetIndex: number, options: OptMoveRow = { appended: false }) {
+    const { column, data } = this.store;
+
+    if (column.treeColumnName) {
+      let moveToLast = false;
+
+      if (!options.appended) {
+        if (targetIndex === data.rawData.length - 1) {
+          moveToLast = true;
+        } else if (this.getIndexOfRow(rowKey) < targetIndex) {
+          targetIndex += 1;
+        }
+      }
+      this.dispatch('moveTreeRow', rowKey, targetIndex, { ...options, moveToLast });
+    } else {
+      this.dispatch('moveRow', rowKey, targetIndex);
+    }
   }
 
   /**

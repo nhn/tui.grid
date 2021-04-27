@@ -1,5 +1,7 @@
+import { includes } from './common';
+
 export function isRowHeader(columnName: string) {
-  return ['_number', '_checked'].indexOf(columnName) > -1;
+  return includes(['_number', '_checked', '_draggable'], columnName);
 }
 
 export function isRowNumColumn(columnName: string) {
