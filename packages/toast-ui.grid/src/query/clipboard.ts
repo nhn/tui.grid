@@ -1,9 +1,11 @@
 import { CustomValue, ColumnInfo } from '@t/store/column';
-import { CellValue, Row, CellRenderData } from '@t/store/data';
+import { CellValue, Row, CellRenderData, ViewRow } from '@t/store/data';
 import { ListItemOptions } from '@t/editor';
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
 import { find, isNull } from '../helper/common';
+import { makeObservable } from '../dispatch/data';
+import { isObservable, notify } from '../helper/observable';
 
 function getCustomValue(
   customValue: CustomValue,
@@ -75,6 +77,23 @@ function getValueToString(store: Store) {
   );
 }
 
+function getObservableList(store: Store, filteredViewData: ViewRow[], start: number, end: number) {
+  const rowList = [];
+
+  for (let i = start; i <= end; i += 1) {
+    if (!isObservable(filteredViewData[i].valueMap)) {
+      makeObservable(store, i, true);
+
+      if (i === end) {
+        notify(store.data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+      }
+    }
+    rowList.push(filteredViewData[i]);
+  }
+
+  return rowList;
+}
+
 function getValuesToString(store: Store) {
   const {
     selection: { originalRange },
@@ -87,8 +106,7 @@ function getValuesToString(store: Store) {
   }
 
   const { row, column } = originalRange!;
-
-  const rowList = filteredViewData.slice(row[0], row[1] + 1);
+  const rowList = getObservableList(store, filteredViewData, ...row);
   const columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
 
   return rowList
