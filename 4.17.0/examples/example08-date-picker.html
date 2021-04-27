@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>8. DatePicker</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://uicdn.toast.com/tui.time-picker/v2.0.3/tui-time-picker.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://uicdn.toast.com/tui.date-picker/v4.1.0/tui-date-picker.css"
+    />
+    <script>var errorLogs=[];window.onerror=function(o,r,e,n){errorLogs.push({message:o,source:r,lineno:e,colno:n})};</script>
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/date-picker.md"
+        target="_blank"
+        >here</a
+			>.
+			<br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://uicdn.toast.com/tui.time-picker/v2.0.3/tui-time-picker.js"></script>
+  <script src="https://uicdn.toast.com/tui.date-picker/v4.1.0/tui-date-picker.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/babel" class="code-js">
+    const gridData = [
+      {
+        c1: '1992/03/25',
+        c2: '12/06/2019',
+        c3: '2014-04-16',
+        c4: '2019-11-19 09:00 AM',
+        c5: '2019-11-19 09:00 AM',
+        c6: '2019-01',
+        c7: '2019'
+      }
+    ];
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      data: gridData,
+      columns: [
+        {
+          header: 'DatePicker (Default)',
+          name: 'c1',
+          editor: 'datePicker'
+        },
+        {
+          header: 'DatePicker (Using options)',
+          name: 'c2',
+          editor: {
+            type: 'datePicker',
+            options: {
+              format: 'dd/MM/yyyy'
+            }
+          }
+        },
+        {
+          header: 'DatePicker (selectableRanges)',
+          name: 'c3',
+          editor: {
+            type: 'datePicker',
+            options: {
+              selectableRanges: [[new Date(2014, 3, 10), new Date(2014, 5, 20)]]
+            }
+          }
+        },
+        {
+          header: 'Date-TimePicker',
+          name: 'c4',
+          editor: {
+            type: 'datePicker',
+            options: {
+              format: 'yyyy-MM-dd HH:mm A',
+              timepicker: true
+            }
+          }
+        },
+        {
+          header: 'Date-TimePicker With tab',
+          name: 'c5',
+          editor: {
+            type: 'datePicker',
+            options: {
+              format: 'yyyy-MM-dd HH:mm A',
+              timepicker: {
+                layoutType: 'tab',
+                inputType: 'spinbox'
+              }
+            }
+          }
+        },
+        {
+          header: 'MonthPicker',
+          name: 'c6',
+          editor: {
+            type: 'datePicker',
+            options: {
+              format: 'yyyy-MM',
+              type: 'month'
+            }
+          }
+        },
+        {
+          header: 'YearPicker',
+          name: 'c7',
+          editor: {
+            type: 'datePicker',
+            options: {
+              format: 'yyyy',
+              type: 'year'
+            }
+          }
+        }
+      ]
+    });
+  </script>
+</html>
