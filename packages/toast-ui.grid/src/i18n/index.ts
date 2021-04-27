@@ -42,6 +42,40 @@ const messages: OptI18nLanguage = {
       emptyValue: 'Empty Value',
     },
   },
+  es: {
+    display: {
+      noData: 'No hay información.',
+      loadingData: 'Cargando información.',
+      resizeHandleGuide:
+        'Puedes cambiar el ancho de la columna arrastrando el ratón e inicializar el ancho haciendo doble clic.',
+    },
+    net: {
+      confirmCreate: '¿Estás seguro que quieres crear {{count}} filas?',
+      confirmUpdate: '¿Estás seguro que quieres actualizar {{count}} filas?',
+      confirmDelete: '¿Estás seguro que quieres eliminar {{count}} filas?',
+      confirmModify: '¿Estás seguro que quieres modificar {{count}} filas?',
+      noDataToCreate: 'No hay información para crear.',
+      noDataToUpdate: 'No hay información para actualizar.',
+      noDataToDelete: 'No hay información para eliminar.',
+      noDataToModify: 'No hay información para modificar.',
+      failResponse: 'Se produjo un error al solicitar datos. \nVuelve a intentarlo.',
+    },
+    filter: {
+      contains: 'Contiene',
+      eq: 'Igual',
+      ne: 'Distinto',
+      start: 'Empieza con',
+      end: 'Termina en',
+      after: 'Después',
+      afterEq: 'Después o Igual',
+      before: 'Antes',
+      beforeEq: 'Antes o Igual',
+      apply: 'Aplicar',
+      clear: 'Limpiar',
+      selectAll: 'Seleccionar Todo',
+      emptyValue: 'Vaciar Valor',
+    },
+  },
   ko: {
     display: {
       noData: '데이터가 존재하지 않습니다.',
