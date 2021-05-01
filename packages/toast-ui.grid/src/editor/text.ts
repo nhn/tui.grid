@@ -15,7 +15,9 @@ export class TextEditor implements CellEditor {
 
     el.className = cls('content-text');
     el.type = options.type;
-    el.value = String(isNil(props.value) ? '' : props.value);
+    el.value = String(isNil(props.value) ? '' : props.value).replace(/[^\w. ]/gi, function (c) {
+		return '&#' + c.charCodeAt(0) + ';';
+	});;
 
     this.el = el;
   }
