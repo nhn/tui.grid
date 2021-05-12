@@ -1225,6 +1225,22 @@ describe('move tree row', () => {
     });
   });
 
+  it('should pass the `appended: true` prop when triggering drag event on appending to an another node', () => {
+    const stub = cy.stub();
+    cy.gridInstance().invoke('on', 'drag', stub);
+
+    // move 'bar_2' row to leaf node(qux row)
+    cy.getCell(6, '_draggable')
+      .trigger('mousedown')
+      .trigger('mousemove', { pageY: 180, force: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', {
+      rowKey: 6,
+      targetRowKey: 3,
+      appended: true,
+    });
+  });
+
   it('should pass the `appended: true` prop when triggering drop event on appending to an another node', () => {
     const stub = cy.stub();
     cy.gridInstance().invoke('on', 'drop', stub);
