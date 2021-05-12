@@ -1255,3 +1255,132 @@ describe('move tree row', () => {
     });
   });
 });
+
+it(`should move the row to with complicated data`, () => {
+  const treeData = [
+    {
+      hrDept: 'dept1',
+      _children: [
+        {
+          hrDept: 'dept2',
+        },
+        {
+          hrDept: 'dept3',
+          _children: [
+            {
+              hrDept: 'dept4',
+              _children: [
+                {
+                  hrDept: 'dept5',
+                },
+              ],
+              _attributes: {
+                expanded: true,
+              },
+            },
+            {
+              hrDept: 'dept6',
+            },
+            {
+              hrDept: 'dept7',
+            },
+          ],
+          _attributes: {
+            expanded: true,
+          },
+        },
+        {
+          hrDept: 'dept8',
+        },
+      ],
+      _attributes: {
+        expanded: true,
+      },
+    },
+    {
+      hrDept: 'dept9',
+      _children: [
+        {
+          hrDept: 'dept10',
+        },
+        {
+          hrDept: 'dept11',
+          _children: [
+            {
+              hrDept: 'dept12',
+            },
+          ],
+          _attributes: {
+            expanded: true,
+          },
+        },
+        {
+          hrDept: 'dept13',
+          _children: [
+            {
+              hrDept: 'dept14',
+              _children: [
+                {
+                  hrDept: 'dept15',
+                },
+                {
+                  hrDept: 'dept16',
+                },
+              ],
+              _attributes: {
+                expanded: true,
+              },
+            },
+            {
+              hrDept: 'dept17',
+            },
+          ],
+          _attributes: {
+            expanded: true,
+          },
+        },
+        {
+          hrDept: 'dept18',
+          _children: [
+            {
+              hrDept: 'dept19',
+            },
+          ],
+          _attributes: {
+            expanded: true,
+          },
+        },
+      ],
+      _attributes: {
+        expanded: true,
+      },
+    },
+    {
+      hrDept: 'dept20',
+    },
+  ];
+
+  cy.createGrid({
+    data: treeData,
+    draggable: true,
+    bodyHeight: 300,
+    columns: [{ name: 'hrDept' }],
+    treeColumnOptions: {
+      name: 'hrDept',
+    },
+  });
+
+  // move 'dept7' row to 'dept6'
+  cy.gridInstance().invoke('moveRow', 6, 5);
+
+  cy.getRsideBody().should('have.cellData', [
+    ['dept1'],
+    ['dept2'],
+    ['dept3'],
+    ['dept4'],
+    ['dept5'],
+    ['dept7'],
+    ['dept6'],
+    ['dept8'],
+  ]);
+});
