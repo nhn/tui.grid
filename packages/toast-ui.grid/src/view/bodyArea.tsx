@@ -162,16 +162,6 @@ class BodyAreaComp extends Component<Props> {
       row.style.left = `${offsetLeft}px`;
       row.style.top = `${offsetTop}px`;
 
-      const gridEvent = new GridEvent({ rowKey, targetRowKey: rowKeyToMove });
-      /**
-       * Occurs when dragging the row
-       * @event Grid#drag
-       * @property {Grid} instance - Current grid instance
-       * @property {RowKey} rowKey - The rowKey of the dragging row
-       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
-       */
-      this.props.eventBus.trigger('drag', gridEvent);
-
       if (props.hasTreeColumn) {
         this.setTreeMovedIndexInfo(movedPosAndIndex);
       } else {
@@ -179,6 +169,22 @@ class BodyAreaComp extends Component<Props> {
         this.movedIndexInfo = { index, rowKey: rowKeyToMove };
         this.props.dispatch('moveRow', rowKey, index);
       }
+
+      const gridEvent = new GridEvent({
+        rowKey,
+        targetRowKey: rowKeyToMove,
+        appended: !!this.movedIndexInfo!.appended,
+      });
+
+      /**
+       * Occurs when dragging the row
+       * @event Grid#drag
+       * @property {Grid} instance - Current grid instance
+       * @property {RowKey} rowKey - The rowKey of the dragging row
+       * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
+       * @property {boolean} appended - Whether the row is appended to other row as the child in tree data.
+       */
+      this.props.eventBus.trigger('drag', gridEvent);
     }
   };
 
