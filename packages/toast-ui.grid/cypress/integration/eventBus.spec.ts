@@ -709,6 +709,7 @@ describe('D&D', () => {
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 0,
       targetRowKey: 1,
+      appended: false,
     });
   });
 

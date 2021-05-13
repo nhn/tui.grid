@@ -162,23 +162,29 @@ class BodyAreaComp extends Component<Props> {
       row.style.left = `${offsetLeft}px`;
       row.style.top = `${offsetTop}px`;
 
-      const gridEvent = new GridEvent({ rowKey, targetRowKey: rowKeyToMove });
+      if (props.hasTreeColumn) {
+        this.setTreeMovedIndexInfo(movedPosAndIndex);
+      } else {
+        // move the row to next index
+        this.movedIndexInfo = { index, rowKey: rowKeyToMove, appended: false };
+        this.props.dispatch('moveRow', rowKey, index);
+      }
+
+      const gridEvent = new GridEvent({
+        rowKey,
+        targetRowKey: rowKeyToMove,
+        appended: this.movedIndexInfo!.appended,
+      });
+
       /**
        * Occurs when dragging the row
        * @event Grid#drag
        * @property {Grid} instance - Current grid instance
        * @property {RowKey} rowKey - The rowKey of the dragging row
        * @property {RowKey} targetRowKey - The rowKey of the row at current dragging position
+       * @property {boolean} appended - Whether the row is appended to other row as the child in tree data.
        */
       this.props.eventBus.trigger('drag', gridEvent);
-
-      if (props.hasTreeColumn) {
-        this.setTreeMovedIndexInfo(movedPosAndIndex);
-      } else {
-        // move the row to next index
-        this.movedIndexInfo = { index, rowKey: rowKeyToMove };
-        this.props.dispatch('moveRow', rowKey, index);
-      }
     }
   };
 
@@ -194,7 +200,7 @@ class BodyAreaComp extends Component<Props> {
     if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE || moveToLast) {
       line.style.top = `${height}px`;
       line.style.display = 'block';
-      this.movedIndexInfo = { index, rowKey, moveToLast };
+      this.movedIndexInfo = { index, rowKey, moveToLast, appended: false };
       // show the background color to mark parent row
     } else {
       line.style.display = 'none';
@@ -317,12 +323,7 @@ class BodyAreaComp extends Component<Props> {
     const { rowKey } = this.draggableInfo!;
 
     if (this.movedIndexInfo) {
-      const {
-        index,
-        rowKey: targetRowKey,
-        appended = false,
-        moveToLast = false,
-      } = this.movedIndexInfo;
+      const { index, rowKey: targetRowKey, appended, moveToLast = false } = this.movedIndexInfo;
       const gridEvent = new GridEvent({ rowKey, targetRowKey, appended });
       /**
        * Occurs when dropping the row
