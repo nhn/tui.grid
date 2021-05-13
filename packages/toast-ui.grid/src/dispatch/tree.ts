@@ -451,15 +451,13 @@ export function moveTreeRow(
     } else {
       const { parentRowKey } = targetRow._attributes.tree!;
       const parentIndex = findIndexByRowKey(data, column, id, parentRowKey);
-      let offset: number;
+      let offset = targetIndex > currentIndex ? targetIndex - (childRows.length + 1) : targetIndex;
 
-      // calculate the moving index for considering removed rows
-      if (targetIndex > currentIndex) {
-        const indexWithoutRemovedRows = targetIndex - (childRows.length + 1);
-        offset =
-          parentIndex === -1 ? indexWithoutRemovedRows : indexWithoutRemovedRows - parentIndex - 1;
-      } else {
-        offset = parentIndex === -1 ? targetIndex : targetIndex - parentIndex - 1;
+      // calculate the offset based on parent row
+      if (parentIndex !== -1) {
+        const parentRow = rawData[parentIndex];
+
+        offset = parentRow._attributes.tree!.childRowKeys.indexOf(targetRow.rowKey)!;
       }
 
       // to resolve the index for moving last index
