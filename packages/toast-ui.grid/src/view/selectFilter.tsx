@@ -7,7 +7,7 @@ import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import { some, debounce, isEmpty } from '../helper/common';
+import { some, debounce, isBlank } from '../helper/common';
 import { getUniqColumnData } from '../query/data';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 import i18n from '../i18n';
@@ -123,12 +123,12 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
         text: String(value),
         checked: some((item) => value === item.value, state),
       }));
-    const isExistEmptyValue = uniqueColumnData.some((value) => isEmpty(value));
+    const isExistEmptyValue = uniqueColumnData.some((value) => isBlank(value));
     if (isExistEmptyValue) {
       columnData.push({
         value: '',
         text: i18n.get('filter.emptyValue'),
-        checked: some((item) => isEmpty(item.value), state),
+        checked: some(({ value }) => isBlank(value), state),
       });
     }
 
