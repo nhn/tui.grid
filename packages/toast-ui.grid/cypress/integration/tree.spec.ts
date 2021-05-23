@@ -1254,6 +1254,36 @@ describe('move tree row', () => {
       appended: true,
     });
   });
+
+  it('should move node to the last regardless of the children properly', () => {
+    // move to last in case of having children
+    cy.gridInstance().invoke('moveRow', 2, 7);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['foo'],
+      ['bar'],
+      ['foo_2'],
+      ['bar_2'],
+      ['baz_2'],
+      ['baz'],
+      ['qux'],
+      ['quxx'],
+    ]);
+
+    // move to last in case of leaf node(baz_2)
+    cy.gridInstance().invoke('moveRow', 7, 7);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['foo'],
+      ['bar'],
+      ['foo_2'],
+      ['bar_2'],
+      ['baz'],
+      ['qux'],
+      ['quxx'],
+      ['baz_2'],
+    ]);
+  });
 });
 
 it(`should move the row to with complicated data`, () => {
