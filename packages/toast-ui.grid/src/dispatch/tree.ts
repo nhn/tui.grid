@@ -288,8 +288,7 @@ export function removeExpandedAttr(row: Row) {
   const { tree } = row._attributes;
 
   if (tree) {
-    delete tree.expanded;
-    notify(tree, 'expanded');
+    tree.expanded = false;
   }
 }
 
@@ -449,7 +448,7 @@ export function moveTreeRow(
     if (options.appended) {
       appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey });
     } else {
-      const { parentRowKey } = targetRow._attributes.tree!;
+      let { parentRowKey } = targetRow._attributes.tree!;
       const parentIndex = findIndexByRowKey(data, column, id, parentRowKey);
       let offset = targetIndex > currentIndex ? targetIndex - (childRows.length + 1) : targetIndex;
 
@@ -462,7 +461,8 @@ export function moveTreeRow(
 
       // to resolve the index for moving last index
       if (options.moveToLast) {
-        offset += 1;
+        parentRowKey = null;
+        offset = rawData.length;
       }
       appendTreeRow(store, originRow, { parentRowKey, offset });
     }
