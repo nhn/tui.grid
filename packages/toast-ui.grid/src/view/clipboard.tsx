@@ -109,12 +109,12 @@ class ClipboardComp extends Component<Props> {
     let data;
     if (html && html.indexOf('table') !== -1) {
       // step 1: Append copied data on contenteditable element to parsing correctly table data.
-      el.textContent = html;
+      el.innerHTML = html;
       // step 2: Make grid data from cell data of appended table element.
       const { rows } = el.querySelector('tbody')!;
       data = convertTableToData(rows);
       // step 3: Empty contenteditable element to reset.
-      el.textContent = '';
+      el.innerHTML = '';
     } else {
       data = convertTextToData(clipboardData.getData('text/plain'));
     }
