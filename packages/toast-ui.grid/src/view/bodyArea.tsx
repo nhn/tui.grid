@@ -26,7 +26,7 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
-import { some, debounce } from '../helper/common';
+import { some, debounce, isNil } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
@@ -64,7 +64,7 @@ interface AreaStyle {
 
 interface MovedIndexInfo {
   index: number;
-  rowKey: RowKey;
+  rowKey: RowKey | null;
   moveToLast?: boolean;
   appended?: boolean;
 }
@@ -172,7 +172,7 @@ class BodyAreaComp extends Component<Props> {
 
       const gridEvent = new GridEvent({
         rowKey,
-        targetRowKey: rowKeyToMove,
+        targetRowKey: this.movedIndexInfo!.rowKey,
         appended: this.movedIndexInfo!.appended,
       });
 
@@ -193,18 +193,19 @@ class BodyAreaComp extends Component<Props> {
     const { index, offsetTop, height, targetRow, moveToLast } = movedPosAndIndex;
     const { rowKey } = targetRow;
 
-    if (this.movedIndexInfo) {
+    if (!isNil(this.movedIndexInfo?.rowKey)) {
       this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
     }
+    const targetRowKey = moveToLast ? null : rowKey;
     // display line border to mark the index to move
     if (Math.abs(height - offsetTop) < ADDITIONAL_RANGE || moveToLast) {
       line.style.top = `${height}px`;
       line.style.display = 'block';
-      this.movedIndexInfo = { index, rowKey, moveToLast, appended: false };
+      this.movedIndexInfo = { index, rowKey: targetRowKey, moveToLast, appended: false };
       // show the background color to mark parent row
     } else {
       line.style.display = 'none';
-      this.movedIndexInfo = { index, rowKey, appended: true };
+      this.movedIndexInfo = { index, rowKey: targetRowKey, appended: true };
       this.props.dispatch('addRowClassName', rowKey, PARENT_CELL_CLASS);
     }
   }
@@ -344,8 +345,8 @@ class BodyAreaComp extends Component<Props> {
       }
     }
     this.props.dispatch('removeRowClassName', rowKey, DRAGGING_CLASS);
-    if (this.movedIndexInfo) {
-      this.props.dispatch('removeRowClassName', this.movedIndexInfo.rowKey, PARENT_CELL_CLASS);
+    if (!isNil(this.movedIndexInfo?.rowKey)) {
+      this.props.dispatch('removeRowClassName', this.movedIndexInfo!.rowKey, PARENT_CELL_CLASS);
     }
     // clear floating element and draggable info
     this.clearDraggableInfo();
