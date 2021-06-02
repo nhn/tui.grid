@@ -1271,7 +1271,7 @@ describe('move tree row', () => {
     });
   });
 
-  it('should pass the `targetRowKey: null` prop when triggering drop event on moving at the bottomost', () => {
+  it('should pass the `targetRowKey: null` prop when triggering drop event on moving at the bottommost', () => {
     const stub = cy.stub();
     cy.gridInstance().invoke('on', 'drop', stub);
 
