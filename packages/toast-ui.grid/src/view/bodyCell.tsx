@@ -28,6 +28,7 @@ interface StoreProps {
   treeInfo?: TreeCellInfo;
   selectedRow: boolean;
   cellBorderWidth: number;
+  columnWidths: { L: number[]; R: number[] };
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -61,11 +62,17 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    const { viewRow, renderData, columnInfo, rowKey, grid } = nextProps;
-    const { viewRow: prevViewRow, renderData: prevRenderData } = this.props;
+    const { viewRow, renderData, columnInfo, rowKey, grid, columnWidths } = nextProps;
+    const {
+      viewRow: prevViewRow,
+      renderData: prevRenderData,
+      columnWidths: prevColumnWidth,
+    } = this.props;
 
     if (
-      (prevRenderData !== renderData || viewRow.uniqueKey !== prevViewRow.uniqueKey) &&
+      (prevRenderData !== renderData ||
+        viewRow.uniqueKey !== prevViewRow.uniqueKey ||
+        columnWidths !== prevColumnWidth) &&
       this.renderer &&
       isFunction(this.renderer.render)
     ) {
@@ -200,7 +207,7 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
+  ({ id, column, selection, dimension, columnCoords }, { viewRow, columnInfo, rowIndex }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
     const grid = getInstance(id);
@@ -212,6 +219,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       grid,
       rowKey,
       columnInfo,
+      columnWidths: columnCoords.widths,
       defaultRowHeight,
       renderData: (valueMap && valueMap[columnName]) || { invalidStates: [] },
       ...(columnName === treeColumnName ? { treeInfo } : null),
