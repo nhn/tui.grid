@@ -36,7 +36,7 @@ export function setCellHeight(
   cellHeightMap[rowIndex][columnName] = Math.max(height, defaultRowHeight);
 }
 
-export function removeCellHeight({ renderState }: Store, rowIndex: number) {
+export function removeRowHeight({ renderState }: Store, rowIndex: number) {
   const { cellHeightMap } = renderState;
   delete cellHeightMap[rowIndex];
 }
