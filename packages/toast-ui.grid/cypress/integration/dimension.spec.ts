@@ -450,4 +450,36 @@ describe('row height', () => {
 
     cy.getByCls('row-odd').invoke('height').should('eq', 40);
   });
+
+  it('rowHeight: auto - The rowHeight changes properly when showing the hidden column dynamically', () => {
+    const data = [
+      {
+        col1: 'something very long text to exceed with of the cell',
+        col2: 'something very long text to\nexceed with of the cell',
+        col3:
+          'grid         example\ngrid newline example\n\ngrid newline example\n\ngrid newline example\n\n',
+        col4: 'grid         example\ngrid newline example\n\ngrid newline example\n\n',
+        col5: 'grid         example\ngrid newline example\n\ngrid newline example\n\n',
+      },
+    ];
+    const columns = [
+      { name: 'col1' },
+      { name: 'col2', hidden: true },
+      {
+        name: 'col3',
+        whiteSpace: 'normal',
+        editor: 'text',
+      },
+      { name: 'col4' },
+      { name: 'col5' },
+    ];
+
+    cy.createGrid({ data, columns, rowHeight: 'auto', rowHeaders: ['rowNum'], width: 500 });
+
+    cy.getByCls('row-odd').invoke('height').should('eq', 84);
+
+    cy.gridInstance().invoke('showColumn', 'col2');
+
+    cy.getByCls('row-odd').invoke('height').should('eq', 114);
+  });
 });

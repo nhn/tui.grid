@@ -30,7 +30,7 @@ class BodyRowComp extends Component<Props> {
     const { rowIndex, autoRowHeight, dispatch } = this.props;
 
     if (autoRowHeight) {
-      dispatch('removeCellHeight', rowIndex);
+      dispatch('removeRowHeight', rowIndex);
     }
   }
 
