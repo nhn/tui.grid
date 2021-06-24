@@ -15,6 +15,7 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
 import { CellChange, Origin } from '@t/event';
 import { updateSummaryValueByCell } from './summary';
+import { updateHeights } from './data';
 
 type ChangeValueFn = () => number;
 interface ChangeInfo {
@@ -180,7 +181,7 @@ export function removeContent(store: Store) {
   data.filteredRawData.slice(rowStart, rowEnd + 1).forEach((row, index) => {
     column.visibleColumnsWithRowHeader.slice(columnStart, columnEnd + 1).forEach(({ name }) => {
       const rowIndex = index + rowStart;
-      if (isEditableCell(data, column, rowIndex, name)) {
+      if (isEditableCell(store, rowIndex, name)) {
         const { prevChange, nextChange, changeValue } = createChangeInfo(
           store,
           row,
@@ -215,7 +216,7 @@ function applyCopiedData(store: Store, copiedData: string[][], range: SelectionR
     const rawRowIndex = rowIndex + startRowIndex;
     for (let columnIndex = 0; columnIndex + startColumnIndex <= endColumnIndex; columnIndex += 1) {
       const name = columnNames[columnIndex + startColumnIndex];
-      if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
+      if (filteredViewData.length && isEditableCell(store, rawRowIndex, name)) {
         const targetRow = filteredRawData[rawRowIndex];
         const { prevChange, nextChange, changeValue } = createChangeInfo(
           store,
@@ -280,6 +281,7 @@ export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: Cha
     }
   });
   forceValidateUniquenessOfColumns(rawData, column);
+  updateHeights(store);
 
   gridEvent = new GridEvent({ origin, changes: nextChanges });
 

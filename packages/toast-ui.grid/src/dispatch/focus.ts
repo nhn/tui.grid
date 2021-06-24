@@ -21,7 +21,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   // makes the data observable to judge editable, disable of the cell
   makeObservable(store, findIndexByRowKey(data, column, id, rowKey, false));
 
-  if (!isEditableCell(data, column, foundIndex, columnName)) {
+  if (!isEditableCell(store, foundIndex, columnName)) {
     return;
   }
 

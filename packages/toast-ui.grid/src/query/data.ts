@@ -36,8 +36,20 @@ export function getCellAddressByIndex(
   };
 }
 
-export function isEditableCell(data: Data, column: Column, rowIndex: number, columnName: string) {
-  const { disabled, editable } = data.filteredViewData[rowIndex].valueMap[columnName];
+export function isEditableCell(store: Store, rowIndex: number, columnName: string) {
+  const { data, column } = store;
+  const { filteredIndex, filteredViewData } = data;
+
+  if (filteredIndex && isNil(filteredIndex[rowIndex])) {
+    return false;
+  }
+
+  // get index based on whole data(not filtered data)
+  const index = filteredIndex ? filteredIndex[rowIndex] : rowIndex;
+  makeObservable(store, index, true);
+
+  const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+
   return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
 
