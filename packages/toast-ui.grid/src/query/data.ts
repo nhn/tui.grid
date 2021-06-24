@@ -40,17 +40,17 @@ export function isEditableCell(store: Store, rowIndex: number, columnName: strin
   const { data, column } = store;
   const { filteredIndex, filteredViewData } = data;
 
-  if (!filteredIndex || !isNil(filteredIndex[rowIndex])) {
-    // get index based on whole data(not filtered data)
-    const index = filteredIndex ? filteredIndex[rowIndex] : rowIndex;
-    makeObservable(store, index, true);
-
-    const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
-
-    return !isHiddenColumn(column, columnName) && editable && !disabled;
+  if (filteredIndex && isNil(filteredIndex[rowIndex])) {
+    return false;
   }
 
-  return false;
+  // get index based on whole data(not filtered data)
+  const index = filteredIndex ? filteredIndex[rowIndex] : rowIndex;
+  makeObservable(store, index, true);
+
+  const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+
+  return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
 
 export function getCheckedRowInfoList({ data }: Store) {
