@@ -134,7 +134,9 @@ export type ClassNameType =
   | 'floating-cell'
   | 'floating-tree-cell'
   | 'floating-tree-cell-content'
-  | 'floating-line';
+  | 'floating-line'
+  | 'context-menu-wrapper'
+  | 'context-menu';
 
 const CLS_PREFIX = 'tui-grid-';
 

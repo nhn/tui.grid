@@ -7,6 +7,7 @@ import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { FilterLayer } from './filterLayer';
+import { ContextMenu } from './contextMenu';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
@@ -44,6 +45,9 @@ interface StoreProps {
   renderState: RenderState;
   focusedRowKey: RowKey | null;
   focusedColumnName: string | null;
+  offsetLeft: number;
+  offsetTop: number;
+  headerHeight: number;
 }
 
 interface TouchEventInfo {
@@ -271,7 +275,7 @@ export class ContainerComp extends Component<Props> {
     }
   }
 
-  public componentDidMount() {
+  componentDidMount() {
     if (this.props.autoWidth) {
       window.addEventListener('resize', this.syncWithDOMWidth);
       // In Preact, the componentDidMount is called before the DOM elements are actually mounted.
@@ -288,20 +292,23 @@ export class ContainerComp extends Component<Props> {
     const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
     if (keyName === 'esc') {
       this.props.dispatch('setActiveColumnAddress', null);
+      this.props.dispatch('setContextMenuPos', null);
     }
   };
 
   private handleDocumentMouseDown = (ev: Event) => {
     const { dispatch, filtering } = this.props;
-    if (filtering) {
-      const target = ev.target as HTMLElement;
-      if (!findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
-        dispatch('setActiveColumnAddress', null);
-      }
+    const target = ev.target as HTMLElement;
+
+    if (filtering && !findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
+      dispatch('setActiveColumnAddress', null);
+    }
+    if (!findParent(target, 'context-menu')) {
+      this.props.dispatch('setContextMenuPos', null);
     }
   };
 
-  public componentWillUnmount() {
+  componentWillUnmount() {
     if (this.props.autoWidth) {
       window.removeEventListener('resize', this.syncWithDOMWidth);
     }
@@ -311,14 +318,24 @@ export class ContainerComp extends Component<Props> {
     this.props.dispatch('refreshLayout', this.el!, this.props.rootElement.parentElement!);
   };
 
-  public shouldComponentUpdate(nextProps: Props) {
+  shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
     }
     return true;
   }
 
-  public render() {
+  handleContextMenu = (event: MouseEvent) => {
+    event.preventDefault();
+
+    const { offsetLeft, offsetTop } = this.props;
+    const left = event.clientX - offsetLeft;
+    const top = event.clientY - offsetTop;
+
+    this.props.dispatch('setContextMenuPos', { left, top });
+  };
+
+  render() {
     const {
       summaryHeight,
       summaryPosition,
@@ -348,6 +365,7 @@ export class ContainerComp extends Component<Props> {
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
+        onContextMenu={this.handleContextMenu}
         ref={(el) => {
           this.el = el;
         }}
@@ -373,6 +391,7 @@ export class ContainerComp extends Component<Props> {
         <Clipboard />
         {pageOptions.position === 'bottom' && <Pagination />}
         <FilterLayer />
+        <ContextMenu />
       </div>
     );
   }
@@ -400,5 +419,8 @@ export const Container = connect<StoreProps, OwnProps>(
     renderState,
     focusedRowKey: focus.rowKey,
     focusedColumnName: focus.columnName,
+    offsetLeft: dimension.offsetLeft,
+    offsetTop: dimension.offsetTop,
+    headerHeight: dimension.headerHeight,
   })
 )(ContainerComp);
