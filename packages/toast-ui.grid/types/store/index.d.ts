@@ -9,6 +9,7 @@ import { Viewport } from './viewport';
 import { Data } from './data';
 import { Dimension } from './dimension';
 import { Column } from './column';
+import { ContextMenu } from './contextMenu';
 
 export type GridId = number;
 
@@ -25,4 +26,5 @@ export interface Store {
   readonly summary: Summary;
   readonly renderState: RenderState;
   readonly filterLayerState: FilterLayerState;
+  readonly contextMenu: ContextMenu;
 }
