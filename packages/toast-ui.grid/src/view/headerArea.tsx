@@ -11,6 +11,7 @@ import { getInstance } from '../instance';
 import { isParentColumnHeader } from '../query/column';
 import { ComplexHeader } from './complexHeader';
 import { ColumnHeader } from './columnHeader';
+import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -50,7 +51,8 @@ class HeaderAreaComp extends Component<Props> {
     if (
       findParent(target, 'cell-row-header') ||
       hasClass(target, 'btn-sorting') ||
-      hasClass(target, 'btn-filter')
+      hasClass(target, 'btn-filter') ||
+      ev.button === RIGHT_MOUSE_BUTTON
     ) {
       return;
     }

@@ -30,6 +30,8 @@ import { some, debounce, isNil } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
+import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
+import { isFocusedCell } from '../query/focus';
 
 interface OwnProps {
   side: Side;
@@ -84,10 +86,9 @@ const ADDITIONAL_RANGE = 3;
 const DRAGGING_CLASS = 'dragging';
 const PARENT_CELL_CLASS = 'parent-cell';
 const DRAGGABLE_COLUMN_NAME = '_draggable';
-const RIGHT_MOUSE_BUTTON = 2;
 
 class BodyAreaComp extends Component<Props> {
-  private el?: HTMLElement;
+  private el!: HTMLElement;
 
   private boundingRect?: { top: number; left: number };
 
@@ -250,9 +251,25 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
+  private isSelectedCell(element: HTMLElement) {
+    const cellAddress = getCellAddress(element);
+
+    if (cellAddress) {
+      const { rowKey, columnName } = cellAddress;
+
+      return isFocusedCell(this.context.store.focus, rowKey, columnName);
+    }
+    return !!findParent(element, 'layer-selection');
+  }
+
   private handleMouseDown = (ev: MouseEvent) => {
     const targetElement = ev.target as HTMLElement;
-    if (!this.el || targetElement === this.el || ev.button === RIGHT_MOUSE_BUTTON) {
+
+    if (
+      !this.el ||
+      targetElement === this.el ||
+      (ev.button === RIGHT_MOUSE_BUTTON && this.isSelectedCell(targetElement))
+    ) {
       return;
     }
 

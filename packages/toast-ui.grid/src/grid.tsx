@@ -269,6 +269,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  *      @param {boolean} [options.draggable] - Whether to enable to drag the row for changing the order of rows.
+ *      @param {Array} [options.contextMenu] - Option array for the context menu.
  */
 export default class Grid implements TuiGrid {
   el: HTMLElement;
