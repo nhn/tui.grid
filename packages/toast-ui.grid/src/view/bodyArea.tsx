@@ -84,6 +84,7 @@ const ADDITIONAL_RANGE = 3;
 const DRAGGING_CLASS = 'dragging';
 const PARENT_CELL_CLASS = 'parent-cell';
 const DRAGGABLE_COLUMN_NAME = '_draggable';
+const RIGHT_MOUSE_BUTTON = 2;
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
@@ -251,7 +252,7 @@ class BodyAreaComp extends Component<Props> {
 
   private handleMouseDown = (ev: MouseEvent) => {
     const targetElement = ev.target as HTMLElement;
-    if (!this.el || targetElement === this.el) {
+    if (!this.el || targetElement === this.el || ev.button === RIGHT_MOUSE_BUTTON) {
       return;
     }
 

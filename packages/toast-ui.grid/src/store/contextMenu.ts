@@ -1,69 +1,67 @@
-import { observable } from '../helper/observable';
 import { ContextMenu, MenuItem } from '@t/store/contextMenu';
+import { observable } from '../helper/observable';
+import i18n from '../i18n';
 
-export function create() {
+function setMenuItemRecursively(itemMap: Record<string, MenuItem>, menuItem: MenuItem) {
+  itemMap[menuItem.name] = menuItem;
+
+  if (menuItem.subMenu) {
+    menuItem.subMenu.forEach((subMenuItem) => {
+      setMenuItemRecursively(itemMap, subMenuItem);
+    });
+  }
+}
+
+function createDefaultContextMenu() {
+  return [
+    [
+      {
+        name: 'copy',
+        label: i18n.get('contextMenu.copy'),
+        action: 'copy',
+      },
+      {
+        name: 'copyColumns',
+        label: i18n.get('contextMenu.copyColumns'),
+        action: 'copyColumns',
+      },
+      {
+        name: 'copyRows',
+        label: i18n.get('contextMenu.copyRows'),
+        action: 'copyRows',
+      },
+    ],
+  ];
+}
+
+interface ContextMenuOptions {
+  menuGroups: MenuItem[][];
+}
+
+export function create({ menuGroups }: ContextMenuOptions) {
   return observable<ContextMenu>({
     pos: null,
-    menuGroups: [
-      [
-        {
-          name: 'id1',
-          label: 'text1',
-          action: () => {
-            console.log(123);
-          },
-        },
-        {
-          name: 'id2',
-          label: 'text1',
-          action: () => {
-            console.log(123);
-          },
-          subMenu: [
-            {
-              name: 'id8',
-              label: 'text1-2',
-              action: () => {
-                console.log(1111);
-              },
-            },
-          ],
-        },
-      ],
-      [
-        {
-          name: 'id3',
-          label: 'text1',
-          action: () => {
-            console.log(123);
-          },
-          subMenu: [
-            {
-              name: 'id7',
-              label: 'text1-1',
-              action: () => {
-                console.log(1111);
-              },
-            },
-          ],
-        },
-        {
-          name: 'id5',
-          label: 'text1',
-          action: () => {
-            console.log(123);
-          },
-        },
-      ],
-    ],
+    menuGroups: menuGroups || createDefaultContextMenu(),
 
     get menuItemMap() {
       return this.menuGroups.reduce((acc: Record<string, MenuItem>, group: MenuItem[]) => {
         group.forEach((menuItem) => {
-          acc[menuItem.name] = menuItem;
+          setMenuItemRecursively(acc, menuItem);
         });
         return acc;
       }, {});
+    },
+
+    get flattenTopMenuItems() {
+      return this.menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
+        const menuItems = group.map((menuItem, itemIndex) => {
+          if (groupIndex < this.menuGroups.length - 1 && itemIndex === group.length - 1) {
+            menuItem.lastItem = true;
+          }
+          return menuItem;
+        });
+        return acc.concat(menuItems);
+      }, []);
     },
   });
 }

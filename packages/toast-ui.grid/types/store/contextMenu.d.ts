@@ -6,8 +6,11 @@ export interface MenuPos {
 export interface MenuItem {
   name: string;
   label: string;
-  action: () => void;
+  action: (() => void) | 'copy' | 'copyColumns' | 'copyRows';
+  classNames?: string[];
+  attributes?: Record<string, any>;
   subMenu?: MenuItem[];
+  lastItem?: boolean;
 }
 
 export type MenuItemMap = Record<string, MenuItem>;
@@ -16,4 +19,5 @@ export interface ContextMenu {
   pos: MenuPos | null;
   menuGroups: MenuItem[][];
   menuItemMap: MenuItemMap;
+  flattenTopMenuItems: MenuItem[];
 }

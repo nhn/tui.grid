@@ -4,10 +4,11 @@ import { DispatchProps } from '../dispatch/create';
 import { cls, findParentByTagName } from '../helper/dom';
 import { MenuPos, MenuItem, MenuItemMap } from '@t/store/contextMenu';
 import { ContextMenuItem } from './contextMenuItem';
+import { isString } from '../helper/common';
 
 interface StoreProps {
   pos: MenuPos | null;
-  menuGroups: MenuItem[][];
+  menuItems: MenuItem[];
   menuItemMap: MenuItemMap;
 }
 
@@ -19,6 +20,8 @@ interface State {
     menuItems: MenuItem[];
   } | null;
 }
+
+const BORDER_WIDTH = 1;
 
 export class ContextMenuComp extends Component<Props, State> {
   private showSubMenu = (ev: MouseEvent) => {
@@ -32,7 +35,7 @@ export class ContextMenuComp extends Component<Props, State> {
 
         if (menuItem.subMenu?.length) {
           const { offsetWidth, offsetTop } = currentItem;
-          const pos = { top: offsetTop, left: offsetWidth + 1 };
+          const pos = { top: offsetTop - BORDER_WIDTH, left: offsetWidth + BORDER_WIDTH };
           subMenuInfo = { menuItems: menuItem.subMenu, pos };
         }
         this.setState({ subMenuInfo });
@@ -40,23 +43,35 @@ export class ContextMenuComp extends Component<Props, State> {
     }
   };
 
-  private flattenMenuGroups() {
-    const { menuGroups } = this.props;
+  private execAction = (ev: MouseEvent) => {
+    const currentItem = findParentByTagName(ev.target as HTMLElement, 'li')!;
 
-    return menuGroups.reduce((acc, group) => {
-      const menuItems = group.map((menuItem) => menuItem);
-      return acc.concat(menuItems);
-    }, []);
-  }
+    if (currentItem) {
+      const menuItem = this.props.menuItemMap[currentItem.getAttribute('data-item-name')!];
+
+      if (menuItem) {
+        if (isString(menuItem.action)) {
+          this.props.dispatch(menuItem.action);
+        } else {
+          menuItem.action();
+        }
+      }
+    }
+    this.props.dispatch('setContextMenuPos', null);
+  };
 
   render() {
-    const { pos } = this.props;
-    const menuItems = this.flattenMenuGroups();
+    const { pos, menuItems } = this.props;
     const { subMenuInfo } = this.state;
     const wrapperStyle = { display: pos ? 'block' : 'none', ...pos };
 
     return (
-      <div class={cls('context-menu-wrapper')} style={wrapperStyle} onMouseOver={this.showSubMenu}>
+      <div
+        class={cls('context-menu-wrapper')}
+        style={wrapperStyle}
+        onMouseOver={this.showSubMenu}
+        onClick={this.execAction}
+      >
         <ul class={cls('context-menu')}>
           {menuItems.map((menuItem) => (
             <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
@@ -65,7 +80,7 @@ export class ContextMenuComp extends Component<Props, State> {
         {subMenuInfo && (
           <ul class={cls('context-menu')} style={{ position: 'absolute', ...subMenuInfo.pos }}>
             {subMenuInfo.menuItems.map((menuItem) => (
-              <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
+              <ContextMenuItem key={menuItem.name} menuItem={menuItem} isSubMenu={true} />
             ))}
           </ul>
         )}
@@ -77,5 +92,5 @@ export class ContextMenuComp extends Component<Props, State> {
 export const ContextMenu = connect<StoreProps>(({ contextMenu }) => ({
   pos: contextMenu.pos,
   menuItemMap: contextMenu.menuItemMap,
-  menuGroups: contextMenu.menuGroups,
+  menuItems: contextMenu.flattenTopMenuItems,
 }))(ContextMenuComp);

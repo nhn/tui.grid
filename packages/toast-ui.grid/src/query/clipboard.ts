@@ -2,8 +2,8 @@ import { CustomValue, ColumnInfo } from '@t/store/column';
 import { CellValue, Row, CellRenderData, ViewRow } from '@t/store/data';
 import { ListItemOptions } from '@t/editor';
 import { Store } from '@t/store';
-import { SelectionRange } from '@t/store/selection';
-import { find, isNull } from '../helper/common';
+import { SelectionRange, Range } from '@t/store/selection';
+import { find, isNull, isNil } from '../helper/common';
 import { makeObservable } from '../dispatch/data';
 import { isObservable, notify } from '../helper/observable';
 
@@ -16,7 +16,7 @@ function getCustomValue(
   return typeof customValue === 'function' ? customValue(value, rowAttrs, column) : customValue;
 }
 
-function getTextWithCopyOptionsApplied(
+export function getTextWithCopyOptionsApplied(
   valueMap: CellRenderData,
   rawData: Row[],
   column: ColumnInfo
@@ -58,25 +58,6 @@ function getTextWithCopyOptionsApplied(
   return String(text);
 }
 
-function getValueToString(store: Store) {
-  const {
-    column: { visibleColumnsWithRowHeader },
-    focus: { originalRowIndex, columnName, totalColumnIndex },
-    data: { filteredViewData, filteredRawData },
-  } = store;
-
-  if (isNull(originalRowIndex) || isNull(columnName) || isNull(totalColumnIndex)) {
-    return '';
-  }
-  const valueMap = filteredViewData[originalRowIndex].valueMap[columnName];
-
-  return getTextWithCopyOptionsApplied(
-    valueMap,
-    filteredRawData,
-    visibleColumnsWithRowHeader[totalColumnIndex]
-  );
-}
-
 function getObservableList(store: Store, filteredViewData: ViewRow[], start: number, end: number) {
   const rowList = [];
 
@@ -94,20 +75,20 @@ function getObservableList(store: Store, filteredViewData: ViewRow[], start: num
   return rowList;
 }
 
-function getValuesToString(store: Store) {
+export function getValuesToString(store: Store, ranges: { rowRange?: Range; columnRange?: Range }) {
   const {
-    selection: { originalRange },
     column: { visibleColumnsWithRowHeader },
     data: { filteredViewData, filteredRawData },
   } = store;
 
-  if (!originalRange) {
+  const { rowRange, columnRange } = ranges;
+
+  if (!rowRange || !columnRange) {
     return '';
   }
 
-  const { row, column } = originalRange!;
-  const rowList = getObservableList(store, filteredViewData, ...row);
-  const columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
+  const rowList = getObservableList(store, filteredViewData, ...rowRange);
+  const columnInRange = visibleColumnsWithRowHeader.slice(columnRange[0], columnRange[1] + 1);
 
   return rowList
     .map(({ valueMap }) =>
@@ -173,19 +154,23 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
   return result;
 }
 
-export function getText(store: Store) {
+export function getText(store: Store, ranges?: { rowRange: Range; columnRange: Range }) {
   const {
-    selection,
-    focus: { rowIndex, columnName },
+    selection: { originalRange },
+    focus: { originalRowIndex, totalColumnIndex },
   } = store;
 
-  if (selection.range) {
-    return getValuesToString(store);
+  let rowRange = ranges?.rowRange ?? originalRange?.row;
+  let columnRange = ranges?.columnRange ?? originalRange?.column;
+
+  // set focus index when there is no selection area
+  if (isNil(rowRange) && !isNull(originalRowIndex)) {
+    rowRange = [originalRowIndex, originalRowIndex];
   }
 
-  if (rowIndex !== null && columnName !== null) {
-    return getValueToString(store);
+  if (isNil(columnRange) && !isNull(totalColumnIndex)) {
+    columnRange = [totalColumnIndex, totalColumnIndex];
   }
 
-  return '';
+  return getValuesToString(store, { rowRange, columnRange });
 }

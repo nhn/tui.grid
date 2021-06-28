@@ -40,9 +40,8 @@ import { createDispatcher, Dispatch } from './dispatch/create';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
 import i18n from './i18n';
-import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
-import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
+import { cls, dataAttr } from './helper/dom';
 import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -72,6 +71,7 @@ import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 import { getFilterState } from './query/filter';
+import { execCopy } from './dispatch/clipboard';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -271,7 +271,7 @@ if ((module as any).hot) {
  *      @param {boolean} [options.draggable] - Whether to enable to drag the row for changing the order of rows.
  */
 export default class Grid implements TuiGrid {
-  private el: HTMLElement;
+  el: HTMLElement;
 
   private gridEl: Element;
 
@@ -980,14 +980,7 @@ export default class Grid implements TuiGrid {
    * Copy to clipboard
    */
   public copyToClipboard() {
-    const clipboard = document.querySelector(`.${cls('clipboard')}`)!;
-    clipboard.innerHTML = getText(this.store);
-
-    if (isSupportWindowClipboardData()) {
-      setClipboardSelection(clipboard.childNodes[0]);
-    }
-    // Accessing the clipboard is a security concern on chrome
-    document.execCommand('copy');
+    execCopy(this.store);
   }
 
   /**
