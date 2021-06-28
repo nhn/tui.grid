@@ -54,11 +54,12 @@ export function create({ menuGroups }: ContextMenuOptions) {
 
     get flattenTopMenuItems() {
       return this.menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
-        const menuItems = group.map((menuItem, itemIndex) => {
+        const menuItems: MenuItem[] = [];
+        group.forEach((menuItem, itemIndex) => {
+          menuItems.push(menuItem);
           if (groupIndex < this.menuGroups.length - 1 && itemIndex === group.length - 1) {
-            menuItem.lastItem = true;
+            menuItems.push({ name: 'seperator' });
           }
-          return menuItem;
         });
         return acc.concat(menuItems);
       }, []);

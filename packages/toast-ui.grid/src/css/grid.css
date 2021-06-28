@@ -1007,7 +1007,7 @@
   z-index: 15;
 }
 
-.tui-grid-context-menu {
+.tui-grid-context-menu-wrapper .tui-grid-context-menu {
   width: auto;
   min-width: 197px;
   color: #333;
@@ -1017,16 +1017,28 @@
   background-color: #fff;
 }
 
-.tui-grid-context-menu .menu-group:last-child {
-  border-bottom: none;
-}
-
 .tui-grid-context-menu .menu-item {
   position: relative;
   height: 32px;
   line-height: 32px;
   padding: 0 14px;
   cursor: pointer;
+}
+
+.tui-grid-context-menu .menu-item:hover {
+  background-color: #d4e9f2;
+}
+
+.tui-grid-context-menu .has-submenu::after {
+  position: absolute;
+  right: 10px;
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAICAQAAACb+P2wAAAANklEQVQI12MoWlkUWsQAggxFzkUfi2IhTIYim6L3RRkQJkORcdHroioEswSmIBOmLQ6iDW4YAA8qHUEC0QE+AAAAAElFTkSuQmCC);
+}
+
+.tui-grid-context-menu .menu-item.seperator {
+  height: 1px;
+  background: #ccc;
+  margin: 5px 0;
 }
 
 .tui-grid-context-menu span {

@@ -325,12 +325,16 @@ export class ContainerComp extends Component<Props> {
     return true;
   }
 
-  handleContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
+  handleContextMenu = (ev: MouseEvent) => {
+    if (findParent(ev.target as HTMLElement, 'cell-header')) {
+      return;
+    }
+
+    ev.preventDefault();
 
     const { offsetLeft, offsetTop } = this.props;
-    const left = event.clientX - offsetLeft;
-    const top = event.clientY - offsetTop;
+    const left = ev.clientX - offsetLeft;
+    const top = ev.clientY - offsetTop;
 
     this.props.dispatch('setContextMenuPos', { left, top });
   };

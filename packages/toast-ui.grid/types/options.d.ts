@@ -111,7 +111,7 @@ export interface OptGrid {
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
-  contextMenu: Omit<MenuItem, 'lastItem'>[][];
+  contextMenu: MenuItem[][];
 }
 
 export interface OptRow {

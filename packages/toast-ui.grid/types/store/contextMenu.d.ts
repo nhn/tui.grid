@@ -5,12 +5,10 @@ export interface MenuPos {
 
 export interface MenuItem {
   name: string;
-  label: string;
-  action: (() => void) | 'copy' | 'copyColumns' | 'copyRows';
+  label?: string;
+  action?: (() => void) | 'copy' | 'copyColumns' | 'copyRows';
   classNames?: string[];
-  attributes?: Record<string, any>;
   subMenu?: MenuItem[];
-  lastItem?: boolean;
 }
 
 export type MenuItemMap = Record<string, MenuItem>;
