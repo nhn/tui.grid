@@ -117,7 +117,7 @@ The response data must be in JSON string format. When the request has been succe
 
 - **result** `{boolean}`: It will return `true` when the request has been successfully made, and `false` otherwise. 
 - **data**
-    - **content** `{array}`: As an array of row data, it is the same as the `grid.resetData()` method's parameter. 
+    - **contents** `{array}`: As an array of row data, it is the same as the `grid.resetData()` method's parameter. 
     - **pagination** `{object}`: with two properties
         - **page** `{number}`: The current page
         - **totalCount** `{number}`: The total number of rows. 
