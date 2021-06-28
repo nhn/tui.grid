@@ -14,6 +14,7 @@ import {
 } from './store/column';
 import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';
+import { MenuItem } from './store/contextMenu';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass, CellRendererProps } from './renderer';
@@ -110,6 +111,7 @@ export interface OptGrid {
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
+  contextMenu: Omit<MenuItem, 'lastItem'>[][];
 }
 
 export interface OptRow {
@@ -460,6 +462,11 @@ export interface OptI18nData {
     clear?: string;
     selectAll?: string;
     emptyValue?: string;
+  };
+  contextMenu?: {
+    copy?: string;
+    copyColumns?: string;
+    copyRows?: string;
   };
 }
 
