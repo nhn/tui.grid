@@ -1029,6 +1029,10 @@
   background-color: #d4e9f2;
 }
 
+.tui-grid-context-menu .menu-item.disabled {
+  color: #ccc;
+}
+
 .tui-grid-context-menu .has-submenu::after {
   position: absolute;
   right: 10px;

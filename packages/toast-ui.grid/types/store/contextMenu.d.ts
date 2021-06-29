@@ -12,6 +12,7 @@ interface ActionParams {
 export interface MenuItem {
   name: string;
   label?: string;
+  disabled?: (params: ActionParams) => boolean;
   action?: ((params: ActionParams) => void) | 'copy' | 'copyColumns' | 'copyRows';
   classNames?: string[];
   subMenu?: MenuItem[];

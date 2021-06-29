@@ -72,6 +72,27 @@ describe('context menu', () => {
     cy.wrap(stub).should('be.calledWithExactly', { rowKey, columnName });
   });
 
+  it('should executing the disabled with cell info(rowKey, columnName) when contextmenu item is displayed', () => {
+    const disabledStub = cy.stub().returns(true);
+    const actionStub = cy.stub();
+    const rowKey = 0;
+    const columnName = 'name';
+
+    const contextMenu = [
+      [{ name: 'menu1', label: 'text1' }],
+      [{ name: 'menu2', label: 'text2', action: actionStub, disabled: disabledStub }],
+    ];
+
+    createGridWithContextMenu(contextMenu);
+
+    showContextMenu(rowKey, columnName);
+    getMenuItemByText('text2').click();
+
+    getMenuItemByText('text2').should('have.class', 'disabled');
+    cy.wrap(disabledStub).should('be.calledWithExactly', { rowKey, columnName });
+    cy.wrap(actionStub).should('be.not.called');
+  });
+
   it('should display sub menu when mouseenter is triggerd on menu item', () => {
     const contextMenu = [
       [{ name: 'menu1', label: 'text1' }],

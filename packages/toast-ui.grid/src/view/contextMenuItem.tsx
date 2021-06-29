@@ -52,8 +52,17 @@ class ContextMenuItemComp extends Component<Props, State> {
     dispatch('hideContextMenu');
   };
 
+  isDisabled() {
+    const { menuItem, rowKey, columnName } = this.props;
+
+    return !!menuItem.disabled?.({ rowKey, columnName });
+  }
+
   render({ menuItem }: Props) {
     const { name, subMenu, label = '', classNames = [] } = menuItem;
+    const disabled = this.isDisabled();
+    // eslint-disable-next-line no-undefined
+    const getListener = (listener: JSX.MouseEventHandler) => (disabled ? undefined : listener);
 
     if (name === 'seperator') {
       return <li class="menu-item seperator"></li>;
@@ -66,12 +75,16 @@ class ContextMenuItemComp extends Component<Props, State> {
       classList.push('has-submenu');
     }
 
+    if (disabled) {
+      classList.push('disabled');
+    }
+
     return (
       <li
         class={classList.join(' ')}
-        onClick={this.execAction}
-        onMouseEnter={this.showSubMenu}
-        onMouseLeave={this.hideSubMenu}
+        onClick={getListener(this.execAction)}
+        onMouseEnter={getListener(this.showSubMenu)}
+        onMouseLeave={getListener(this.hideSubMenu)}
       >
         <span dangerouslySetInnerHTML={{ __html: label }} />
         {subMenuInfo && (
