@@ -81,9 +81,9 @@ const messages: OptI18nLanguage = {
       emptyValue: 'Vaciar Valor',
     },
     contextMenu: {
-      copy: 'Copy',
-      copyColumns: 'Copy Columns',
-      copyRows: 'Copy Rows',
+      copy: 'Copiar',
+      copyColumns: 'Copiar Columnas',
+      copyRows: 'Copiar Filas',
     },
   },
   ko: {

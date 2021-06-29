@@ -2,16 +2,6 @@ import { ContextMenu, MenuItem } from '@t/store/contextMenu';
 import { observable } from '../helper/observable';
 import i18n from '../i18n';
 
-function setMenuItemRecursively(itemMap: Record<string, MenuItem>, menuItem: MenuItem) {
-  itemMap[menuItem.name] = menuItem;
-
-  if (menuItem.subMenu) {
-    menuItem.subMenu.forEach((subMenuItem) => {
-      setMenuItemRecursively(itemMap, subMenuItem);
-    });
-  }
-}
-
 function createDefaultContextMenu(): MenuItem[][] {
   return [
     [
@@ -43,22 +33,13 @@ export function create({ menuGroups }: ContextMenuOptions) {
     posInfo: null,
     menuGroups: menuGroups || createDefaultContextMenu(),
 
-    get menuItemMap() {
-      return this.menuGroups.reduce((acc: Record<string, MenuItem>, group: MenuItem[]) => {
-        group.forEach((menuItem) => {
-          setMenuItemRecursively(acc, menuItem);
-        });
-        return acc;
-      }, {});
-    },
-
     get flattenTopMenuItems() {
       return this.menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
         const menuItems: MenuItem[] = [];
         group.forEach((menuItem, itemIndex) => {
           menuItems.push(menuItem);
           if (groupIndex < this.menuGroups.length - 1 && itemIndex === group.length - 1) {
-            menuItems.push({ name: 'seperator' });
+            menuItems.push({ name: 'separator' });
           }
         });
         return acc.concat(menuItems);

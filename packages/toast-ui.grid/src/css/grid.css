@@ -956,7 +956,7 @@
 }
 
 .tui-grid-floating-row {
-  z-Index: 15;
+  z-index: 15;
   background: #fff;
   border: 1px solid #ddd;
   color: #5a6268;
@@ -991,7 +991,7 @@
   height: 1px;
   background: #00a9ff;
   display: none;
-  z-Index: 15;
+  z-index: 15;
 }
 
 .tui-grid-cell.dragging {
@@ -999,7 +999,7 @@
 }
 
 .tui-grid-cell.parent-cell {
-  background-color: rgba(0, 169, 255, 0.15)
+  background-color: rgba(0, 169, 255, 0.15);
 }
 
 .tui-grid-container .tui-grid-context-menu {
@@ -1036,7 +1036,7 @@
   content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAICAQAAACb+P2wAAAANklEQVQI12MoWlkUWsQAggxFzkUfi2IhTIYim6L3RRkQJkORcdHroioEswSmIBOmLQ6iDW4YAA8qHUEC0QE+AAAAAElFTkSuQmCC);
 }
 
-.tui-grid-context-menu .menu-item.seperator {
+.tui-grid-context-menu .menu-item.separator {
   height: 1px;
   background: #ccc;
   margin: 5px 0;

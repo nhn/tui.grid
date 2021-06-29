@@ -58,17 +58,8 @@ class ContextMenuItemComp extends Component<Props, State> {
     return !!menuItem.disabled?.({ rowKey, columnName });
   }
 
-  render({ menuItem }: Props) {
-    const { name, subMenu, label = '', classNames = [] } = menuItem;
-    const disabled = this.isDisabled();
-    // eslint-disable-next-line no-undefined
-    const getListener = (listener: JSX.MouseEventHandler) => (disabled ? undefined : listener);
-
-    if (name === 'seperator') {
-      return <li class="menu-item seperator"></li>;
-    }
-
-    const { subMenuInfo } = this.state;
+  createClassNames(disabled: boolean) {
+    const { subMenu, classNames = [] } = this.props.menuItem;
     const classList = classNames.concat('menu-item');
 
     if (subMenu) {
@@ -79,9 +70,25 @@ class ContextMenuItemComp extends Component<Props, State> {
       classList.push('disabled');
     }
 
+    return classList.join(' ');
+  }
+
+  render({ menuItem }: Props) {
+    const { name, label = '' } = menuItem;
+
+    if (name === 'separator') {
+      return <li class="menu-item separator"></li>;
+    }
+
+    const disabled = this.isDisabled();
+    // eslint-disable-next-line no-undefined
+    const getListener = (listener: JSX.MouseEventHandler) => (disabled ? undefined : listener);
+    const classNames = this.createClassNames(disabled);
+    const { subMenuInfo } = this.state;
+
     return (
       <li
-        class={classList.join(' ')}
+        class={classNames}
         onClick={getListener(this.execAction)}
         onMouseEnter={getListener(this.showSubMenu)}
         onMouseLeave={getListener(this.hideSubMenu)}

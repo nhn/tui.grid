@@ -33,7 +33,7 @@ function getMenuItemByText(text: string) {
 }
 
 describe('context menu', () => {
-  it('should display default context menu when contextmenu event is triggered', () => {
+  it('should display default context menus when contextmenu event is triggered', () => {
     createGridWithContextMenu();
 
     showContextMenu(0, 'name');
@@ -93,7 +93,7 @@ describe('context menu', () => {
     cy.wrap(actionStub).should('be.not.called');
   });
 
-  it('should display sub menu when mouseenter is triggerd on menu item', () => {
+  it('should display sub menu when mouseenter is triggered on menu item', () => {
     const contextMenu = [
       [{ name: 'menu1', label: 'text1' }],
       [{ name: 'menu2', label: 'text2', subMenu: [{ name: 'subMenu1', label: 'subMenu1' }] }],

@@ -24,11 +24,8 @@ export interface MenuPosInfo {
   columnName: string;
 }
 
-export type MenuItemMap = Record<string, MenuItem>;
-
 export interface ContextMenu {
   posInfo: MenuPosInfo | null;
   menuGroups: MenuItem[][];
-  menuItemMap: MenuItemMap;
   flattenTopMenuItems: MenuItem[];
 }
