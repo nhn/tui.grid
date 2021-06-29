@@ -20,7 +20,7 @@ export class ContextMenuComp extends Component<Props> {
       const { pos, rowKey, columnName } = posInfo;
       return (
         <ul class={cls('context-menu')} style={pos}>
-          {menuItems!.map((menuItem) => (
+          {menuItems.map((menuItem) => (
             <ContextMenuItem
               key={menuItem.name}
               menuItem={menuItem}
