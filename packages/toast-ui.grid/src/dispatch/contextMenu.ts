@@ -1,10 +1,35 @@
 import { Store } from '@t/store';
 import { MenuPos } from '@t/store/contextMenu';
-import { Range } from '@t/store/selection';
+import { Range, PagePosition } from '@t/store/selection';
+import { ElementInfo } from '@t/dispatch';
 import { execCopy } from './clipboard';
+import { findOffsetIndex } from '../helper/common';
+import { getRowKeyByIndexWithPageRange } from '../query/data';
 
-export function setContextMenuPos({ contextMenu }: Store, pos: MenuPos | null) {
-  contextMenu.pos = pos;
+export function showContextMenu(
+  { contextMenu, data, column, columnCoords, rowCoords }: Store,
+  pos: MenuPos,
+  elementInfo: ElementInfo,
+  eventInfo: PagePosition
+) {
+  const { pageX, pageY } = eventInfo;
+  const { visibleColumnsBySideWithRowHeader } = column;
+
+  const { side, scrollLeft, scrollTop, left, top } = elementInfo;
+  const offsetLeft = pageX - left + scrollLeft;
+  const offsetTop = pageY - top + scrollTop;
+
+  const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
+  const columnName = visibleColumnsBySideWithRowHeader[side][columnIndex].name;
+
+  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
+  const rowKey = getRowKeyByIndexWithPageRange(data, rowIndex);
+
+  contextMenu.posInfo = { pos, rowKey, columnName };
+}
+
+export function hideContextMenu({ contextMenu }: Store) {
+  contextMenu.posInfo = null;
 }
 
 export function copy(store: Store) {

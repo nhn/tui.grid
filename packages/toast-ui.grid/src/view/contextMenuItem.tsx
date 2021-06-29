@@ -1,5 +1,6 @@
 import { h, Component } from 'preact';
-import { MenuItem, MenuPos } from '@t/store/contextMenu';
+import { RowKey } from '@t/store/data';
+import { MenuItem, MenuPosInfo } from '@t/store/contextMenu';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { isString } from '../helper/common';
@@ -7,25 +8,27 @@ import { ContextMenu } from './contextMenu';
 
 interface OwnProps {
   menuItem: MenuItem;
+  rowKey: RowKey;
+  columnName: string;
 }
 
 type Props = OwnProps & DispatchProps;
 
 interface State {
   subMenuInfo: {
-    pos: MenuPos;
+    posInfo: MenuPosInfo;
     menuItems: MenuItem[];
   } | null;
 }
 
 class ContextMenuItemComp extends Component<Props, State> {
   private showSubMenu = (ev: MouseEvent) => {
-    const { menuItem } = this.props;
+    const { menuItem, rowKey, columnName } = this.props;
 
     if (menuItem.subMenu?.length) {
       const { offsetWidth } = ev.target as HTMLElement;
       const pos = { top: -6, left: offsetWidth };
-      const subMenuInfo = { menuItems: menuItem.subMenu, pos };
+      const subMenuInfo = { menuItems: menuItem.subMenu, posInfo: { pos, rowKey, columnName } };
 
       this.setState({ subMenuInfo });
     }
@@ -36,21 +39,21 @@ class ContextMenuItemComp extends Component<Props, State> {
   };
 
   private execAction = (ev: MouseEvent) => {
-    const { menuItem, dispatch } = this.props;
+    const { menuItem, dispatch, rowKey, columnName } = this.props;
 
     if (menuItem.action) {
       if (isString(menuItem.action)) {
         this.props.dispatch(menuItem.action);
       } else {
-        menuItem.action();
+        menuItem.action({ rowKey, columnName });
       }
     }
     ev.stopPropagation();
-    dispatch('setContextMenuPos', null);
+    dispatch('hideContextMenu');
   };
 
   render({ menuItem }: Props) {
-    const { name, label = '', subMenu, classNames = [] } = menuItem;
+    const { name, subMenu, label = '', classNames = [] } = menuItem;
 
     if (name === 'seperator') {
       return <li class="menu-item seperator"></li>;
@@ -71,7 +74,9 @@ class ContextMenuItemComp extends Component<Props, State> {
         onMouseLeave={this.hideSubMenu}
       >
         <span dangerouslySetInnerHTML={{ __html: label }} />
-        {subMenuInfo && <ContextMenu menuItems={subMenuInfo.menuItems} pos={subMenuInfo.pos} />}
+        {subMenuInfo && (
+          <ContextMenu menuItems={subMenuInfo.menuItems} posInfo={subMenuInfo.posInfo} />
+        )}
       </li>
     );
   }

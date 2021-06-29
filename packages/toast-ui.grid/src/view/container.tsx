@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { EditingEvent } from '@t/store/focus';
+import { EditingEvent, Side } from '@t/store/focus';
 import { SummaryPosition } from '@t/store/summary';
 import { ViewRow, PageOptions, RowKey } from '@t/store/data';
 import { RenderState } from '@t/store/renderState';
@@ -11,7 +11,7 @@ import { ContextMenu } from './contextMenu';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr, findParent } from '../helper/dom';
+import { cls, getCellAddress, dataAttr, findParent, getCoordinateWithOffset } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { EventBus, getEventBus } from '../event/eventBus';
@@ -292,7 +292,7 @@ export class ContainerComp extends Component<Props> {
     const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
     if (keyName === 'esc') {
       this.props.dispatch('setActiveColumnAddress', null);
-      this.props.dispatch('setContextMenuPos', null);
+      this.props.dispatch('hideContextMenu');
     }
   };
 
@@ -304,7 +304,7 @@ export class ContainerComp extends Component<Props> {
       dispatch('setActiveColumnAddress', null);
     }
     if (!findParent(target, 'context-menu')) {
-      this.props.dispatch('setContextMenuPos', null);
+      this.props.dispatch('hideContextMenu');
     }
   };
 
@@ -333,10 +333,18 @@ export class ContainerComp extends Component<Props> {
     ev.preventDefault();
 
     const { offsetLeft, offsetTop } = this.props;
-    const left = ev.clientX - offsetLeft;
-    const top = ev.clientY - offsetTop;
+    const pos = { left: ev.clientX - offsetLeft, top: ev.clientY - offsetTop };
 
-    this.props.dispatch('setContextMenuPos', { left, top });
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    const bodyArea = findParent(ev.target as HTMLElement, 'body-area')!;
+    const side: Side = findParent(bodyArea, 'lside-area') ? 'L' : 'R';
+    const { scrollTop, scrollLeft } = bodyArea;
+    const { top, left } = bodyArea.getBoundingClientRect();
+
+    const elementInfo = { scrollTop, scrollLeft, side, top, left };
+    const eventInfo = { pageX, pageY };
+
+    this.props.dispatch('showContextMenu', pos, elementInfo, eventInfo);
   };
 
   render() {

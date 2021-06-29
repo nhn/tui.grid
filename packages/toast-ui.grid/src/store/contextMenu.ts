@@ -40,7 +40,7 @@ interface ContextMenuOptions {
 
 export function create({ menuGroups }: ContextMenuOptions) {
   return observable<ContextMenu>({
-    pos: null,
+    posInfo: null,
     menuGroups: menuGroups || createDefaultContextMenu(),
 
     get menuItemMap() {
