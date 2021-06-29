@@ -111,7 +111,7 @@ export interface OptGrid {
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
-  contextMenu: MenuItem[][];
+  contextMenu?: MenuItem[][];
 }
 
 export interface OptRow {
