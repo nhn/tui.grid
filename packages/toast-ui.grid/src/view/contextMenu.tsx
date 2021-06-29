@@ -19,18 +19,16 @@ export class ContextMenuComp extends Component<Props> {
     if (posInfo) {
       const { pos, rowKey, columnName } = posInfo;
       return (
-        <div class={cls('context-menu-wrapper')} style={pos}>
-          <ul class={cls('context-menu')}>
-            {menuItems!.map((menuItem) => (
-              <ContextMenuItem
-                key={menuItem.name}
-                menuItem={menuItem}
-                rowKey={rowKey}
-                columnName={columnName}
-              />
-            ))}
-          </ul>
-        </div>
+        <ul class={cls('context-menu')} style={pos}>
+          {menuItems!.map((menuItem) => (
+            <ContextMenuItem
+              key={menuItem.name}
+              menuItem={menuItem}
+              rowKey={rowKey}
+              columnName={columnName}
+            />
+          ))}
+        </ul>
       );
     }
     return null;
