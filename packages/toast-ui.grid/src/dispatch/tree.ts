@@ -47,6 +47,10 @@ import { setAutoResizingColumnWidths } from './column';
 
 let computedFontStyle = '';
 
+interface TriggerByMovingRow {
+  movingRow?: boolean;
+}
+
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
 
@@ -336,17 +340,22 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
 }
 
 // @TODO: consider tree disabled state with cascading
-export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
+export function appendTreeRow(
+  store: Store,
+  row: OptRow,
+  options: OptAppendTreeRow & TriggerByMovingRow
+) {
   const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
-  const { parentRowKey, offset } = options;
+  const { parentRowKey, offset, movingRow } = options;
   const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
   const rawRows = flattenTreeData(id, [row], parentRow!, column, {
     keyColumnName: column.keyColumnName,
     offset,
   });
+  const modificationType = movingRow ? 'UPDATE' : 'CREATE';
 
   fillMissingColumnData(column, rawRows);
 
@@ -359,7 +368,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 
   const rowHeights = rawRows.map((rawRow) => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
-    getDataManager(id).push('CREATE', rawRow, true);
+    getDataManager(id).push(modificationType, rawRow, true);
 
     return getRowHeight(rawRow, dimension.rowHeight);
   });
@@ -369,11 +378,12 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 }
 
 // @TODO: consider tree disabled state with cascading
-export function removeTreeRow(store: Store, rowKey: RowKey) {
+export function removeTreeRow(store: Store, rowKey: RowKey, movingRow?: boolean) {
   const { data, rowCoords, id, column } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
   const parentRow = getParentRow(store, rowKey);
+  const modificationType = movingRow ? 'UPDATE' : 'DELETE';
 
   uncheck(store, rowKey);
 
@@ -396,7 +406,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
-    getDataManager(id).push('DELETE', removedRows[i]);
+    getDataManager(id).push(modificationType, removedRows[i]);
   }
   postUpdateAfterManipulation(store, startIdx, rawData);
 }
@@ -439,14 +449,14 @@ export function moveTreeRow(
   const moveToChild = some((childRow) => childRow.rowKey === targetRow.rowKey, childRows);
 
   if (!moveToChild) {
-    removeTreeRow(store, rowKey);
+    removeTreeRow(store, rowKey, true);
     const originRow = getOriginObject(row as Observable<Row>);
 
     getDataManager(id).push('UPDATE', targetRow, true);
     getDataManager(id).push('UPDATE', row, true);
 
     if (options.appended) {
-      appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey });
+      appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey, movingRow: true });
     } else {
       let { parentRowKey } = targetRow._attributes.tree!;
       const parentIndex = findIndexByRowKey(data, column, id, parentRowKey);
@@ -464,7 +474,7 @@ export function moveTreeRow(
         parentRowKey = null;
         offset = rawData.length;
       }
-      appendTreeRow(store, originRow, { parentRowKey, offset });
+      appendTreeRow(store, originRow, { parentRowKey, offset, movingRow: true });
     }
     postUpdateAfterManipulation(store, minIndex);
   }

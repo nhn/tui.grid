@@ -944,6 +944,12 @@ describe('editing tree cell', () => {
   });
 });
 
+interface ModifiedRowsMap {
+  createdRows?: Record<string, any>[];
+  updatedRows?: Record<string, any>[];
+  deletedRows?: Record<string, any>[];
+}
+
 describe('should extend the width with `width: auto` option as text length', () => {
   beforeEach(() => {
     cy.createGrid({
@@ -1001,6 +1007,20 @@ describe('origin data', () => {
 });
 
 describe('move tree row', () => {
+  function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
+    cy.gridInstance()
+      .invoke('getModifiedRows')
+      .should((rowsMap) => {
+        Object.keys(modifiedRowsMap).forEach((type) => {
+          const rows = rowsMap[type];
+
+          for (let i = 0; i < rows.length; i += 1) {
+            expect(rows[i]).to.contain(modifiedRowsMap[type as keyof ModifiedRowsMap]![i]);
+          }
+        });
+      });
+  }
+
   beforeEach(() => {
     const treeData = [
       {
@@ -1313,6 +1333,21 @@ describe('move tree row', () => {
       ['quxx'],
       ['baz_2'],
     ]);
+  });
+
+  it('should be added to modifiedDataManager with "UPDATE" code', () => {
+    cy.gridInstance().invoke('moveRow', 0, 7, { appended: true });
+
+    assertModifiedRowsContainsObject({
+      updatedRows: [
+        { c1: 'baz_2' },
+        { c1: 'foo' },
+        { c1: 'bar' },
+        { c1: 'baz' },
+        { c1: 'qux' },
+        { c1: 'quxx' },
+      ],
+    });
   });
 });
 
