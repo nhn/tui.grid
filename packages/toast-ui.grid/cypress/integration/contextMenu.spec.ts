@@ -157,7 +157,7 @@ describe('context menu', () => {
     cy.getByCls('clipboard').should('have.text', 'Lee\nHan\nRyu');
   });
 
-  it('should copy the rows when default `Copy Columns` menu is clicked', () => {
+  it('should copy the rows when default `Copy Rows` menu is clicked', () => {
     const rowKey = 0;
     const columnName = 'name';
 

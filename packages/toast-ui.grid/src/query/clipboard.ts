@@ -75,7 +75,7 @@ function getObservableList(store: Store, filteredViewData: ViewRow[], start: num
   return rowList;
 }
 
-export function getValuesToString(store: Store, ranges: { rowRange?: Range; columnRange?: Range }) {
+function getValuesToString(store: Store, ranges: { rowRange?: Range; columnRange?: Range }) {
   const {
     column: { visibleColumnsWithRowHeader },
     data: { filteredViewData, filteredRawData },

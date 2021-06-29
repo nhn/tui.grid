@@ -47,7 +47,6 @@ interface StoreProps {
   focusedColumnName: string | null;
   offsetLeft: number;
   offsetTop: number;
-  headerHeight: number;
 }
 
 interface TouchEventInfo {
@@ -433,6 +432,5 @@ export const Container = connect<StoreProps, OwnProps>(
     focusedColumnName: focus.columnName,
     offsetLeft: dimension.offsetLeft,
     offsetTop: dimension.offsetTop,
-    headerHeight: dimension.headerHeight,
   })
 )(ContainerComp);
