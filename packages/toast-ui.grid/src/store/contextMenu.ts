@@ -12,7 +12,7 @@ function setMenuItemRecursively(itemMap: Record<string, MenuItem>, menuItem: Men
   }
 }
 
-function createDefaultContextMenu() {
+function createDefaultContextMenu(): MenuItem[][] {
   return [
     [
       {
@@ -35,7 +35,7 @@ function createDefaultContextMenu() {
 }
 
 interface ContextMenuOptions {
-  menuGroups: MenuItem[][];
+  menuGroups?: MenuItem[][];
 }
 
 export function create({ menuGroups }: ContextMenuOptions) {
