@@ -213,7 +213,7 @@ class BodyAreaComp extends Component<Props> {
   }
 
   private startToDragRow = (posInfo: PosInfo) => {
-    const container = this.el!.parentElement!.parentElement!;
+    const container = this.el.parentElement!.parentElement!;
     posInfo.container = container;
     const draggableInfo = createDraggableInfo(this.context.store, posInfo);
 
@@ -406,8 +406,8 @@ class BodyAreaComp extends Component<Props> {
   componentWillReceiveProps(nextProps: Props) {
     const { scrollTop, scrollLeft } = nextProps;
 
-    this.el!.scrollTop = scrollTop;
-    this.el!.scrollLeft = scrollLeft;
+    this.el.scrollTop = scrollTop;
+    this.el.scrollLeft = scrollLeft;
   }
 
   public render({

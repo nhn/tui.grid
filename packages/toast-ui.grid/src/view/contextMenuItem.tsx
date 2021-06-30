@@ -37,13 +37,12 @@ class ContextMenuItemComp extends Component<Props, State> {
 
   private execAction = (ev: MouseEvent) => {
     const { menuItem, dispatch } = this.props;
+    const { action } = menuItem;
 
-    if (menuItem.action) {
-      if (isString(menuItem.action)) {
-        this.props.dispatch(menuItem.action);
-      } else {
-        menuItem.action();
-      }
+    if (isString(action)) {
+      this.props.dispatch(action);
+    } else if (action) {
+      action();
     }
     ev.stopPropagation();
     dispatch('hideContextMenu');

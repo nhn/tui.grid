@@ -16,7 +16,7 @@ function getCustomValue(
   return typeof customValue === 'function' ? customValue(value, rowAttrs, column) : customValue;
 }
 
-export function getTextWithCopyOptionsApplied(
+function getTextWithCopyOptionsApplied(
   valueMap: CellRenderData,
   rawData: Row[],
   column: ColumnInfo
