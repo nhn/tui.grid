@@ -1,5 +1,5 @@
 import { RowKey } from '@t/store/data';
-import { MenuItem } from '@t/store/contextMenu';
+import { CreateMenuGroups } from '@t/store/contextMenu';
 import i18n from '@/i18n';
 import { cls } from '@/helper/dom';
 
@@ -7,7 +7,7 @@ before(() => {
   cy.visit('/dist');
 });
 
-function createGridWithContextMenu(contextMenu?: MenuItem[][]) {
+function createGridWithContextMenu(contextMenu?: CreateMenuGroups) {
   i18n.setLanguage('en');
 
   const data = [
@@ -43,8 +43,27 @@ describe('context menu', () => {
     assertMenuItemByText(i18n.get('contextMenu.copyColumns'));
   });
 
+  it('should call contextMenu option with rowKey and column name', () => {
+    const contextMenu = cy
+      .stub()
+      .returns([[{ name: 'menu1', label: 'text1' }], [{ name: 'menu2', label: 'text2' }]]);
+
+    createGridWithContextMenu(contextMenu);
+
+    showContextMenu(0, 'name');
+
+    cy.wrap(contextMenu).should('be.calledWithExactly', { rowKey: 0, columnName: 'name' });
+
+    showContextMenu(0, 'age');
+
+    cy.wrap(contextMenu).should('be.calledWithExactly', { rowKey: 0, columnName: 'age' });
+  });
+
   it('should display custom context menu when contextmenu event is triggered', () => {
-    const contextMenu = [[{ name: 'menu1', label: 'text1' }], [{ name: 'menu2', label: 'text2' }]];
+    const contextMenu = () => [
+      [{ name: 'menu1', label: 'text1' }],
+      [{ name: 'menu2', label: 'text2' }],
+    ];
 
     createGridWithContextMenu(contextMenu);
 
@@ -59,7 +78,7 @@ describe('context menu', () => {
     const rowKey = 0;
     const columnName = 'name';
 
-    const contextMenu = [
+    const contextMenu = () => [
       [{ name: 'menu1', label: 'text1' }],
       [{ name: 'menu2', label: 'text2', action: stub }],
     ];
@@ -69,18 +88,24 @@ describe('context menu', () => {
     showContextMenu(rowKey, columnName);
     getMenuItemByText('text2').click();
 
-    cy.wrap(stub).should('be.calledWithExactly', { rowKey, columnName });
+    cy.wrap(stub).should('be.called');
   });
 
   it('should executing the disabled with cell info(rowKey, columnName) when contextmenu item is displayed', () => {
-    const disabledStub = cy.stub().returns(true);
     const actionStub = cy.stub();
     const rowKey = 0;
     const columnName = 'name';
 
-    const contextMenu = [
+    const contextMenu: CreateMenuGroups = (params) => [
       [{ name: 'menu1', label: 'text1' }],
-      [{ name: 'menu2', label: 'text2', action: actionStub, disabled: disabledStub }],
+      [
+        {
+          name: 'menu2',
+          label: 'text2',
+          action: actionStub,
+          disabled: params.columnName === 'name',
+        },
+      ],
     ];
 
     createGridWithContextMenu(contextMenu);
@@ -89,12 +114,11 @@ describe('context menu', () => {
     getMenuItemByText('text2').click();
 
     getMenuItemByText('text2').should('have.class', 'disabled');
-    cy.wrap(disabledStub).should('be.calledWithExactly', { rowKey, columnName });
     cy.wrap(actionStub).should('be.not.called');
   });
 
   it('should display sub menu when mouseenter is triggered on menu item', () => {
-    const contextMenu = [
+    const contextMenu = () => [
       [{ name: 'menu1', label: 'text1' }],
       [{ name: 'menu2', label: 'text2', subMenu: [{ name: 'subMenu1', label: 'subMenu1' }] }],
     ];
@@ -108,7 +132,7 @@ describe('context menu', () => {
   });
 
   it('should apply classNames option to context menu', () => {
-    const contextMenu = [[{ name: 'menu1', label: 'text1', classNames: ['myClass'] }]];
+    const contextMenu = () => [[{ name: 'menu1', label: 'text1', classNames: ['myClass'] }]];
 
     createGridWithContextMenu(contextMenu);
 
@@ -118,7 +142,7 @@ describe('context menu', () => {
   });
 
   it('should apply label option as html to context menu', () => {
-    const contextMenu = [[{ name: 'menu1', label: '<em>emphasis</em>' }]];
+    const contextMenu = () => [[{ name: 'menu1', label: '<em>emphasis</em>' }]];
 
     createGridWithContextMenu(contextMenu);
 

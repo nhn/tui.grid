@@ -1,6 +1,5 @@
 import { h, Component } from 'preact';
-import { RowKey } from '@t/store/data';
-import { MenuItem, MenuPosInfo } from '@t/store/contextMenu';
+import { MenuItem, MenuPos } from '@t/store/contextMenu';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { isString } from '../helper/common';
@@ -8,27 +7,25 @@ import { ContextMenu } from './contextMenu';
 
 interface OwnProps {
   menuItem: MenuItem;
-  rowKey: RowKey;
-  columnName: string;
 }
 
 type Props = OwnProps & DispatchProps;
 
 interface State {
   subMenuInfo: {
-    posInfo: MenuPosInfo;
+    pos: MenuPos;
     menuItems: MenuItem[];
   } | null;
 }
 
 class ContextMenuItemComp extends Component<Props, State> {
   private showSubMenu = (ev: MouseEvent) => {
-    const { menuItem, rowKey, columnName } = this.props;
+    const { menuItem } = this.props;
 
     if (menuItem.subMenu?.length) {
       const { offsetWidth } = ev.target as HTMLElement;
       const pos = { top: -6, left: offsetWidth };
-      const subMenuInfo = { menuItems: menuItem.subMenu, posInfo: { pos, rowKey, columnName } };
+      const subMenuInfo = { menuItems: menuItem.subMenu, pos };
 
       this.setState({ subMenuInfo });
     }
@@ -39,27 +36,21 @@ class ContextMenuItemComp extends Component<Props, State> {
   };
 
   private execAction = (ev: MouseEvent) => {
-    const { menuItem, dispatch, rowKey, columnName } = this.props;
+    const { menuItem, dispatch } = this.props;
 
     if (menuItem.action) {
       if (isString(menuItem.action)) {
         this.props.dispatch(menuItem.action);
       } else {
-        menuItem.action({ rowKey, columnName });
+        menuItem.action();
       }
     }
     ev.stopPropagation();
     dispatch('hideContextMenu');
   };
 
-  isDisabled() {
-    const { menuItem, rowKey, columnName } = this.props;
-
-    return !!menuItem.disabled?.({ rowKey, columnName });
-  }
-
-  createClassNames(disabled: boolean) {
-    const { subMenu, classNames = [] } = this.props.menuItem;
+  createClassNames() {
+    const { subMenu, disabled, classNames = [] } = this.props.menuItem;
     const classList = classNames.concat('menu-item');
 
     if (subMenu) {
@@ -74,16 +65,15 @@ class ContextMenuItemComp extends Component<Props, State> {
   }
 
   render({ menuItem }: Props) {
-    const { name, label = '' } = menuItem;
+    const { name, label = '', disabled } = menuItem;
 
     if (name === 'separator') {
       return <li class="menu-item separator"></li>;
     }
 
-    const disabled = this.isDisabled();
     // eslint-disable-next-line no-undefined
     const getListener = (listener: JSX.MouseEventHandler) => (disabled ? undefined : listener);
-    const classNames = this.createClassNames(disabled);
+    const classNames = this.createClassNames();
     const { subMenuInfo } = this.state;
 
     return (
@@ -94,9 +84,7 @@ class ContextMenuItemComp extends Component<Props, State> {
         onMouseLeave={getListener(this.hideSubMenu)}
       >
         <span dangerouslySetInnerHTML={{ __html: label }} />
-        {subMenuInfo && (
-          <ContextMenu menuItems={subMenuInfo.menuItems} posInfo={subMenuInfo.posInfo} />
-        )}
+        {subMenuInfo && <ContextMenu menuItems={subMenuInfo.menuItems} pos={subMenuInfo.pos} />}
       </li>
     );
   }

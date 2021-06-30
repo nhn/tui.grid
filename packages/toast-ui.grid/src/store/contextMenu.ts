@@ -1,4 +1,4 @@
-import { ContextMenu, MenuItem } from '@t/store/contextMenu';
+import { ContextMenu, MenuItem, CreateMenuGroups } from '@t/store/contextMenu';
 import { observable } from '../helper/observable';
 import i18n from '../i18n';
 
@@ -25,20 +25,27 @@ function createDefaultContextMenu(): MenuItem[][] {
 }
 
 interface ContextMenuOptions {
-  menuGroups?: MenuItem[][];
+  createMenuGroups?: CreateMenuGroups;
 }
 
-export function create({ menuGroups }: ContextMenuOptions) {
+export function create({ createMenuGroups }: ContextMenuOptions) {
   return observable<ContextMenu>({
     posInfo: null,
-    menuGroups: menuGroups || createDefaultContextMenu(),
+    createMenuGroups: createMenuGroups || createDefaultContextMenu,
 
     get flattenTopMenuItems() {
-      return this.menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
+      if (!this.posInfo) {
+        return [];
+      }
+
+      const { rowKey, columnName } = this.posInfo;
+      const menuGroups = this.createMenuGroups({ rowKey, columnName });
+
+      return menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
         const menuItems: MenuItem[] = [];
         group.forEach((menuItem, itemIndex) => {
           menuItems.push(menuItem);
-          if (groupIndex < this.menuGroups.length - 1 && itemIndex === group.length - 1) {
+          if (groupIndex < menuGroups.length - 1 && itemIndex === group.length - 1) {
             menuItems.push({ name: 'separator' });
           }
         });

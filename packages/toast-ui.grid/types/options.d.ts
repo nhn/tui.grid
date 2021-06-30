@@ -14,7 +14,7 @@ import {
 } from './store/column';
 import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';
-import { MenuItem } from './store/contextMenu';
+import { CreateMenuGroups } from './store/contextMenu';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass, CellRendererProps } from './renderer';
@@ -111,7 +111,7 @@ export interface OptGrid {
   onGridUpdated?: GridEventListener;
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
-  contextMenu?: MenuItem[][];
+  contextMenu?: CreateMenuGroups;
 }
 
 export interface OptRow {

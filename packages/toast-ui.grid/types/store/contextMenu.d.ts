@@ -5,15 +5,11 @@ export interface MenuPos {
   top: number;
 }
 
-interface ActionParams {
-  rowKey: RowKey;
-  columnName: string;
-}
 export interface MenuItem {
   name: string;
   label?: string;
-  disabled?: (params: ActionParams) => boolean;
-  action?: ((params: ActionParams) => void) | 'copy' | 'copyColumns' | 'copyRows';
+  disabled?: boolean;
+  action?: (() => void) | 'copy' | 'copyColumns' | 'copyRows';
   classNames?: string[];
   subMenu?: MenuItem[];
 }
@@ -24,8 +20,10 @@ export interface MenuPosInfo {
   columnName: string;
 }
 
+export type CreateMenuGroups = (params: { rowKey: RowKey; columnName: string }) => MenuItem[][];
+
 export interface ContextMenu {
   posInfo: MenuPosInfo | null;
-  menuGroups: MenuItem[][];
+  createMenuGroups: CreateMenuGroups;
   flattenTopMenuItems: MenuItem[];
 }

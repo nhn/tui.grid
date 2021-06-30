@@ -2,31 +2,27 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import { MenuPosInfo, MenuItem } from '@t/store/contextMenu';
+import { MenuItem, MenuPos } from '@t/store/contextMenu';
 import { ContextMenuItem } from './contextMenuItem';
 
 interface StoreProps {
-  posInfo: MenuPosInfo | null;
   menuItems: MenuItem[];
+  pos: MenuPos | null;
 }
+
+type OwnProps = Partial<StoreProps>;
 
 type Props = DispatchProps & StoreProps;
 
 export class ContextMenuComp extends Component<Props> {
   render() {
-    const { posInfo, menuItems } = this.props;
+    const { pos, menuItems } = this.props;
 
-    if (posInfo) {
-      const { pos, rowKey, columnName } = posInfo;
+    if (pos) {
       return (
         <ul class={cls('context-menu')} style={pos}>
           {menuItems.map((menuItem) => (
-            <ContextMenuItem
-              key={menuItem.name}
-              menuItem={menuItem}
-              rowKey={rowKey}
-              columnName={columnName}
-            />
+            <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
           ))}
         </ul>
       );
@@ -35,9 +31,7 @@ export class ContextMenuComp extends Component<Props> {
   }
 }
 
-export const ContextMenu = connect<StoreProps, Partial<StoreProps>>(
-  ({ contextMenu }, { menuItems, posInfo }) => ({
-    posInfo: posInfo || contextMenu.posInfo,
-    menuItems: menuItems || contextMenu.flattenTopMenuItems,
-  })
-)(ContextMenuComp);
+export const ContextMenu = connect<StoreProps, OwnProps>(({ contextMenu }, { menuItems, pos }) => ({
+  pos: pos || (contextMenu.posInfo?.pos ?? null),
+  menuItems: menuItems || contextMenu.flattenTopMenuItems,
+}))(ContextMenuComp);

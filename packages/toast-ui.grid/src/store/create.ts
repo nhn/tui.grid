@@ -44,7 +44,7 @@ export function createStore(id: number, options: OptGrid): Store {
     header = {},
     disabled = false,
     draggable = false,
-    contextMenu: menuGroups,
+    contextMenu: createMenuGroups,
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -124,7 +124,7 @@ export function createStore(id: number, options: OptGrid): Store {
   });
   const filterLayerState = createFilterLayerState();
   const renderState = createRenderState();
-  const contextMenu = createContextMenu({ menuGroups });
+  const contextMenu = createContextMenu({ createMenuGroups });
 
   const store = observable({
     id,
