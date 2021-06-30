@@ -713,7 +713,7 @@ export default class Grid implements TuiGrid {
     if (editingAddress) {
       const { rowKey, columnName } = editingAddress;
       const value = this.getValue(rowKey, columnName) as string;
-      this.dispatch('finishEditing', rowKey, columnName, value);
+      this.dispatch('finishEditing', rowKey, columnName, value, { save: false });
     }
   }
 

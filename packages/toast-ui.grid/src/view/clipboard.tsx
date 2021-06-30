@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { RowKey } from '@t/store/data';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import {
@@ -12,11 +13,16 @@ import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '.
 import { isEdge, isMobile } from '../helper/browser';
 import { getText } from '../query/clipboard';
 import { convertTextToData } from '../helper/common';
+import GridEvent from '../event/gridEvent';
+import { getEventBus, EventBus } from '../event/eventBus';
 
 interface StoreProps {
   navigating: boolean;
   editing: boolean;
+  rowKey: RowKey | null;
+  columnName: string | null;
   filtering: boolean;
+  eventBus: EventBus;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -167,7 +173,21 @@ class ClipboardComp extends Component<Props> {
     }
 
     if (!(type === 'clipboard' && command === 'paste')) {
-      this.dispatchKeyboardEvent(type, command);
+      const { rowKey, columnName } = this.props;
+      const gridEvent = new GridEvent({ keyboardEvent: ev, rowKey, columnName });
+      /**
+       * Occurs when key down event is triggered.
+       * @event Grid#keydown
+       * @property {Grid} instance - Current grid instance
+       * @property {Object} keyboardEvent - Keyboard Event
+       * @property {Object} rowKey - Focused rowKey
+       * @property {Object} columnName - Focused column name
+       */
+      this.props.eventBus.trigger('keydown', gridEvent);
+
+      if (!gridEvent.isStopped()) {
+        this.dispatchKeyboardEvent(type, command);
+      }
     }
   };
 
@@ -235,8 +255,11 @@ class ClipboardComp extends Component<Props> {
   }
 }
 
-export const Clipboard = connect<StoreProps>(({ focus, filterLayerState }) => ({
+export const Clipboard = connect<StoreProps>(({ focus, filterLayerState, id }) => ({
   navigating: focus.navigating,
+  rowKey: focus.rowKey,
+  columnName: focus.columnName,
   editing: !!focus.editingAddress,
   filtering: !!filterLayerState.activeColumnAddress,
+  eventBus: getEventBus(id),
 }))(ClipboardComp);

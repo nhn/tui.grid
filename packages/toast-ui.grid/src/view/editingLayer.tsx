@@ -8,7 +8,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { findProp, isFunction, isNull } from '../helper/common';
+import { findProp, isNull } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 
@@ -49,10 +49,10 @@ export class EditingLayerComp extends Component<Props> {
 
     switch (keyName) {
       case 'enter':
-        this.finishEditing(true);
+        this.saveAndFinishEditing(true);
         break;
       case 'esc':
-        this.finishEditing(false);
+        this.cancelEditing();
         break;
       case 'tab':
         this.moveTabFocus(ev, 'nextCell');
@@ -65,19 +65,39 @@ export class EditingLayerComp extends Component<Props> {
     }
   };
 
-  private finishEditing(save: boolean) {
-    const { dispatch, editingAddress, active } = this.props;
+  private getEditingCellInfo() {
+    const { rowKey, columnName } = this.props.editingAddress!;
+    const value = this.editor!.getValue();
+
+    return { rowKey, columnName, value };
+  }
+
+  private cancelEditing() {
+    const { rowKey, columnName, value } = this.getEditingCellInfo();
+
+    if (this.editor?.beforeDestroy) {
+      this.editor.beforeDestroy();
+    }
+
+    this.props.dispatch('finishEditing', rowKey, columnName, value, {
+      save: false,
+      triggeredByKey: true,
+    });
+  }
+
+  private saveAndFinishEditing(triggeredByKey = false) {
+    const { dispatch, active } = this.props;
 
     if (this.editor && active) {
-      const { rowKey, columnName } = editingAddress!;
-      const value = this.editor.getValue();
-      if (save) {
-        dispatch('setValue', rowKey, columnName, value);
-      }
-      if (isFunction(this.editor.beforeDestroy)) {
+      const { rowKey, columnName, value } = this.getEditingCellInfo();
+
+      dispatch('setValue', rowKey, columnName, value);
+
+      if (this.editor?.beforeDestroy) {
         this.editor.beforeDestroy();
       }
-      dispatch('finishEditing', rowKey, columnName, value);
+
+      dispatch('finishEditing', rowKey, columnName, value, { save: true, triggeredByKey });
     }
   }
 
@@ -107,7 +127,7 @@ export class EditingLayerComp extends Component<Props> {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
 
-      if (isFunction(cellEditor.mounted)) {
+      if (cellEditor.mounted) {
         // To access the actual mounted DOM elements
         setTimeout(() => {
           cellEditor.mounted!();
@@ -139,7 +159,7 @@ export class EditingLayerComp extends Component<Props> {
       (prevActive &&
         (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey))
     ) {
-      this.finishEditing(true);
+      this.saveAndFinishEditing();
     }
   }
 

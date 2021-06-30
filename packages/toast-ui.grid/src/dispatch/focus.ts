@@ -9,6 +9,11 @@ import { setValue, makeObservable } from './data';
 import { isUndefined } from '../helper/common';
 import { isHiddenColumn } from '../query/column';
 
+interface EditingInfo {
+  save: boolean;
+  triggeredByKey?: boolean;
+}
+
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
   const { filteredRawData } = data;
@@ -49,14 +54,21 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   }
 }
 
+// @TODO: Events should be separated(ex.'editingFinish', 'editingCanceled')
 export function finishEditing(
   { focus, id }: Store,
   rowKey: RowKey,
   columnName: string,
-  value: CellValue
+  value: CellValue,
+  editingInfo: EditingInfo
 ) {
+  if (isEditingCell(focus, rowKey, columnName)) {
+    focus.editingAddress = null;
+    focus.navigating = true;
+  }
+
   const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ rowKey, columnName, value });
+  const gridEvent = new GridEvent({ rowKey, columnName, value, ...editingInfo });
 
   /**
    * Occurs when editing the cell is finished
@@ -65,15 +77,10 @@ export function finishEditing(
    * @property {number} columnName - columnName of the target cell
    * @property {number | string | boolean | null | undefined} value - value of the editing cell
    * @property {Grid} instance - Current grid instance
+   * @property {boolean} save - Whether to save the value
+   * @property {boolean} triggeredByKey - Whether to trigger the event by key
    */
   eventBus.trigger('editingFinish', gridEvent);
-
-  if (!gridEvent.isStopped()) {
-    if (isEditingCell(focus, rowKey, columnName)) {
-      focus.editingAddress = null;
-      focus.navigating = true;
-    }
-  }
 }
 
 export function changeFocus(
@@ -162,7 +169,7 @@ export function saveAndFinishEditing(store: Store, value?: string) {
   }
 
   setValue(store, rowKey, columnName, value);
-  finishEditing(store, rowKey, columnName, value);
+  finishEditing(store, rowKey, columnName, value, { save: true });
 }
 
 export function setFocusInfo(
