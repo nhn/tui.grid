@@ -456,7 +456,45 @@ describe('editing', () => {
         rowKey: 0,
         columnName: 'name',
         value: 'Kim',
+        triggeredByKey: false,
+        save: true,
       });
+    });
+  });
+
+  it('editingFinish by keymap(Enter)', () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'editingFinish', callback);
+
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+
+    cy.getByCls('layer-editing').trigger('keydown', { keyCode: 13, which: 13, force: true });
+
+    cy.wrap(callback).should('be.calledWithMatch', {
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim',
+      triggeredByKey: true,
+      save: true,
+    });
+  });
+
+  it('editingFinish by keymap(Esc)', () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'editingFinish', callback);
+
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+
+    cy.getByCls('layer-editing').trigger('keydown', { keyCode: 27, which: 27, force: true });
+
+    cy.wrap(callback).should('be.calledWithMatch', {
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim',
+      triggeredByKey: true,
+      save: false,
     });
   });
 });
@@ -727,5 +765,19 @@ describe('D&D', () => {
       targetRowKey: 1,
       appended: false,
     });
+  });
+});
+
+it('keydown event', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'keydown', callback);
+
+  cy.gridInstance().invoke('focus', 1, 'name');
+  cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'name',
   });
 });
