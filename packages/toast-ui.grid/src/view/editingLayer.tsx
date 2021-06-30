@@ -75,9 +75,8 @@ export class EditingLayerComp extends Component<Props> {
   private cancelEditing() {
     const { rowKey, columnName, value } = this.getEditingCellInfo();
 
-    if (this.editor?.beforeDestroy) {
-      this.editor.beforeDestroy();
-    }
+    // eslint-disable-next-line no-unused-expressions
+    this.editor?.beforeDestroy?.();
 
     this.props.dispatch('finishEditing', rowKey, columnName, value, {
       save: false,
@@ -93,9 +92,8 @@ export class EditingLayerComp extends Component<Props> {
 
       dispatch('setValue', rowKey, columnName, value);
 
-      if (this.editor?.beforeDestroy) {
-        this.editor.beforeDestroy();
-      }
+      // eslint-disable-next-line no-unused-expressions
+      this.editor?.beforeDestroy?.();
 
       dispatch('finishEditing', rowKey, columnName, value, { save: true, triggeredByKey });
     }
