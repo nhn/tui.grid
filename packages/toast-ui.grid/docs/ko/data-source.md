@@ -160,7 +160,7 @@ const grid = new Grid({
 (아래의 예시는 단순한 예시로, 더 많은 정보는 [API 문서](http://nhn.github.io/tui.grid/latest/)에서 찾을 수 있다.)
 
 ```js
-grid.request('createData'); // 'GET' 방식으로 '/api/createData'에 요청을 보낸다.
+grid.request('createData'); // 'POST' 방식으로 '/api/createData'에 요청을 보낸다.
 grid.request('updateData'); // 'PUT' 방식으로 '/api/updateData'에 요청을 보낸다.
 ```
 
