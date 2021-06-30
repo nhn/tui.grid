@@ -40,6 +40,9 @@ export interface GridEventProps {
   floatingRow?: HTMLElement;
   targetRowKey?: RowKey | null;
   appended?: boolean;
+  keyboardEvent?: KeyboardEvent | null;
+  save?: boolean;
+  triggeredByKey?: boolean;
 }
 
 export class TuiGridEvent {

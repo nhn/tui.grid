@@ -77,7 +77,8 @@ export type GridEventName =
   | 'afterChange'
   | 'dragStart'
   | 'drag'
-  | 'drop';
+  | 'drop'
+  | 'keydown';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
