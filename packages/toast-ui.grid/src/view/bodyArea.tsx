@@ -30,6 +30,8 @@ import { some, debounce, isNil } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
+import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
+import { isFocusedCell } from '../query/focus';
 
 interface OwnProps {
   side: Side;
@@ -86,7 +88,7 @@ const PARENT_CELL_CLASS = 'parent-cell';
 const DRAGGABLE_COLUMN_NAME = '_draggable';
 
 class BodyAreaComp extends Component<Props> {
-  private el?: HTMLElement;
+  private el!: HTMLElement;
 
   private boundingRect?: { top: number; left: number };
 
@@ -211,7 +213,7 @@ class BodyAreaComp extends Component<Props> {
   }
 
   private startToDragRow = (posInfo: PosInfo) => {
-    const container = this.el!.parentElement!.parentElement!;
+    const container = this.el.parentElement!.parentElement!;
     posInfo.container = container;
     const draggableInfo = createDraggableInfo(this.context.store, posInfo);
 
@@ -249,9 +251,25 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
+  private isSelectedCell(element: HTMLElement) {
+    const cellAddress = getCellAddress(element);
+
+    if (cellAddress) {
+      const { rowKey, columnName } = cellAddress;
+
+      return isFocusedCell(this.context.store.focus, rowKey, columnName);
+    }
+    return !!findParent(element, 'layer-selection');
+  }
+
   private handleMouseDown = (ev: MouseEvent) => {
     const targetElement = ev.target as HTMLElement;
-    if (!this.el || targetElement === this.el) {
+
+    if (
+      !this.el ||
+      targetElement === this.el ||
+      (ev.button === RIGHT_MOUSE_BUTTON && this.isSelectedCell(targetElement))
+    ) {
       return;
     }
 
@@ -388,8 +406,8 @@ class BodyAreaComp extends Component<Props> {
   componentWillReceiveProps(nextProps: Props) {
     const { scrollTop, scrollLeft } = nextProps;
 
-    this.el!.scrollTop = scrollTop;
-    this.el!.scrollLeft = scrollLeft;
+    this.el.scrollTop = scrollTop;
+    this.el.scrollLeft = scrollLeft;
   }
 
   public render({
@@ -415,6 +433,7 @@ class BodyAreaComp extends Component<Props> {
     const tableContainerStyle = {
       top: offsetTop,
       left: offsetLeft,
+      width: dummyRowCount ? '100%' : '',
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible',
     };

@@ -12,6 +12,7 @@ import * as tree from './tree';
 import * as sort from './sort';
 import * as filter from './filter';
 import * as pagination from './pagination';
+import * as contextMenu from './contextMenu';
 import { Store } from '@t/store';
 
 const dispatchMap = {
@@ -29,6 +30,7 @@ const dispatchMap = {
   ...sort,
   ...filter,
   ...pagination,
+  ...contextMenu,
 };
 
 type DispatchMap = typeof dispatchMap;

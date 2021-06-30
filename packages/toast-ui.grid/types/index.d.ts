@@ -31,6 +31,7 @@ import {
   RequestOptions,
 } from './dataSource';
 import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
+import { MenuItem } from './store/contextMenu';
 
 type InternalProp =
   | 'sortKey'
@@ -315,5 +316,6 @@ export {
   FilterOptionType,
   Filter,
   FilterState,
+  MenuItem,
 };
 export default tui.Grid;

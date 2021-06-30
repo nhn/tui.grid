@@ -41,6 +41,11 @@ const messages: OptI18nLanguage = {
       selectAll: 'Select All',
       emptyValue: 'Empty Value',
     },
+    contextMenu: {
+      copy: 'Copy',
+      copyColumns: 'Copy Columns',
+      copyRows: 'Copy Rows',
+    },
   },
   es: {
     display: {
@@ -75,6 +80,11 @@ const messages: OptI18nLanguage = {
       selectAll: 'Seleccionar Todo',
       emptyValue: 'Vaciar Valor',
     },
+    contextMenu: {
+      copy: 'Copiar',
+      copyColumns: 'Copiar Columnas',
+      copyRows: 'Copiar Filas',
+    },
   },
   ko: {
     display: {
@@ -108,6 +118,11 @@ const messages: OptI18nLanguage = {
       clear: 'Clear',
       selectAll: 'Select All',
       emptyValue: 'Empty Value',
+    },
+    contextMenu: {
+      copy: '복사',
+      copyColumns: '열 복사',
+      copyRows: '행 복사',
     },
   },
 };
