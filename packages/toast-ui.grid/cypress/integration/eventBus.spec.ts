@@ -427,7 +427,7 @@ describe('editing', () => {
 
       if (type === 'UI') {
         cy.gridInstance().invoke('focus', 0, 'name');
-        cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
+        clipboardType('{enter}');
       } else {
         cy.gridInstance().invoke('startEditing', 0, 'name');
       }
@@ -768,13 +768,13 @@ describe('D&D', () => {
   });
 });
 
-it('keydown event', () => {
+it('keydown', () => {
   const callback = cy.stub();
 
   cy.gridInstance().invoke('on', 'keydown', callback);
 
   cy.gridInstance().invoke('focus', 1, 'name');
-  cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
+  clipboardType('{downArrow}');
 
   cy.wrap(callback).should('be.calledWithMatch', {
     rowKey: 1,
