@@ -161,8 +161,8 @@ Then, you can use the `request()` method to send individual requests.
 (The example below is a basic use of the `request()` method, and more information is available in the [API documentation](https://nhn.github.io/tui.grid/latest/). 
 
 ```javascript
-grid.request('createData'); // Uses the 'GET' method to send a request to '/api/createData'.
-grid.request('updateData'); // Uses the 'POST' method to send a request to '/api/updateData'.
+grid.request('createData'); // Uses the 'POST' method to send a request to '/api/createData'.
+grid.request('updateData'); // Uses the 'PUT' method to send a request to '/api/updateData'.
 ```
 
 When the `request()` method is called, the `grid` instance sends a request using the modified data, and the data is composed of a JSON string of arrays that contain all data from the modified rows. For example, the data string transmitted by calling `request('updateData')` after having changed two rows is as follows. 

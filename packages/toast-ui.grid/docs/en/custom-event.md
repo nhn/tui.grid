@@ -122,6 +122,7 @@ grid.on('mousedown', function(ev) {
 - `dragStart`: Drag to start the movement of the row (only occurs if the `dragable` option is enabled)
 - `drag`: Dragging to move row (only occurs if the `dragable` option is enabled)
 - `drop`: When the drag is over and the row movement is complete. (only occurs if the `dragable` option is enabled)
+- `keydown`: When a key is pressed. (Does not occur during editing)
 
 There are other events that can be used when using `DataSource`.
 
