@@ -1351,7 +1351,7 @@ describe('move tree row', () => {
   });
 });
 
-it(`should move the row to with complicated data`, () => {
+function createTreeGridWithComplcatedData() {
   const treeData = [
     {
       hrDept: 'dept1',
@@ -1464,7 +1464,10 @@ it(`should move the row to with complicated data`, () => {
       name: 'hrDept',
     },
   });
+}
 
+it('should move the row to with complicated data', () => {
+  createTreeGridWithComplcatedData();
   // move 'dept7' row to 'dept6'
   cy.gridInstance().invoke('moveRow', 6, 5);
 
@@ -1477,5 +1480,29 @@ it(`should move the row to with complicated data`, () => {
     ['dept7'],
     ['dept6'],
     ['dept8'],
+  ]);
+});
+
+it('should update row number after calling appendTreeRow()', () => {
+  createTreeGridWithComplcatedData();
+
+  const appendedData = {
+    hrDept: 'test',
+    _children: [{ hrDept: 'test1' }, { hrDept: 'test2' }, { hrDept: 'test3' }],
+  };
+
+  cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 2, focus: true });
+  cy.gridInstance().invoke('expandAll');
+
+  cy.getRsideBody().should('have.cellData', [
+    ['dept1'],
+    ['dept2'],
+    ['dept3'],
+    ['dept4'],
+    ['dept5'],
+    ['dept6'],
+    ['dept7'],
+    ['test'],
+    ['test1'],
   ]);
 });
