@@ -37,7 +37,7 @@ import {
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
-import { findProp, findPropIndex, removeArrayItem, some } from '../helper/common';
+import { findProp, findPropIndex, removeArrayItem, some, silentSplice } from '../helper/common';
 import { getComputedFontStyle, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
@@ -361,10 +361,8 @@ export function appendTreeRow(
 
   const viewRows = rawRows.map((rawRow) => createViewRow(id, rawRow, rawData, column));
 
-  batchObserver(() => {
-    rawData.splice(startIdx, 0, ...rawRows);
-  });
-  viewData.splice(startIdx, 0, ...viewRows);
+  silentSplice(rawData, startIdx, 0, ...rawRows);
+  silentSplice(viewData, startIdx, 0, ...viewRows);
 
   const rowHeights = rawRows.map((rawRow) => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
@@ -372,6 +370,7 @@ export function appendTreeRow(
 
     return getRowHeight(rawRow, dimension.rowHeight);
   });
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
   heights.splice(startIdx, 0, ...rowHeights);
 
   postUpdateAfterManipulation(store, startIdx, rawRows);
