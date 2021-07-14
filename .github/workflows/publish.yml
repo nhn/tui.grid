@@ -1,4 +1,4 @@
-name: Editor Publish
+name: Grid Publish
 on: [workflow_dispatch]
 jobs:
   checkVersion:
@@ -13,7 +13,7 @@ jobs:
         id: check
         uses: PostHog/check-package-version@v2
         with:
-          path: ${{ env.WORKING_DIRECTORY }}
+          path: ${{ env.WORKING_DIRECTORY }}/
       - name: Log when unchanged
         if: steps.check.outputs.is-new-version == 'false'
         run: 'echo "No version change"'
@@ -32,7 +32,7 @@ jobs:
         id: version
         uses: PostHog/check-package-version@v2
         with:
-          path: ${{ env.WORKING_DIRECTORY }}
+          path: ${{ env.WORKING_DIRECTORY }}/
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
@@ -83,7 +83,7 @@ jobs:
         id: version
         uses: PostHog/check-package-version@v2
         with:
-          path: ${{ env.WORKING_DIRECTORY }}
+          path: ${{ env.WORKING_DIRECTORY }}/
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
