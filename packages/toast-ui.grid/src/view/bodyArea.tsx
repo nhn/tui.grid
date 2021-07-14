@@ -433,7 +433,6 @@ class BodyAreaComp extends Component<Props> {
     const tableContainerStyle = {
       top: offsetTop,
       left: offsetLeft,
-      width: dummyRowCount ? '100%' : '',
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible',
     };
