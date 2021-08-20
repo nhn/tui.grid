@@ -186,11 +186,35 @@ describe('Selection', () => {
     assertSelectedRange({ start: [1, 1], end: [3, 1] });
   });
 
-  it('Select all cells by pressing cmd(ctrl) + A', () => {
-    cy.getCellByIdx(1, 1).click();
-    clipboardType('{ctrl}A');
+  describe('cmd(ctrl) + A', () => {
+    it('should Select all cells', () => {
+      cy.getCellByIdx(1, 1).click();
+      clipboardType('{ctrl}A');
 
-    assertSelectedRange({ start: [0, 0], end: [3, 1] });
+      assertSelectedRange({ start: [0, 0], end: [3, 1] });
+    });
+
+    it('should select all cells after calling appendRows() API', () => {
+      const data = [
+        { name: 'Han', value: 1 },
+        { name: 'Kim', value: 2 },
+        { name: 'Ryu', value: 3 },
+        { name: 'Lee', value: 4 },
+      ];
+      const columns = [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+      ];
+
+      cy.gridInstance().invoke('destroy');
+      cy.createGrid({ columns });
+
+      cy.gridInstance().invoke('appendRows', data);
+      cy.getCellByIdx(1, 1).click();
+      clipboardType('{ctrl}A');
+
+      assertSelectedRange({ start: [0, 0], end: [3, 1] });
+    });
   });
 
   ['backspace', 'del'].forEach((key) => {
