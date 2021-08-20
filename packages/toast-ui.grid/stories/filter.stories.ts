@@ -188,9 +188,9 @@ layerDatePicker.story = { parameters: { notes: layerDatePickerNote } };
 
 export const layerAfterMovingPosition = () => {
   const columns: OptColumn[] = [
-    { name: 'name', filter: 'text', width: 500 },
-    { name: 'age', filter: 'number', width: 500 },
-    { name: 'score', width: 500 },
+    { name: 'name', filter: 'text' },
+    { name: 'age', filter: 'number' },
+    { name: 'score' },
   ];
 
   const { el } = createGrid(columns, []);

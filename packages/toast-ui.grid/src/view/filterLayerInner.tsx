@@ -71,20 +71,22 @@ export class FilterLayerInnerComp extends Component<Props> {
     }
   }
 
-  componentDidUpdate() {
-    const { left } = this.el.getBoundingClientRect();
-    const { clientWidth } = this.el;
-    const { innerWidth } = window;
+  componentDidUpdate(prevProp: Props) {
+    const { name: currentColName, left: currnetLeft } = this.props.columnAddress;
 
-    if (innerWidth < left + clientWidth) {
-      const orgLeft = this.state.left;
-      this.setState({ left: orgLeft - (left + clientWidth - innerWidth) });
-    }
-  }
+    if (currentColName !== prevProp.columnAddress.name) {
+      const { left } = this.el.getBoundingClientRect();
+      const { clientWidth } = this.el;
+      const { innerWidth } = window;
+      const distance = currnetLeft - this.state.left;
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.columnAddress.name !== this.props.columnAddress.name) {
-      this.setState({ left: nextProps.columnAddress.left });
+      let resultLeft = currnetLeft;
+
+      if (innerWidth < left + distance + clientWidth) {
+        resultLeft = currnetLeft - (left + distance + clientWidth - innerWidth);
+      }
+
+      this.setState({ left: resultLeft });
     }
   }
 
