@@ -25,6 +25,11 @@ interface OwnProps {
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
+// react state, props => 동작 및 업데이트 과정
+// react class component life cycle
+
+// life cycle 통합해서 한번만 업데이트
+
 export class FilterLayerInnerComp extends Component<Props> {
   private el!: HTMLElement;
 
@@ -63,6 +68,23 @@ export class FilterLayerInnerComp extends Component<Props> {
     if (innerWidth < left + clientWidth) {
       const orgLeft = this.state.left;
       this.setState({ left: orgLeft - (left + clientWidth - innerWidth) });
+    }
+  }
+
+  componentDidUpdate() {
+    const { left } = this.el.getBoundingClientRect();
+    const { clientWidth } = this.el;
+    const { innerWidth } = window;
+
+    if (innerWidth < left + clientWidth) {
+      const orgLeft = this.state.left;
+      this.setState({ left: orgLeft - (left + clientWidth - innerWidth) });
+    }
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.columnAddress.name !== this.props.columnAddress.name) {
+      this.setState({ left: nextProps.columnAddress.left });
     }
   }
 
