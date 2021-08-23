@@ -73,12 +73,13 @@ export class FilterLayerInnerComp extends Component<Props> {
       const { left } = this.el.getBoundingClientRect();
       const { clientWidth } = this.el;
       const { innerWidth } = window;
-      const distance = currentLeft - this.state.left;
+      const diff = currentLeft - this.state.left;
 
       let resultLeft = currentLeft;
 
-      if (innerWidth < left + distance + clientWidth) {
-        resultLeft = currentLeft - (left + distance + clientWidth - innerWidth);
+      // Positioning the filter layer inside the viewport when it is out of the viewport
+      if (innerWidth < left + diff + clientWidth) {
+        resultLeft = currentLeft - (left + diff + clientWidth - innerWidth);
       }
 
       this.setState({ left: resultLeft });
