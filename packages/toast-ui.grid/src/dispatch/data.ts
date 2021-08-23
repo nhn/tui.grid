@@ -757,8 +757,11 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   const startIndex = data.rawData.length;
   const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
 
-  data.rawData = data.rawData.concat(rawData);
-  data.viewData = data.viewData.concat(viewData);
+  const newRawData = data.rawData.concat(rawData);
+  const newViewData = data.viewData.concat(viewData);
+
+  data.rawData = newRawData;
+  data.viewData = newViewData;
 
   resetSortKey(data, startIndex);
   sortByCurrentState(store);

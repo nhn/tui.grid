@@ -9,7 +9,11 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
+function assertEditFinished() {
+  cy.getByCls('content-text').should('not.exist');
+}
+
+function createGrid() {
   const data = [
     { name: 'Han', value: 1 },
     { name: 'Kim', value: 2 },
@@ -23,13 +27,13 @@ beforeEach(() => {
   ];
 
   cy.createGrid({ data, columns });
-});
-
-function assertEditFinished() {
-  cy.getByCls('content-text').should('not.exist');
 }
 
 describe('editor', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+
   it('start and finish editing by pressing enter', () => {
     cy.getCellByIdx(1, 0).click();
     clipboardType('{enter}');
@@ -62,6 +66,10 @@ describe('editor', () => {
 });
 
 describe('Focus', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+
   it('Move by pressing arrow key', () => {
     cy.getCellByIdx(1, 0).click();
     clipboardType('{rightarrow}');
@@ -126,6 +134,8 @@ describe('Focus', () => {
 
 describe('Selection', () => {
   it('select by pressing shift + arrowKey', () => {
+    createGrid();
+
     cy.getCellByIdx(1, 0).click();
     clipboardType('{shift}{rightarrow}');
 
@@ -145,6 +155,8 @@ describe('Selection', () => {
   });
 
   it('Select to the first cell of row based on focus by pressing shift + home', () => {
+    createGrid();
+
     cy.getCellByIdx(0, 1).click();
     clipboardType('{shift}{home}');
 
@@ -152,6 +164,8 @@ describe('Selection', () => {
   });
 
   it('Select to the last cell of row based on focus  by pressing shift + end', () => {
+    createGrid();
+
     cy.getCellByIdx(0, 0).click();
     clipboardType('{shift}{end}');
 
@@ -159,6 +173,8 @@ describe('Selection', () => {
   });
 
   it('Select to the first cell of column based on focus by pressing shift + pageup', () => {
+    createGrid();
+
     cy.getCellByIdx(1, 1).click();
     clipboardType('{shift}{pageup}');
 
@@ -166,6 +182,8 @@ describe('Selection', () => {
   });
 
   it('Select to the last cell of column based on focus by pressing shift + pagedown', () => {
+    createGrid();
+
     cy.getCellByIdx(1, 1).click();
     clipboardType('{shift}{pagedown}');
 
@@ -173,6 +191,8 @@ describe('Selection', () => {
   });
 
   it('Select to the first cell of first column based on focus by pressing cmd(ctrl) + shift + home', () => {
+    createGrid();
+
     cy.getCellByIdx(1, 1).click();
     clipboardType('{ctrl}{shift}{home}');
 
@@ -180,21 +200,50 @@ describe('Selection', () => {
   });
 
   it('Select to the last cell of last column based on focus by pressing cmd(ctrl) + shift + end', () => {
+    createGrid();
+
     cy.getCellByIdx(1, 1).click();
     clipboardType('{ctrl}{shift}{end}');
 
     assertSelectedRange({ start: [1, 1], end: [3, 1] });
   });
 
-  it('Select all cells by pressing cmd(ctrl) + A', () => {
-    cy.getCellByIdx(1, 1).click();
-    clipboardType('{ctrl}A');
+  describe('cmd(ctrl) + A', () => {
+    it('should Select all cells', () => {
+      createGrid();
 
-    assertSelectedRange({ start: [0, 0], end: [3, 1] });
+      cy.getCellByIdx(1, 1).click();
+      clipboardType('{ctrl}A');
+
+      assertSelectedRange({ start: [0, 0], end: [3, 1] });
+    });
+
+    it('should select all cells after calling appendRows() API', () => {
+      const data = [
+        { name: 'Han', value: 1 },
+        { name: 'Kim', value: 2 },
+        { name: 'Ryu', value: 3 },
+        { name: 'Lee', value: 4 },
+      ];
+      const columns = [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+      ];
+
+      cy.createGrid({ columns });
+
+      cy.gridInstance().invoke('appendRows', data);
+      cy.getCellByIdx(1, 1).click();
+      clipboardType('{ctrl}A');
+
+      assertSelectedRange({ start: [0, 0], end: [3, 1] });
+    });
   });
 
   ['backspace', 'del'].forEach((key) => {
     it(`delete selection content by pressing ${key}`, () => {
+      createGrid();
+
       const range = { start: [0, 0], end: [1, 1] };
       cy.gridInstance().invoke('setSelectionRange', range);
       clipboardType(`{${key}}`);
