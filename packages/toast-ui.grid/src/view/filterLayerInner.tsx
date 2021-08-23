@@ -25,11 +25,6 @@ interface OwnProps {
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
-// react state, props => 동작 및 업데이트 과정
-// react class component life cycle
-
-// life cycle 통합해서 한번만 업데이트
-
 export class FilterLayerInnerComp extends Component<Props> {
   private el!: HTMLElement;
 
@@ -72,18 +67,18 @@ export class FilterLayerInnerComp extends Component<Props> {
   }
 
   componentDidUpdate(prevProp: Props) {
-    const { name: currentColName, left: currnetLeft } = this.props.columnAddress;
+    const { name: currentColName, left: currentLeft } = this.props.columnAddress;
 
     if (currentColName !== prevProp.columnAddress.name) {
       const { left } = this.el.getBoundingClientRect();
       const { clientWidth } = this.el;
       const { innerWidth } = window;
-      const distance = currnetLeft - this.state.left;
+      const distance = currentLeft - this.state.left;
 
-      let resultLeft = currnetLeft;
+      let resultLeft = currentLeft;
 
       if (innerWidth < left + distance + clientWidth) {
-        resultLeft = currnetLeft - (left + distance + clientWidth - innerWidth);
+        resultLeft = currentLeft - (left + distance + clientWidth - innerWidth);
       }
 
       this.setState({ left: resultLeft });

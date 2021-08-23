@@ -202,13 +202,8 @@ export const layerAfterMovingPosition = () => {
 };
 
 const layerAfterMovingPositionNote = `
-## Filter Buttons
-- name (Blue Icon) : Filter is activated
-- age (Black Icon) : Filter is not activated
-- score (No Icon) : No Filter
-
-### Design Guide
-- https://zpl.io/blLWxde
+## Filter Layer Position
+- Displaying the filter layer on the correct position when it updated.
 `;
 
 layerAfterMovingPosition.story = { parameters: { notes: layerAfterMovingPositionNote } };
