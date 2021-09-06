@@ -1,4 +1,3 @@
-/* eslint-disable */
 const path = require('path');
 const package = require('./package');
 const webpack = require('webpack');
@@ -81,6 +80,7 @@ module.exports = (env, { mode }) => {
           amd: 'tui-date-picker',
           root: ['tui', 'DatePicker'],
         },
+        xlsx: 'XLSX',
       },
       optimization: {
         minimize: false,

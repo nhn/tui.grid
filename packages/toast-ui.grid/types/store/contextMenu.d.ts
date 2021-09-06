@@ -9,7 +9,7 @@ export interface MenuItem {
   name: string;
   label?: string;
   disabled?: boolean;
-  action?: (() => void) | 'copy' | 'copyColumns' | 'copyRows';
+  action?: (() => void) | 'copy' | 'copyColumns' | 'copyRows' | 'csvExport' | 'excelExport';
   classNames?: string[];
   subMenu?: MenuItem[];
 }

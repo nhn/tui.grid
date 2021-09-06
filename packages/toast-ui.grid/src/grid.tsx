@@ -72,6 +72,7 @@ import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 import { getFilterState } from './query/filter';
 import { execCopy } from './dispatch/clipboard';
+import { ExportOpt } from '@t/store/export';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -1706,5 +1707,15 @@ export default class Grid implements TuiGrid {
    */
   public getPaginationTotalCount() {
     return this.store.data.pageOptions.totalCount;
+  }
+
+  /**
+   * Export a file in the specified format
+   * @param {string} format - Format of export file
+   * @param {ExportOpt} exportOpt - Options for export
+   * @returns {} - total count
+   */
+  public export(format: 'csv' | 'xlsx', exportOpt?: ExportOpt) {
+    this.dispatch('execExport', format, exportOpt);
   }
 }
