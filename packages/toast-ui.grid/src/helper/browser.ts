@@ -1,5 +1,7 @@
+type MsSaveOrOpenBlob = (blob: any, defaultName?: string | undefined) => boolean;
+
 export interface NavigatorWithMsSaveOrOpenBlob extends Navigator {
-  msSaveOrOpenBlob: Function;
+  msSaveOrOpenBlob: MsSaveOrOpenBlob;
 }
 
 export function isEdge() {
