@@ -1,23 +1,34 @@
-/* eslint-disable max-depth */
 import { Store } from '@t/store';
 import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { Row } from '@t/store/data';
 import { ExportOpt } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
-import { isRowHeader } from '../helper/column';
-import { convertDataToText, convertTextToData } from '../helper/common';
+import { isCheckboxOrDragColumn } from '../helper/column';
+import { convertDataToText, convertTextToData, includes } from '../helper/common';
 import { getText } from '../query/clipboard';
 import { getComplexColumnsHierarchy, convertHierarchyToData } from '../query/column';
-import { isIE9 } from '../helper/browser';
+import {
+  isSupportWindowNavigatorMsSaveOrOpenBlob,
+  NavigatorWithMsSaveOrOpenBlob,
+} from '../helper/browser';
 import * as XLSX from 'xlsx';
+
+interface Merge {
+  s: {
+    r: number;
+    c: number;
+  };
+  e: {
+    r: number;
+    c: number;
+  };
+}
 
 function removeUnnecessaryColumns(
   hierarchy: (ColumnInfo | ComplexColumnInfo)[][],
   columnNames: string[]
 ) {
-  return hierarchy.filter((colInfos) => {
-    return columnNames.indexOf(colInfos[colInfos.length - 1].name) !== -1;
-  });
+  return hierarchy.filter((colInfos) => includes(columnNames, colInfos[colInfos.length - 1].name));
 }
 
 function getComplexHeaderData(column: Column, columnNames: string[]) {
@@ -44,96 +55,88 @@ function getColumnNamesAndHeaders(
       .map((colInfo) => colInfo.name);
   } else if (columnNames.length === 0) {
     columnNames = column.allColumns
-      .filter((colInfo) => (includeHiddenColumns || !colInfo.hidden) && !isRowHeader(colInfo.name))
+      .filter(
+        (colInfo) =>
+          (includeHiddenColumns || !colInfo.hidden) && !isCheckboxOrDragColumn(colInfo.name)
+      )
       .map((colInfo) => colInfo.name);
   }
 
   const columnHeaders = column.allColumns
-    .filter((colInfo) => columnNames.indexOf(colInfo.name) !== -1)
+    .filter((colInfo) => includes(columnNames, colInfo.name))
     .map((colInfo) => colInfo.header.replace(sortExp, ''));
 
   return { columnNames, columnHeaders };
 }
 
 function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySelected: boolean) {
-  return onlySelected
-    ? convertTextToData(getText(store))
-    : rows.map((row) => columnNames.map((colName) => row[colName]));
+  if (onlySelected) {
+    return convertTextToData(getText(store));
+  }
+
+  const data = rows.map((row) => columnNames.map((colName) => row[colName]));
+
+  if (columnNames[0] === '_number') {
+    data.forEach((row, index) => {
+      row[0] = `No.${index + 1}`;
+    });
+  }
+
+  return data;
 }
 
 function getMergeObject(complexColumnHeaderData: string[][]) {
-  const merges = [];
-  const isMergedCell = complexColumnHeaderData.map((row) => row.map(() => false));
-  const numOfRow = isMergedCell.length;
-  const numOfColumn = isMergedCell[0].length;
+  const merges: Merge[] = [];
+  const numOfRow = complexColumnHeaderData.length;
+  const numOfColumn = complexColumnHeaderData[0].length;
 
-  for (let rowNum = 0; rowNum < numOfRow; rowNum += 1) {
-    for (let colNum = 0; colNum < numOfColumn; colNum += 1) {
-      if (!isMergedCell[rowNum][colNum]) {
-        const merge = { s: { r: rowNum, c: colNum }, e: { r: rowNum, c: colNum } };
+  complexColumnHeaderData.forEach((row, rowIndex) => {
+    row.forEach((currentName, colIndex) => {
+      const compareColumnName = complexColumnHeaderData[rowIndex][colIndex];
+
+      if (compareColumnName !== '') {
+        const merge: Merge = { s: { r: rowIndex, c: colIndex }, e: { r: rowIndex, c: colIndex } };
         let mergeRowNum, mergeColNum;
 
-        for (mergeRowNum = rowNum + 1; mergeRowNum < numOfRow; mergeRowNum += 1) {
-          if (
-            complexColumnHeaderData[mergeRowNum][colNum] ===
-            complexColumnHeaderData[mergeRowNum - 1][colNum]
-          ) {
+        for (mergeRowNum = rowIndex + 1; mergeRowNum < numOfRow; mergeRowNum += 1) {
+          if (complexColumnHeaderData[mergeRowNum][colIndex] === compareColumnName) {
+            complexColumnHeaderData[mergeRowNum][colIndex] = '';
             merge.e.r += 1;
           } else {
             break;
           }
         }
 
-        for (mergeColNum = colNum + 1; mergeColNum < numOfColumn; mergeColNum += 1) {
-          if (
-            complexColumnHeaderData[mergeRowNum - 1][mergeColNum] ===
-            complexColumnHeaderData[mergeRowNum - 1][mergeColNum - 1]
-          ) {
+        for (mergeColNum = colIndex + 1; mergeColNum < numOfColumn; mergeColNum += 1) {
+          if (complexColumnHeaderData[mergeRowNum - 1][mergeColNum] === compareColumnName) {
+            complexColumnHeaderData[mergeRowNum - 1][mergeColNum] = '';
             merge.e.c += 1;
           } else {
             break;
           }
         }
 
-        for (let mergedRowNum = merge.s.r; mergedRowNum < merge.e.r + 1; mergedRowNum += 1) {
-          for (let mergedColNum = merge.s.c; mergedColNum < merge.e.c + 1; mergedColNum += 1) {
-            isMergedCell[mergedRowNum][mergedColNum] = true;
-          }
-        }
+        complexColumnHeaderData[rowIndex][colIndex] = '';
 
         if (!(merge.s.r === merge.e.r && merge.s.c === merge.e.c)) {
           merges.push(merge);
         }
       }
-    }
-  }
+    });
+  });
 
   return merges;
 }
 
-export function exportCsv(fileName: string, targetText: string, delimiter: string) {
-  if (isIE9()) {
-    const frame = document.createElement('iframe');
-    document.body.appendChild(frame);
+export function exportCsv(fileName: string, targetText: string) {
+  const targetBlob = new Blob([targetText], { type: 'text/csv' });
 
-    if (frame.contentWindow) {
-      frame.contentWindow.document.open('text/csv', 'replace');
-      frame.contentWindow.document.write(`sep=${delimiter}\r\n${targetText}`);
-      frame.contentWindow.document.close();
-      frame.contentWindow.focus();
-
-      frame.contentWindow.document.execCommand('SaveAs', false, fileName);
-    }
-
-    document.body.removeChild(frame);
-    //@ts-ignore
-  } else if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-    const targetBlob = new Blob([targetText], { type: 'text/csv' });
-
-    //@ts-ignore
-    window.navigator.msSaveOrOpenBlob(targetBlob, `${fileName}.csv`);
+  if (isSupportWindowNavigatorMsSaveOrOpenBlob()) {
+    (window.navigator as NavigatorWithMsSaveOrOpenBlob).msSaveOrOpenBlob(
+      targetBlob,
+      `${fileName}.csv`
+    );
   } else {
-    const targetBlob = new Blob([targetText], { type: 'text/csv' });
     const targetLink = document.createElement('a');
 
     targetLink.download = `${fileName}.csv`;
@@ -195,7 +198,7 @@ export function execExport(store: Store, format: string, options?: ExportOpt) {
     }
     const targetText = convertDataToText(targetData, delimiter);
 
-    exportCsv(fileName, targetText, delimiter);
+    exportCsv(fileName, targetText);
   } else if (format === 'xlsx') {
     let complexHeaderData = null;
 
@@ -215,6 +218,4 @@ export function execExport(store: Store, format: string, options?: ExportOpt) {
       exportExcel(fileName, targetData, complexHeaderData);
     }
   }
-
-  return targetData;
 }

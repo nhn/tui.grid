@@ -15,6 +15,9 @@
 const wp = require('@cypress/webpack-preprocessor');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const package = require('../../package');
+
+const minify = process.argv.indexOf('--minify') >= 0;
 
 // @TODO: should change the loader option
 module.exports = (on) => {
@@ -30,9 +33,13 @@ module.exports = (on) => {
       devtool: 'cheap-module-eval-source-map',
       plugins: [
         new MiniCssExtractPlugin({
-          filename: 'toastui-select-box.css',
+          filename: package.name + (minify ? '.min' : '') + '.css',
         }),
       ],
+      node: {
+        fs: 'empty',
+        module: 'empty',
+      },
       module: {
         rules: [
           {
