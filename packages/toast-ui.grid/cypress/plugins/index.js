@@ -13,8 +13,10 @@
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const wp = require('@cypress/webpack-preprocessor');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
+// @TODO: should change the loader option
 module.exports = (on) => {
   const options = {
     webpackOptions: {
@@ -26,6 +28,11 @@ module.exports = (on) => {
       },
       // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
       devtool: 'cheap-module-eval-source-map',
+      plugins: [
+        new MiniCssExtractPlugin({
+          filename: 'toastui-select-box.css',
+        }),
+      ],
       module: {
         rules: [
           {
@@ -34,6 +41,11 @@ module.exports = (on) => {
             options: {
               transpileOnly: true,
             },
+          },
+          {
+            test: /\.css$/,
+            exclude: /node_modules(?!\/@toast-ui\/select-box)/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader'],
           },
         ],
       },
