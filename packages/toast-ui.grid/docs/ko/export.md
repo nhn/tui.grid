@@ -111,8 +111,15 @@ const grid = Grid({
 
 > 컨텍스트 메뉴의 가이드는 [📒 컨텍스트 메뉴](./contextMenu.md)에서 살펴볼 수 있다.
 
-### 엑셀 내보내기
+## 주의사항
 
+### 복합 컬럼
+엑셀 내보내기는 복합 컬럼을 지원하지만 CSV 내보내지는 이를 지원하지 않는다. 만약 복합 컬럼을 사용하는 중에 CSV 내보내기를 수행하면 컬럼 헤더는 내보내지 않는다.
+
+### 행 컬럼
+햄 컬럼 사용시 행 번호만 내보낸다.
+
+### 엑셀 내보내기
 그리드의 엑셀 내보내기 기능은 [SheetJS](https://sheetjs.com/)(v0.17.1)를 사용하므로 엑셀 내보내기 기능을 사용하려면 SheetJS를 추가한다.
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
