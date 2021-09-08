@@ -19,7 +19,7 @@ import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary'
 import { TuiGridEvent } from './event';
 import { HeaderRendererClass, CellRendererClass, CellRendererProps } from './renderer';
 import { CellEditorClass } from './editor';
-import { ExportOpt } from './store/export';
+import { OptExport } from './store/export';
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -79,7 +79,9 @@ export type GridEventName =
   | 'dragStart'
   | 'drag'
   | 'drop'
-  | 'keydown';
+  | 'keydown'
+  | 'beforeExport'
+  | 'afterExport';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -114,7 +116,7 @@ export interface OptGrid {
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
   contextMenu?: CreateMenuGroups;
-  exportData?: ExportOpt;
+  exportData?: OptExport;
 }
 
 export interface OptRow {

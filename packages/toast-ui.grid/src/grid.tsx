@@ -72,7 +72,7 @@ import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 import { getFilterState } from './query/filter';
 import { execCopy } from './dispatch/clipboard';
-import { ExportOpt } from '@t/store/export';
+import { OptExport } from '@t/store/export';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -1712,10 +1712,16 @@ export default class Grid implements TuiGrid {
   /**
    * Export a file in the specified format
    * @param {string} format - Format of export file
-   * @param {ExportOpt} exportOpt - Options for export
-   * @returns {} - total count
+   * @param {OptExport} options - Options for export
+   *    @property {boolean} options.includeHeader - Whether to include headers
+   *    @property {boolean} options.includeHiddenColumns - Whether to include hidden columns
+   *    @property {string[]} options.columnNames - Columns names to export
+   *    @property {boolean} options.onlySelected - Whether to export only the selected range
+   *    @property {boolean} options.onlyFiltered - Whether to export only the filtered data
+   *    @property {','|';'|'\t'|'|'} options.delimiter - Delimiter to export CSV
+   *    @property {string} options.fileName - File name to export
    */
-  public export(format: 'csv' | 'xlsx', exportOpt?: ExportOpt) {
-    this.dispatch('execExport', format, exportOpt);
+  public export(format: 'csv' | 'xlsx', options?: OptExport) {
+    this.dispatch('execExport', format, options);
   }
 }

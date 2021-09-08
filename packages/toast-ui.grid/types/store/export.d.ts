@@ -1,4 +1,4 @@
-export interface ExportOpt {
+export interface OptExport {
   includeHeader?: boolean;
   includeHiddenColumns?: boolean;
   onlySelected?: boolean;

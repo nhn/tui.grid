@@ -1,10 +1,12 @@
 import { Store } from '@t/store';
 import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { Row } from '@t/store/data';
-import { ExportOpt } from '@t/store/export';
+import { OptExport } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
 import { isCheckboxOrDragColumn } from '../helper/column';
 import { convertDataToText, convertTextToData, includes } from '../helper/common';
+import { createExportEvent, EventParams, EventType } from '../query/export';
+import { getEventBus } from '../event/eventBus';
 import { getText } from '../query/clipboard';
 import { getComplexColumnsHierarchy, convertHierarchyToData } from '../query/column';
 import {
@@ -71,10 +73,14 @@ function getColumnNamesAndHeaders(
 
 function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySelected: boolean) {
   if (onlySelected) {
-    return convertTextToData(getText(store));
+    const dataText = getText(store);
+
+    if (dataText) {
+      return convertTextToData(getText(store));
+    }
   }
 
-  const data = rows.map((row) => columnNames.map((colName) => row[colName]));
+  const data = rows.map((row) => columnNames.map((colName) => row[colName] as string));
 
   if (columnNames[0] === '_number') {
     data.forEach((row, index) => {
@@ -83,6 +89,20 @@ function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySel
   }
 
   return data;
+}
+
+function emitBeforeExport(store: Store, eventType: EventType, eventParams: EventParams) {
+  const eventBus = getEventBus(store.id);
+  const gridEvent = createExportEvent(eventType, eventParams);
+  eventBus.trigger(eventType, gridEvent);
+
+  return gridEvent;
+}
+
+function emitAfterExport(store: Store, eventType: EventType, eventParams: EventParams) {
+  const eventBus = getEventBus(store.id);
+  const gridEvent = createExportEvent(eventType, eventParams);
+  eventBus.trigger(eventType, gridEvent);
 }
 
 function getMergeObject(complexColumnHeaderData: string[][]) {
@@ -161,7 +181,7 @@ export function exportExcel(
   XLSX.writeFile(wb, `${fileName}.xlsx`);
 }
 
-export function execExport(store: Store, format: string, options?: ExportOpt) {
+export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptExport) {
   const {
     includeHeader = true,
     includeHiddenColumns = false,
@@ -185,21 +205,47 @@ export function execExport(store: Store, format: string, options?: ExportOpt) {
     originalRange
   );
 
-  let targetData: any[][] = getTargetData(
+  let targetData: string[][] = getTargetData(
     store,
     onlyFiltered ? filteredRawData : rawData,
     columnNames,
     onlySelected
   );
 
+  const exportOptions = {
+    includeHeader,
+    includeHiddenColumns,
+    onlySelected,
+    onlyFiltered,
+    delimiter,
+    fileName,
+    columnNames,
+  };
+
   if (format === 'csv') {
     if (includeHeader && column.complexColumnHeaders.length === 0) {
       targetData.unshift(columnHeaders);
     }
+
+    const gridEvent = emitBeforeExport(store, 'beforeExport', {
+      exportFormat: format,
+      exportOptions,
+      data: targetData,
+    });
+
+    if (gridEvent.isStopped()) {
+      return;
+    }
+
     const targetText = convertDataToText(targetData, delimiter);
 
     exportCsv(fileName, targetText);
   } else if (format === 'xlsx') {
+    if (!XLSX) {
+      console.error('Not found dependency "xlsx"');
+      return;
+    }
+
     let complexHeaderData = null;
 
     if (includeHeader) {
@@ -212,10 +258,22 @@ export function execExport(store: Store, format: string, options?: ExportOpt) {
       }
     }
 
-    if (!XLSX) {
-      console.error('Not found dependency "xlsx"');
-    } else {
-      exportExcel(fileName, targetData, complexHeaderData);
+    const gridEvent = emitBeforeExport(store, 'beforeExport', {
+      exportFormat: format,
+      exportOptions,
+      data: targetData,
+    });
+
+    if (gridEvent.isStopped()) {
+      return;
     }
+
+    exportExcel(fileName, targetData, complexHeaderData);
   }
+
+  emitAfterExport(store, 'beforeExport', {
+    exportFormat: format,
+    exportOptions,
+    data: targetData,
+  });
 }

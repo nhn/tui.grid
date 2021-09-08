@@ -1,10 +1,10 @@
 # 내보내기 💾
 
-TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기 기능을 제공한다. `exportData` API 또는 컨텍스트 메뉴의 `내보내기`의 하위 메뉴를 통해 내보내기를 진행할 수 있으며, `exportData` 옵션으로 원하는 형태로 내보내기를 수행할 수 있다.
+TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기 기능을 제공한다. `export` API 또는 컨텍스트 메뉴의 `내보내기`의 하위 메뉴를 통해 내보내기를 진행할 수 있다.
 
 ## 옵션
 
-`exportData` 기능의 옵션은 객체 형태로 정의하며 각 요소는 아래처럼 구성된다.
+`export` 기능의 옵션은 객체 형태로 정의하며 각 요소는 아래처럼 구성된다.
 
 | 프로퍼티 | 타입 | 기본값 | 설명 |
 | --- | --- | --- | --- |
@@ -12,15 +12,17 @@ TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기
 | `includeHiddenColumns` | `boolean` | `false` | 내보내는 파일에 숨겨진 컬럼의 포함 여부를 결정한다.<br>값이 참이면 모든 컬럼을 내보낸다. |
 | `columnNames` | `string[]` | `[...보이는 모든 컬럼명]` | 내보내려는 컬럼을 선택한다.<br>해당 배열에 요소가 1개 이상 전달되면 `includeHiddenColumns` 옵션의 값과 상관 없이 전달 받은 컬럼을 내보낸다. |
 | `onlySelected` | `boolean` | `false` | 선택한 영역만 내보낼지 여부를 결정한다.<br>값이 참이면 `includeHiddenColumns` 옵션과 `columnNames` 옵션의 값과 상관 없이 현재 선택한 영역만 내보낸다.<br>선택 영역이 없다면 옵션 값과 상관 없이 지정한 컬럼의 데이터 또는 숨겨진 컬럼을 포함한 모든 컬럼의 데이터 또는 보이는 컬럼의 데이터를 내보낸다. |
-| `onlyFiltered` | `boolean` | `true` | 필터된 데이터만 내보낼지 여부를 결정한다.<br>값이 참이면 필터된 데이터만 내보내고, 거짓이면 모든 데이터를 내보낸다. |
+| `onlyFiltered` | `boolean` | `true` | 필터링된 데이터만 내보낼지 여부를 결정한다.<br>값이 참이면 필터된 데이터만 내보내고, 거짓이면 모든 데이터를 내보낸다. |
 | `delimiter` | `','\|';'\|'\t'\|'\|'` | `','` | CSV 내보내기 시 구분자를 정의한다. |
 | `fileName` | `string` | `'grid-export'` | 내보낼 파일의 이름을 정의한다. |
 
-### 내보내기 API 사용하기
+## API
 
-인자로 주어진 포맷과 내보내기 옵션에 따라 파일을 내보낸다.
+### export
 
-`exportData(format: 'csv' | 'xlsx', exportOpt?: ExportOpt)`
+인자로 주어진 포맷과 내보내기 옵션에 따라 파일을 내보낸다. (`ExportOpt`의 인터페이스 구조는 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/types/store/export.d.ts)을 참고한다.)
+
+`export(format: 'csv' | 'xlsx', exportOpt?: ExportOpt)`
 
 ```js
 options = {
@@ -29,19 +31,21 @@ options = {
   fileName: 'myExport',
 };
 
-grid.exportData('csv');
-grid.exportData('xlsx');
-grid.exportData('xlsx', options);
+grid.export('csv');
+grid.export('xlsx');
+grid.export('xlsx', options);
 ```
 
-### 컨텍스트 메뉴
+## 컨텍스트 메뉴
+
+### 기본 컨텍스트 메뉴
 그리드의 컨텍스트 메뉴에 `Export` 메뉴의 하위 메뉴로 `CSV Export`, `Excel Export` 메뉴가 추가된다.
 
 각 메뉴 클릭 시 선택한 포맷으로 다운로드가 시작된다.
 
 <img width="435" alt="context menu for export" src="https://user-images.githubusercontent.com/41339744/132184356-3bde459b-ec08-4443-8cea-90d41d6604a7.png">
 
-#### 컨텍스트 메뉴에서 커스텀 옵션 사용하기
+### 커스텀 컨텍스트 메뉴
 초기 설정 옵션 이외의 다른 옵션을 이용해 내보내기를 수행하고 싶다면 아래와 같이 컨텍스트 메뉴를 설정한다.
 
 ```js
@@ -64,14 +68,14 @@ const grid = Grid({
                   label: 'CSV export',
                   action: () => {
                     // 옵션을 전달하지 않으면 초기 설정 옵션으로 내보내기가 수행된다.
-                    grid.exportData('csv');
+                    grid.export('csv');
                   }
                 },
                 {
                   name: 'excelExport',
                   label: 'Excel export',
                   action: () => {
-                    grid.exportData('xlsx');
+                    grid.export('xlsx');
                   }
                 },
               ]
@@ -87,14 +91,14 @@ const grid = Grid({
                   action: () => {
                     // 옵션을 전달해 초기 옵션이 아닌 다른 옵션으로 내보내기를 수행한다.
                     // 만약 옵션을 모달을 통해 전달받아 내보내기를 수행하길 원한다면 이곳에 해당 기능을 수행하는 코드를 작성하면 된다.
-                    grid.exportData('csv', { includeHeader: false });
+                    grid.export('csv', { includeHeader: false });
                   }
                 },
                 {
                   name: 'excelExport',
                   label: 'Excel export',
                   action: () => {
-                    grid.exportData('xlsx', { includeHeader: false });
+                    grid.export('xlsx', { includeHeader: false });
                   }
                 },
               ]
@@ -111,13 +115,41 @@ const grid = Grid({
 
 > 컨텍스트 메뉴의 가이드는 [📒 컨텍스트 메뉴](./contextMenu.md)에서 살펴볼 수 있다.
 
+## 커스텀 이벤트
+
+### beforeExport
+
+내보내기 전에 발생하는 `beforeExport` 커스텀 이벤트를 제공한다.
+
+```js
+grid.on('beforeExport', ev => {
+  console.log(ev);
+  // ev.exportFormat - Export format (csv or xlsx)
+  // ev.exportOptions - Used export options
+  // ev.data - Data to be finally exported (string[][])
+});
+```
+
+### afterExport
+
+내보내기 후에 발생하는 `afterExport` 커스텀 이벤트를 제공한다.
+
+```js
+grid.on('afterExport', ev => {
+  console.log(ev);
+  // ev.exportFormat - Export format (csv or xlsx)
+  // ev.exportOptions - Used export options
+  // ev.data - Data to be finally exported (string[][])
+});
+```
+
 ## 주의사항
 
 ### 복합 컬럼
 엑셀 내보내기는 복합 컬럼을 지원하지만 CSV 내보내지는 이를 지원하지 않는다. 만약 복합 컬럼을 사용하는 중에 CSV 내보내기를 수행하면 컬럼 헤더는 내보내지 않는다.
 
 ### 행 컬럼
-햄 컬럼 사용시 행 번호만 내보낸다.
+행 컬럼 사용시 행 번호만 내보낸다.
 
 ### 엑셀 내보내기
 그리드의 엑셀 내보내기 기능은 [SheetJS](https://sheetjs.com/)(v0.17.1)를 사용하므로 엑셀 내보내기 기능을 사용하려면 SheetJS를 추가한다.
