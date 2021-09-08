@@ -19,15 +19,15 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      * Occurs before export
      * @event Grid#beforeExport
      * @property {'csv' | 'xlsx'} exportFormat - Export format
-     * @property {ExportOpt} exportOptions - Used export options
-     * @property {boolean} exportOptions.includeHeader - Whether to include headers
-     * @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
-     * @property {string[]} exportOptions.columnNames - Columns names to export
-     * @property {boolean} exportOptions.onlySelected - Whether to export only the selected range
-     * @property {boolean} exportOptions.onlyFiltered - Whether to export only the filtered data
-     * @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
-     * @property {string} exportOptions.fileName - File name to export
-     * @property {string[][]} data - Data to be finally exported
+     * @property {Object} exportOptions - Used export options
+     *    @property {boolean} exportOptions.includeHeader - Whether to include headers
+     *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
+     *    @property {string[]} exportOptions.columnNames - Columns names to export
+     *    @property {boolean} exportOptions.onlySelected - Whether to export only the selected range
+     *    @property {boolean} exportOptions.onlyFiltered - Whether to export only the filtered data
+     *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
+     *    @property {string} exportOptions.fileName - File name to export
+     *    @property {string[][]} data - Data to be finally exported
      * @property {Grid} instance - Current grid instance
      */
     case 'beforeExport':
@@ -37,15 +37,15 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      * Occurs after export
      * @event Grid#afterExport
      * @property {'csv' | 'xlsx'} exportFormat - Export format
-     * @property {ExportOpt} exportOptions - Used export options
-     * @property {boolean} exportOptions.includeHeader - Whether to include headers
-     * @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
-     * @property {string[]} exportOptions.columnNames - Columns names to export
-     * @property {boolean} exportOptions.onlySelected - Whether to export only the selected range
-     * @property {boolean} exportOptions.onlyFiltered - Whether to export only the filtered data
-     * @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
-     * @property {string} exportOptions.fileName - File name to export
-     * @property {string[][]} data - Data to be finally exported
+     * @property {Object} exportOptions - Used export options
+     *    @property {boolean} exportOptions.includeHeader - Whether to include headers
+     *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
+     *    @property {string[]} exportOptions.columnNames - Columns names to export
+     *    @property {boolean} exportOptions.onlySelected - Whether to export only the selected range
+     *    @property {boolean} exportOptions.onlyFiltered - Whether to export only the filtered data
+     *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
+     *    @property {string} exportOptions.fileName - File name to export
+     *    @property {string[][]} data - Data to be finally exported
      * @property {Grid} instance - Current grid instance
      */
     case 'afterExport':

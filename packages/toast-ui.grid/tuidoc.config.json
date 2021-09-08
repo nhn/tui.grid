@@ -32,6 +32,7 @@
       "tmpdoc/view/root.js",
       "tmpdoc/dispatch/focus.js",
       "tmpdoc/view/bodyArea.js",
+      "tmpdoc/query/export.js",
       "tmpdoc/query/sort.js",
       "tmpdoc/query/filter.js",
       "tmpdoc/view/pagination.js"
@@ -66,7 +67,8 @@
       "example23-client-pagination": "23. Client Pagination",
       "example24-filter": "24. Filter",
       "example25-large-data-performance": "25. Large Data Performance",
-      "example26-infinite-scroll": "26. infinite scroll"
+      "example26-infinite-scroll": "26. infinite scroll",
+      "example27-export": "27. Export"
     },
     "globalErrorLogVariable": "errorLogs"
   },

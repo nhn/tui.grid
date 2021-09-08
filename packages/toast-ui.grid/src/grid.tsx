@@ -1712,14 +1712,14 @@ export default class Grid implements TuiGrid {
   /**
    * Export a file in the specified format
    * @param {string} format - Format of export file
-   * @param {OptExport} options - Options for export
-   *    @property {boolean} options.includeHeader - Whether to include headers
-   *    @property {boolean} options.includeHiddenColumns - Whether to include hidden columns
-   *    @property {string[]} options.columnNames - Columns names to export
-   *    @property {boolean} options.onlySelected - Whether to export only the selected range
-   *    @property {boolean} options.onlyFiltered - Whether to export only the filtered data
-   *    @property {','|';'|'\t'|'|'} options.delimiter - Delimiter to export CSV
-   *    @property {string} options.fileName - File name to export
+   * @param {Object} [options] - Options for export
+   *    @param {boolean} options.includeHeader - Whether to include headers
+   *    @param {boolean} options.includeHiddenColumns - Whether to include hidden columns
+   *    @param {string[]} options.columnNames - Columns names to export
+   *    @param {boolean} options.onlySelected - Whether to export only the selected range
+   *    @param {boolean} options.onlyFiltered - Whether to export only the filtered data
+   *    @param {','|';'|'\\t'|'|'} options.delimiter - Delimiter to export CSV
+   *    @param {string} options.fileName - File name to export
    */
   public export(format: 'csv' | 'xlsx', options?: OptExport) {
     this.dispatch('execExport', format, options);
