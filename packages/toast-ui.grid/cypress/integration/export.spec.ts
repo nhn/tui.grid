@@ -16,11 +16,12 @@ function getMenuItemByText(text: string) {
   return cy.contains(`.${cls('context-menu')} .menu-item`, text);
 }
 
-function formatToType(format: string) {
-  if (format === 'csv') {
-    return 'CSV';
-  }
-  return 'Excel';
+function clickExportMenuItemByFormat(format: 'csv' | 'xlsx') {
+  const text = format === 'csv' ? 'CSV' : 'Excel';
+
+  showContextMenu(0, 'name');
+  getMenuItemByText('Export').trigger('mouseenter');
+  cy.contains(`.${cls('context-menu')} .menu-item`, text).click();
 }
 
 describe('Export data', () => {
@@ -50,9 +51,8 @@ describe('Export data', () => {
 
   beforeEach(() => {
     cy.createGrid({ data, columns });
-    callback = cy.stub().callsFake((ev: GridEvent) => {
-      ev.stop();
-    });
+    callback = cy.stub().callsFake((ev: GridEvent) => ev.stop());
+    cy.gridInstance().invoke('on', 'beforeExport', callback);
   });
 
   afterEach(() => {
@@ -61,12 +61,8 @@ describe('Export data', () => {
 
   describe('Default options', () => {
     ['csv', 'xlsx'].forEach((format) => {
-      it(`should export data according to defulat export options to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-
-        showContextMenu(0, 'name');
-        getMenuItemByText('Export').trigger('mouseenter');
-        getMenuItemByText(`${formatToType(format)} Export`).click();
+      it(`should export data according to default export options to '${format}'`, () => {
+        clickExportMenuItemByFormat(format as 'csv' | 'xlsx');
 
         cy.wrap(callback).should('be.calledWithMatch', {
           data: [
@@ -92,11 +88,7 @@ describe('Export data', () => {
         ],
       });
 
-      cy.gridInstance().invoke('on', 'beforeExport', callback);
-
-      showContextMenu(0, 'name');
-      getMenuItemByText('Export').trigger('mouseenter');
-      getMenuItemByText('CSV Export').click();
+      clickExportMenuItemByFormat('csv');
 
       cy.wrap(callback).should('be.calledWithMatch', {
         data: [
@@ -118,11 +110,7 @@ describe('Export data', () => {
         ],
       });
 
-      cy.gridInstance().invoke('on', 'beforeExport', callback);
-
-      showContextMenu(0, 'name');
-      getMenuItemByText('Export').trigger('mouseenter');
-      getMenuItemByText('Excel Export').click();
+      clickExportMenuItemByFormat('xlsx');
 
       cy.wrap(callback).should('be.calledWithMatch', {
         data: [
@@ -136,10 +124,9 @@ describe('Export data', () => {
     });
   });
 
-  describe('Without column headers', () => {
+  describe('Without column headers (includeHeader = false)', () => {
     ['csv', 'xlsx'].forEach((format) => {
       it(`should export data without column headers to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
         cy.gridInstance().invoke('export', format, { includeHeader: false });
 
         cy.wrap(callback).should('be.calledWithMatch', {
@@ -153,10 +140,9 @@ describe('Export data', () => {
     });
   });
 
-  describe('With hidden columns', () => {
+  describe('With hidden columns (includeHiddenColumns = true)', () => {
     ['csv', 'xlsx'].forEach((format) => {
       it(`should export data with hidden column to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
         cy.gridInstance().invoke('export', format, { includeHiddenColumns: true });
 
         cy.wrap(callback).should('be.calledWithMatch', {
@@ -171,10 +157,9 @@ describe('Export data', () => {
     });
   });
 
-  describe('With column names', () => {
+  describe('With column names (columnNames = [...selectedColumnNames])', () => {
     ['csv', 'xlsx'].forEach((format) => {
       it(`should export data with selected columns to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
         cy.gridInstance().invoke('export', format, { columnNames: ['name', 'price'] });
 
         cy.wrap(callback).should('be.calledWithMatch', {
@@ -189,90 +174,9 @@ describe('Export data', () => {
     });
   });
 
-  describe('With only selected', () => {
-    ['csv', 'xlsx'].forEach((format) => {
-      it(`should export data of selected range to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-        setSelectionUsingMouse([0, 0], [1, 1]);
-        cy.gridInstance().invoke('export', format, { onlySelected: true });
-
-        cy.wrap(callback).should('be.calledWithMatch', {
-          data: [
-            ['Name', 'Artist'],
-            ['Sugar', 'Maroon5'],
-            ['Get Lucky', 'Daft Punk'],
-          ],
-        });
-      });
-
-      it(`should export data of selected range to '${format}' regardless of "includeHiddenColumns" and "columnNames" options`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-        setSelectionUsingMouse([0, 0], [1, 1]);
-        cy.gridInstance().invoke('export', format, {
-          includeHiddenColumns: true,
-          columnNames: ['name'],
-          onlySelected: true,
-        });
-
-        cy.wrap(callback).should('be.calledWithMatch', {
-          data: [
-            ['Name', 'Artist'],
-            ['Sugar', 'Maroon5'],
-            ['Get Lucky', 'Daft Punk'],
-          ],
-        });
-      });
-
-      it(`should export all visible data to '${format}' when no selected range`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-        cy.gridInstance().invoke('export', format, { onlySelected: true });
-
-        cy.wrap(callback).should('be.calledWithMatch', {
-          data: [
-            ['Name', 'Artist'],
-            ['Sugar', 'Maroon5'],
-            ['Get Lucky', 'Daft Punk'],
-            ['21', 'Adele'],
-          ],
-        });
-      });
-
-      it(`should export data of selected columns to '${format}' when no selected range regardless of "includeHiddenColumns" option`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-        cy.gridInstance().invoke('export', format, {
-          includeHiddenColumns: true,
-          columnNames: ['name'],
-          onlySelected: true,
-        });
-
-        cy.wrap(callback).should('be.calledWithMatch', {
-          data: [['Name'], ['Sugar'], ['Get Lucky'], ['21']],
-        });
-      });
-
-      it(`should export data with hidden columns to '${format}' when no selected range and columns`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
-        cy.gridInstance().invoke('export', format, {
-          includeHiddenColumns: true,
-          onlySelected: true,
-        });
-
-        cy.wrap(callback).should('be.calledWithMatch', {
-          data: [
-            ['Name', 'Artist', 'Price'],
-            ['Sugar', 'Maroon5', 1000],
-            ['Get Lucky', 'Daft Punk', 2000],
-            ['21', 'Adele', 3000],
-          ],
-        });
-      });
-    });
-  });
-
-  describe('With only filtered data', () => {
+  describe('With only filtered (onlyFiltered = true)', () => {
     ['csv', 'xlsx'].forEach((format) => {
       it(`should export only filtered data to '${format}'`, () => {
-        cy.gridInstance().invoke('on', 'beforeExport', callback);
         invokeFilter('name', [{ code: 'eq', value: '21' }]);
         cy.gridInstance().invoke('export', format, { onlyFiltered: true });
 
@@ -286,9 +190,102 @@ describe('Export data', () => {
     });
   });
 
-  describe('With custom delimiter', () => {
+  describe('With only selected (onlySelected = true)', () => {
+    describe('With selected range', () => {
+      ['csv', 'xlsx'].forEach((format) => {
+        it(`should export data of selected range to '${format}'`, () => {
+          setSelectionUsingMouse([0, 0], [1, 1]);
+          cy.gridInstance().invoke('export', format, { onlySelected: true });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [
+              ['Name', 'Artist'],
+              ['Sugar', 'Maroon5'],
+              ['Get Lucky', 'Daft Punk'],
+            ],
+          });
+        });
+
+        it(`should export data of selected range to '${format}' regardless of "includeHiddenColumns" and "columnNames" options`, () => {
+          setSelectionUsingMouse([0, 0], [1, 1]);
+          cy.gridInstance().invoke('export', format, {
+            includeHiddenColumns: true,
+            columnNames: ['name'],
+            onlySelected: true,
+          });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [
+              ['Name', 'Artist'],
+              ['Sugar', 'Maroon5'],
+              ['Get Lucky', 'Daft Punk'],
+            ],
+          });
+        });
+
+        it(`should export data of selected range to '${format}' according to "onlyFiltered" option`, () => {
+          invokeFilter('name', [{ code: 'eq', value: '21' }]);
+          setSelectionUsingMouse([0, 0], [0, 0]);
+          cy.gridInstance().invoke('export', format, {
+            onlyFiltered: true,
+            onlySelected: true,
+          });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [['Name'], ['21']],
+          });
+        });
+      });
+    });
+
+    describe('Without selected range', () => {
+      ['csv', 'xlsx'].forEach((format) => {
+        it(`should export all visible data to '${format}' when no selected range`, () => {
+          cy.gridInstance().invoke('export', format, { onlySelected: true });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [
+              ['Name', 'Artist'],
+              ['Sugar', 'Maroon5'],
+              ['Get Lucky', 'Daft Punk'],
+              ['21', 'Adele'],
+            ],
+          });
+        });
+
+        it(`should export data of selected columns to '${format}' when no selected range regardless of "includeHiddenColumns" option`, () => {
+          cy.gridInstance().invoke('export', format, {
+            includeHiddenColumns: true,
+            columnNames: ['name'],
+            onlySelected: true,
+          });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [['Name'], ['Sugar'], ['Get Lucky'], ['21']],
+          });
+        });
+
+        it(`should export data with hidden columns to '${format}' when no selected range and columns`, () => {
+          cy.gridInstance().invoke('export', format, {
+            includeHiddenColumns: true,
+            onlySelected: true,
+          });
+
+          cy.wrap(callback).should('be.calledWithMatch', {
+            data: [
+              ['Name', 'Artist', 'Price'],
+              ['Sugar', 'Maroon5', 1000],
+              ['Get Lucky', 'Daft Punk', 2000],
+              ['21', 'Adele', 3000],
+            ],
+          });
+        });
+      });
+    });
+  });
+
+  describe('With custom delimiter (delimiter)', () => {
     it(`should export data with custom delimiter to 'csv'`, () => {
-      cy.gridInstance().invoke('on', 'beforeExport', callback);
       cy.gridInstance().invoke('export', 'csv', { delimiter: ';' });
 
       cy.wrap(callback).should('be.calledWithMatch', {
@@ -297,9 +294,8 @@ describe('Export data', () => {
     });
   });
 
-  describe('With custom file name', () => {
+  describe('With custom file name (fileName)', () => {
     it(`should export data with custom file name to 'csv'`, () => {
-      cy.gridInstance().invoke('on', 'beforeExport', callback);
       cy.gridInstance().invoke('export', 'csv', { fileName: 'myExport' });
 
       cy.wrap(callback).should('be.calledWithMatch', {

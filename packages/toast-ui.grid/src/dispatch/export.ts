@@ -3,16 +3,13 @@ import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { Row } from '@t/store/data';
 import { OptExport } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
-import { isCheckboxOrDragColumn } from '../helper/column';
+import { isCheckboxColumn, isDragColumn } from '../helper/column';
 import { convertDataToText, convertTextToData, includes } from '../helper/common';
 import { createExportEvent, EventParams, EventType } from '../query/export';
 import { getEventBus } from '../event/eventBus';
 import { getText } from '../query/clipboard';
 import { getComplexColumnsHierarchy, convertHierarchyToData } from '../query/column';
-import {
-  isSupportWindowNavigatorMsSaveOrOpenBlob,
-  NavigatorWithMsSaveOrOpenBlob,
-} from '../helper/browser';
+import { isSupportMsSaveOrOpenBlob, NavigatorWithMsSaveOrOpenBlob } from '../helper/browser';
 import * as XLSX from 'xlsx';
 
 interface Merge {
@@ -34,41 +31,55 @@ function removeUnnecessaryColumns(
 }
 
 function getComplexHeaderData(column: Column, columnNames: string[]) {
-  let hierachy = getComplexColumnsHierarchy(column.allColumns, column.complexColumnHeaders);
-  hierachy = removeUnnecessaryColumns(hierachy, columnNames);
+  const hierachy = getComplexColumnsHierarchy(column.allColumns, column.complexColumnHeaders);
+  const filteredHierachy = removeUnnecessaryColumns(hierachy, columnNames);
 
-  return convertHierarchyToData(hierachy, 'header');
+  return convertHierarchyToData(filteredHierachy);
 }
 
-function getColumnNamesAndHeaders(
+function getColumnNamesAndHeadersByOptions(
   column: Column,
   columnNames: string[],
   includeHiddenColumns: boolean,
   onlySelected: boolean,
   originalRange: SelectionRange | null
 ) {
-  const sortExp = /\(desc\)|\(asc\)/;
+  const reSort = /\(desc\)|\(asc\)/;
+  const { allColumns } = column;
+
+  let targetColumnNames: string[] = [];
+  let targetColumnHeaders: string[] = [];
+
   if (onlySelected && originalRange) {
     const [start, end] = originalRange.column;
 
-    columnNames = column.allColumns
+    allColumns
       .filter((colInfo) => includeHiddenColumns || !colInfo.hidden)
       .slice(start, end + 1)
-      .map((colInfo) => colInfo.name);
+      .forEach((colInfo) => {
+        targetColumnNames.push(colInfo.name);
+        targetColumnHeaders.push(colInfo.header);
+      });
   } else if (columnNames.length === 0) {
-    columnNames = column.allColumns
+    allColumns
       .filter(
         (colInfo) =>
-          (includeHiddenColumns || !colInfo.hidden) && !isCheckboxOrDragColumn(colInfo.name)
+          (includeHiddenColumns || !colInfo.hidden) &&
+          !(isCheckboxColumn(colInfo.name) && isDragColumn(colInfo.name))
       )
-      .map((colInfo) => colInfo.name);
+      .forEach((colInfo) => {
+        targetColumnNames.push(colInfo.name);
+        targetColumnHeaders.push(colInfo.header);
+      });
+  } else {
+    targetColumnNames = columnNames.slice(0);
+
+    targetColumnHeaders = allColumns
+      .filter((colInfo) => includes(targetColumnNames, colInfo.name))
+      .map((colInfo) => colInfo.header.replace(reSort, ''));
   }
 
-  const columnHeaders = column.allColumns
-    .filter((colInfo) => includes(columnNames, colInfo.name))
-    .map((colInfo) => colInfo.header.replace(sortExp, ''));
-
-  return { columnNames, columnHeaders };
+  return { targetColumnNames, targetColumnHeaders };
 }
 
 function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySelected: boolean) {
@@ -76,7 +87,7 @@ function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySel
     const dataText = getText(store);
 
     if (dataText) {
-      return convertTextToData(getText(store));
+      return convertTextToData(dataText);
     }
   }
 
@@ -91,7 +102,7 @@ function getTargetData(store: Store, rows: Row[], columnNames: string[], onlySel
   return data;
 }
 
-function emitBeforeExport(store: Store, eventType: EventType, eventParams: EventParams) {
+function emitExportByType(store: Store, eventType: EventType, eventParams: EventParams) {
   const eventBus = getEventBus(store.id);
   const gridEvent = createExportEvent(eventType, eventParams);
   eventBus.trigger(eventType, gridEvent);
@@ -99,13 +110,7 @@ function emitBeforeExport(store: Store, eventType: EventType, eventParams: Event
   return gridEvent;
 }
 
-function emitAfterExport(store: Store, eventType: EventType, eventParams: EventParams) {
-  const eventBus = getEventBus(store.id);
-  const gridEvent = createExportEvent(eventType, eventParams);
-  eventBus.trigger(eventType, gridEvent);
-}
-
-function getMergeObject(complexColumnHeaderData: string[][]) {
+function getMergeRelationships(complexColumnHeaderData: string[][]) {
   const merges: Merge[] = [];
   const numOfRow = complexColumnHeaderData.length;
   const numOfColumn = complexColumnHeaderData[0].length;
@@ -114,7 +119,7 @@ function getMergeObject(complexColumnHeaderData: string[][]) {
     row.forEach((currentName, colIndex) => {
       const compareColumnName = complexColumnHeaderData[rowIndex][colIndex];
 
-      if (compareColumnName !== '') {
+      if (compareColumnName) {
         const merge: Merge = { s: { r: rowIndex, c: colIndex }, e: { r: rowIndex, c: colIndex } };
         let mergeRowNum, mergeColNum;
 
@@ -138,7 +143,7 @@ function getMergeObject(complexColumnHeaderData: string[][]) {
 
         complexColumnHeaderData[rowIndex][colIndex] = '';
 
-        if (!(merge.s.r === merge.e.r && merge.s.c === merge.e.c)) {
+        if (merge.s.r !== merge.e.r || merge.s.c !== merge.e.c) {
           merges.push(merge);
         }
       }
@@ -148,10 +153,10 @@ function getMergeObject(complexColumnHeaderData: string[][]) {
   return merges;
 }
 
-export function exportCsv(fileName: string, targetText: string) {
+function exportCsv(fileName: string, targetText: string) {
   const targetBlob = new Blob([targetText], { type: 'text/csv' });
 
-  if (isSupportWindowNavigatorMsSaveOrOpenBlob()) {
+  if (isSupportMsSaveOrOpenBlob()) {
     (window.navigator as NavigatorWithMsSaveOrOpenBlob).msSaveOrOpenBlob(
       targetBlob,
       `${fileName}.csv`
@@ -165,7 +170,7 @@ export function exportCsv(fileName: string, targetText: string) {
   }
 }
 
-export function exportExcel(
+function exportExcel(
   fileName: string,
   targetArray: string[][],
   complexColumnHeaderData: string[][] | null
@@ -174,7 +179,7 @@ export function exportExcel(
   const ws = XLSX.utils.aoa_to_sheet(targetArray);
 
   if (complexColumnHeaderData) {
-    ws['!merges'] = getMergeObject(complexColumnHeaderData);
+    ws['!merges'] = getMergeRelationships(complexColumnHeaderData);
   }
 
   XLSX.utils.book_append_sheet(wb, ws);
@@ -197,7 +202,12 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     selection: { originalRange },
   } = store;
 
-  const { columnHeaders, columnNames } = getColumnNamesAndHeaders(
+  const { complexColumnHeaders } = column;
+
+  const {
+    targetColumnHeaders: columnHeaders,
+    targetColumnNames: columnNames,
+  } = getColumnNamesAndHeadersByOptions(
     column,
     options?.columnNames || [],
     includeHiddenColumns,
@@ -223,11 +233,11 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
   };
 
   if (format === 'csv') {
-    if (includeHeader && column.complexColumnHeaders.length === 0) {
+    if (includeHeader && complexColumnHeaders.length === 0) {
       targetData.unshift(columnHeaders);
     }
 
-    const gridEvent = emitBeforeExport(store, 'beforeExport', {
+    const gridEvent = emitExportByType(store, 'beforeExport', {
       exportFormat: format,
       exportOptions,
       data: targetData,
@@ -240,8 +250,8 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     const targetText = convertDataToText(targetData, delimiter);
 
     exportCsv(fileName, targetText);
-  } else if (format === 'xlsx') {
-    if (!XLSX) {
+  } else {
+    if (!XLSX.writeFile) {
       console.error('Not found dependency "xlsx"');
       return;
     }
@@ -258,7 +268,7 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
       }
     }
 
-    const gridEvent = emitBeforeExport(store, 'beforeExport', {
+    const gridEvent = emitExportByType(store, 'beforeExport', {
       exportFormat: format,
       exportOptions,
       data: targetData,
@@ -271,7 +281,7 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     exportExcel(fileName, targetData, complexHeaderData);
   }
 
-  emitAfterExport(store, 'beforeExport', {
+  emitExportByType(store, 'beforeExport', {
     exportFormat: format,
     exportOptions,
     data: targetData,

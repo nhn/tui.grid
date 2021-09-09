@@ -12,6 +12,6 @@ export function isCheckboxColumn(columnName: string) {
   return columnName === '_checked';
 }
 
-export function isCheckboxOrDragColumn(columnName: string) {
-  return includes(['_checked', '_draggable'], columnName);
+export function isDragColumn(columnName: string) {
+  return columnName === '_draggable';
 }

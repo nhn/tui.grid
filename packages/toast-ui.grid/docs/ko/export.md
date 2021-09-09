@@ -20,7 +20,7 @@ TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기
 
 ### export
 
-인자로 주어진 포맷과 내보내기 옵션에 따라 파일을 내보낸다. (`ExportOpt`의 인터페이스 구조는 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/types/store/export.d.ts)을 참고한다.)
+인자로 주어진 포맷과 내보내기 옵션에 따라 파일을 내보낸다. (`ExportOpt`의 인터페이스 구조는 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/types/store/export.d.ts)를 참고한다.)
 
 `export(format: 'csv' | 'xlsx', exportOpt?: ExportOpt)`
 
@@ -145,8 +145,12 @@ grid.on('afterExport', ev => {
 
 ## 주의사항
 
+### 옵션 우선순위
+옵션의 우선순위는 열의 경우 `includeHiddenColumns` => `columnNames` => `onlySelected` 순으로, 행의 경우 `onlyFiltered` => `onlySelected` 순으로 높아진다.
+즉, `onlySelected`의 값이 `true`이면 다른 세 옵션의 값과 상관없이 선택 영역의 데이터만 내보낸다.
+
 ### 복합 컬럼
-엑셀 내보내기는 복합 컬럼을 지원하지만 CSV 내보내지는 이를 지원하지 않는다. 만약 복합 컬럼을 사용하는 중에 CSV 내보내기를 수행하면 컬럼 헤더는 내보내지 않는다.
+엑셀 내보내기는 복합 컬럼을 지원하지만 CSV 내보내기는 이를 지원하지 않는다. 만약 복합 컬럼을 사용하는 중에 CSV 내보내기를 수행하면 컬럼 헤더는 내보내지 않는다.
 
 ### 행 컬럼
 행 컬럼 사용시 행 번호만 내보낸다.

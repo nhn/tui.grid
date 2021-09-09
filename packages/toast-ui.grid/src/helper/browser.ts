@@ -15,6 +15,6 @@ export function isMobile() {
   );
 }
 
-export function isSupportWindowNavigatorMsSaveOrOpenBlob() {
+export function isSupportMsSaveOrOpenBlob() {
   return !!(window.navigator as NavigatorWithMsSaveOrOpenBlob).msSaveOrOpenBlob;
 }

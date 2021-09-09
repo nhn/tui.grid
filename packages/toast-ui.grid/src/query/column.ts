@@ -64,12 +64,9 @@ export function getComplexColumnsHierarchy(
   );
 }
 
-export function convertHierarchyToData(
-  hierarchy: MergedComplexColumns[],
-  attr?: 'header' | 'name'
-) {
+export function convertHierarchyToData(hierarchy: MergedComplexColumns[]) {
   const maxRowCount = getHierarchyMaxRowCount(hierarchy);
-  const data: any[][] = [];
+  const data: string[][] = [];
   for (let i = 0; i < maxRowCount; i += 1) {
     data.push([]);
   }
@@ -77,7 +74,7 @@ export function convertHierarchyToData(
   hierarchy.forEach((colunms) => {
     for (let i = 0; i < maxRowCount; i += 1) {
       const colInfo = colunms[i < colunms.length ? i : colunms.length - 1];
-      data[i].push(attr ? colInfo[attr] : colInfo);
+      data[i].push(colInfo.header);
     }
   });
 
