@@ -53,7 +53,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     originalRange
   );
 
-  let targetData: string[][] = getTargetData(
+  const data: string[][] = getTargetData(
     store,
     onlyFiltered ? filteredRawData : rawData,
     columnNames,
@@ -70,7 +70,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     columnNames,
   };
 
-  return { targetData, columnHeaders, columnNames, exportOptions };
+  return { data, columnHeaders, columnNames, exportOptions };
 }
 
 function emitExportByType(store: Store, eventType: EventType, eventParams: EventParams) {
@@ -167,13 +167,14 @@ function exportCallback(
 }
 
 export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptExport) {
-  let { targetData, columnHeaders, columnNames, exportOptions } = getExportDataAndColumnsAndOptions(
+  const { data, columnHeaders, columnNames, exportOptions } = getExportDataAndColumnsAndOptions(
     store,
     options
   );
   const { includeHeader, delimiter, fileName } = exportOptions;
   const { column } = store;
 
+  let targetData = data.slice(0);
   let complexHeaderData = null;
 
   if (format === 'csv') {
@@ -223,7 +224,6 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     if (gridEvent.isStopped()) {
       return;
     }
-
     exportExcel(fileName, targetData, complexHeaderData);
   }
 

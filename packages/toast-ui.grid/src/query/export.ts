@@ -135,8 +135,6 @@ export function getTargetData(
   columnNames: string[],
   onlySelected: boolean
 ) {
-  console.log(columnNames);
-
   if (onlySelected) {
     let targetRow = rows;
 
@@ -149,7 +147,7 @@ export function getTargetData(
       targetRow = rows.slice(rowStart, rowEnd + 1);
     }
 
-    return targetRow.map((row, index) => columnNames.map((colName) => row[colName] as string));
+    return targetRow.map((row) => columnNames.map((colName) => row[colName] as string));
   }
 
   const data = rows.map((row, index) =>
