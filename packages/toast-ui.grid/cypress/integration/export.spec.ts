@@ -2,7 +2,7 @@ import GridEvent from '@/event/gridEvent';
 import { cls } from '@/helper/dom';
 import { RowKey } from '@t/store/data';
 import { SinonStub } from 'cypress/types/sinon';
-import { invokeFilter, setSelectionUsingMouse } from '../helper/util';
+import { invokeFilter } from '../helper/util';
 
 before(() => {
   cy.visit('/dist');
@@ -194,7 +194,8 @@ describe('Export data', () => {
     describe('With selected range', () => {
       ['csv', 'xlsx'].forEach((format) => {
         it(`should export data of selected range to '${format}'`, () => {
-          setSelectionUsingMouse([0, 0], [1, 1]);
+          const range = { start: [0, 0], end: [1, 1] };
+          cy.gridInstance().invoke('setSelectionRange', range);
           cy.gridInstance().invoke('export', format, { onlySelected: true });
 
           cy.wrap(callback).should('be.calledWithMatch', {
@@ -207,7 +208,8 @@ describe('Export data', () => {
         });
 
         it(`should export data of selected range to '${format}' regardless of "includeHiddenColumns" and "columnNames" options`, () => {
-          setSelectionUsingMouse([0, 0], [1, 1]);
+          const range = { start: [0, 0], end: [1, 1] };
+          cy.gridInstance().invoke('setSelectionRange', range);
           cy.gridInstance().invoke('export', format, {
             includeHiddenColumns: true,
             columnNames: ['name'],
@@ -225,7 +227,8 @@ describe('Export data', () => {
 
         it(`should export data of selected range to '${format}' according to "onlyFiltered" option`, () => {
           invokeFilter('name', [{ code: 'eq', value: '21' }]);
-          setSelectionUsingMouse([0, 0], [0, 0]);
+          const range = { start: [0, 0], end: [0, 0] };
+          cy.gridInstance().invoke('setSelectionRange', range);
           cy.gridInstance().invoke('export', format, {
             onlyFiltered: true,
             onlySelected: true,
