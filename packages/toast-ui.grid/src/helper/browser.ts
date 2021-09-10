@@ -18,3 +18,20 @@ export function isMobile() {
 export function isSupportMsSaveOrOpenBlob() {
   return !!(window.navigator as NavigatorWithMsSaveOrOpenBlob).msSaveOrOpenBlob;
 }
+
+export function downloadBlob(blob: Blob, fileName: string) {
+  if (isSupportMsSaveOrOpenBlob()) {
+    (window.navigator as NavigatorWithMsSaveOrOpenBlob).msSaveOrOpenBlob(blob, `${fileName}.csv`);
+  } else {
+    const targetLink = document.createElement('a');
+
+    targetLink.download = `${fileName}.csv`;
+
+    if (typeof targetLink.download === 'undefined') {
+      targetLink.setAttribute('target', '_blank');
+    }
+
+    targetLink.href = window.URL.createObjectURL(blob);
+    targetLink.click();
+  }
+}

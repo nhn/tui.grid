@@ -47,6 +47,8 @@ export interface GridEventProps {
   exportFormat?: 'csv' | 'xlsx';
   exportOptions?: OptExport;
   data?: string[][];
+  complexHeaderData?: string[][] | null;
+  exportFn?: Function;
 }
 
 export class TuiGridEvent {

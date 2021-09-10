@@ -67,12 +67,13 @@ export function getComplexColumnsHierarchy(
 export function convertHierarchyToData(hierarchy: MergedComplexColumns[]) {
   const maxRowCount = getHierarchyMaxRowCount(hierarchy);
   const data: string[][] = [];
-  for (let i = 0; i < maxRowCount; i += 1) {
-    data.push([]);
-  }
 
   hierarchy.forEach((colunms) => {
     for (let i = 0; i < maxRowCount; i += 1) {
+      if (!Array.isArray(data[i])) {
+        data.push([]);
+      }
+
       const colInfo = colunms[i < colunms.length ? i : colunms.length - 1];
       data[i].push(colInfo.header);
     }
