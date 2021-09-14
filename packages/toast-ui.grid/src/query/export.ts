@@ -15,12 +15,11 @@ export interface EventParams {
   exportFormat: 'csv' | 'xlsx';
   exportOptions: OptExport;
   data: string[][];
-  exportFn: Function;
-  complexHeaderData?: string[][] | null;
+  exportFn?: (data: string[][]) => void;
 }
 
 export function createExportEvent(eventType: EventType, eventParams: EventParams) {
-  const { exportFormat, exportOptions, data, complexHeaderData, exportFn } = eventParams;
+  const { exportFormat, exportOptions, data, exportFn } = eventParams;
   let props: GridEventProps = {};
 
   switch (eventType) {
@@ -37,12 +36,11 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
      *    @property {string} exportOptions.fileName - File name to export
      * @property {string[][]} data - Data to be finally exported
-     * @property {string[][] | null} complexHeaderData - Data to complex column for merging relationships
      * @property {function} exportFn - Callback function to export modified data
      * @property {Grid} instance - Current grid instance
      */
     case 'beforeExport':
-      props = { exportFormat, exportOptions, data, complexHeaderData, exportFn };
+      props = { exportFormat, exportOptions, data, exportFn };
       break;
     /**
      * Occurs after export
@@ -57,12 +55,10 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
      *    @property {string} exportOptions.fileName - File name to export
      * @property {string[][]} data - Data to be finally exported
-     * @property {string[][] | null} complexHeaderData - Data to complex column for merging relationships
-     * @property {function} exportFn - Callback function to export modified data
      * @property {Grid} instance - Current grid instance
      */
     case 'afterExport':
-      props = { exportFormat, exportOptions, data, complexHeaderData, exportFn };
+      props = { exportFormat, exportOptions, data };
       break;
     default: // do nothing
   }
@@ -136,18 +132,18 @@ export function getTargetData(
   onlySelected: boolean
 ) {
   if (onlySelected) {
-    let targetRow = rows;
+    let targetRows = rows;
 
     const {
       selection: { originalRange },
     } = store;
 
     if (originalRange) {
-      const [rowStart, rowEnd] = originalRange?.row;
-      targetRow = rows.slice(rowStart, rowEnd + 1);
+      const [rowStart, rowEnd] = originalRange.row;
+      targetRows = rows.slice(rowStart, rowEnd + 1);
     }
 
-    return targetRow.map((row) => columnNames.map((colName) => row[colName] as string));
+    return targetRows.map((row) => columnNames.map((colName) => row[colName] as string));
   }
 
   const data = rows.map((row, index) =>

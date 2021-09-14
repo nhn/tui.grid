@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { Store } from '@t/store';
 import { OptExport } from '@t/store/export';
 import { convertDataToText } from '../helper/common';
@@ -11,7 +12,6 @@ import {
 } from '../query/export';
 import { getEventBus } from '../event/eventBus';
 import { downloadBlob } from '../helper/browser';
-import * as XLSX from 'xlsx';
 
 interface Merge {
   // The interface of xlsx library.
@@ -73,7 +73,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
   return { data, columnHeaders, columnNames, exportOptions };
 }
 
-function emitExportByType(store: Store, eventType: EventType, eventParams: EventParams) {
+function emitExportEvent(store: Store, eventType: EventType, eventParams: EventParams) {
   const eventBus = getEventBus(store.id);
   const gridEvent = createExportEvent(eventType, eventParams);
   eventBus.trigger(eventType, gridEvent);
@@ -81,7 +81,7 @@ function emitExportByType(store: Store, eventType: EventType, eventParams: Event
   return gridEvent;
 }
 
-function getMergeRelationships(complexColumnHeaderData: string[][]) {
+function getMergeRelationship(complexColumnHeaderData: string[][]) {
   const merges: Merge[] = [];
   const numOfRow = complexColumnHeaderData.length;
   const numOfColumn = complexColumnHeaderData[0].length;
@@ -122,7 +122,7 @@ function getMergeRelationships(complexColumnHeaderData: string[][]) {
   return merges;
 }
 
-function exportCsv(fileName: string, targetText: string) {
+function exportCSV(fileName: string, targetText: string) {
   const targetBlob = new Blob([targetText], { type: 'text/csv' });
 
   downloadBlob(targetBlob, fileName);
@@ -137,7 +137,7 @@ function exportExcel(
   const ws = XLSX.utils.aoa_to_sheet(targetArray);
 
   if (complexColumnHeaderData) {
-    ws['!merges'] = getMergeRelationships(complexColumnHeaderData);
+    ws['!merges'] = getMergeRelationship(complexColumnHeaderData);
   }
 
   XLSX.utils.book_append_sheet(wb, ws);
@@ -147,22 +147,24 @@ function exportExcel(
 function exportCallback(
   data: string[][],
   format: 'csv' | 'xlsx',
-  complexHeaderData: string[][],
-  options?: OptExport
+  options: OptExport,
+  complexHeaderData?: string[][]
 ) {
   const { delimiter = ',', fileName = 'grid-export' } = options || {};
 
   if (format === 'csv') {
     const targetText = convertDataToText(data, delimiter);
 
-    exportCsv(fileName, targetText);
+    exportCSV(fileName, targetText);
   } else {
-    if (!XLSX.writeFile) {
-      console.error('Not found dependency "xlsx"');
+    if (!XLSX?.writeFile) {
+      console.error(
+        '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
+      );
       return;
     }
 
-    exportExcel(fileName, data, complexHeaderData);
+    exportExcel(fileName, data, complexHeaderData!);
   }
 }
 
@@ -175,19 +177,20 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
   const { column } = store;
 
   let targetData = data.slice(0);
-  let complexHeaderData = null;
 
   if (format === 'csv') {
     if (includeHeader && column.complexColumnHeaders.length === 0) {
       targetData.unshift(columnHeaders);
     }
 
-    const gridEvent = emitExportByType(store, 'beforeExport', {
+    const exportFn = (exportingData: string[][]) =>
+      exportCallback(exportingData, 'csv', exportOptions);
+
+    const gridEvent = emitExportEvent(store, 'beforeExport', {
       exportFormat: format,
       exportOptions,
       data: targetData,
-      exportFn: exportCallback,
-      complexHeaderData,
+      exportFn,
     });
 
     if (gridEvent.isStopped()) {
@@ -196,12 +199,16 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
 
     const targetText = convertDataToText(targetData, delimiter);
 
-    exportCsv(fileName, targetText);
+    exportCSV(fileName, targetText);
   } else {
-    if (!XLSX.writeFile) {
-      console.error('Not found dependency "xlsx"');
+    if (!XLSX?.writeFile) {
+      console.error(
+        '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
+      );
       return;
     }
+
+    let complexHeaderData: string[][] | null = null;
 
     if (includeHeader) {
       if (column.complexColumnHeaders.length > 0) {
@@ -212,13 +219,14 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
         targetData.unshift(columnHeaders);
       }
     }
+    const exportFn = (exportingData: string[][]) =>
+      exportCallback(exportingData, 'xlsx', exportOptions, complexHeaderData!);
 
-    const gridEvent = emitExportByType(store, 'beforeExport', {
+    const gridEvent = emitExportEvent(store, 'beforeExport', {
       exportFormat: format,
       exportOptions,
       data: targetData,
-      exportFn: exportCallback,
-      complexHeaderData,
+      exportFn,
     });
 
     if (gridEvent.isStopped()) {
@@ -227,11 +235,9 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     exportExcel(fileName, targetData, complexHeaderData);
   }
 
-  emitExportByType(store, 'afterExport', {
+  emitExportEvent(store, 'afterExport', {
     exportFormat: format,
     exportOptions,
     data: targetData,
-    exportFn: exportCallback,
-    complexHeaderData,
   });
 }
