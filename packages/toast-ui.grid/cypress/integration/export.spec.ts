@@ -227,8 +227,10 @@ describe('Export data', () => {
 
         it(`should export data of selected range to '${format}' according to "onlyFiltered" option`, () => {
           invokeFilter('name', [{ code: 'eq', value: '21' }]);
+
           const range = { start: [0, 0], end: [0, 0] };
           cy.gridInstance().invoke('setSelectionRange', range);
+
           cy.gridInstance().invoke('export', format, {
             onlyFiltered: true,
             onlySelected: true,
