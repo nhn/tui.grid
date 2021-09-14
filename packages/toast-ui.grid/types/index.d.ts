@@ -310,6 +310,7 @@ export {
   OptHeader as HeaderOptions,
   OptRow as RowOptions,
   OptColumn as ColumnOptions,
+  OptExport as ExportOptions,
   ModifiedRowsOptions,
   ModifiedRows,
   Params,

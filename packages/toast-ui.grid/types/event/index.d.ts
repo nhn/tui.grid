@@ -48,7 +48,7 @@ export interface GridEventProps {
   exportOptions?: OptExport;
   data?: string[][];
   complexHeaderData?: string[][] | null;
-  exportFn?: Function;
+  exportFn?: (data: string[][]) => void;
 }
 
 export class TuiGridEvent {
