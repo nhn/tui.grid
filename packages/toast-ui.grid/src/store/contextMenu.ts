@@ -20,6 +20,22 @@ function createDefaultContextMenu(): MenuItem[][] {
         label: i18n.get('contextMenu.copyRows'),
         action: 'copyRows',
       },
+      {
+        name: 'export',
+        label: i18n.get('contextMenu.export'),
+        subMenu: [
+          {
+            name: 'csvExport',
+            label: i18n.get('contextMenu.csvExport'),
+            action: 'csvExport',
+          },
+          {
+            name: 'excelExport',
+            label: i18n.get('contextMenu.excelExport'),
+            action: 'excelExport',
+          },
+        ],
+      },
     ],
   ];
 }

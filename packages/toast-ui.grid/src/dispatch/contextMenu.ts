@@ -3,6 +3,7 @@ import { MenuPos } from '@t/store/contextMenu';
 import { Range, PagePosition } from '@t/store/selection';
 import { ElementInfo } from '@t/dispatch';
 import { execCopy } from './clipboard';
+import { execExport } from './export';
 import { findOffsetIndex } from '../helper/common';
 import { getRowKeyByIndexWithPageRange } from '../query/data';
 
@@ -58,4 +59,12 @@ export function copyRows(store: Store) {
     : [focus.originalRowIndex!, focus.originalRowIndex!];
 
   execCopy(store, { rowRange, columnRange });
+}
+
+export function csvExport(store: Store) {
+  execExport(store, 'csv');
+}
+
+export function excelExport(store: Store) {
+  execExport(store, 'xlsx');
 }

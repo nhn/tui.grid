@@ -32,6 +32,7 @@ import {
 } from './dataSource';
 import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
 import { MenuItem } from './store/contextMenu';
+import { OptExport } from './store/export';
 
 type InternalProp =
   | 'sortKey'
@@ -277,6 +278,8 @@ declare namespace tui {
     public setPaginationTotalCount(totalCount: number): void;
 
     public getPaginationTotalCount(): number;
+
+    public export(format: 'csv' | 'xlsx', options?: OptExport): void;
   }
 }
 
@@ -307,6 +310,7 @@ export {
   OptHeader as HeaderOptions,
   OptRow as RowOptions,
   OptColumn as ColumnOptions,
+  OptExport as ExportOptions,
   ModifiedRowsOptions,
   ModifiedRows,
   Params,

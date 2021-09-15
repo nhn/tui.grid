@@ -79,6 +79,7 @@
   },
   "dependencies": {
     "tui-date-picker": "^4.1.0",
-    "tui-pagination": "^3.4.0"
+    "tui-pagination": "^3.4.0",
+    "xlsx": "^0.17.1"
   }
 }

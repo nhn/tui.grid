@@ -3,6 +3,7 @@ import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
 import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
+import { OptExport } from '@t/store/export';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 export interface CellChange {
@@ -43,6 +44,11 @@ export interface GridEventProps {
   keyboardEvent?: KeyboardEvent | null;
   save?: boolean;
   triggeredByKey?: boolean;
+  exportFormat?: 'csv' | 'xlsx';
+  exportOptions?: OptExport;
+  data?: string[][];
+  complexHeaderData?: string[][] | null;
+  exportFn?: (data: string[][]) => void;
 }
 
 export class TuiGridEvent {

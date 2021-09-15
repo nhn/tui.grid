@@ -78,7 +78,9 @@ export type GridEventName =
   | 'dragStart'
   | 'drag'
   | 'drop'
-  | 'keydown';
+  | 'keydown'
+  | 'beforeExport'
+  | 'afterExport';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -468,6 +470,9 @@ export interface OptI18nData {
     copy?: string;
     copyColumns?: string;
     copyRows?: string;
+    export?: string;
+    csvExport?: string;
+    excelExport?: string;
   };
 }
 

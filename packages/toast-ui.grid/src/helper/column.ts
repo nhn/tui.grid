@@ -11,3 +11,7 @@ export function isRowNumColumn(columnName: string) {
 export function isCheckboxColumn(columnName: string) {
   return columnName === '_checked';
 }
+
+export function isDragColumn(columnName: string) {
+  return columnName === '_draggable';
+}

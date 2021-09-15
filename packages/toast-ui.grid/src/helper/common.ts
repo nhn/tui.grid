@@ -426,6 +426,10 @@ export function convertTextToData(text: string) {
     );
 }
 
+export function convertDataToText(data: string[][], delimiter: string) {
+  return data.map((row) => `"${row.join(`"${delimiter}"`)}"`).join('\n');
+}
+
 export function silentSplice<T>(arr: T[], start: number, deleteCount: number, ...items: T[]): T[] {
   return Array.prototype.splice.call(arr, start, deleteCount, ...items);
 }

@@ -45,6 +45,9 @@ const messages: OptI18nLanguage = {
       copy: 'Copy',
       copyColumns: 'Copy Columns',
       copyRows: 'Copy Rows',
+      export: 'Export',
+      csvExport: 'CSV Export',
+      excelExport: 'Excel Export',
     },
   },
   es: {
@@ -84,6 +87,9 @@ const messages: OptI18nLanguage = {
       copy: 'Copiar',
       copyColumns: 'Copiar Columnas',
       copyRows: 'Copiar Filas',
+      export: 'exportar',
+      csvExport: 'CSV exportar',
+      excelExport: 'Excel exportar',
     },
   },
   ko: {
@@ -123,6 +129,9 @@ const messages: OptI18nLanguage = {
       copy: '복사',
       copyColumns: '열 복사',
       copyRows: '행 복사',
+      export: '내보내기',
+      csvExport: 'CSV로 내보내기',
+      excelExport: '엑셀로 내보내기',
     },
   },
 };

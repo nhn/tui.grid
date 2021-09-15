@@ -14,6 +14,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
+const package = require('../../package');
+
+const minify = process.argv.indexOf('--minify') >= 0;
 
 module.exports = (on) => {
   const options = {
