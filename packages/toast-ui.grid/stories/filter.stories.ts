@@ -13,9 +13,16 @@ function createGrid(columns: OptColumn[], data: OptRow[] = []) {
   return { el, grid };
 }
 
-function clickFilterBtnAsync(el: HTMLElement, callback?: () => void) {
+interface ClickBtnOption {
+  btnIndex?: number;
+  callback?: () => void;
+}
+
+function clickFilterBtnAsync(el: HTMLElement, clickBtnOption?: ClickBtnOption) {
+  const { btnIndex = 0, callback } = clickBtnOption || {};
+
   setTimeout(() => {
-    const filterBtn = el.querySelector('.tui-grid-btn-filter') as HTMLElement;
+    const filterBtn = el.querySelectorAll<HTMLElement>('.tui-grid-btn-filter')[btnIndex];
     filterBtn.click();
     if (callback) {
       callback();
@@ -164,8 +171,10 @@ layerSelect.story = { parameters: { notes: layerSelectNote } };
 export const layerDatePicker = () => {
   const columns: OptColumn[] = [{ name: 'date', filter: 'date' }];
   const { el } = createGrid(columns);
-  clickFilterBtnAsync(el, () => {
-    clickLayerInputAsync(el);
+  clickFilterBtnAsync(el, {
+    callback: () => {
+      clickLayerInputAsync(el);
+    },
   });
 
   return el;
@@ -176,3 +185,25 @@ const layerDatePickerNote = `
 - Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
 `;
 layerDatePicker.story = { parameters: { notes: layerDatePickerNote } };
+
+export const layerAfterMovingPosition = () => {
+  const columns: OptColumn[] = [
+    { name: 'name', filter: 'text' },
+    { name: 'age', filter: 'number' },
+    { name: 'score' },
+  ];
+
+  const { el } = createGrid(columns, []);
+
+  clickFilterBtnAsync(el);
+  clickFilterBtnAsync(el, { btnIndex: 1 });
+
+  return el;
+};
+
+const layerAfterMovingPositionNote = `
+## Filter Layer Position
+- Displaying the filter layer on the correct position when it updated.
+`;
+
+layerAfterMovingPosition.story = { parameters: { notes: layerAfterMovingPositionNote } };

@@ -66,6 +66,26 @@ export class FilterLayerInnerComp extends Component<Props> {
     }
   }
 
+  componentDidUpdate(prevProp: Props) {
+    const { name: currentColName, left: currentLeft } = this.props.columnAddress;
+
+    if (currentColName !== prevProp.columnAddress.name) {
+      const { left } = this.el.getBoundingClientRect();
+      const { clientWidth } = this.el;
+      const { innerWidth } = window;
+      const diff = currentLeft - this.state.left;
+
+      let resultLeft = currentLeft;
+
+      // Positioning the filter layer inside the viewport when it is out of the viewport
+      if (innerWidth < left + diff + clientWidth) {
+        resultLeft = currentLeft - (left + diff + clientWidth - innerWidth);
+      }
+
+      this.setState({ left: resultLeft });
+    }
+  }
+
   public render() {
     const {
       columnInfo,
