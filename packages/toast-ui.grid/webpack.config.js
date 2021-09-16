@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const package = require('./package');
 const webpack = require('webpack');
@@ -36,7 +37,7 @@ const commonConfig = {
   output: {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
-    filename: package.name + (minify ? '.min' : '') + '.js',
+    filename: `${package.name + (minify ? '.min' : '')}.js`,
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist'),
   },
@@ -54,7 +55,7 @@ module.exports = (env, { mode }) => {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
-          filename: package.name + (minify ? '.min' : '') + '.css',
+          filename: `${package.name + (minify ? '.min' : '')}.css`,
         }),
         new webpack.BannerPlugin({ banner, entryOnly: true }),
       ],
@@ -80,7 +81,12 @@ module.exports = (env, { mode }) => {
           amd: 'tui-date-picker',
           root: ['tui', 'DatePicker'],
         },
-        xlsx: 'XLSX',
+        xlsx: {
+          commonjs: 'xlsx',
+          commonjs2: 'xlsx',
+          amd: 'xlsx',
+          root: 'XLSX',
+        },
       },
       optimization: {
         minimize: false,
@@ -93,7 +99,7 @@ module.exports = (env, { mode }) => {
           new TerserPlugin({
             terserOptions: {
               compress: {
-                drop_console: true, // eslint-disable-line camelcase
+                drop_console: true, // eslint-disable-line @typescript-eslint/camelcase
                 warnings: true,
               },
               output: {
