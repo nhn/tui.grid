@@ -1,14 +1,27 @@
 name: Grid Publish
 on: [workflow_dispatch]
+
+env:
+  WORKING_DIRECTORY: ./packages/toast-ui.grid
+  VUE_WRAPPER_DIRECTORY: ./packages/toast-ui.vue-grid
+  REACT_WRAPPER_DIRECTORY: ./packages/toast-ui.react-grid
+  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
+  ROOT_DEPENDENCY_PATHS: ./node_modules
+  CACHED_BUILD_PATHS: ./packages/toast-ui.grid/dist
+  BUILD_CACHE_KEY: ${{ github.sha }}
+
 jobs:
-  checkVersion:
+  check-version:
     name: Check package version
     runs-on: ubuntu-latest
-    env:
-      WORKING_DIRECTORY: ./packages/toast-ui.grid
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
       - name: Check package version
         id: check
         uses: PostHog/check-package-version@v2
@@ -18,42 +31,153 @@ jobs:
         if: steps.check.outputs.is-new-version == 'false'
         run: 'echo "No version change"'
       - name: Cancel Workflow
+        if: steps.check.outputs.is-new-version == 'false'
         uses: andymckay/cancel-action@0.2
-
-  deploy-doc:
-    needs: [checkVersion]
-    env:
-      WORKING_DIRECTORY: ./packages/toast-ui.grid
+    
+  install_dependencies:
+    name: Install dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Compute dependency cache key
+        id: root_lockfile_hash
+        run: echo "::set-output name=hash::${{ hashFiles('package-lock.json') }}"
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        id: root_cache_dependencies
+        with:
+          path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+          key: ${{ steps.root_lockfile_hash.outputs.hash }}
+      - name: Install dependencies
+        if: steps.root_cache_dependencies.outputs.cache-hit == ''
+        run: npm install
+      - name: Compute dependency cache key (toast.ui-grid)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        id: grid_lockfile_hash
+        run: echo "::set-output name=hash::${{ hashFiles('package-lock.json') }}"
+      - name: Check dependency cache (toast.ui-grid)
+        uses: actions/cache@v2
+        id: grid_cache_dependencies
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ steps.grid_lockfile_hash.outputs.hash }}
+      - name: Install dependencies (toast.ui-grid)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        if: steps.grid_cache_dependencies.outputs.cache-hit == ''
+        run: npm install
+    outputs:
+      root_cache_key: ${{ steps.root_lockfile_hash.outputs.hash }}
+      grid_cache_key: ${{ steps.grid_lockfile_hash.outputs.hash }}
+
+  build:
+    name: Build
+    needs: [install_dependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+          key: ${{ needs.install_dependencies.outputs.root_cache_key }}
+      - name: Check dependency cache (toast.ui-grid)
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ needs.install_dependencies.outputs.grid_cache_key }}
+      - name: Check build cache
+        uses: actions/cache@v2
+        id: cache_built_packages
+        with:
+          path: ${{ env.CACHED_BUILD_PATHS }}
+          key: ${{ env.BUILD_CACHE_KEY }}
+      - name: Build packages
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        if: steps.cache_built_packages.outputs.cache-hit == ''
+        run: npm run build
+    outputs:
+      root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
+      grid_cache_key: ${{ needs.install_dependencies.outputs.grid_cache_key }}
+
+  push-tag:
+    needs: [check-version, build]
+    name: Push tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
       - name: Get package version
         id: version
         uses: PostHog/check-package-version@v2
         with:
           path: ${{ env.WORKING_DIRECTORY }}/
-      - name: Use Node.js 10.x
+      - name: Create Tag
+        run: |
+          git config --local user.email "jajugoguma@gmail.com"
+          git config --local user.name "jajugoguma"
+          git tag v${{ steps.version.outputs.committed-version }}
+      - name: Push changes
+        run: |
+          git push origin v${{ steps.version.outputs.committed-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      root_cache_key: ${{ needs.build.outputs.root_cache_key }}
+      grid_cache_key: ${{ needs.build.outputs.grid_cache_key }}
+
+  publish-docs:
+    needs: [push-tag]
+    name: Publish documents
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
         uses: actions/setup-node@v1
         with:
-          node-version: '10.x'
-      - name: npm install
-        run: |
-          npm i -g @toast-ui/doc
-          npm ci
-      - name: npm install(toast.ui-grid)
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm ci
-      - name: Build
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm run build
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Get package version
+        id: version
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}/
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+          key: ${{ needs.push-tag.outputs.root_cache_key }}
+      - name: npm i -g @toast-ui/doc
+        run: npm i -g @toast-ui/doc
+      - name: Check dependency cache (toast.ui-grid)
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ needs.push-tag.outputs.grid_cache_key }}
       - name: Run doc
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           npm run doc
-          mv apps/toast-ui.grid/${{ steps.version.outputs.committed-version }} ${{ steps.version.outputs.committed-version }}
-          mv -i apps/toast-ui.grid/_latest latest
+          mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
+          mv -i _latest ../../latest
+          rm -rf tmpdoc
           git stash --include-untracked
       - name: Checkout gh-pages
         uses: actions/checkout@v2
@@ -61,8 +185,9 @@ jobs:
           ref: gh-pages
       - name: Commit files
         run: |
-          git config --local user.email "js87zz.lee@nhn.com"
-          git config --local user.name "js87zz"
+          git config --local user.email "jajugoguma@gmail.com"
+          git config --local user.name "jajugoguma"
+          rm -rf latest
           git stash pop
           git add .
           git commit -m "${{ steps.version.outputs.committed-version }}"
@@ -71,62 +196,124 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-  tag:
-    needs: [checkVersion]
-    env:
-      WORKING_DIRECTORY: ./packages/toast-ui.grid
+
+  publish-package:
+    needs: [push-tag]
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+          key: ${{ needs.push-tag.outputs.root_cache_key }}
+      - name: Check dependency cache (toast.ui-grid)
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ needs.push-tag.outputs.grid_cache_key }}
+      - name: Check build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_BUILD_PATHS }}
+          key: ${{ env.BUILD_CACHE_KEY }}
+      - name: Publish
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+    outputs:
+      root_cache_key: ${{ needs.push-tag.outputs.root_cache_key }}
+      grid_cache_key: ${{ needs.push-tag.outputs.grid_cache_key }}
+
+  publish-cdn:
+    needs: [publish-package]
+    name: Publish to CDN
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Check dependency cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+          key: ${{ needs.publish-package.outputs.root_cache_key }}
+      - name: Check dependency cache (toast.ui-grid)
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+          key: ${{ needs.publish-package.outputs.grid_cache_key }}
+      - name: Check build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHED_BUILD_PATHS }}
+          key: ${{ env.BUILD_CACHE_KEY }}
+      - name: Upload files to CDN
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run publish:cdn
+        env:
+          TOAST_CLOUD_TENENTID: ${{ secrets.TOAST_CLOUD_TENENTID }}
+          TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
+          TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
+          TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}
+
+  publish-wrapper:
+    runs-on: ubuntu-latest
+    needs: [publish-package]
+    name: Publish wrapper
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
       - name: Get package version
         id: version
         uses: PostHog/check-package-version@v2
         with:
           path: ${{ env.WORKING_DIRECTORY }}/
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
+      - name: Update package.json of wrappers
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          npm run build
-      - name: Create Tag
+          npm run update:wrapper
+      - name: Vue wrapper lock update
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
         run: |
-          git config --local user.email "js87zz.lee@nhn.com"
-          git config --local user.name "js87zz"
-          git tag v${{ steps.version.outputs.committed-version }}
+          npm install
+      - name: React wrapper lock update
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: Commit files
+        run: |
+          git config --local user.email "jajugoguma@gmail.com"
+          git config --local user.name "jajugoguma"
+          git add .
+          git commit -m "chore: update version of wrappers to v${{ steps.version.outputs.committed-version }}"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-npm:
-    needs: [checkVersion]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
-          registry-url: https://registry.npmjs.org/
-      - name: npm install
+          branch: master
+      - name: Publish vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
         run: |
-          npm ci
-      - name: npm install(toast.ui-grid)
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+          npm publish
+      - name: Publish react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
         run: |
-          npm ci
-      - name: Build
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          npm run build
-      - name: Publish
-        run: npm publish
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+          npm publish
