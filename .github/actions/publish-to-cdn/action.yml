@@ -1,0 +1,70 @@
+name: 'Publish to CDN'
+description: "Publish bundles to CDN"
+inputs:
+  ROOT_DEPENDENCY_PATHS:
+    description: 'Path of root node modules'
+    require: true
+  WORKING_DIRECTORY:
+    description: 'Path of working directory'
+    require: true
+  CACHED_DEPENDENCY_PATHS:
+    description: 'Path of node modules'
+    require: true
+  CACHED_BUILD_PATHS:
+    description: 'Path of dist'
+    require: true
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencise'
+    require: true
+  GRID_CACHE_KEY:
+    description: 'Key of dependencise'
+    require: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build'
+    require: true
+  TOAST_CLOUD_TENENTID:
+    description: 'Tenent id for CDN'
+    require: true
+  TOAST_CLOUD_STORAGEID:
+    description: 'Storage id for CDN'
+    require: true
+  TOAST_CLOUD_USERNAME:
+    description: 'User name for CDN'
+    require: true
+  TOAST_CLOUD_PASSWORD:
+    description: 'password for CDN'
+    require: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
+    - name: Check dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.ROOT_DEPENDENCY_PATHS }}
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check dependency cache (toast.ui-grid)
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.CACHED_DEPENDENCY_PATHS }}
+        key: ${{ inputs.GRID_CACHE_KEY }}
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.CACHED_BUILD_PATHS }}
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Upload files to CDN
+      working-directory: ${{ inputs.WORKING_DIRECTORY }}
+      run: |
+        npm run publish:cdn
+      env:
+        TOAST_CLOUD_TENENTID: ${{ inputs.TOAST_CLOUD_TENENTID }}
+        TOAST_CLOUD_STORAGEID: ${{ inputs.TOAST_CLOUD_STORAGEID }}
+        TOAST_CLOUD_USERNAME: ${{ inputs.TOAST_CLOUD_USERNAME }}
+        TOAST_CLOUD_PASSWORD: ${{ inputs.TOAST_CLOUD_PASSWORD }}
+      shell: bash

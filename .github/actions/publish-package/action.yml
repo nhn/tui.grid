@@ -1,0 +1,58 @@
+name: 'Publish to CDN'
+description: "Publish bundles to CDN"
+inputs:
+  ROOT_DEPENDENCY_PATHS:
+    description: 'Path of root node modules'
+    require: true
+  WORKING_DIRECTORY:
+    description: 'Path of working directory'
+    require: true
+  CACHED_DEPENDENCY_PATHS:
+    description: 'Path of node modules'
+    require: true
+  CACHED_BUILD_PATHS:
+    description: 'Path of dist'
+    require: true
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencise'
+    require: true
+  GRID_CACHE_KEY:
+    description: 'Key of dependencise'
+    require: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build'
+    require: true
+  NODE_AUTH_TOKEN:
+    description: 'NPM authrization token'
+    require: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
+    - uses: actions/checkout@v2
+    - name: Check dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.ROOT_DEPENDENCY_PATHS }}
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check dependency cache (toast.ui-grid)
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.CACHED_DEPENDENCY_PATHS }}
+        key: ${{ inputs.GRID_CACHE_KEY }}
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.CACHED_BUILD_PATHS }}
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Publish
+      working-directory: ${{ inputs.WORKING_DIRECTORY }}
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
+      shell: bash

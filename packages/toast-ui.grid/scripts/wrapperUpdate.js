@@ -5,9 +5,9 @@ const GRID_PACKAGE_JSON_PATH = path.join(__dirname, '../package.json');
 const REACT_PACKAGE_JSON_PATH = path.join(__dirname, '../../toast-ui.react-grid/package.json');
 const VUE_PACKAGE_JSON_PATH = path.join(__dirname, '../../toast-ui.vue-grid/package.json');
 
-const gridPackage = JSON.parse(fs.readFileSync(GRID_PACKAGE_JSON_PATH, 'utf8'));
-const reactGridPackage = JSON.parse(fs.readFileSync(REACT_PACKAGE_JSON_PATH, 'utf8'));
-const vueGridPackage = JSON.parse(fs.readFileSync(VUE_PACKAGE_JSON_PATH, 'utf8'));
+const gridPackage = require(GRID_PACKAGE_JSON_PATH);
+const reactGridPackage = require(REACT_PACKAGE_JSON_PATH);
+const vueGridPackage = require(VUE_PACKAGE_JSON_PATH);
 
 const version = gridPackage.version;
 
