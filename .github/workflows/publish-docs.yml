@@ -1,6 +1,11 @@
 name: Publish documents
 on: [workflow_dispatch]
 
+env:
+  WORKING_DIRECTORY: ./packages/toast-ui.grid
+  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
+  ROOT_DEPENDENCY_PATHS: ./node_modules
+
 jobs:
   install_dependencies:
     name: Install dependencies
