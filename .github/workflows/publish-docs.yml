@@ -1,0 +1,35 @@
+name: Publish documents
+on: [workflow_dispatch]
+
+env:
+  WORKING_DIRECTORY: ./packages/toast-ui.grid
+  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
+  ROOT_DEPENDENCY_PATHS: ./node_modules
+
+jobs:
+  install_dependencies:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: install_dependencies
+        id: cache-keys
+        uses: ./.github/actions/install-dependencies
+    outputs:
+      root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
+      grid_cache_key: ${{ steps.cache-keys.outputs.grid_cache_key }}
+
+  publish-docs:
+    needs: [install_dependencies]
+    name: Publish documents
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Publish documents
+        uses: ./.github/actions/publish-docs
+        with:
+          ROOT_CACHE_KEY: ${{ needs.install_dependencies.outputs.root_cache_key }}
+          GRID_CACHE_KEY: ${{ needs.install_dependencies.outputs.grid_cache_key }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

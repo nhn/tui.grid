@@ -1,0 +1,71 @@
+name: 'Publish to CDN'
+description: "Publish bundles to CDN"
+inputs:
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencise'
+    required: true
+  GRID_CACHE_KEY:
+    description: 'Key of dependencise'
+    required: true
+  GITHUB_TOKEN:
+    description: 'Github token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
+    - name: Get package version
+      id: version
+      uses: PostHog/check-package-version@v2
+      with:
+        path: ${{ env.WORKING_DIRECTORY }}/
+    - name: Check dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.ROOT_DEPENDENCY_PATHS }}/
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: npm i -g @toast-ui/doc
+      run: npm i -g @toast-ui/doc
+      shell: bash
+    - name: Check dependency cache (toast.ui-grid)
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}/
+        key: ${{ inputs.GRID_CACHE_KEY }}
+    - name: Run doc
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        npm run doc
+        mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
+        mv -i _latest ../../latest
+        rm -rf tmpdoc
+        git stash --include-untracked
+      shell: bash
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+    - name: Commit files
+      run: |
+        git config --local user.email "daeyeon.kim@nhn.com"
+        git config --local user.name "jajugoguma"
+        rm -rf latest
+        rm -rf ${{ steps.version.outputs.committed-version }}
+        git stash pop
+        git add .
+        git commit -m "${{ steps.version.outputs.committed-version }}"
+      shell: bash
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.GITHUB_TOKEN }}
+        branch: gh-pages
+    - name: Checkout branch
+      uses: actions/checkout@v2
+      with:
+        ref: master

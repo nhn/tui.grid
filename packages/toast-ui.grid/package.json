@@ -21,7 +21,9 @@
     "storybook:build": "build-storybook",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
     "doc:dev": "npm run ts2js && tuidoc --serv",
-    "doc": "npm run ts2js && tuidoc"
+    "doc": "npm run ts2js && tuidoc",
+    "publish:cdn": "node scripts/publishToCDN.js",
+    "update:wrapper": "node scripts/wrapperUpdate.js"
   },
   "repository": {
     "type": "git",

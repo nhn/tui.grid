@@ -1,0 +1,47 @@
+name: 'Build'
+description: "Build package"
+inputs:
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencise'
+    required: true
+  GRID_CACHE_KEY:
+    description: 'Key of dependencise'
+    required: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
+    - name: Check dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.ROOT_DEPENDENCY_PATHS }}/
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check dependency cache (toast.ui-grid)
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}/
+        key: ${{ inputs.GRID_CACHE_KEY }}
+    - name: Check build cache
+      uses: actions/cache@v2
+      id: cache_built_packages
+      with:
+        path: ${{ env.CACHED_BUILD_PATHS }}/
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Build packages
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        if echo ${{ steps.cache_built_packages.outputs.cache-hit }} | grep -c "true"
+        then
+          echo "Cache hit - skipping building"
+        else
+          npm run build
+        fi
+      shell: bash
