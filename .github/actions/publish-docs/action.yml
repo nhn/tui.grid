@@ -1,15 +1,10 @@
 name: 'Publish to CDN'
 description: "Publish bundles to CDN"
+env:
+  WORKING_DIRECTORY: ./packages/toast-ui.grid
+  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
+  ROOT_DEPENDENCY_PATHS: ./node_modules
 inputs:
-  ROOT_DEPENDENCY_PATHS:
-    description: 'Path of root node modules'
-    required: true
-  WORKING_DIRECTORY:
-    description: 'Path of working directory'
-    required: true
-  CACHED_DEPENDENCY_PATHS:
-    description: 'Path of node modules'
-    required: true
   ROOT_CACHE_KEY:
     description: 'Key of root dependencise'
     required: true
@@ -32,11 +27,11 @@ runs:
       id: version
       uses: PostHog/check-package-version@v2
       with:
-        path: ${{ inputs.WORKING_DIRECTORY }}/
+        path: ${{ env.WORKING_DIRECTORY }}/
     - name: Check dependency cache
       uses: actions/cache@v2
       with:
-        path: ${{ inputs.ROOT_DEPENDENCY_PATHS }}
+        path: ${{ env.ROOT_DEPENDENCY_PATHS }}
         key: ${{ inputs.ROOT_CACHE_KEY }}
     - name: npm i -g @toast-ui/doc
       run: npm i -g @toast-ui/doc
@@ -44,10 +39,10 @@ runs:
     - name: Check dependency cache (toast.ui-grid)
       uses: actions/cache@v2
       with:
-        path: ${{ inputs.CACHED_DEPENDENCY_PATHS }}
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}
         key: ${{ inputs.GRID_CACHE_KEY }}
     - name: Run doc
-      working-directory: ${{ inputs.WORKING_DIRECTORY }}
+      working-directory: ${{ env.WORKING_DIRECTORY }}
       run: |
         npm run doc
         mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
@@ -61,7 +56,7 @@ runs:
         ref: gh-pages
     - name: Commit files
       run: |
-        git config --local user.email "jajugoguma@gmail.com"
+        git config --local user.email "daeyeon.kim@nhn.com"
         git config --local user.name "jajugoguma"
         rm -rf latest
         rm -rf ${{ steps.version.outputs.committed-version }}

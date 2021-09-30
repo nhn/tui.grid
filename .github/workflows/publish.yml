@@ -3,11 +3,6 @@ on: [workflow_dispatch]
 
 env:
   WORKING_DIRECTORY: ./packages/toast-ui.grid
-  VUE_WRAPPER_DIRECTORY: ./packages/toast-ui.vue-grid
-  REACT_WRAPPER_DIRECTORY: ./packages/toast-ui.react-grid
-  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
-  ROOT_DEPENDENCY_PATHS: ./node_modules
-  CACHED_BUILD_PATHS: ./packages/toast-ui.grid/dist
   BUILD_CACHE_KEY: ${{ github.sha }}
 
 jobs:
@@ -43,10 +38,6 @@ jobs:
       - name: install_dependencies
         id: cache-keys
         uses: ./.github/actions/install-dependencies
-        with:
-          ROOT_DEPENDENCY_PATHS: ${{ env.ROOT_DEPENDENCY_PATHS }}
-          CACHED_DEPENDENCY_PATHS: ${{ env.CACHED_DEPENDENCY_PATHS }}
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
     outputs:
       root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
       grid_cache_key: ${{ steps.cache-keys.outputs.grid_cache_key }}
@@ -61,10 +52,6 @@ jobs:
       - name: build
         uses: ./.github/actions/build-cache
         with:
-          ROOT_DEPENDENCY_PATHS: ${{ env.ROOT_DEPENDENCY_PATHS }}
-          CACHED_DEPENDENCY_PATHS: ${{ env.CACHED_DEPENDENCY_PATHS }}
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
-          CACHED_BUILD_PATHS: ${{ env.CACHED_BUILD_PATHS }}
           ROOT_CACHE_KEY: ${{ needs.install_dependencies.outputs.root_cache_key }}
           GRID_CACHE_KEY: ${{ needs.install_dependencies.outputs.grid_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
@@ -91,7 +78,7 @@ jobs:
           path: ${{ env.WORKING_DIRECTORY }}/
       - name: Create Tag
         run: |
-          git config --local user.email "jajugoguma@gmail.com"
+          git config --local user.email "daeyeon.kim@nhn.com"
           git config --local user.name "jajugoguma"
           git tag v${{ steps.version.outputs.committed-version }}
       - name: Push changes
@@ -109,10 +96,6 @@ jobs:
       - name: Publish package
         uses: ./.github/actions/publish-package
         with:
-          ROOT_DEPENDENCY_PATHS: ${{ env.ROOT_DEPENDENCY_PATHS }}
-          CACHED_DEPENDENCY_PATHS: ${{ env.CACHED_DEPENDENCY_PATHS }}
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
-          CACHED_BUILD_PATHS: ${{ env.CACHED_BUILD_PATHS }}
           ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
           GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
@@ -128,10 +111,6 @@ jobs:
       - name: Publish to CDN
         uses: ./.github/actions/publish-to-cdn
         with:
-          ROOT_DEPENDENCY_PATHS: ${{ env.ROOT_DEPENDENCY_PATHS }}
-          CACHED_DEPENDENCY_PATHS: ${{ env.CACHED_DEPENDENCY_PATHS }}
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
-          CACHED_BUILD_PATHS: ${{ env.CACHED_BUILD_PATHS }}
           ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
           GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
@@ -150,9 +129,6 @@ jobs:
       - name: Publish documents
         uses: ./.github/actions/publish-docs
         with:
-          ROOT_DEPENDENCY_PATHS: ${{ env.ROOT_DEPENDENCY_PATHS }}
-          CACHED_DEPENDENCY_PATHS: ${{ env.CACHED_DEPENDENCY_PATHS }}
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
           ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
           GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
