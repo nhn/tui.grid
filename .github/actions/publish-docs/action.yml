@@ -3,22 +3,22 @@ description: "Publish bundles to CDN"
 inputs:
   ROOT_DEPENDENCY_PATHS:
     description: 'Path of root node modules'
-    require: true
+    required: true
   WORKING_DIRECTORY:
     description: 'Path of working directory'
-    require: true
+    required: true
   CACHED_DEPENDENCY_PATHS:
     description: 'Path of node modules'
-    require: true
+    required: true
   ROOT_CACHE_KEY:
     description: 'Key of root dependencise'
-    require: true
+    required: true
   GRID_CACHE_KEY:
     description: 'Key of dependencise'
-    require: true
+    required: true
   GITHUB_TOKEN:
     description: 'Github token'
-    require: true
+    required: true
 
 runs:
   using: "composite"

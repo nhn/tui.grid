@@ -3,13 +3,13 @@ description: "Set Node.js version and Install node modules"
 inputs:
   ROOT_DEPENDENCY_PATHS:
     description: 'Path of root node modules'
-    require: true
+    required: true
   WORKING_DIRECTORY:
     description: 'Path of working directory'
-    require: true
+    required: true
   CACHED_DEPENDENCY_PATHS:
     description: 'Path of node modules'
-    require: true
+    required: true
 outputs:
   root_cache_key:
     description: 'Key of root dependencise'

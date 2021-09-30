@@ -3,25 +3,25 @@ description: "Build package"
 inputs:
   ROOT_DEPENDENCY_PATHS:
     description: 'Path of root node modules'
-    require: true
+    required: true
   WORKING_DIRECTORY:
     description: 'Path of working directory'
-    require: true
+    required: true
   CACHED_DEPENDENCY_PATHS:
     description: 'Path of node modules'
-    require: true
+    required: true
   CACHED_BUILD_PATHS:
     description: 'Path of dist'
-    require: true
+    required: true
   ROOT_CACHE_KEY:
     description: 'Key of root dependencise'
-    require: true
+    required: true
   GRID_CACHE_KEY:
     description: 'Key of dependencise'
-    require: true
+    required: true
   BUILD_CACHE_KEY:
     description: 'Key of build'
-    require: true
+    required: true
 
 runs:
   using: "composite"
