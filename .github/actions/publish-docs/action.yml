@@ -1,9 +1,5 @@
 name: 'Publish to CDN'
 description: "Publish bundles to CDN"
-env:
-  WORKING_DIRECTORY: ./packages/toast-ui.grid
-  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
-  ROOT_DEPENDENCY_PATHS: ./node_modules
 inputs:
   ROOT_CACHE_KEY:
     description: 'Key of root dependencise'
@@ -31,7 +27,7 @@ runs:
     - name: Check dependency cache
       uses: actions/cache@v2
       with:
-        path: ${{ env.ROOT_DEPENDENCY_PATHS }}
+        path: ${{ env.ROOT_DEPENDENCY_PATHS }}/
         key: ${{ inputs.ROOT_CACHE_KEY }}
     - name: npm i -g @toast-ui/doc
       run: npm i -g @toast-ui/doc
@@ -39,7 +35,7 @@ runs:
     - name: Check dependency cache (toast.ui-grid)
       uses: actions/cache@v2
       with:
-        path: ${{ env.CACHED_DEPENDENCY_PATHS }}
+        path: ${{ env.CACHED_DEPENDENCY_PATHS }}/
         key: ${{ inputs.GRID_CACHE_KEY }}
     - name: Run doc
       working-directory: ${{ env.WORKING_DIRECTORY }}

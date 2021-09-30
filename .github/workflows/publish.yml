@@ -3,6 +3,9 @@ on: [workflow_dispatch]
 
 env:
   WORKING_DIRECTORY: ./packages/toast-ui.grid
+  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
+  ROOT_DEPENDENCY_PATHS: ./node_modules
+  CACHED_BUILD_PATHS: ./packages/toast-ui.grid/dist
   BUILD_CACHE_KEY: ${{ github.sha }}
 
 jobs:
