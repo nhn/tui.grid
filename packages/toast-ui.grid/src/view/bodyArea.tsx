@@ -52,6 +52,7 @@ interface StoreProps {
   cellBorderWidth: number;
   eventBus: EventBus;
   hasTreeColumn: boolean;
+  visibleTotalWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -79,6 +80,7 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
   'offsetLeft',
   'offsetTop',
   'totalColumnWidth',
+  'visibleTotalWidth',
 ];
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISTANCE_FOR_DRAG = 10;
@@ -422,6 +424,7 @@ class BodyAreaComp extends Component<Props> {
     scrollX,
     scrollY,
     cellBorderWidth,
+    visibleTotalWidth,
   }: Props) {
     const areaStyle: AreaStyle = { height: bodyHeight };
     if (!scrollX) {
@@ -431,6 +434,7 @@ class BodyAreaComp extends Component<Props> {
       areaStyle.overflowY = 'hidden';
     }
     const tableContainerStyle = {
+      width: visibleTotalWidth,
       top: offsetTop,
       left: offsetLeft,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
@@ -470,9 +474,24 @@ class BodyAreaComp extends Component<Props> {
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { columnCoords, rowCoords, dimension, viewport, id, column } = store;
   const { totalRowHeight } = rowCoords;
-  const { totalColumnWidth } = columnCoords;
+  const { totalColumnWidth, widths } = columnCoords;
   const { bodyHeight, scrollXHeight, scrollX, scrollY, cellBorderWidth } = dimension;
-  const { offsetLeft, offsetTop, scrollTop, scrollLeft, dummyRowCount } = viewport;
+  const {
+    offsetLeft,
+    offsetTop,
+    scrollTop,
+    scrollLeft,
+    dummyRowCount,
+    colRange,
+    columns,
+  } = viewport;
+
+  const visibleWidths = side === 'R' ? widths[side].slice(...colRange) : widths[side];
+  const visibleColumns = side === 'R' ? columns : column.visibleColumnsBySideWithRowHeader[side];
+  const visibleTotalWidth = visibleColumns.reduce(
+    (acc, _, idx) => acc + visibleWidths[idx] + cellBorderWidth,
+    0
+  );
 
   return {
     bodyHeight,
@@ -489,5 +508,6 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     cellBorderWidth,
     eventBus: getEventBus(id),
     hasTreeColumn: !!column.treeColumnName,
+    visibleTotalWidth,
   };
 })(BodyAreaComp);
