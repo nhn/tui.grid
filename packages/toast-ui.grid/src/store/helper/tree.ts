@@ -1,6 +1,7 @@
-import { OptRow } from '../../../types/options';
-import { Row, RowKey } from '../../../types/store/data';
-import { Column } from '../../../types/store/column';
+import { GridId } from '@t/store';
+import { OptRow } from '@t/options';
+import { Row, RowKey } from '@t/store/data';
+import { Column } from '@t/store/column';
 import { createRawRow } from '../data';
 import { isExpanded, getDepth, isLeaf, isHidden } from '../../query/tree';
 import { observable, observe } from '../../helper/observable';
@@ -23,12 +24,18 @@ interface TreeDataCreationOption {
   disabled?: boolean;
 }
 
-let treeRowKey = -1;
+interface TreeRowKeyMap {
+  [id: number]: number;
+}
 
-function generateTreeRowKey() {
-  treeRowKey += 1;
+const treeRowKeyMap: TreeRowKeyMap = {};
 
-  return treeRowKey;
+function generateTreeRowKey(id: GridId) {
+  treeRowKeyMap[id] = treeRowKeyMap[id] ?? -1;
+
+  treeRowKeyMap[id] += 1;
+
+  return treeRowKeyMap[id];
 }
 
 function addChildRowKey(row: Row, childRow: Row) {
@@ -87,7 +94,7 @@ export function createTreeRawRow(
     row._leaf = true;
   }
   // generate new tree rowKey when row doesn't have rowKey
-  const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
+  const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey(id) : Number(row.rowKey);
   const rawRow = createRawRow(id, row, targetTreeRowKey, column, {
     keyColumnName,
     lazyObservable,
@@ -151,7 +158,7 @@ export function createTreeRawData({
 }: TreeDataCreationOption) {
   // only reset the rowKey on lazy observable data
   if (lazyObservable) {
-    treeRowKey = -1;
+    treeRowKeyMap[id] = -1;
   }
 
   return flattenTreeData(id, data, null, column, {
