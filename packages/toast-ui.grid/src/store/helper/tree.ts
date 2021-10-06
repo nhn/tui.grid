@@ -30,6 +30,10 @@ interface TreeRowKeyMap {
 
 const treeRowKeyMap: TreeRowKeyMap = {};
 
+export function clearTreeRowKeyMap(id: GridId) {
+  delete treeRowKeyMap[id];
+}
+
 function generateTreeRowKey(id: GridId) {
   treeRowKeyMap[id] = treeRowKeyMap[id] ?? -1;
 
