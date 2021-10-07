@@ -134,4 +134,5 @@ jobs:
         with:
           ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
           GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
+          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
