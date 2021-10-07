@@ -49,8 +49,8 @@ runs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
       run: |
         npm run doc
-        mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
-        mv -i _latest ../../latest
+        mv _${{ steps.version.outputs.committed-version }} ../../_${{ steps.version.outputs.committed-version }}
+        mv -i _latest ../../_latest
         rm -rf tmpdoc
         git stash --include-untracked
       shell: bash
@@ -65,6 +65,8 @@ runs:
         rm -rf latest
         rm -rf ${{ steps.version.outputs.committed-version }}
         git stash pop
+         mv _${{ steps.version.outputs.committed-version }} ${{ steps.version.outputs.committed-version }}
+        mv -i _latest latest
         git add .
         git commit -m "${{ steps.version.outputs.committed-version }}"
       shell: bash
