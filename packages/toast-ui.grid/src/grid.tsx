@@ -34,6 +34,7 @@ import {
   ModifiedDataManager,
   ModificationTypeCode,
 } from '@t/dataSource';
+import { OptExport } from '@t/store/export';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { createDispatcher, Dispatch } from './dispatch/create';
@@ -72,7 +73,7 @@ import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 import { getFilterState } from './query/filter';
 import { execCopy } from './dispatch/clipboard';
-import { OptExport } from '@t/store/export';
+import { clearTreeRowKeyMap } from './store/helper/tree';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -1549,6 +1550,7 @@ export default class Grid implements TuiGrid {
    */
   public destroy() {
     render('', this.el, this.gridEl);
+    clearTreeRowKeyMap(this.store.id);
     for (const key in this) {
       if (hasOwnProp(this, key)) {
         delete this[key];
