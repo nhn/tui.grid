@@ -30,10 +30,18 @@ jobs:
         working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
         run: |
           npm install
+      - name: Build vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
       - name: React wrapper lock update
         working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
         run: |
           npm install
+      - name: Build react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
       - name: Commit files
         run: |
           git config --local user.email "daeyeon.kim@nhn.com"
@@ -49,7 +57,11 @@ jobs:
         working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
         run: |
           npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Publish react wrapper
         working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
         run: |
           npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

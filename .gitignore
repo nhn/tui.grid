@@ -60,3 +60,4 @@ karma.conf.local.js
 .vscode/
 dist/
 .env
+!_*/dist/
