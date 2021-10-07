@@ -965,10 +965,21 @@
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border-radius: 3px;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .tui-grid-floating-cell {
   display: inline-block;
+  overflow: hidden;
+  line-height: normal;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.tui-grid-floating-cell .tui-grid-cell-content {
+  padding: 0 5px;
+  word-break: break-all;
+  text-align: start;
 }
 
 .tui-grid-floating-tree-cell {
@@ -977,7 +988,6 @@
 
 .tui-grid-floating-tree-cell-content {
   margin-left: 10px;
-  vertical-align: middle
 }
 
 .tui-grid-floating-tree-cell .tui-grid-tree-icon {
