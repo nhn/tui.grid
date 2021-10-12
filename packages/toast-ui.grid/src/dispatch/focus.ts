@@ -6,7 +6,7 @@ import { isEditableCell, findIndexByRowKey } from '../query/data';
 import { isFocusedCell, isEditingCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../query/rowSpan';
 import { setValue, makeObservable } from './data';
-import { isUndefined } from '../helper/common';
+import { isNil, isUndefined } from '../helper/common';
 import { isHiddenColumn } from '../query/column';
 import { isRowFiltred } from '../query/filter';
 
@@ -135,9 +135,8 @@ export function changeFocus(
     focus.rowKey = focusRowKey;
   }
 
-  if (focus.rowKey && isRowFiltred(store, focus.rowKey)) {
+  if (!isNil(focus.rowKey) && isRowFiltred(store, focus.rowKey)) {
     initFocus(store);
-    return;
   }
 }
 

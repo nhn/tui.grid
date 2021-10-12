@@ -2,7 +2,7 @@ import { Store } from '@t/store';
 import { RowKey } from '@t/store/data';
 import { FilterOptionType, OperatorType, FilterState } from '@t/store/filterLayerState';
 import { GridEventProps } from '@t/event';
-import { deepCopyArray, find } from '../helper/common';
+import { deepCopyArray } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 import { getFormattedValue } from './data';
 
@@ -105,15 +105,11 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
   return new GridEvent(props);
 }
 
-export function isRowFiltred(store: Store, rowKey: RowKey | null) {
+export function isRowFiltred(store: Store, rowKey: RowKey) {
   const { filters } = store.data;
 
   if (!filters) {
     return false;
-  }
-
-  if (!rowKey) {
-    return true;
   }
 
   return !!filters.filter((filter) => {
