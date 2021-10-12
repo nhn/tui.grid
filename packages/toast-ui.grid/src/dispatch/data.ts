@@ -71,9 +71,6 @@ import {
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 
 function updateHeightsWithFilteredData(store: Store) {
-  if (store.data.filters) {
-    initFocus(store);
-  }
   updateHeights(store);
 }
 
