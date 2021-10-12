@@ -195,10 +195,10 @@ For more information on PR's step, please see links of Contributing section.
 ## 🚀 Used By
 
 - [NCP - Commerce Platform](https://www.e-ncp.com/)
-- [Toast File](https://file.toast.com/)
+- [TOAST File](https://file.toast.com/)
 - [HANGAME](https://www.hangame.com/)
 - [TOAST Gamebase](https://docs.toast.com/ko/Game/Gamebase/ko/oper-analytics/)
-- [TOAST Dooray - Collaboration Service](https://dooray.com/)
+- [NHN Dooray - Collaboration Service](https://dooray.com/)
 - [Shop by](https://www.godo.co.kr/shopby/main.gd)
 - [Payco](https://www.payco.com/)
 - [YES24 - Movie Management System (Admin Tools)](http://m.movie.yes24.com/Movie/CurrentMovie.aspx)
