@@ -70,7 +70,7 @@ export function matchRowHeight(store: Store) {
   data.rawData.slice(start, end).forEach((row) => {
     const height = row._attributes.height;
 
-    if (!isUndefined(height) && rowCoords.heights[row.sortKey] != height) {
+    if (!isUndefined(height) && rowCoords.heights[row.sortKey] !== height) {
       rowCoords.heights[row.sortKey] = height;
     }
   });
