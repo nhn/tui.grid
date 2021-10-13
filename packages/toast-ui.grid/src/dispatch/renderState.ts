@@ -62,3 +62,18 @@ export function refreshRowHeight(store: Store, rowIndex: number, rowHeight: numb
     notify(rowCoords, 'heights');
   }
 }
+
+export function matchRowHeight(store: Store) {
+  const { data, rowCoords, viewport } = store;
+  const [start, end] = viewport.rowRange;
+
+  data.rawData.slice(start, end).forEach((row) => {
+    const height = row._attributes.height;
+
+    if (!isUndefined(height) && rowCoords.heights[row.sortKey] != height) {
+      rowCoords.heights[row.sortKey] = height;
+    }
+  });
+
+  notify(rowCoords, 'heights');
+}

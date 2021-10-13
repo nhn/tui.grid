@@ -32,6 +32,7 @@ import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
 import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
 import { isFocusedCell } from '../query/focus';
+import { matchRowHeight } from '../dispatch/renderState';
 
 interface OwnProps {
   side: Side;
@@ -173,6 +174,8 @@ class BodyAreaComp extends Component<Props> {
         this.movedIndexInfo = { index, rowKey: rowKeyToMove, appended: false };
         this.props.dispatch('moveRow', rowKey, index);
       }
+
+      matchRowHeight(this.context.store);
 
       const gridEvent = new GridEvent({
         rowKey,
