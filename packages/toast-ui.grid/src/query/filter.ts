@@ -4,7 +4,8 @@ import { FilterOptionType, OperatorType, FilterState } from '@t/store/filterLaye
 import { GridEventProps } from '@t/event';
 import { deepCopyArray } from '../helper/common';
 import GridEvent from '../event/gridEvent';
-import { getFormattedValue } from './data';
+import { findRowByRowKey } from './data';
+import { getFormattedValue } from '../store/helper/data';
 
 // @TODO: 'filter' event will be deprecated
 export type EventType =
@@ -105,19 +106,24 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
   return new GridEvent(props);
 }
 
-export function isRowFiltred(store: Store, rowKey: RowKey) {
-  const { filters } = store.data;
+export function isRowFiltred(store: Store, rowKey: RowKey | null | undefined) {
+  const { data, column, id } = store;
+  const { filters } = data;
+  const { allColumnMap } = column;
+  const row = findRowByRowKey(data, column, id, rowKey, false);
 
-  if (!filters) {
+  if (!filters || !row) {
     return false;
   }
 
-  return !!filters.filter((filter) => {
-    const { columnName, conditionFn } = filter;
+  return !!store.data.filters?.some(({ conditionFn, columnName }) => {
+    const { formatter } = allColumnMap[columnName];
+    const value = row[columnName];
+    const relationListItems = row._relationListItemMap[columnName];
+    const formatterProps = { row, column: allColumnMap[columnName], value };
 
-    if (conditionFn) {
-      return !conditionFn(getFormattedValue(store, rowKey, columnName));
-    }
-    return false;
-  }).length;
+    return conditionFn
+      ? !conditionFn(getFormattedValue(formatterProps, formatter, value, relationListItems))
+      : false;
+  });
 }
