@@ -69,7 +69,7 @@ import {
   forceValidateUniquenessOfColumn,
 } from '../store/helper/validation';
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
-import { isRowFiltred } from '../query/filter';
+import { isRowFiltered } from '../query/filter';
 
 export function updateHeights(store: Store) {
   const { data, rowCoords, dimension } = store;
@@ -686,7 +686,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   getDataManager(id).push('UPDATE', rawRow);
 
-  if (isRowFiltred(store, store.focus.rowKey)) {
+  if (isRowFiltered(store, store.focus.rowKey)) {
     initFocus(store);
   }
   updateHeights(store);
