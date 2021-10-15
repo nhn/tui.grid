@@ -331,6 +331,10 @@ export class ContainerComp extends Component<Props> {
 
     ev.preventDefault();
 
+    if (findParent(ev.target as HTMLElement, 'cell-dummy')) {
+      return;
+    }
+
     const { offsetLeft, offsetTop } = this.props;
     const pos = { left: ev.clientX - offsetLeft, top: ev.clientY - offsetTop };
 
