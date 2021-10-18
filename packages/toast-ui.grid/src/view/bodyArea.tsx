@@ -296,7 +296,10 @@ class BodyAreaComp extends Component<Props> {
       return;
     }
 
-    if (!isDatePickerElement(targetElement) && !findParentByClassName(targetElement, 'layer-editing')) {
+    if (
+      !isDatePickerElement(targetElement) &&
+      !findParentByClassName(targetElement, 'layer-editing')
+    ) {
       dispatch(
         'mouseDownBody',
         { scrollTop, scrollLeft, side, ...this.boundingRect },

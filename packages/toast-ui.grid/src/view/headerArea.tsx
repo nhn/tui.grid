@@ -3,7 +3,13 @@ import { Side } from '@t/store/focus';
 import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { Range } from '@t/store/selection';
 import { ColGroup } from './colGroup';
-import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParentByClassName } from '../helper/dom';
+import {
+  cls,
+  setCursorStyle,
+  getCoordinateWithOffset,
+  hasClass,
+  findParentByClassName,
+} from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
