@@ -195,4 +195,18 @@ describe('context menu', () => {
     // bypassing the clipboard test using our own clipboard element.
     cy.getByCls('clipboard').should('have.text', 'Lee\t20');
   });
+
+  it('should not display the context menu on dummy rows', () => {
+    const data = [
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 28 },
+      { name: 'Ryu', age: 22 },
+    ];
+    const columns = [{ name: 'name' }, { name: 'age' }];
+
+    cy.createGrid({ data, columns, bodyHeight: 300, showDummyRows: true });
+
+    cy.getByCls('cell-dummy').first().rightclick();
+    cy.getByCls('context-menu').should('be.not.visible');
+  });
 });
