@@ -11,7 +11,14 @@ import { ContextMenu } from './contextMenu';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr, findParent, getCoordinateWithOffset } from '../helper/dom';
+import {
+  cls,
+  getCellAddress,
+  dataAttr,
+  findParentByClassName,
+  getCoordinateWithOffset,
+  isParentExistWithClassNames,
+} from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { EventBus, getEventBus } from '../event/eventBus';
@@ -299,10 +306,14 @@ export class ContainerComp extends Component<Props> {
     const { dispatch, filtering } = this.props;
     const target = ev.target as HTMLElement;
 
-    if (filtering && !findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
+    if (
+      filtering &&
+      !findParentByClassName(target, 'btn-filter') &&
+      !findParentByClassName(target, 'filter-container')
+    ) {
       dispatch('setActiveColumnAddress', null);
     }
-    if (!findParent(target, 'context-menu')) {
+    if (!findParentByClassName(target, 'context-menu')) {
       this.props.dispatch('hideContextMenu');
     }
   };
@@ -325,22 +336,18 @@ export class ContainerComp extends Component<Props> {
   }
 
   handleContextMenu = (ev: MouseEvent) => {
-    if (findParent(ev.target as HTMLElement, 'cell-header')) {
+    if (isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy'])) {
       return;
     }
 
     ev.preventDefault();
 
-    if (findParent(ev.target as HTMLElement, 'cell-dummy')) {
-      return;
-    }
-
     const { offsetLeft, offsetTop } = this.props;
     const pos = { left: ev.clientX - offsetLeft, top: ev.clientY - offsetTop };
 
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
-    const bodyArea = findParent(ev.target as HTMLElement, 'body-area')!;
-    const side: Side = findParent(bodyArea, 'lside-area') ? 'L' : 'R';
+    const bodyArea = findParentByClassName(ev.target as HTMLElement, 'body-area')!;
+    const side: Side = findParentByClassName(bodyArea, 'lside-area') ? 'L' : 'R';
     const { scrollTop, scrollLeft } = bodyArea;
     const { top, left } = bodyArea.getBoundingClientRect();
 

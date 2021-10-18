@@ -3,7 +3,7 @@ import { Side } from '@t/store/focus';
 import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { Range } from '@t/store/selection';
 import { ColGroup } from './colGroup';
-import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParent } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParentByClassName } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -49,7 +49,7 @@ class HeaderAreaComp extends Component<Props> {
     const target = ev.target as HTMLElement;
 
     if (
-      findParent(target, 'cell-row-header') ||
+      findParentByClassName(target, 'cell-row-header') ||
       hasClass(target, 'btn-sorting') ||
       hasClass(target, 'btn-filter') ||
       ev.button === RIGHT_MOUSE_BUTTON
@@ -60,7 +60,7 @@ class HeaderAreaComp extends Component<Props> {
     let name = target.getAttribute('data-column-name')!;
 
     if (!name) {
-      const parent = findParent(target, 'cell-header');
+      const parent = findParentByClassName(target, 'cell-header');
       if (parent) {
         name = parent.getAttribute('data-column-name')!;
       }

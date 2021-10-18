@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { SortingType } from '@t/store/column';
 import { SortState } from '@t/store/data';
 import { DataProvider } from '@t/dataSource';
-import { cls, hasClass, findParent } from '../helper/dom';
+import { cls, hasClass, findParentByClassName } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
 import { DispatchProps } from '../dispatch/create';
@@ -33,7 +33,7 @@ class SortingButtonComp extends Component<Props> {
 
     const { dispatch, sortState, dataProvider, defaultAscending } = this.props;
     const { columns } = sortState;
-    const th = findParent(target, 'cell');
+    const th = findParentByClassName(target, 'cell');
     const columnName = th!.getAttribute('data-column-name')!;
     const index = findPropIndex('columnName', columnName, columns);
     const ascending = index !== -1 ? !columns[index].ascending : defaultAscending;

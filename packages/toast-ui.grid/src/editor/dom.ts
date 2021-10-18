@@ -1,4 +1,4 @@
-import { findParent } from '../helper/dom';
+import { findParentByClassName } from '../helper/dom';
 
 const INDENT = 5;
 const SCROLL_BAR_WIDTH = 17;
@@ -9,7 +9,7 @@ export function setOpacity(el: HTMLElement, opacity: number | string) {
 }
 
 export function getContainerElement(el: HTMLElement) {
-  return findParent(el, 'container')!;
+  return findParentByClassName(el, 'container')!;
 }
 
 export function setLayerPosition(
