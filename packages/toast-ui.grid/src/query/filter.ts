@@ -1,10 +1,8 @@
 import { Store } from '@t/store';
-import { RowKey } from '@t/store/data';
 import { FilterOptionType, OperatorType, FilterState } from '@t/store/filterLayerState';
 import { GridEventProps } from '@t/event';
-import { deepCopyArray, isNil } from '../helper/common';
+import { deepCopyArray } from '../helper/common';
 import GridEvent from '../event/gridEvent';
-import { getFormattedValue } from './data';
 
 // @TODO: 'filter' event will be deprecated
 export type EventType =
@@ -103,16 +101,4 @@ export function createFilterEvent({ data }: Store, eventType: EventType, eventPa
   /* eslint-disable no-fallthrough */
 
   return new GridEvent(props);
-}
-
-export function isRowFiltered(store: Store, rowKey: RowKey | null | undefined) {
-  const { filters } = store.data;
-
-  if (!filters || isNil(rowKey)) {
-    return false;
-  }
-
-  return !!store.data.filters?.some(({ conditionFn, columnName }) =>
-    conditionFn ? !conditionFn(getFormattedValue(store, rowKey, columnName)) : false
-  );
 }

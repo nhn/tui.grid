@@ -153,23 +153,4 @@ describe('should not display the focus layer', () => {
       .invoke('getFocusedCell')
       .should('eql', { columnName: null, rowKey: null, value: null });
   });
-
-  it('should destroy the focusing layer, only when row will be filtered', () => {
-    cy.gridInstance().invoke('setFilter', 'age', 'number');
-    invokeFilter('age', [{ code: 'lt', value: 30 }]);
-
-    cy.gridInstance().invoke('startEditing', 0, 'age');
-    cy.getByCls('content-text').type('20');
-    cy.getCellByIdx(0, 0).click();
-
-    getActiveFocusLayer().should('exist');
-
-    cy.gridInstance().invoke('startEditing', 0, 'age');
-    cy.getByCls('content-text').type('30');
-    cy.getCellByIdx(0, 0).click();
-
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { columnName: null, rowKey: null, value: null });
-  });
 });

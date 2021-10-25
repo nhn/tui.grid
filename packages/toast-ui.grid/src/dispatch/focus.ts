@@ -8,7 +8,6 @@ import { getRowSpanByRowKey, isRowSpanEnabled } from '../query/rowSpan';
 import { setValue, makeObservable } from './data';
 import { isUndefined } from '../helper/common';
 import { isHiddenColumn } from '../query/column';
-import { isRowFiltered } from '../query/filter';
 
 interface EditingInfo {
   save: boolean;
@@ -133,10 +132,6 @@ export function changeFocus(
     focus.prevRowKey = focus.rowKey;
     focus.columnName = columnName;
     focus.rowKey = focusRowKey;
-  }
-
-  if (isRowFiltered(store, focus.rowKey)) {
-    initFocus(store);
   }
 }
 
