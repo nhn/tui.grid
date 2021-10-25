@@ -722,6 +722,24 @@ describe('setRow()', () => {
 
     cy.getCell(1, 'name').should('have.text', 'observable');
   });
+
+  it.only('should destroy the focusing layer, only when row will be filtered', () => {
+    createGrid();
+    cy.gridInstance().invoke('setFilter', 'age', 'number');
+    invokeFilter('age', [{ code: 'gt', value: 5 }]);
+
+    cy.getCellByIdx(0, 0).click();
+
+    cy.gridInstance().invoke('setValue', 0, 'age', '6');
+
+    cy.getByCls('layer-focus').should('exist');
+
+    cy.gridInstance().invoke('setValue', 0, 'age', '0');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { columnName: null, rowKey: null, value: null });
+  });
 });
 
 describe('moveRow()', () => {
@@ -894,6 +912,23 @@ describe('setValue()', () => {
       ['Kim', '10'],
       ['Lee', '20'],
     ]);
+  });
+
+  it('should destroy the focusing layer, only when row will be filtered', () => {
+    cy.gridInstance().invoke('setFilter', 'age', 'number');
+    invokeFilter('age', [{ code: 'gt', value: 5 }]);
+
+    cy.getCellByIdx(0, 0).click();
+
+    cy.gridInstance().invoke('setValue', 0, 'age', '6');
+
+    cy.getByCls('layer-focus').should('exist');
+
+    cy.gridInstance().invoke('setValue', 0, 'age', '0');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { columnName: null, rowKey: null, value: null });
   });
 });
 

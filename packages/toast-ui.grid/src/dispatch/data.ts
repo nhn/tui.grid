@@ -72,7 +72,11 @@ import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 import { fitRowHeightWhenMovingRow } from './renderState';
 
 function updateHeightsWithFilteredData(store: Store) {
-  if (store.data.filters) {
+  const { data, focus } = store;
+  const { filteredRawData } = data;
+  const { rowKey } = focus;
+  // if (isRowFiltered(store, store.focus.rowKey)) {
+  if (!filteredRawData.some((row) => row.rowKey === rowKey)) {
     initFocus(store);
   }
   updateHeights(store);
@@ -180,7 +184,9 @@ export function setValue(
     sort(store, columnName, columns[index].ascending, true, false);
   }
 
-  updateHeightsWithFilteredData(store);
+  setTimeout(() => {
+    updateHeightsWithFilteredData(store);
+  });
   updateSummaryValueByCell(store, columnName, { orgValue, value });
   getDataManager(id).push('UPDATE', targetRow);
 
@@ -693,7 +699,9 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   getDataManager(id).push('UPDATE', rawRow);
 
-  updateHeightsWithFilteredData(store);
+  setTimeout(() => {
+    updateHeightsWithFilteredData(store);
+  });
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   postUpdateAfterManipulation(store, rowIndex, 'DONE');
 }
