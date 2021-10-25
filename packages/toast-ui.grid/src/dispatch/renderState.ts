@@ -63,17 +63,35 @@ export function refreshRowHeight(store: Store, rowIndex: number, rowHeight: numb
   }
 }
 
-export function matchRowHeight(store: Store) {
-  const { data, rowCoords, viewport } = store;
-  const [start, end] = viewport.rowRange;
+export function fitRowHeightWhenMovingRow(store: Store, currentIndex: number, targetIndex: number) {
+  const { rowCoords, renderState } = store;
+  const { cellHeightMap } = renderState;
 
-  data.rawData.slice(start, end).forEach((row) => {
-    const height = row._attributes.height;
+  if (Object.keys(cellHeightMap).length === 0) {
+    return;
+  }
 
-    if (!isUndefined(height) && rowCoords.heights[row.sortKey] !== height) {
-      rowCoords.heights[row.sortKey] = height;
+  const direction = targetIndex > currentIndex ? 1 : -1;
+
+  for (let i = currentIndex; i !== targetIndex; i += direction) {
+    const target = i + direction;
+    const temp = cellHeightMap[i];
+    cellHeightMap[i] = cellHeightMap[target];
+    cellHeightMap[target] = temp;
+
+    const highestHeight = Object.keys(cellHeightMap[i]).reduce(
+      (acc, columnName) => Math.max(acc, cellHeightMap[i][columnName]),
+      -1
+    );
+    const targetHighestHeight = Object.keys(cellHeightMap[target]).reduce(
+      (acc, columnName) => Math.max(acc, cellHeightMap[target][columnName]),
+      -1
+    );
+    if (highestHeight !== targetHighestHeight) {
+      rowCoords.heights[i] = highestHeight;
+      rowCoords.heights[target] = targetHighestHeight;
     }
-  });
+  }
 
   notify(rowCoords, 'heights');
 }
