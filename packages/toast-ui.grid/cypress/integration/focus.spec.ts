@@ -1,5 +1,4 @@
 import { cls } from '@/helper/dom';
-import { invokeFilter } from '../helper/util';
 
 before(() => {
   cy.visit('/dist');
