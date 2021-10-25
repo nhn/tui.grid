@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { RowKey, TreeCellInfo } from '@t/store/data';
-import { cls, findParent } from '../helper/dom';
+import { cls, findParentByClassName } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { TREE_INDENT_WIDTH } from '../helper/constant';
@@ -28,9 +28,9 @@ export class TreeCellContentsComp extends Component<Props> {
     const { dispatch, rowKey } = this.props;
     const target = ev.target as HTMLElement;
 
-    if (findParent(target, 'tree-button-collapse')) {
+    if (findParentByClassName(target, 'tree-button-collapse')) {
       dispatch('expandByRowKey', rowKey, false);
-    } else if (findParent(target, 'tree-button-expand')) {
+    } else if (findParentByClassName(target, 'tree-button-expand')) {
       dispatch('collapseByRowKey', rowKey, false);
     }
   };

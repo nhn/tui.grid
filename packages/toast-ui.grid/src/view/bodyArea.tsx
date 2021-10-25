@@ -19,7 +19,7 @@ import {
   setCursorStyle,
   hasClass,
   isDatePickerElement,
-  findParent,
+  findParentByClassName,
   getCellAddress,
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
@@ -261,7 +261,7 @@ class BodyAreaComp extends Component<Props> {
 
       return isFocusedCell(this.context.store.focus, rowKey, columnName);
     }
-    return !!findParent(element, 'layer-selection');
+    return !!findParentByClassName(element, 'layer-selection');
   }
 
   private handleMouseDown = (ev: MouseEvent) => {
@@ -296,7 +296,10 @@ class BodyAreaComp extends Component<Props> {
       return;
     }
 
-    if (!isDatePickerElement(targetElement) && !findParent(targetElement, 'layer-editing')) {
+    if (
+      !isDatePickerElement(targetElement) &&
+      !findParentByClassName(targetElement, 'layer-editing')
+    ) {
       dispatch(
         'mouseDownBody',
         { scrollTop, scrollLeft, side, ...this.boundingRect },

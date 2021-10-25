@@ -197,13 +197,17 @@ export function findParentByTagName(el: HTMLElement, tagName: string) {
   return currentEl;
 }
 
-export function findParent(el: HTMLElement, className: ClassNameType) {
+export function findParentByClassName(el: HTMLElement, className: ClassNameType) {
   let currentEl: HTMLElement | null = el;
   while (currentEl && !hasClass(currentEl, className)) {
     currentEl = currentEl.parentElement;
   }
 
   return currentEl;
+}
+
+export function isParentExistWithClassNames(el: HTMLElement, classNames: ClassNameType[]) {
+  return classNames.some((className) => !isNull(findParentByClassName(el, className)));
 }
 
 export function getCellAddress(el: HTMLElement) {
