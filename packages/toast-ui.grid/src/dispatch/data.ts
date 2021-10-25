@@ -69,6 +69,7 @@ import {
   forceValidateUniquenessOfColumn,
 } from '../store/helper/validation';
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
+import { fitRowHeightWhenMovingRow } from './renderState';
 
 function updateHeightsWithFilteredData(store: Store) {
   if (store.data.filters) {
@@ -719,6 +720,8 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
     rawData.splice(targetIndex, 0, rawRow);
   });
   viewData.splice(targetIndex, 0, viewRow);
+
+  fitRowHeightWhenMovingRow(store, currentIndex, targetIndex);
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
