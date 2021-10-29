@@ -3,7 +3,7 @@ import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
 import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
-import { OptExport } from '@t/store/export';
+import { OptExport } from '../store/export';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 export interface CellChange {
