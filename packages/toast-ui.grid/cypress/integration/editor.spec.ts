@@ -2,6 +2,7 @@ import GridEvent from '@/event/gridEvent';
 import { CellValue } from '@t/store/data';
 import { createCustomLayerEditor, CustomTextEditor } from '../helper/customEditor';
 import { GridEventProps } from '@t/event';
+import { clickFilterBtn } from '../helper/util';
 
 before(() => {
   cy.visit('/dist');
@@ -63,6 +64,7 @@ describe('with interaction', () => {
       {
         name: 'name',
         editor: 'text',
+        filter: 'select',
       },
       { name: 'age' },
     ];
@@ -79,6 +81,16 @@ describe('with interaction', () => {
     cy.gridInstance().invoke('startEditing', 0, 'name');
     cy.getCell(1, 'name').click();
 
+    cy.getByCls('layer-editing').should('be.not.visible');
+  });
+
+  it('should destroy the editing later and save editing, when fileter button clicked', () => {
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+    cy.getByCls('content-text').type('Kim');
+
+    clickFilterBtn();
+
+    cy.getCell(0, 'name').should('have.text', 'Kim');
     cy.getByCls('layer-editing').should('be.not.visible');
   });
 });
