@@ -36,6 +36,7 @@ class FilterButtonComp extends Component<Props> {
 
     if (!activeColumnAddress || activeColumnAddress.name !== columnName) {
       const left = target.getBoundingClientRect().left - offsetLeft - DISTANCE_FROM_ICON_TO_LAYER;
+      dispatch('saveAndFinishEditing');
       dispatch('setActiveColumnAddress', { name: columnName, left });
     }
   };
