@@ -46,6 +46,7 @@ export class TreeCellContentsComp extends Component<Props> {
               class={cls('btn-tree')}
               style={{ left: i * TREE_INDENT_WIDTH }}
               onClick={this.handleClick}
+              type="button"
             >
               <i />
             </button>
