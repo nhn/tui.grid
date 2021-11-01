@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>23. Client Pagination</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.css"
+    />
+    <style>
+      .btn-wrapper {
+        margin-bottom: 10px;
+      }
+    </style>
+    <script>var errorLogs=[];window.onerror=function(o,r,e,n){errorLogs.push({message:o,source:r,lineno:e,colno:n})};</script>
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/pagination.md"
+        target="_blank"
+        >here</a
+      >
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div class="btn-wrapper">
+        <button id="appendBtn">appendBtn</button>
+        <button id="prependBtn">prependBtn</button>
+      </div>
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://uicdn.toast.com/tui.pagination/v3.4.0/tui-pagination.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ],
+      rowHeaders: ['rowNum'],
+      pageOptions: {
+        useClient: true,
+        perPage: 5
+      }
+    });
+
+    const appendBtn = document.getElementById('appendBtn');
+    const prependBtn = document.getElementById('prependBtn');
+
+    const appendedData = {
+      name: 'Music',
+      artist: 'Lee',
+      type: 'Deluxe',
+      release: '2019.09.09',
+      genre: 'Pop'
+    };
+
+    appendBtn.addEventListener('click', () => {
+      grid.appendRow(appendedData);
+    });
+
+    prependBtn.addEventListener('click', () => {
+      grid.prependRow(appendedData);
+    });
+  </script>
+</html>
