@@ -52,6 +52,6 @@
     "xhr-mock": "^2.4.1"
   },
   "dependencies": {
-    "tui-grid": "^4.19.2"
+    "tui-grid": "^4.19.3"
   }
 }
