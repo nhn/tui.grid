@@ -105,14 +105,14 @@ if ((module as any).hot) {
  *          @param {boolean} [options.header.complexColumns.hideChildHeaders=false] - If set to true, the child columns header are hidden.
  *          @param {boolean} [options.header.complexColumns.resizable=false] - If set to true, resize-handles of each complex columns will be shown.
  *      @param {string|number} [options.width='auto'] - Options for grid width.
- *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 40,
+ *      @param {string|number} [options.rowHeight=40] - The height of each rows.
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
  *      @param {number} [options.minRowHeight=40] - The minimum height of each rows. When this value is larger than
  *          the row's height, it set to the row's height.
  *      @param {string|number} [options.bodyHeight] - The height of body area. The default value is 'auto',
  *          the height of body area expands to total height of rows. If set to 'fitToParent', the height of the grid
  *          will expand to fit the height of parent element. If set to number, the height is fixed.
- *      @param {number} [options.minBodyHeight=minRowHeight] - The minimum height of body area. When this value
+ *      @param {number} [options.minBodyHeight=130] - The minimum height of body area. When this value
  *          is larger than the body's height, it set to the body's height.
  *      @param {Object} [options.columnOptions] - Option object for all columns
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
