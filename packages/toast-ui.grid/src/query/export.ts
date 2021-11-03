@@ -3,11 +3,12 @@ import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { OptExport } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
 import { Store } from '@t/store';
-import { Row } from '@t/store/data';
+import { ViewRow } from '@t/store/data';
 import { isCheckboxColumn, isDragColumn, isRowNumColumn } from '../helper/column';
 import { includes } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 import { convertHierarchyToData, getComplexColumnsHierarchy } from './column';
+import { makeObservable } from '../dispatch/data';
 
 export type EventType = 'beforeExport' | 'afterExport';
 
@@ -127,10 +128,15 @@ export function getHeaderDataFromComplexColumn(column: Column, columnNames: stri
 
 export function getTargetData(
   store: Store,
-  rows: Row[],
+  rows: ViewRow[],
   columnNames: string[],
-  onlySelected: boolean
+  onlySelected: boolean,
+  useFormattedValue: boolean
 ) {
+  rows.forEach((_, index) => {
+    makeObservable(store, index);
+  });
+
   if (onlySelected) {
     let targetRows = rows;
 
@@ -143,19 +149,39 @@ export function getTargetData(
       targetRows = rows.slice(rowStart, rowEnd + 1);
     }
 
-    return targetRows.map((row) => columnNames.map((colName) => row[colName] as string));
+    return targetRows.map((row) => {
+      const { valueMap } = row;
+
+      return columnNames.map((colName) => {
+        const { formattedValue, value } = valueMap[colName];
+
+        if (useFormattedValue && String(value) !== formattedValue) {
+          return formattedValue;
+        }
+
+        return value as string;
+      });
+    });
   }
 
-  const data = rows.map((row, index) =>
-    columnNames.reduce((rowData: string[], colName) => {
+  const data = rows.map((row, index) => {
+    const { valueMap } = row;
+
+    return columnNames.reduce((rowData: string[], colName) => {
       if (isRowNumColumn(colName)) {
         rowData.push(`No.${index + 1}`);
       } else {
-        rowData.push(row[colName] as string);
+        const { formattedValue, value } = valueMap[colName];
+
+        if (useFormattedValue && String(value) !== formattedValue) {
+          rowData.push(formattedValue);
+        } else {
+          rowData.push(value as string);
+        }
       }
       return rowData;
-    }, [])
-  );
+    }, []);
+  });
 
   return data;
 }

@@ -311,7 +311,7 @@ describe('Export data', () => {
 
   describe.only('useFormattedValue option', () => {
     beforeEach(() => {
-      const columns = [
+      const formatColumn = [
         {
           header: 'Type',
           name: 'typeCode',
@@ -328,7 +328,7 @@ describe('Export data', () => {
           },
         },
       ];
-      cy.gridInstance().invoke('setColumns', columns);
+      cy.gridInstance().invoke('setColumns', formatColumn);
     });
 
     ['csv', 'xlsx'].forEach((format) => {
