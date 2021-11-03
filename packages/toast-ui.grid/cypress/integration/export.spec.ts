@@ -26,9 +26,9 @@ function clickExportMenuItemByFormat(format: 'csv' | 'xlsx') {
 
 describe('Export data', () => {
   const data = [
-    { name: 'Sugar', artist: 'Maroon5', price: 1000 },
-    { name: 'Get Lucky', artist: 'Daft Punk', price: 2000 },
-    { name: '21', artist: 'Adele', price: 3000 },
+    { name: 'Sugar', artist: 'Maroon5', price: 1000, typeCode: '2' },
+    { name: 'Get Lucky', artist: 'Daft Punk', price: 2000, typeCode: '3' },
+    { name: '21', artist: 'Adele', price: 3000, typeCode: '1' },
   ];
   const columns = [
     {
@@ -305,6 +305,46 @@ describe('Export data', () => {
 
       cy.wrap(callback).should('be.calledWithMatch', {
         exportOptions: { fileName: 'myExport' },
+      });
+    });
+  });
+
+  describe.only('useFormattedValue option', () => {
+    beforeEach(() => {
+      const columns = [
+        {
+          header: 'Type',
+          name: 'typeCode',
+          formatter: 'listItemText',
+          editor: {
+            type: 'select',
+            options: {
+              listItems: [
+                { text: 'Deluxe', value: '1' },
+                { text: 'EP', value: '2' },
+                { text: 'Single', value: '3' },
+              ],
+            },
+          },
+        },
+      ];
+      cy.gridInstance().invoke('setColumns', columns);
+    });
+
+    ['csv', 'xlsx'].forEach((format) => {
+      it(`should export formatted data to '${format}' (useFormattedValue = true(default))`, () => {
+        cy.gridInstance().invoke('export', format);
+
+        cy.wrap(callback).should('be.calledWithMatch', {
+          data: [['Type'], ['EP'], ['Single'], ['Deluxe']],
+        });
+      });
+      it(`should export original data to '${format}' (useFormattedValue = false)`, () => {
+        cy.gridInstance().invoke('export', format, { useFormattedValue: false });
+
+        cy.wrap(callback).should('be.calledWithMatch', {
+          data: [['Type'], ['2'], ['3'], ['1']],
+        });
       });
     });
   });
