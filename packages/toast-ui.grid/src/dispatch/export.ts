@@ -123,7 +123,7 @@ function getMergeRelationship(complexColumnHeaderData: string[][]) {
 }
 
 function exportCSV(fileName: string, targetText: string) {
-  const targetBlob = new Blob(['\ufeff' + targetText], { type: 'text/csv;charset=utf-8;' });
+  const targetBlob = new Blob([`\ufeff${targetText}`], { type: 'text/csv;charset=utf-8;' });
 
   downloadBlob(targetBlob, fileName);
 }
