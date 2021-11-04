@@ -37,32 +37,33 @@ function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
 }
 
 export function sendHostname() {
+  const hostname = location.hostname;
+  const applicationKeyForStorage = `TOAST UI grid for ${hostname}: Statistics`;
+  const date = window.localStorage.getItem(applicationKeyForStorage);
+
+  if (date && !isExpired(Number(date))) {
+    return;
+  }
+
   try {
-    const hostname = location.hostname;
-    const applicationKeyForStorage = `TOAST UI grid for ${hostname}: Statistics`;
-    const date = window.localStorage.getItem(applicationKeyForStorage);
-
-    if (date && !isExpired(Number(date))) {
-      return;
-    }
-
     window.localStorage.setItem(applicationKeyForStorage, String(new Date().getTime()));
-
-    setTimeout(function () {
-      if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        imagePing('https://www.google-analytics.com/collect', {
-          v: 1,
-          t: 'event',
-          tid: 'UA-129951906-1',
-          cid: hostname,
-          dp: hostname,
-          dh: 'grid',
-          el: 'grid',
-          ec: 'use',
-        });
-      }
-    }, 1000);
   } catch (e) {
     //If browser is set to block third-party cookies, do nothing.
+    return;
   }
+
+  setTimeout(function () {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      imagePing('https://www.google-analytics.com/collect', {
+        v: 1,
+        t: 'event',
+        tid: 'UA-129951906-1',
+        cid: hostname,
+        dp: hostname,
+        dh: 'grid',
+        el: 'grid',
+        ec: 'use',
+      });
+    }
+  }, 1000);
 }
