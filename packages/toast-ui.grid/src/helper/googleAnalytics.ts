@@ -36,21 +36,25 @@ function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
   return trackingElement;
 }
 
+function getDate(applicationKeyForStorage: string) {
+  try {
+    return window.localStorage.getItem(applicationKeyForStorage);
+  } catch (e) {
+    // Returns null to do nothing if the browser is set to block third-party cookies.
+    return null;
+  }
+}
+
 export function sendHostname() {
   const hostname = location.hostname;
   const applicationKeyForStorage = `TOAST UI grid for ${hostname}: Statistics`;
-  const date = window.localStorage.getItem(applicationKeyForStorage);
+  const date = getDate(applicationKeyForStorage);
 
-  if (date && !isExpired(Number(date))) {
+  if ((date && !isExpired(Number(date))) || !date) {
     return;
   }
 
-  try {
-    window.localStorage.setItem(applicationKeyForStorage, String(new Date().getTime()));
-  } catch (e) {
-    //If browser is set to block third-party cookies, do nothing.
-    return;
-  }
+  window.localStorage.setItem(applicationKeyForStorage, String(new Date().getTime()));
 
   setTimeout(function () {
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
