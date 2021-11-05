@@ -75,7 +75,7 @@ function updateHeightsWithFilteredData(store: Store) {
   const { data, focus } = store;
   const { filteredRawData } = data;
   const { rowKey } = focus;
-  // if (isRowFiltered(store, store.focus.rowKey)) {
+
   if (!filteredRawData.some((row) => row.rowKey === rowKey)) {
     initFocus(store);
   }

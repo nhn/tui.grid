@@ -84,7 +84,7 @@ describe('with interaction', () => {
     cy.getByCls('layer-editing').should('be.not.visible');
   });
 
-  it('should destroy the editing later and save editing, when fileter button clicked', () => {
+  it('should destroy the editing later and save editing, when filter button clicked', () => {
     cy.gridInstance().invoke('startEditing', 0, 'name');
     cy.getByCls('content-text').type('Kim');
 
