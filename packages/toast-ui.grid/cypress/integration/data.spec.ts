@@ -723,7 +723,7 @@ describe('setRow()', () => {
     cy.getCell(1, 'name').should('have.text', 'observable');
   });
 
-  it.only('should destroy the focusing layer, only when row will be filtered', () => {
+  it('should destroy the focusing layer, only when row will be filtered', () => {
     createGrid();
     cy.gridInstance().invoke('setFilter', 'age', 'number');
     invokeFilter('age', [{ code: 'gt', value: 5 }]);
