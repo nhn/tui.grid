@@ -199,7 +199,7 @@ const grid = new Grid({
 
 | 옵션명 | 타입 | 기본값 |
 | --- | --- | --- | 
-| `rowHeight` | `number \| 'auto'` | `'auto'` |
+| `rowHeight` | `number \| 'auto'` | `40` |
 | `minRowHeight` | `number` | `40` |
 
 * 뷰포트 영역 높이 설정
@@ -207,7 +207,7 @@ const grid = new Grid({
 | 옵션명 | 타입 | 기본값 |
 | --- | --- | --- | 
 | `bodyHeight` |  `number \| 'auto' \| 'fitToParent'` | `'auto'` |
-| `minBodyHeight` | `number` | `minRowHeight` |
+| `minBodyHeight` | `number` | `130` |
 
 * 헤더 영역 높이 설정
 

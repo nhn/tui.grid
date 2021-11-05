@@ -145,7 +145,7 @@ Following are the options used to configure the height.
 
 | Option Name | Type | Default Value |
 | --- | --- | --- | 
-| `rowHeight` | `number \| 'auto'` | `'auto'` |
+| `rowHeight` | `number \| 'auto'` | `40` |
 | `minRowHeight` | `number` | `40` |
 
 * Viewport Area Height Configuration
@@ -153,7 +153,7 @@ Following are the options used to configure the height.
 | Option Name | Type | Default Value |
 | --- | --- | --- | 
 | `bodyHeight` |  `number \| 'auto' \| 'fitToParent'` | `'auto'` |
-| `minBodyHeight` | `number` | `minRowHeight` |
+| `minBodyHeight` | `number` | `130` |
 
 * Header Area Height Configuration
 
