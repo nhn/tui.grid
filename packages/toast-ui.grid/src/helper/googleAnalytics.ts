@@ -1,3 +1,5 @@
+import { isNull } from './common';
+
 type GA_URL = 'https://www.google-analytics.com/collect';
 interface TrackingInfo {
   v: number;
@@ -50,7 +52,7 @@ export function sendHostname() {
   const applicationKeyForStorage = `TOAST UI grid for ${hostname}: Statistics`;
   const date = getDate(applicationKeyForStorage);
 
-  if ((date && !isExpired(Number(date))) || !date) {
+  if ((date && !isExpired(Number(date))) || isNull(date)) {
     return;
   }
 
