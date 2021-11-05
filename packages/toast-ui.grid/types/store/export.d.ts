@@ -6,4 +6,5 @@ export interface OptExport {
   columnNames?: string[];
   delimiter?: ',' | ';' | '\t' | '|';
   fileName?: string;
+  useFormattedValue?: boolean;
 }

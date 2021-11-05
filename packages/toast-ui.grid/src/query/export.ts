@@ -8,6 +8,8 @@ import { isCheckboxColumn, isDragColumn, isRowNumColumn } from '../helper/column
 import { includes } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 import { convertHierarchyToData, getComplexColumnsHierarchy } from './column';
+import { createFormattedValue } from '../store/helper/data';
+import { Dictionary } from '@t/options';
 
 export type EventType = 'beforeExport' | 'afterExport';
 
@@ -16,6 +18,37 @@ export interface EventParams {
   exportOptions: OptExport;
   data: string[][];
   exportFn?: (data: string[][]) => void;
+}
+
+function getColumnInfoDictionary(store: Store, columnNames: string[]) {
+  const colmnInfos: Dictionary<ColumnInfo> = {};
+
+  store.column.allColumns.forEach((columnInfo) => {
+    if (includes(columnNames, columnInfo.name)) {
+      colmnInfos[columnInfo.name] = columnInfo;
+    }
+  });
+
+  return colmnInfos;
+}
+
+function getValue(
+  row: Row,
+  colmnInfos: Dictionary<ColumnInfo>,
+  columName: string,
+  useFormattedValue: boolean,
+  index?: number
+) {
+  if (isRowNumColumn(columName)) {
+    return `No.${index! + 1}`;
+  }
+
+  const origianlValue = row[columName];
+  const formattedValue = createFormattedValue(row, colmnInfos[columName]);
+
+  return useFormattedValue && String(origianlValue) !== formattedValue
+    ? formattedValue
+    : (origianlValue as string);
 }
 
 export function createExportEvent(eventType: EventType, eventParams: EventParams) {
@@ -129,33 +162,24 @@ export function getTargetData(
   store: Store,
   rows: Row[],
   columnNames: string[],
-  onlySelected: boolean
+  onlySelected: boolean,
+  useFormattedValue: boolean
 ) {
-  if (onlySelected) {
-    let targetRows = rows;
+  const colmnInfoDictionary = getColumnInfoDictionary(store, columnNames);
+  const {
+    selection: { originalRange },
+  } = store;
 
-    const {
-      selection: { originalRange },
-    } = store;
+  let targetRows = rows;
 
-    if (originalRange) {
-      const [rowStart, rowEnd] = originalRange.row;
-      targetRows = rows.slice(rowStart, rowEnd + 1);
-    }
-
-    return targetRows.map((row) => columnNames.map((colName) => row[colName] as string));
+  if (onlySelected && originalRange) {
+    const [rowStart, rowEnd] = originalRange.row;
+    targetRows = rows.slice(rowStart, rowEnd + 1);
   }
 
-  const data = rows.map((row, index) =>
-    columnNames.reduce((rowData: string[], colName) => {
-      if (isRowNumColumn(colName)) {
-        rowData.push(`No.${index + 1}`);
-      } else {
-        rowData.push(row[colName] as string);
-      }
-      return rowData;
-    }, [])
+  return targetRows.map((row, index) =>
+    columnNames.map((colName) =>
+      getValue(row, colmnInfoDictionary, colName, useFormattedValue, index)
+    )
   );
-
-  return data;
 }

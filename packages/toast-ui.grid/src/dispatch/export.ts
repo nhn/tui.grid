@@ -34,6 +34,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     onlyFiltered = true,
     delimiter = ',',
     fileName = 'grid-export',
+    useFormattedValue = false,
   } = options || {};
 
   const {
@@ -57,7 +58,8 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     store,
     onlyFiltered ? filteredRawData : rawData,
     columnNames,
-    onlySelected
+    onlySelected,
+    useFormattedValue
   );
 
   const exportOptions = {

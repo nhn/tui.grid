@@ -1720,6 +1720,7 @@ export default class Grid implements TuiGrid {
    *    @param {string[]} [options.columnNames=[...allVisibleColumnNames]] - Columns names to export
    *    @param {boolean} [options.onlySelected=false] - Whether to export only the selected range
    *    @param {boolean} [options.onlyFiltered=true] - Whether to export only the filtered data
+   *    @param {boolean} [options.useFormattedValue=false] - Whether to export formatted values or original values
    *    @param {','|';'|'\\t'|'|'} [options.delimiter=','] - Delimiter to export CSV
    *    @param {string} [options.fileName='grid-export'] - File name to export
    */
