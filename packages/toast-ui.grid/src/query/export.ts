@@ -20,7 +20,7 @@ export interface EventParams {
   exportFn?: (data: string[][]) => void;
 }
 
-function getColumnInfoDictionaryToUse(store: Store, columnNames: string[]) {
+function getColumnInfoDictionary(store: Store, columnNames: string[]) {
   const colmnInfos: Dictionary<ColumnInfo> = {};
 
   store.column.allColumns.forEach((columnInfo) => {
@@ -32,7 +32,7 @@ function getColumnInfoDictionaryToUse(store: Store, columnNames: string[]) {
   return colmnInfos;
 }
 
-function getValueToUse(
+function getValue(
   row: Row,
   colmnInfos: Dictionary<ColumnInfo>,
   columName: string,
@@ -165,7 +165,7 @@ export function getTargetData(
   onlySelected: boolean,
   useFormattedValue: boolean
 ) {
-  const colmnInfoDictionary = getColumnInfoDictionaryToUse(store, columnNames);
+  const colmnInfoDictionary = getColumnInfoDictionary(store, columnNames);
   const {
     selection: { originalRange },
   } = store;
@@ -179,7 +179,7 @@ export function getTargetData(
 
   return targetRows.map((row, index) =>
     columnNames.map((colName) =>
-      getValueToUse(row, colmnInfoDictionary, colName, useFormattedValue, index)
+      getValue(row, colmnInfoDictionary, colName, useFormattedValue, index)
     )
   );
 }
