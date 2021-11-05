@@ -13,7 +13,7 @@ TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기
 | `columnNames` | `string[]` | `[...보이는 모든 컬럼명]` | 내보내려는 컬럼을 선택한다.<br>해당 배열에 요소가 1개 이상 전달되면 `includeHiddenColumns` 옵션의 값과 상관 없이 전달 받은 컬럼을 내보낸다. |
 | `onlySelected` | `boolean` | `false` | 선택한 영역만 내보낼지 여부를 결정한다.<br>값이 참이면 `includeHiddenColumns` 옵션과 `columnNames` 옵션의 값과 상관 없이 현재 선택한 영역만 내보낸다.<br>선택 영역이 없다면 옵션 값과 상관 없이 지정한 컬럼의 데이터 또는 숨겨진 컬럼을 포함한 모든 컬럼의 데이터 또는 보이는 컬럼의 데이터를 내보낸다. |
 | `onlyFiltered` | `boolean` | `true` | 필터링된 데이터만 내보낼지 여부를 결정한다.<br>값이 참이면 필터링된 데이터만 내보내고, 거짓이면 모든 데이터를 내보낸다. |
-| `useFormattedValue` | `boolean` | `true` | 포맷된 데이터를 내보낼지 여부를 결정한다.<br>값이 참이면 포맷된 데이터를 내보내고, 거짓이면 원본 데이터를 내보낸다. |
+| `useFormattedValue` | `boolean` | `false` | 포맷된 데이터를 내보낼지 여부를 결정한다.<br>값이 참이면 포맷된 데이터를 내보내고, 거짓이면 원본 데이터를 내보낸다. |
 | `delimiter` | `','\|';'\|'\t'\|'\|'` | `','` | CSV 내보내기 시 구분자를 정의한다. |
 | `fileName` | `string` | `'grid-export'` | 내보낼 파일의 이름을 정의한다. |
 

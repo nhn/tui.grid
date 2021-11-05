@@ -309,7 +309,7 @@ describe('Export data', () => {
     });
   });
 
-  describe.only('useFormattedValue option', () => {
+  describe('useFormattedValue option', () => {
     beforeEach(() => {
       const formatColumn = [
         {
@@ -332,15 +332,16 @@ describe('Export data', () => {
     });
 
     ['csv', 'xlsx'].forEach((format) => {
-      it(`should export formatted data to '${format}' (useFormattedValue = true(default))`, () => {
-        cy.gridInstance().invoke('export', format);
+      it(`should export formatted data to '${format}' (useFormattedValue = true)`, () => {
+        cy.gridInstance().invoke('export', format, { useFormattedValue: true });
 
         cy.wrap(callback).should('be.calledWithMatch', {
           data: [['Type'], ['EP'], ['Single'], ['Deluxe']],
         });
       });
-      it(`should export original data to '${format}' (useFormattedValue = false)`, () => {
-        cy.gridInstance().invoke('export', format, { useFormattedValue: false });
+
+      it(`should export original data to '${format}' (useFormattedValue = false(default))`, () => {
+        cy.gridInstance().invoke('export', format);
 
         cy.wrap(callback).should('be.calledWithMatch', {
           data: [['Type'], ['2'], ['3'], ['1']],

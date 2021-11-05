@@ -3,12 +3,13 @@ import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
 import { OptExport } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
 import { Store } from '@t/store';
-import { ViewRow } from '@t/store/data';
+import { Row } from '@t/store/data';
 import { isCheckboxColumn, isDragColumn, isRowNumColumn } from '../helper/column';
 import { includes } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 import { convertHierarchyToData, getComplexColumnsHierarchy } from './column';
-import { makeObservable } from '../dispatch/data';
+import { createFormattedValue } from '../store/helper/data';
+import { Dictionary } from '@t/options';
 
 export type EventType = 'beforeExport' | 'afterExport';
 
@@ -17,6 +18,37 @@ export interface EventParams {
   exportOptions: OptExport;
   data: string[][];
   exportFn?: (data: string[][]) => void;
+}
+
+function getColumnInfoDictionaryToUse(store: Store, columnNames: string[]) {
+  const colmnInfos: Dictionary<ColumnInfo> = {};
+
+  store.column.allColumns.map((columnInfo) => {
+    if (includes(columnNames, columnInfo.name)) {
+      colmnInfos[columnInfo.name] = columnInfo;
+    }
+  });
+
+  return colmnInfos;
+}
+
+function getValueToUse(
+  row: Row,
+  colmnInfos: Dictionary<ColumnInfo>,
+  columName: string,
+  useFormattedValue: boolean,
+  index?: number
+) {
+  if (isRowNumColumn(columName)) {
+    return `No.${index! + 1}`;
+  }
+
+  const origianlValue = row[columName];
+  const formattedValue = createFormattedValue(row, colmnInfos[columName]);
+
+  return useFormattedValue && String(origianlValue) !== formattedValue
+    ? formattedValue
+    : (origianlValue as string);
 }
 
 export function createExportEvent(eventType: EventType, eventParams: EventParams) {
@@ -128,60 +160,26 @@ export function getHeaderDataFromComplexColumn(column: Column, columnNames: stri
 
 export function getTargetData(
   store: Store,
-  rows: ViewRow[],
+  rows: Row[],
   columnNames: string[],
   onlySelected: boolean,
   useFormattedValue: boolean
 ) {
-  rows.forEach((_, index) => {
-    makeObservable(store, index);
-  });
+  const colmnInfoDictionary = getColumnInfoDictionaryToUse(store, columnNames);
+  const {
+    selection: { originalRange },
+  } = store;
 
-  if (onlySelected) {
-    let targetRows = rows;
+  let targetRows = rows;
 
-    const {
-      selection: { originalRange },
-    } = store;
-
-    if (originalRange) {
-      const [rowStart, rowEnd] = originalRange.row;
-      targetRows = rows.slice(rowStart, rowEnd + 1);
-    }
-
-    return targetRows.map((row) => {
-      const { valueMap } = row;
-
-      return columnNames.map((colName) => {
-        const { formattedValue, value } = valueMap[colName];
-
-        if (useFormattedValue && String(value) !== formattedValue) {
-          return formattedValue;
-        }
-
-        return value as string;
-      });
-    });
+  if (onlySelected && originalRange) {
+    const [rowStart, rowEnd] = originalRange.row;
+    targetRows = rows.slice(rowStart, rowEnd + 1);
   }
 
-  const data = rows.map((row, index) => {
-    const { valueMap } = row;
-
-    return columnNames.reduce((rowData: string[], colName) => {
-      if (isRowNumColumn(colName)) {
-        rowData.push(`No.${index + 1}`);
-      } else {
-        const { formattedValue, value } = valueMap[colName];
-
-        if (useFormattedValue && String(value) !== formattedValue) {
-          rowData.push(formattedValue);
-        } else {
-          rowData.push(value as string);
-        }
-      }
-      return rowData;
-    }, []);
-  });
-
-  return data;
+  return targetRows.map((row, index) =>
+    columnNames.map((colName) =>
+      getValueToUse(row, colmnInfoDictionary, colName, useFormattedValue, index)
+    )
+  );
 }
