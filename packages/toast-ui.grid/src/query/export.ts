@@ -23,7 +23,7 @@ export interface EventParams {
 function getColumnInfoDictionaryToUse(store: Store, columnNames: string[]) {
   const colmnInfos: Dictionary<ColumnInfo> = {};
 
-  store.column.allColumns.map((columnInfo) => {
+  store.column.allColumns.forEach((columnInfo) => {
     if (includes(columnNames, columnInfo.name)) {
       colmnInfos[columnInfo.name] = columnInfo;
     }
