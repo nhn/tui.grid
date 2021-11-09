@@ -1179,6 +1179,14 @@ export default class Grid implements TuiGrid {
   }
 
   /**
+   * Return a list of filtered rows.
+   * @returns {Array} - A list of filtered rows
+   */
+  public getFilteredData() {
+    return this.store.data.filteredRawData.map((row) => getOmittedInternalProp(row));
+  }
+
+  /**
    * Return the total number of the rows.
    * @returns {number} - The total number of the rows
    */
