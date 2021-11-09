@@ -23,6 +23,18 @@ describe('row header API', () => {
     cy.get(`[data-row-key=0] input`).should('not.be.checked');
   });
 
+  it('checkBetween, uncheckBetween', () => {
+    cy.gridInstance().invoke('checkBetween', 0, 2);
+    cy.get(`[data-row-key=0] input`).should('be.checked');
+    cy.get(`[data-row-key=1] input`).should('be.checked');
+    cy.get(`[data-row-key=2] input`).should('be.checked');
+
+    cy.gridInstance().invoke('uncheckBetween', 0, 2);
+    cy.get(`[data-row-key=0] input`).should('not.be.checked');
+    cy.get(`[data-row-key=1] input`).should('not.be.checked');
+    cy.get(`[data-row-key=2] input`).should('not.be.checked');
+  });
+
   it('checkAll, uncheckAll', () => {
     cy.gridInstance().invoke('checkAll');
 
@@ -153,4 +165,19 @@ it('All checkbox automatically changes depending on the state of the rowHeader c
   cy.gridInstance().invoke('uncheck', 2);
 
   assertHeaderCheckboxStatus(false);
+});
+
+it('should click consecutive checkboxes with shift-click', () => {
+  cy.get(`[data-row-key=0] input`).click().type('{shift}', { release: false });
+  cy.get(`[data-row-key=2] input`).click();
+
+  cy.get(`[data-row-key=0] input`).should('be.checked');
+  cy.get(`[data-row-key=1] input`).should('be.checked');
+  cy.get(`[data-row-key=2] input`).should('be.checked');
+
+  cy.get(`[data-row-key=0] input`).click();
+
+  cy.get(`[data-row-key=0] input`).should('be.not.checked');
+  cy.get(`[data-row-key=1] input`).should('be.not.checked');
+  cy.get(`[data-row-key=2] input`).should('be.not.checked');
 });
