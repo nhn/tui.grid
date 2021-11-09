@@ -17,6 +17,7 @@ import {
   someProp,
   findPropIndex,
   silentSplice,
+  isNil,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
@@ -70,6 +71,15 @@ import {
 } from '../store/helper/validation';
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 import { fitRowHeightWhenMovingRow } from './renderState';
+
+function getCheckRange({ data, column, id }: Store, startRowKey: RowKey, targetRowKey: RowKey) {
+  const filtered = !!data.filters;
+
+  const from = findIndexByRowKey(data, column, id, startRowKey, filtered);
+  const to = findIndexByRowKey(data, column, id, targetRowKey, filtered);
+
+  return from < to ? [from, to + 1] : [to, from + 1];
+}
 
 function updateHeightsWithFilteredData(store: Store) {
   const { data, focus } = store;
@@ -240,6 +250,19 @@ export function setRowAttribute<K extends keyof RowAttributes>(
   }
 }
 
+export function setRowsAttributeInRange<K extends keyof RowAttributes>(
+  { data: { filteredRawData } }: Store,
+  attrName: K,
+  value: RowAttributes[K],
+  range: number[]
+) {
+  filteredRawData.slice(...range).forEach((row) => {
+    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
+      row._attributes[attrName] = value;
+    }
+  });
+}
+
 export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
@@ -293,10 +316,12 @@ export function setColumnValues(
 }
 
 export function check(store: Store, rowKey: RowKey) {
-  const { id, column } = store;
+  const { id, column, data } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
+
+  data.clickedCheckboxRowkey = rowKey;
 
   setRowAttribute(store, rowKey, 'checked', true);
   if (allColumnMap[treeColumnName]) {
@@ -316,10 +341,12 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { id, column } = store;
+  const { id, column, data } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
+
+  data.clickedCheckboxRowkey = rowKey;
 
   setRowAttribute(store, rowKey, 'checked', false);
   if (allColumnMap[treeColumnName]) {
@@ -336,6 +363,64 @@ export function uncheck(store: Store, rowKey: RowKey) {
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('uncheck', gridEvent);
+}
+
+export function checkBetween(store: Store, startRowKey: RowKey, endRowKey?: RowKey) {
+  const { data, id } = store;
+  const { clickedCheckboxRowkey } = data;
+  const targetRowKey = endRowKey || clickedCheckboxRowkey;
+
+  data.clickedCheckboxRowkey = startRowKey;
+
+  if (isNil(targetRowKey)) {
+    check(store, startRowKey);
+    return;
+  }
+
+  const range = getCheckRange(store, startRowKey, targetRowKey);
+
+  setRowsAttributeInRange(store, 'checked', true, range);
+  setCheckedAllRows(store);
+
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({ range });
+
+  /**
+   * Occurs when a checkbox in header is checked(checked all checkbox in row header)
+   * @event Grid#checkBetween
+   * @property {number | string} range - index range of the checked rows
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('checkBetween', gridEvent);
+}
+
+export function uncheckBetween(store: Store, startRowKey: RowKey, endRowKey?: RowKey) {
+  const { data, id } = store;
+  const { clickedCheckboxRowkey } = data;
+  const targetRowKey = endRowKey || clickedCheckboxRowkey;
+
+  data.clickedCheckboxRowkey = startRowKey;
+
+  if (isNil(targetRowKey)) {
+    uncheck(store, startRowKey);
+    return;
+  }
+
+  const range = getCheckRange(store, startRowKey, targetRowKey);
+
+  setRowsAttributeInRange(store, 'checked', false, range);
+  setCheckedAllRows(store);
+
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({ range });
+
+  /**
+   * Occurs when a checkbox in header is checked(checked all checkbox in row header)
+   * @event Grid#uncheckBetween
+   * @property {number | string} range - index range of the unchecked rows
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('uncheckBetween', gridEvent);
 }
 
 export function checkAll(store: Store, allPage?: boolean) {
@@ -827,4 +912,8 @@ function postUpdateAfterManipulation(
   setCheckedAllRows(store);
   forceValidateUniquenessOfColumns(store.data.rawData, store.column);
   setAutoResizingColumnWidths(store, rows);
+}
+
+export function resetClickedCheckboxRowkey({ data }: Store) {
+  data.clickedCheckboxRowkey = null;
 }

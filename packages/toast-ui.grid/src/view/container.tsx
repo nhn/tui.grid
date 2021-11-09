@@ -306,6 +306,10 @@ export class ContainerComp extends Component<Props> {
     const { dispatch, filtering } = this.props;
     const target = ev.target as HTMLElement;
 
+    if (!findParentByClassName(target, 'row-header-checkbox')) {
+      dispatch('resetClickedCheckboxRowkey');
+    }
+
     if (
       filtering &&
       !findParentByClassName(target, 'btn-filter') &&

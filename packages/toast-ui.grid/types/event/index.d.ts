@@ -1,5 +1,5 @@
 import TuiGrid from '../index';
-import { CellValue, RowKey, SortState } from '../store/data';
+import { CellValue, CheckedRange, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
 import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
@@ -24,7 +24,7 @@ export interface GridEventProps {
   columnName?: string | null;
   prevRowKey?: RowKey | null;
   prevColumnName?: string | null;
-  range?: SelectionRange | null;
+  range?: SelectionRange | CheckedRange | null;
   xhr?: XMLHttpRequest;
   sortState?: SortState;
   filterState?: Filter[] | null;

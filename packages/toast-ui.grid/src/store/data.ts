@@ -508,6 +508,7 @@ export function create({
     disabledAllCheckbox: disabled,
     filters: null,
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
+    clickedCheckboxRowkey: null,
 
     get filteredRawData() {
       if (this.filters) {

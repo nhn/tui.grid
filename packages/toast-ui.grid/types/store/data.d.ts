@@ -8,6 +8,7 @@ import { Range } from './selection';
 export type CellValue = number | string | boolean | null | undefined | object;
 export type RowKey = number | string;
 export type RowSpanMap = Dictionary<RowSpan>;
+export type CheckedRange = number[];
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
@@ -136,6 +137,7 @@ export interface Data {
   pageRowRange: Range;
   filters: Filter[] | null;
   loadingState: LoadingState;
+  clickedCheckboxRowkey: RowKey | null;
 }
 
 export type RemoveTargetRows = {
