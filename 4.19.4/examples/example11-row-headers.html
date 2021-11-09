@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>11. Customizing Row headers</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link rel="stylesheet" type="text/css" href="./css/checkbox.css" />
+    <script>var errorLogs=[];window.onerror=function(o,r,e,n){errorLogs.push({message:o,source:r,lineno:e,colno:n})};</script>
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/row-header.md"
+        target="_blank"
+        >here</a
+      >
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    class RowNumberRenderer {
+      constructor(props) {
+        const el = document.createElement('span');
+        el.innerHTML = `No.${props.formattedValue}`;
+        this.el = el;
+      }
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props) {
+        this.el.innerHTML = `No.${props.formattedValue}`;
+      }
+    }
+
+    class CheckboxRenderer {
+      constructor(props) {
+        const { grid, rowKey } = props;
+
+        const label = document.createElement('label');
+        label.className = 'checkbox';
+        label.setAttribute('for', String(rowKey));
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.className = 'hidden-input';
+        hiddenInput.id = String(rowKey);
+
+        const customInput = document.createElement('span');
+        customInput.className = 'custom-input';
+
+        label.appendChild(hiddenInput);
+        label.appendChild(customInput);
+
+        hiddenInput.type = 'checkbox';
+        hiddenInput.addEventListener('change', () => {
+          if (hiddenInput.checked) {
+            grid.check(rowKey);
+          } else {
+            grid.uncheck(rowKey);
+          }
+        });
+
+        this.el = label;
+
+        this.render(props);
+      }
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props) {
+        const hiddenInput = this.el.querySelector('.hidden-input');
+        const checked = Boolean(props.value);
+
+        hiddenInput.checked = checked;
+      }
+    }
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      rowHeaders: [
+        {
+          type: 'rowNum',
+          renderer: {
+            type: RowNumberRenderer
+          }
+        },
+        {
+          type: 'checkbox',
+          header: `
+          <label for="all-checkbox" class="checkbox">
+            <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
+            <span class="custom-input"></span>
+          </label>
+        `,
+          renderer: {
+            type: CheckboxRenderer
+          }
+        }
+      ],
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ]
+    });
+
+    grid.on('check', function(ev) {
+      console.log('check', ev);
+    });
+
+    grid.on('uncheck', function(ev) {
+      console.log('uncheck', ev);
+    });
+  </script>
+</html>
