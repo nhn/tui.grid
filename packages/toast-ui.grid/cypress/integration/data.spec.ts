@@ -597,7 +597,7 @@ describe('getters', () => {
       .should('have.subset', [getRowDataWithAttrs(1), getRowDataWithAttrs(2)]);
   });
 
-  it.only('getFilteredData() returns filtered rows', () => {
+  it('getFilteredData() returns filtered rows', () => {
     cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
     cy.gridInstance()
       .invoke('getFilteredData')
