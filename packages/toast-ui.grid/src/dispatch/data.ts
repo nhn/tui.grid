@@ -8,6 +8,7 @@ import {
 } from '@t/store/data';
 import { Store } from '@t/store';
 import { ColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
 import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
 import {
   findProp,
@@ -76,7 +77,7 @@ function getIndexRangeOfCheckbox(
   { data, column, id }: Store,
   startRowKey: RowKey,
   targetRowKey: RowKey
-) {
+): Range {
   const filtered = isFiltered(data);
 
   const from = findIndexByRowKey(data, column, id, startRowKey, filtered);
@@ -258,7 +259,7 @@ export function setRowsAttributeInRange<K extends keyof RowAttributes>(
   store: Store,
   attrName: K,
   value: RowAttributes[K],
-  range: number[]
+  range: Range
 ) {
   store.data.filteredRawData.slice(...range).forEach((row) => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
