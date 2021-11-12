@@ -382,7 +382,11 @@ export function setCheckboxBetween(
   data.clickedCheckboxRowkey = startRowKey;
 
   if (isNil(targetRowKey)) {
-    value ? check(store, startRowKey) : uncheck(store, startRowKey);
+    if (value) {
+      check(store, startRowKey);
+    } else {
+      uncheck(store, startRowKey);
+    }
     return;
   }
 
@@ -881,8 +885,4 @@ function postUpdateAfterManipulation(
   setCheckedAllRows(store);
   forceValidateUniquenessOfColumns(store.data.rawData, store.column);
   setAutoResizingColumnWidths(store, rows);
-}
-
-export function resetClickedCheckboxRowkey({ data }: Store) {
-  data.clickedCheckboxRowkey = null;
 }
