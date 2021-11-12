@@ -46,9 +46,9 @@ import {
   getRemovedClassName,
   getCreatedRowInfo,
   isSorted,
-  isFiltered,
   getMaxRowKey,
   isScrollPagination,
+  isFiltered,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -77,10 +77,10 @@ function getIndexRangeOfCheckbox(
   startRowKey: RowKey,
   targetRowKey: RowKey
 ) {
-  const isFiltered = !!data.filters;
+  const filtered = isFiltered(data);
 
-  const from = findIndexByRowKey(data, column, id, startRowKey, isFiltered);
-  const to = findIndexByRowKey(data, column, id, targetRowKey, isFiltered);
+  const from = findIndexByRowKey(data, column, id, startRowKey, filtered);
+  const to = findIndexByRowKey(data, column, id, targetRowKey, filtered);
 
   return from < to ? [from, to + 1] : [to, from + 1];
 }
