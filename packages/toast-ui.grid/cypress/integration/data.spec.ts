@@ -597,6 +597,13 @@ describe('getters', () => {
       .should('have.subset', [getRowDataWithAttrs(1), getRowDataWithAttrs(2)]);
   });
 
+  it('getFilteredData() returns filtered rows', () => {
+    cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+    cy.gridInstance()
+      .invoke('getFilteredData')
+      .should('have.subset', [getRowDataWithAttrs(2)]);
+  });
+
   it('getRowCount() returns the total number of the rows', () => {
     cy.gridInstance().invoke('getRowCount').should('eq', 2);
   });
