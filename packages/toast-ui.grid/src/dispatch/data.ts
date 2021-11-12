@@ -382,7 +382,7 @@ export function setCheckboxBetween(
   data.clickedCheckboxRowkey = startRowKey;
 
   if (isNil(targetRowKey)) {
-    check(store, startRowKey);
+    value ? check(store, startRowKey) : uncheck(store, startRowKey);
     return;
   }
 
