@@ -18,19 +18,11 @@ export class RowHeaderInputRenderer implements CellRenderer {
 
     input.addEventListener('click', (ev: MouseEvent) => {
       if (ev.shiftKey) {
-        if (input.checked) {
-          grid.checkBetween(rowKey);
-        } else {
-          grid.uncheckBetween(rowKey);
-        }
+        grid[input.checked ? 'checkBetween' : 'uncheckBetween'](rowKey);
         return;
       }
 
-      if (input.checked) {
-        grid.check(rowKey);
-      } else {
-        grid.uncheck(rowKey);
-      }
+      grid[input.checked ? 'check' : 'uncheck'](rowKey);
     });
 
     el.appendChild(input);

@@ -85,6 +85,10 @@ Cypress.Commands.add('getRowHeaderCell', (rowKey, columnName) =>
   )
 );
 
+Cypress.Commands.add('getRowHeaderInput', (rowKey) =>
+  cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"] input`)
+);
+
 Cypress.Commands.add('getRowHeaderCells', (columnName) => {
   return cy.get(`td[data-column-name=${columnName}]`);
 });

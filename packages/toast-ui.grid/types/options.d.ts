@@ -48,8 +48,6 @@ export type GridEventName =
   | 'columnResize'
   | 'check'
   | 'uncheck'
-  | 'checkBetween'
-  | 'uncheckBetween'
   | 'checkAll'
   | 'uncheckAll'
   | 'selection'

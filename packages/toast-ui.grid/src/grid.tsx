@@ -896,7 +896,7 @@ export default class Grid implements TuiGrid {
    * @param {number|string} [endRowKey] - The unique key of the row
    */
   public checkBetween(startRowKey: RowKey, endRowKey?: RowKey) {
-    this.dispatch('checkBetween', startRowKey, endRowKey);
+    this.dispatch('setCheckboxBetween', true, startRowKey, endRowKey);
   }
 
   /**
@@ -905,7 +905,7 @@ export default class Grid implements TuiGrid {
    * @param {number|string} [endRowKey] - The unique key of the row
    */
   public uncheckBetween(startRowKey: RowKey, endRowKey?: RowKey) {
-    this.dispatch('uncheckBetween', startRowKey, endRowKey);
+    this.dispatch('setCheckboxBetween', false, startRowKey, endRowKey);
   }
 
   /**

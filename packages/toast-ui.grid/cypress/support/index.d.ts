@@ -25,6 +25,8 @@ declare namespace Cypress {
 
     getRowHeaderCell(rowKey: RowKey, columnName: RowHeaderType): Chainable<any>;
 
+    getRowHeaderInput(rowKey: RowKey): Chainable<any>;
+
     getRowHeaderCells(columnName: RowHeaderType): Chainable<any>;
 
     getColumnCells(columnName: string): Chainable<any>;

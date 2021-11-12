@@ -90,19 +90,11 @@ class CheckboxRenderer {
       ev.preventDefault();
 
       if (ev.shiftKey) {
-        if (!hiddenInput.checked) {
-          grid.checkBetween(rowKey);
-        } else {
-          grid.uncheckBetween(rowKey);
-        }
+        grid[!hiddenInput.checked ? 'checkBetween' : 'uncheckBetween'](rowKey);
         return;
       }
 
-      if (!hiddenInput.checked) {
-        grid.check(rowKey);
-      } else {
-        grid.uncheck(rowKey);
-      }
+      grid[!hiddenInput.checked ? 'check' : 'uncheck'](rowKey);
     });
 
     this.el = label;
