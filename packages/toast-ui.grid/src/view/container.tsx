@@ -338,16 +338,19 @@ export class ContainerComp extends Component<Props> {
   }
 
   handleContextMenu = (ev: MouseEvent) => {
+    const { target } = ev;
     if (
       isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy']) ||
       !this.context.store.contextMenu
     ) {
-      ev.target?.dispatchEvent(
-        new MouseEvent('mouseup', {
+      if (target) {
+        const mouseupEvent = new MouseEvent('mouseup', {
           bubbles: true,
           cancelable: true,
-        })
-      );
+        });
+        target.dispatchEvent(mouseupEvent);
+      }
+
       return;
     }
 
