@@ -16,12 +16,13 @@ export class RowHeaderInputRenderer implements CellRenderer {
     input.name = '_checked';
     input.disabled = disabled;
 
-    input.addEventListener('change', () => {
-      if (input.checked) {
-        grid.check(rowKey);
-      } else {
-        grid.uncheck(rowKey);
+    input.addEventListener('click', (ev: MouseEvent) => {
+      if (ev.shiftKey) {
+        grid[input.checked ? 'checkBetween' : 'uncheckBetween'](rowKey);
+        return;
       }
+
+      grid[input.checked ? 'check' : 'uncheck'](rowKey);
     });
 
     el.appendChild(input);

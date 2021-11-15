@@ -136,6 +136,10 @@ declare namespace tui {
 
     public uncheck(rowKey: RowKey): void;
 
+    public checkBetween(stratRowKey: RowKey, endRowKey?: RowKey): void;
+
+    public uncheckBetween(stratRowKey: RowKey, endRowKey?: RowKey): void;
+
     public checkAll(): void;
 
     public uncheckAll(): void;

@@ -891,6 +891,24 @@ export default class Grid implements TuiGrid {
   }
 
   /**
+   * Check the rows between the specified rowKeys. If endRowKey is not passed, perform 'check' on the row of startRowKey.
+   * @param {number|string} startRowKey - The unique key of the row
+   * @param {number|string} [endRowKey] - The unique key of the row
+   */
+  public checkBetween(startRowKey: RowKey, endRowKey?: RowKey) {
+    this.dispatch('setCheckboxBetween', true, startRowKey, endRowKey);
+  }
+
+  /**
+   * Uncheck the rows between the specified rowKeys. If endRowKey is not passed, perform 'uncheck' on the row of startRowKey.
+   * @param {number|string} startRowKey - The unique key of the row
+   * @param {number|string} [endRowKey] - The unique key of the row
+   */
+  public uncheckBetween(startRowKey: RowKey, endRowKey?: RowKey) {
+    this.dispatch('setCheckboxBetween', false, startRowKey, endRowKey);
+  }
+
+  /**
    * Check all rows.
    * @param {boolean} [allPage] - check all rows when using pagination. The default value is 'true'.
    */

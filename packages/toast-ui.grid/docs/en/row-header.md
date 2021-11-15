@@ -70,7 +70,7 @@ class CheckboxRenderer {
     const { grid, rowKey } = props;
 
     const label = document.createElement('label');
-    label.className = 'checkbox';
+    label.className = 'checkbox tui-grid-row-header-checkbox';
     label.setAttribute('for', String(rowKey));
 
     const hiddenInput = document.createElement('input');
@@ -84,12 +84,15 @@ class CheckboxRenderer {
     label.appendChild(customInput);
 
     hiddenInput.type = 'checkbox';
-    hiddenInput.addEventListener('change', () => {
-      if (hiddenInput.checked) {
-        grid.check(rowKey);
-      } else {
-        grid.uncheck(rowKey);
+    label.addEventListener('click', (ev) => {
+      ev.preventDefault();
+
+      if (ev.shiftKey) {
+        grid[!hiddenInput.checked ? 'checkBetween' : 'uncheckBetween'](rowKey);
+        return;
       }
+
+      grid[!hiddenInput.checked ? 'check' : 'uncheck'](rowKey);
     });
 
     this.el = label;

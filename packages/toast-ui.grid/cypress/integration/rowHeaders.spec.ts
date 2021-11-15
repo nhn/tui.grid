@@ -1,4 +1,8 @@
-import { assertHeaderCheckboxStatus } from '../helper/assert';
+import {
+  assertCheckBoxesChecked,
+  assertCheckBoxesUnchecked,
+  assertHeaderCheckboxStatus,
+} from '../helper/assert';
 
 const columns = [{ name: 'name', minWidth: 150 }];
 
@@ -21,6 +25,16 @@ describe('row header API', () => {
 
     cy.gridInstance().invoke('uncheck', 0);
     cy.get(`[data-row-key=0] input`).should('not.be.checked');
+  });
+
+  it('checkBetween, uncheckBetween', () => {
+    cy.gridInstance().invoke('checkBetween', 0, 2);
+
+    assertCheckBoxesChecked([0, 2]);
+
+    cy.gridInstance().invoke('uncheckBetween', 0, 2);
+
+    assertCheckBoxesUnchecked([0, 2]);
   });
 
   it('checkAll, uncheckAll', () => {
@@ -153,4 +167,15 @@ it('All checkbox automatically changes depending on the state of the rowHeader c
   cy.gridInstance().invoke('uncheck', 2);
 
   assertHeaderCheckboxStatus(false);
+});
+
+it('should click consecutive checkboxes with shift-click', () => {
+  cy.getRowHeaderInput(0).click().type('{shift}', { release: false });
+  cy.getRowHeaderInput(2).click();
+
+  assertCheckBoxesChecked([0, 2]);
+
+  cy.getRowHeaderInput(0).click();
+
+  assertCheckBoxesUnchecked([0, 2]);
 });

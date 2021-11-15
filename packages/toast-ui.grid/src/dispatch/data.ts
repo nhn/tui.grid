@@ -8,6 +8,7 @@ import {
 } from '@t/store/data';
 import { Store } from '@t/store';
 import { ColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
 import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
 import {
   findProp,
@@ -17,6 +18,7 @@ import {
   someProp,
   findPropIndex,
   silentSplice,
+  isNil,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
@@ -45,9 +47,9 @@ import {
   getRemovedClassName,
   getCreatedRowInfo,
   isSorted,
-  isFiltered,
   getMaxRowKey,
   isScrollPagination,
+  isFiltered,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -70,6 +72,19 @@ import {
 } from '../store/helper/validation';
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 import { fitRowHeightWhenMovingRow } from './renderState';
+
+function getIndexRangeOfCheckbox(
+  { data, column, id }: Store,
+  startRowKey: RowKey,
+  targetRowKey: RowKey
+): Range {
+  const filtered = isFiltered(data);
+
+  const from = findIndexByRowKey(data, column, id, startRowKey, filtered);
+  const to = findIndexByRowKey(data, column, id, targetRowKey, filtered);
+
+  return from < to ? [from, to + 1] : [to, from + 1];
+}
 
 function updateHeightsWithFilteredData(store: Store) {
   const { data, focus } = store;
@@ -240,6 +255,19 @@ export function setRowAttribute<K extends keyof RowAttributes>(
   }
 }
 
+export function setRowsAttributeInRange<K extends keyof RowAttributes>(
+  store: Store,
+  attrName: K,
+  value: RowAttributes[K],
+  range: Range
+) {
+  store.data.filteredRawData.slice(...range).forEach((row) => {
+    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
+      row._attributes[attrName] = value;
+    }
+  });
+}
+
 export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
@@ -293,10 +321,12 @@ export function setColumnValues(
 }
 
 export function check(store: Store, rowKey: RowKey) {
-  const { id, column } = store;
+  const { id, column, data } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
+
+  data.clickedCheckboxRowkey = rowKey;
 
   setRowAttribute(store, rowKey, 'checked', true);
   if (allColumnMap[treeColumnName]) {
@@ -316,10 +346,12 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { id, column } = store;
+  const { id, column, data } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
+
+  data.clickedCheckboxRowkey = rowKey;
 
   setRowAttribute(store, rowKey, 'checked', false);
   if (allColumnMap[treeColumnName]) {
@@ -336,6 +368,33 @@ export function uncheck(store: Store, rowKey: RowKey) {
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('uncheck', gridEvent);
+}
+
+export function setCheckboxBetween(
+  store: Store,
+  value: boolean,
+  startRowKey: RowKey,
+  endRowKey?: RowKey
+) {
+  const { data } = store;
+  const { clickedCheckboxRowkey } = data;
+  const targetRowKey = endRowKey || clickedCheckboxRowkey;
+
+  data.clickedCheckboxRowkey = startRowKey;
+
+  if (isNil(targetRowKey)) {
+    if (value) {
+      check(store, startRowKey);
+    } else {
+      uncheck(store, startRowKey);
+    }
+    return;
+  }
+
+  const range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+
+  setRowsAttributeInRange(store, 'checked', value, range);
+  setCheckedAllRows(store);
 }
 
 export function checkAll(store: Store, allPage?: boolean) {

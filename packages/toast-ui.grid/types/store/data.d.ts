@@ -136,6 +136,7 @@ export interface Data {
   pageRowRange: Range;
   filters: Filter[] | null;
   loadingState: LoadingState;
+  clickedCheckboxRowkey: RowKey | null;
 }
 
 export type RemoveTargetRows = {

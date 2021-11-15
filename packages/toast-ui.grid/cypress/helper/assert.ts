@@ -17,6 +17,20 @@ export function assertGridHasRightRowNumber() {
   });
 }
 
+export function assertCheckBoxesChecked(range: [number, number]) {
+  const [from, to] = range;
+  for (let i = from; i <= to; i += 1) {
+    cy.getRowHeaderInput(i).should('be.checked');
+  }
+}
+
+export function assertCheckBoxesUnchecked(range: [number, number]) {
+  const [from, to] = range;
+  for (let i = from; i <= to; i += 1) {
+    cy.getRowHeaderInput(i).should('not.be.checked');
+  }
+}
+
 export function assertFocusedCell(columnName: string, rowKey: number) {
   cy.gridInstance().invoke('getFocusedCell').should('have.subset', { columnName, rowKey });
 }
