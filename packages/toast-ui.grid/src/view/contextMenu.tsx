@@ -32,6 +32,6 @@ export class ContextMenuComp extends Component<Props> {
 }
 
 export const ContextMenu = connect<StoreProps, OwnProps>(({ contextMenu }, { menuItems, pos }) => ({
-  pos: pos || (contextMenu.posInfo?.pos ?? null),
-  menuItems: menuItems || contextMenu.flattenTopMenuItems,
+  pos: pos || (contextMenu?.posInfo?.pos ?? null),
+  menuItems: menuItems || contextMenu!.flattenTopMenuItems,
 }))(ContextMenuComp);

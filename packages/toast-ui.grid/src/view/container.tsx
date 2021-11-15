@@ -26,6 +26,7 @@ import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
 import { keyNameMap, KeyNameMap } from '../helper/keyboard';
+import contextMenuTypes from '@t/store/contextMenu';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -54,6 +55,7 @@ interface StoreProps {
   focusedColumnName: string | null;
   offsetLeft: number;
   offsetTop: number;
+  contextMenu: contextMenuTypes.ContextMenu | null;
 }
 
 interface TouchEventInfo {
@@ -370,6 +372,7 @@ export class ContainerComp extends Component<Props> {
       scrollX,
       scrollY,
       pageOptions,
+      contextMenu,
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
@@ -413,14 +416,14 @@ export class ContainerComp extends Component<Props> {
         <Clipboard />
         {pageOptions.position === 'bottom' && <Pagination />}
         <FilterLayer />
-        <ContextMenu />
+        {contextMenu && <ContextMenu />}
       </div>
     );
   }
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState }) => ({
+  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState, contextMenu }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
@@ -443,5 +446,6 @@ export const Container = connect<StoreProps, OwnProps>(
     focusedColumnName: focus.columnName,
     offsetLeft: dimension.offsetLeft,
     offsetTop: dimension.offsetTop,
+    contextMenu,
   })
 )(ContainerComp);

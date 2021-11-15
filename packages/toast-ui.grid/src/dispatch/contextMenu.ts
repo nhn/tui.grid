@@ -4,7 +4,7 @@ import { Range, PagePosition } from '@t/store/selection';
 import { ElementInfo } from '@t/dispatch';
 import { execCopy } from './clipboard';
 import { execExport } from './export';
-import { findOffsetIndex } from '../helper/common';
+import { findOffsetIndex, isNull } from '../helper/common';
 import { getRowKeyByIndexWithPageRange } from '../query/data';
 
 export function showContextMenu(
@@ -13,6 +13,10 @@ export function showContextMenu(
   elementInfo: ElementInfo,
   eventInfo: PagePosition
 ) {
+  if (isNull(contextMenu)) {
+    return;
+  }
+
   const { pageX, pageY } = eventInfo;
   const { visibleColumnsBySideWithRowHeader } = column;
 
@@ -30,7 +34,9 @@ export function showContextMenu(
 }
 
 export function hideContextMenu({ contextMenu }: Store) {
-  contextMenu.posInfo = null;
+  if (!isNull(contextMenu)) {
+    contextMenu.posInfo = null;
+  }
 }
 
 export function copy(store: Store) {

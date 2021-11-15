@@ -1,4 +1,5 @@
 import { ContextMenu, MenuItem, CreateMenuGroups } from '@t/store/contextMenu';
+import { isNull } from '../helper/common';
 import { observable } from '../helper/observable';
 import i18n from '../i18n';
 
@@ -41,32 +42,34 @@ function createDefaultContextMenu(): MenuItem[][] {
 }
 
 interface ContextMenuOptions {
-  createMenuGroups?: CreateMenuGroups;
+  createMenuGroups?: CreateMenuGroups | null;
 }
 
 export function create({ createMenuGroups }: ContextMenuOptions) {
-  return observable<ContextMenu>({
-    posInfo: null,
-    createMenuGroups: createMenuGroups || createDefaultContextMenu,
+  return isNull(createMenuGroups)
+    ? createMenuGroups
+    : observable<ContextMenu>({
+        posInfo: null,
+        createMenuGroups: createMenuGroups || createDefaultContextMenu,
 
-    get flattenTopMenuItems() {
-      if (!this.posInfo) {
-        return [];
-      }
-
-      const { rowKey, columnName } = this.posInfo;
-      const menuGroups = this.createMenuGroups({ rowKey, columnName });
-
-      return menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
-        const menuItems: MenuItem[] = [];
-        group.forEach((menuItem, itemIndex) => {
-          menuItems.push(menuItem);
-          if (groupIndex < menuGroups.length - 1 && itemIndex === group.length - 1) {
-            menuItems.push({ name: 'separator' });
+        get flattenTopMenuItems() {
+          if (!this.posInfo) {
+            return [];
           }
-        });
-        return acc.concat(menuItems);
-      }, []);
-    },
-  });
+
+          const { rowKey, columnName } = this.posInfo;
+          const menuGroups = this.createMenuGroups({ rowKey, columnName });
+
+          return menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
+            const menuItems: MenuItem[] = [];
+            group.forEach((menuItem, itemIndex) => {
+              menuItems.push(menuItem);
+              if (groupIndex < menuGroups.length - 1 && itemIndex === group.length - 1) {
+                menuItems.push({ name: 'separator' });
+              }
+            });
+            return acc.concat(menuItems);
+          }, []);
+        },
+      });
 }
