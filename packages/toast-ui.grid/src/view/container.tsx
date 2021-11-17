@@ -26,7 +26,7 @@ import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
 import { keyNameMap, KeyNameMap } from '../helper/keyboard';
-import contextMenuTypes from '@t/store/contextMenu';
+import { emitMouseup } from '../helper/mouse';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -55,7 +55,6 @@ interface StoreProps {
   focusedColumnName: string | null;
   offsetLeft: number;
   offsetTop: number;
-  contextMenu: contextMenuTypes.ContextMenu | null;
 }
 
 interface TouchEventInfo {
@@ -338,19 +337,11 @@ export class ContainerComp extends Component<Props> {
   }
 
   handleContextMenu = (ev: MouseEvent) => {
-    const { target } = ev;
     if (
       isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy']) ||
-      !this.context.store.contextMenu
+      !this.context.store.contextMenu.createMenuGroups
     ) {
-      if (target) {
-        const mouseupEvent = new MouseEvent('mouseup', {
-          bubbles: true,
-          cancelable: true,
-        });
-        target.dispatchEvent(mouseupEvent);
-      }
-
+      emitMouseup(this.el!);
       return;
     }
 
@@ -384,7 +375,6 @@ export class ContainerComp extends Component<Props> {
       scrollX,
       scrollY,
       pageOptions,
-      contextMenu,
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
@@ -428,14 +418,14 @@ export class ContainerComp extends Component<Props> {
         <Clipboard />
         {pageOptions.position === 'bottom' && <Pagination />}
         <FilterLayer />
-        {contextMenu && <ContextMenu />}
+        <ContextMenu />
       </div>
     );
   }
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState, contextMenu }) => ({
+  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
@@ -458,6 +448,5 @@ export const Container = connect<StoreProps, OwnProps>(
     focusedColumnName: focus.columnName,
     offsetLeft: dimension.offsetLeft,
     offsetTop: dimension.offsetTop,
-    contextMenu,
   })
 )(ContainerComp);

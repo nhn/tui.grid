@@ -26,5 +26,5 @@ export interface Store {
   readonly summary: Summary;
   readonly renderState: RenderState;
   readonly filterLayerState: FilterLayerState;
-  readonly contextMenu: ContextMenu | null;
+  readonly contextMenu: ContextMenu;
 }

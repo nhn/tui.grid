@@ -42,34 +42,34 @@ function createDefaultContextMenu(): MenuItem[][] {
 }
 
 interface ContextMenuOptions {
-  createMenuGroups?: CreateMenuGroups | null;
+  createMenuGroups?: CreateMenuGroups;
 }
 
 export function create({ createMenuGroups }: ContextMenuOptions) {
-  return isNull(createMenuGroups)
-    ? createMenuGroups
-    : observable<ContextMenu>({
-        posInfo: null,
-        createMenuGroups: createMenuGroups || createDefaultContextMenu,
+  return observable<ContextMenu>({
+    posInfo: null,
+    createMenuGroups: isNull(createMenuGroups)
+      ? null
+      : createMenuGroups || createDefaultContextMenu,
 
-        get flattenTopMenuItems() {
-          if (!this.posInfo) {
-            return [];
+    get flattenTopMenuItems() {
+      if (!this.posInfo) {
+        return [];
+      }
+
+      const { rowKey, columnName } = this.posInfo;
+      const menuGroups = this.createMenuGroups?.({ rowKey, columnName });
+
+      return menuGroups?.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
+        const menuItems: MenuItem[] = [];
+        group.forEach((menuItem, itemIndex) => {
+          menuItems.push(menuItem);
+          if (groupIndex < menuGroups.length - 1 && itemIndex === group.length - 1) {
+            menuItems.push({ name: 'separator' });
           }
-
-          const { rowKey, columnName } = this.posInfo;
-          const menuGroups = this.createMenuGroups({ rowKey, columnName });
-
-          return menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
-            const menuItems: MenuItem[] = [];
-            group.forEach((menuItem, itemIndex) => {
-              menuItems.push(menuItem);
-              if (groupIndex < menuGroups.length - 1 && itemIndex === group.length - 1) {
-                menuItems.push({ name: 'separator' });
-              }
-            });
-            return acc.concat(menuItems);
-          }, []);
-        },
-      });
+        });
+        return acc.concat(menuItems);
+      }, []);
+    },
+  });
 }

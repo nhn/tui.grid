@@ -20,10 +20,12 @@ export interface MenuPosInfo {
   columnName: string;
 }
 
-export type CreateMenuGroups = (params: { rowKey: RowKey; columnName: string }) => MenuItem[][];
+export type CreateMenuGroups =
+  | ((params: { rowKey: RowKey; columnName: string }) => MenuItem[][])
+  | null;
 
 export interface ContextMenu {
   posInfo: MenuPosInfo | null;
   createMenuGroups: CreateMenuGroups;
-  flattenTopMenuItems: MenuItem[];
+  flattenTopMenuItems: MenuItem[] | null;
 }
