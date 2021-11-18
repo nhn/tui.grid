@@ -1,4 +1,5 @@
 import { ContextMenu, MenuItem, CreateMenuGroups } from '@t/store/contextMenu';
+import { isNull } from '../helper/common';
 import { observable } from '../helper/observable';
 import i18n from '../i18n';
 
@@ -47,7 +48,9 @@ interface ContextMenuOptions {
 export function create({ createMenuGroups }: ContextMenuOptions) {
   return observable<ContextMenu>({
     posInfo: null,
-    createMenuGroups: createMenuGroups || createDefaultContextMenu,
+    createMenuGroups: isNull(createMenuGroups)
+      ? null
+      : createMenuGroups || createDefaultContextMenu,
 
     get flattenTopMenuItems() {
       if (!this.posInfo) {
@@ -55,9 +58,9 @@ export function create({ createMenuGroups }: ContextMenuOptions) {
       }
 
       const { rowKey, columnName } = this.posInfo;
-      const menuGroups = this.createMenuGroups({ rowKey, columnName });
+      const menuGroups = this.createMenuGroups?.({ rowKey, columnName });
 
-      return menuGroups.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
+      return menuGroups?.reduce((acc: MenuItem[], group: MenuItem[], groupIndex: number) => {
         const menuItems: MenuItem[] = [];
         group.forEach((menuItem, itemIndex) => {
           menuItems.push(menuItem);

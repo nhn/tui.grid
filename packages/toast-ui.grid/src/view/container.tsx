@@ -26,6 +26,7 @@ import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
 import { keyNameMap, KeyNameMap } from '../helper/keyboard';
+import { emitMouseup } from '../helper/mouse';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -336,7 +337,11 @@ export class ContainerComp extends Component<Props> {
   }
 
   handleContextMenu = (ev: MouseEvent) => {
-    if (isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy'])) {
+    if (
+      isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy']) ||
+      !this.context.store.contextMenu.createMenuGroups
+    ) {
+      emitMouseup(this.el!);
       return;
     }
 

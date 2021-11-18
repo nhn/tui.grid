@@ -209,4 +209,18 @@ describe('context menu', () => {
     cy.getByCls('cell-dummy').first().rightclick();
     cy.getByCls('context-menu').should('be.not.visible');
   });
+
+  it('should disable the context menu by passing opions to null', () => {
+    const data = [
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 28 },
+      { name: 'Ryu', age: 22 },
+    ];
+    const columns = [{ name: 'name' }, { name: 'age' }];
+
+    cy.createGrid({ data, columns, contextMenu: null });
+
+    showContextMenu(0, 'name');
+    cy.getByCls('context-menu').should('be.not.visible');
+  });
 });

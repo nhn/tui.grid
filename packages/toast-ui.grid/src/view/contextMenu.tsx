@@ -6,7 +6,7 @@ import { MenuItem, MenuPos } from '@t/store/contextMenu';
 import { ContextMenuItem } from './contextMenuItem';
 
 interface StoreProps {
-  menuItems: MenuItem[];
+  menuItems: MenuItem[] | null;
   pos: MenuPos | null;
 }
 
@@ -21,7 +21,7 @@ export class ContextMenuComp extends Component<Props> {
     if (pos) {
       return (
         <ul class={cls('context-menu')} style={pos}>
-          {menuItems.map((menuItem) => (
+          {menuItems!.map((menuItem) => (
             <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
           ))}
         </ul>
@@ -32,6 +32,6 @@ export class ContextMenuComp extends Component<Props> {
 }
 
 export const ContextMenu = connect<StoreProps, OwnProps>(({ contextMenu }, { menuItems, pos }) => ({
-  pos: pos || (contextMenu.posInfo?.pos ?? null),
-  menuItems: menuItems || contextMenu.flattenTopMenuItems,
+  pos: pos || (contextMenu?.posInfo?.pos ?? null),
+  menuItems: menuItems || contextMenu?.flattenTopMenuItems,
 }))(ContextMenuComp);

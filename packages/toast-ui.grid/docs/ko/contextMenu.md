@@ -3,7 +3,7 @@
 TOAST UI Grid는 `v4.18.0` 버전부터 컨텍스트 메뉴 기능을 제공한다. 셀에서 마우스 우측 버튼을 누르면 컨텍스트 메뉴가 나오며, `contextMenu` 옵션으로 원하는 컨텍스트 메뉴를 설정할 수 있다.
 
 ### 옵션
-`contextMenu` 옵션은 반드시 함수가 되어야 하며, 함수의 반환값은 아래와 같은 2차원 배열이어야 한다.
+`contextMenu` 옵션은 함수나 `null`이 되어야 하며, 함수의 반환값은 아래와 같은 2차원 배열이어야 한다.
 
 ```js
 const grid = Grid({
@@ -51,6 +51,9 @@ const grid = Grid({
 
 ![image](https://user-images.githubusercontent.com/37766175/123938532-2a3e0800-d9d2-11eb-9ded-ec4562cb026e.png)
 
+`contextMenu` 옵션이 `null`이면 컨텍스트 메뉴는 비활성화 되며 브라우저의 기본 컨텍스트 메뉴가 활성화 된다.
+
+![image](https://user-images.githubusercontent.com/41339744/142086149-bb853f02-08e0-41cf-9a46-5dc48c85db20.gif)
 
 #### 동적 컨텍스트 메뉴
 `contextMenu` 옵션으로 설정한 함수는 `rowKey`, `columnName`로 구성된 객체를 인자로 받는다. 이 객체는 컨텍스트 메뉴를 띄운 셀의 `rowKey`, `columnName`을 의미하며, 아래처럼 동적으로 메뉴 구성을 변경하고 싶은 경우 사용한다.
