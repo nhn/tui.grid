@@ -2,7 +2,12 @@ import { OptGrid } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
-import { invokeFilter, applyAliasHeaderCheckbox, dragAndDrop } from '../helper/util';
+import {
+  invokeFilter,
+  applyAliasHeaderCheckbox,
+  dragAndDropRow,
+  dragAndDropColumn,
+} from '../helper/util';
 import { assertGridHasRightRowNumber, assertHeaderCheckboxStatus } from '../helper/assert';
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
@@ -1045,62 +1050,295 @@ describe('D&D', () => {
     return cy.getByCls('layer-focus');
   }
 
-  beforeEach(() => {
-    const largeData = [
-      { name: 'Kim', age: 10 },
-      { name: 'Lee', age: 20 },
-      { name: 'Ryu', age: 30 },
-      { name: 'Han', age: 40 },
+  function getActiveSelectionlayer() {
+    return cy.getByCls('layer-selection');
+  }
+
+  describe('Row', () => {
+    beforeEach(() => {
+      const largeData = [
+        { name: 'Kim', age: 10 },
+        { name: 'Lee', age: 20 },
+        { name: 'Ryu', age: 30 },
+        { name: 'Han', age: 40 },
+      ];
+      const columns = [
+        { name: 'name', editor: 'text', sortable: true, filter: 'text' },
+        { name: 'age', editor: 'text', sortable: true },
+      ];
+
+      cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
+    });
+
+    it('should move the row by dragging the row(bottom direction)', () => {
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Lee', '20'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
+
+      dragAndDropRow(1, 140);
+
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Ryu', '30'],
+        ['Lee', '20'],
+        ['Han', '40'],
+      ]);
+    });
+
+    it('should move the row by dragging the row(top direction)', () => {
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Lee', '20'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
+
+      dragAndDropRow(1, 40);
+
+      cy.getRsideBody().should('have.cellData', [
+        ['Lee', '20'],
+        ['Kim', '10'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
+    });
+
+    it('should remove the focus when triggering mousedown to drag element', () => {
+      cy.gridInstance().invoke('focus', 1, 'name');
+
+      dragAndDropRow(1, 40);
+
+      getActiveFocusLayer().should('not.exist');
+    });
+  });
+
+  describe('Column', () => {
+    const data = [
+      { name: 'Kim', age: 10, price: 100 },
+      { name: 'Lee', age: 20, price: 200 },
+      { name: 'Ryu', age: 30, price: 300 },
+      { name: 'Han', age: 40, price: 400 },
     ];
-    const columns = [
-      { name: 'name', editor: 'text', sortable: true, filter: 'text' },
-      { name: 'age', editor: 'text', sortable: true },
-    ];
+    const columns = [{ name: 'name' }, { name: 'age' }, { name: 'price' }];
 
-    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
-  });
+    describe('Default', () => {
+      beforeEach(() => {
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+        });
+      });
 
-  it('should move the row by dragging the row(bottom direction)', () => {
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Lee', '20'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
+      it('should move the column by dragging the column(left direction)', () => {
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
 
-    dragAndDrop(1, 140);
+        dragAndDropColumn('age', 150);
 
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Ryu', '30'],
-      ['Lee', '20'],
-      ['Han', '40'],
-    ]);
-  });
+        cy.getRsideBody().should('have.cellData', [
+          ['10', 'Kim', '100'],
+          ['20', 'Lee', '200'],
+          ['30', 'Ryu', '300'],
+          ['40', 'Han', '400'],
+        ]);
+      });
 
-  it('should move the row by dragging the row(top direction)', () => {
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Lee', '20'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
+      it('should move the column by dragging the column(right direction)', () => {
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
 
-    dragAndDrop(1, 40);
+        dragAndDropColumn('age', 650);
 
-    cy.getRsideBody().should('have.cellData', [
-      ['Lee', '20'],
-      ['Kim', '10'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
-  });
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '100', '10'],
+          ['Lee', '200', '20'],
+          ['Ryu', '300', '30'],
+          ['Han', '400', '40'],
+        ]);
+      });
 
-  it('should remove the focus when triggering mousedown to drag element', () => {
-    cy.gridInstance().invoke('focus', 1, 'name');
+      it('should remove the focus when starting to drag element', () => {
+        cy.gridInstance().invoke('focus', 1, 'name');
 
-    dragAndDrop(1, 40);
+        dragAndDropColumn('age', 150);
 
-    getActiveFocusLayer().should('not.exist');
+        getActiveFocusLayer().should('not.exist');
+      });
+
+      it('should remove the selection when starting to drag element', () => {
+        cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 1] });
+        dragAndDropColumn('age', 150);
+
+        getActiveSelectionlayer().should('not.exist');
+      });
+
+      it('should not move the column by dragging the column if it is disabled', () => {
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
+
+        cy.gridInstance().invoke('disableColumn', 'name');
+
+        dragAndDropColumn('name', 550);
+
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
+      });
+    });
+
+    describe('With row header', () => {
+      beforeEach(() => {
+        const rowHeaders = [
+          {
+            type: 'rowNum',
+          },
+          {
+            type: 'checkbox',
+          },
+        ];
+
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+          rowHeaders,
+        });
+      });
+
+      ['_number', '_checked', '_draggable'].forEach((rowHeaderName) => {
+        it(`should not move the column by dragging the column if it is row header column (${rowHeaderName})`, () => {
+          cy.getRsideBody().should('have.cellData', [
+            ['Kim', '10', '100'],
+            ['Lee', '20', '200'],
+            ['Ryu', '30', '300'],
+            ['Han', '40', '400'],
+          ]);
+
+          dragAndDropColumn(rowHeaderName, 550);
+
+          cy.getRsideBody().should('have.cellData', [
+            ['Kim', '10', '100'],
+            ['Lee', '20', '200'],
+            ['Ryu', '30', '300'],
+            ['Han', '40', '400'],
+          ]);
+        });
+      });
+    });
+
+    describe('With complex columns', () => {
+      function createGridWithComplexColumn() {
+        const complexColumns = [{ header: 'human', name: 'human', childNames: ['name', 'age'] }];
+
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+          header: { height: 80, complexColumns },
+        });
+      }
+
+      it('should not move the column by dragging the column if it has complex columns', () => {
+        createGridWithComplexColumn();
+
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
+
+        dragAndDropColumn('name', 550);
+
+        cy.getRsideBody().should('have.cellData', [
+          ['Kim', '10', '100'],
+          ['Lee', '20', '200'],
+          ['Ryu', '30', '300'],
+          ['Han', '40', '400'],
+        ]);
+      });
+    });
+
+    describe('With tree columns', () => {
+      beforeEach(() => {
+        const treeData = [
+          { genre: 'Pop', name: '2002', price: 100 },
+          { genre: 'Rock', name: 'radioactive', price: 200 },
+          { genre: 'R&B', name: 'something', price: 300 },
+          { genre: 'Rap', name: '99 problems', price: 400 },
+        ];
+        const treeColumns = [{ name: 'genre' }, { name: 'name' }, { name: 'price' }];
+        const treeColumnOptions = {
+          name: 'genre',
+          useCascadingCheckbox: true,
+        };
+
+        cy.createGrid({
+          data: treeData,
+          columns: treeColumns,
+          bodyHeight: 400,
+          draggable: true,
+          treeColumnOptions,
+        });
+      });
+
+      it('should not move the column by dragging the column if it is tree columns', () => {
+        cy.getRsideBody().should('have.cellData', [
+          ['Pop', '2002', '100'],
+          ['Rock', 'radioactive', '200'],
+          ['R&B', 'something', '300'],
+          ['Rap', '99 problems', '400'],
+        ]);
+
+        dragAndDropColumn('genre', 550);
+
+        cy.getRsideBody().should('have.cellData', [
+          ['Pop', '2002', '100'],
+          ['Rock', 'radioactive', '200'],
+          ['R&B', 'something', '300'],
+          ['Rap', '99 problems', '400'],
+        ]);
+      });
+
+      it('should move the column by dragging the column if it has tree columns but it is not tree column', () => {
+        cy.getRsideBody().should('have.cellData', [
+          ['Pop', '2002', '100'],
+          ['Rock', 'radioactive', '200'],
+          ['R&B', 'something', '300'],
+          ['Rap', '99 problems', '400'],
+        ]);
+
+        dragAndDropColumn('name', 550);
+
+        cy.getRsideBody().should('have.cellData', [
+          ['Pop', '100', '2002'],
+          ['Rock', '200', 'radioactive'],
+          ['R&B', '300', 'something'],
+          ['Rap', '400', '99 problems'],
+        ]);
+      });
+    });
   });
 });

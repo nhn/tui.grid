@@ -9,7 +9,7 @@ import {
   assertToggleButtonExpanded,
   assertModifiedRowsLength,
 } from '../helper/assert';
-import { dragAndDrop } from '../helper/util';
+import { dragAndDropRow } from '../helper/util';
 
 const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
@@ -1079,7 +1079,7 @@ describe('move tree row', () => {
         cy.gridInstance().invoke('moveRow', 1, 5, { appended: true });
       } else {
         // move 'bar' row to 'foo_2' first child
-        dragAndDrop(1, 280);
+        dragAndDropRow(1, 280);
       }
 
       cy.getRsideBody().should('have.cellData', [
@@ -1103,7 +1103,7 @@ describe('move tree row', () => {
         cy.gridInstance().invoke('moveRow', 6, 1);
       } else {
         // move 'bar_2' row to first index of 'foo' row
-        dragAndDrop(6, 90);
+        dragAndDropRow(6, 90);
       }
 
       cy.getRsideBody().should('have.cellData', [
@@ -1125,7 +1125,7 @@ describe('move tree row', () => {
         cy.gridInstance().invoke('moveRow', 6, 0);
       } else {
         // move 'bar' row to first index of root
-        dragAndDrop(6, 48);
+        dragAndDropRow(6, 48);
       }
 
       cy.getRsideBody().should('have.cellData', [
@@ -1147,7 +1147,7 @@ describe('move tree row', () => {
         cy.gridInstance().invoke('moveRow', 6, 3, { appended: true });
       } else {
         // move 'bar_2' row to leaf node(qux row)
-        dragAndDrop(6, 180);
+        dragAndDropRow(6, 180);
       }
 
       cy.gridInstance().invoke('expandAll');
@@ -1171,7 +1171,7 @@ describe('move tree row', () => {
         cy.gridInstance().invoke('moveRow', 0, 7);
       } else {
         // move 'foo' row to last node(baz_2 row)
-        dragAndDrop(0, 600);
+        dragAndDropRow(0, 600);
       }
 
       cy.gridInstance().invoke('expandAll');
@@ -1194,7 +1194,7 @@ describe('move tree row', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('moveRow', 0, 7);
       } else {
-        dragAndDrop(0, 600);
+        dragAndDropRow(0, 600);
       }
 
       cy.getRsideBody().should('have.cellData', [
@@ -1215,7 +1215,7 @@ describe('move tree row', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('moveRow', 0, 7, { appended: true });
       } else {
-        dragAndDrop(0, 340);
+        dragAndDropRow(0, 340);
       }
 
       cy.getRsideBody().should('have.cellData', [
@@ -1236,7 +1236,7 @@ describe('move tree row', () => {
     cy.gridInstance().invoke('on', 'drop', stub);
 
     // move 'bar' row to first index of root
-    dragAndDrop(6, 48);
+    dragAndDropRow(6, 48);
 
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 6,
@@ -1282,7 +1282,7 @@ describe('move tree row', () => {
     cy.gridInstance().invoke('on', 'drop', stub);
 
     // move 'bar_2' row to leaf node(qux row)
-    dragAndDrop(6, 180);
+    dragAndDropRow(6, 180);
 
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 6,
@@ -1296,7 +1296,7 @@ describe('move tree row', () => {
     cy.gridInstance().invoke('on', 'drop', stub);
 
     // move 'bar_2' row to leaf node(qux row)
-    dragAndDrop(6, 370);
+    dragAndDropRow(6, 370);
 
     cy.wrap(stub).should('be.calledWithMatch', {
       rowKey: 6,
