@@ -39,7 +39,9 @@ export interface GridEventProps {
   origin?: Origin;
   changes?: CellChange[];
   floatingRow?: HTMLElement;
+  floatingColumn?: HTMLElement;
   targetRowKey?: RowKey | null;
+  targetColumnName?: string | null;
   appended?: boolean;
   keyboardEvent?: KeyboardEvent | null;
   save?: boolean;

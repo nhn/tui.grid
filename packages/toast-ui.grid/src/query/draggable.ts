@@ -1,8 +1,10 @@
+import { ColumnInfo } from '@t/store/column';
 import { Store } from '@t/store';
 import { RowKey, ViewRow, Row } from '@t/store/data';
 import { findOffsetIndex, fromArray, clamp } from '../helper/common';
 import { cls } from '../helper/dom';
 import { findIndexByRowKey } from './data';
+import { findColumnIndexByPosition } from './mouse';
 
 export interface PosInfo {
   pageX: number;
@@ -14,14 +16,20 @@ export interface PosInfo {
   container?: HTMLElement;
 }
 
-export interface DraggableInfo {
+export interface DraggableRowInfo {
   row: HTMLElement;
   rowKey: RowKey;
   line: HTMLElement;
   targetRow?: Row;
 }
 
-export interface MovedIndexAndPosInfo {
+export interface DraggableColumnInfo {
+  column: HTMLElement;
+  columnName: string;
+  targetColumn?: ColumnInfo;
+}
+
+export interface MovedIndexAndPosInfoOfRow {
   index: number;
   height: number;
   offsetLeft: number;
@@ -30,9 +38,19 @@ export interface MovedIndexAndPosInfo {
   moveToLast: boolean;
 }
 
+export interface MovedIndexAndPosInfoOfColumn {
+  index: number;
+  offsetLeft: number;
+  targetColumn: ColumnInfo;
+}
+
 export interface FloatingRowSize {
   width: number;
   height: number;
+}
+
+export interface FloatingColumnSize {
+  width: number;
 }
 
 interface FloatingRowOffsets {
@@ -54,10 +72,20 @@ function createRow(height: string) {
   return row;
 }
 
-function createCells(cell: Element) {
+function createColumn(height: string, width: string) {
+  const column = document.createElement('div');
+
+  column.className = cls('floating-column');
+  column.style.width = width;
+  column.style.lineHeight = height;
+
+  return column;
+}
+
+export function createCells(cell: Element) {
   const childLen = cell.childNodes.length;
   const el = document.createElement('div');
-  el.className = cls('floating-cell');
+  el.className = cls('floating-cell', 'cell-header');
   el.style.width = window.getComputedStyle(cell).width;
 
   for (let i = 0; i < childLen; i += 1) {
@@ -119,7 +147,22 @@ function createFloatingDraggableRow(
   return row;
 }
 
-export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableInfo | null {
+function createFloatingDraggableColumn(store: Store, colunmName: string, posInfo: PosInfo) {
+  const cell = posInfo.container!.querySelector(`[data-column-name="${colunmName}"]`)!;
+  const { clientHeight, clientWidth } = cell;
+  const { left } = cell.getBoundingClientRect();
+
+  const column = createColumn(`${clientHeight}px`, `${clientWidth}px`);
+
+  column.className = cls('floating-column');
+  column.style.left = `${left - store.dimension.offsetLeft}px`;
+
+  column.appendChild(createCells(cell));
+
+  return column;
+}
+
+export function createDraggableRowInfo(store: Store, posInfo: PosInfo): DraggableRowInfo | null {
   const { data, dimension } = store;
   const { rawData, filters } = data;
 
@@ -128,7 +171,7 @@ export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableIn
     return null;
   }
 
-  const { offsetLeft, offsetTop, index } = getMovedPosAndIndex(store, posInfo);
+  const { offsetLeft, offsetTop, index } = getMovedPosAndIndexOfRow(store, posInfo);
   const { rowKey, _attributes } = rawData[index];
   const row = createFloatingDraggableRow(store, rowKey, offsetLeft, offsetTop, posInfo);
 
@@ -141,10 +184,19 @@ export function createDraggableInfo(store: Store, posInfo: PosInfo): DraggableIn
       };
 }
 
-export function getMovedPosAndIndex(
+export function createDraggableColumnInfo(store: Store, posInfo: PosInfo): DraggableColumnInfo {
+  const { targetColumn } = getMovedPosAndIndexOfColumn(store, posInfo);
+  const { name: columnName } = targetColumn;
+
+  const column = createFloatingDraggableColumn(store, columnName, posInfo);
+
+  return { column, columnName, targetColumn };
+}
+
+export function getMovedPosAndIndexOfRow(
   store: Store,
   { pageX, pageY, left, top, scrollTop }: PosInfo
-): MovedIndexAndPosInfo {
+): MovedIndexAndPosInfoOfRow {
   const { rowCoords, dimension, column, data } = store;
   const { heights, offsets } = rowCoords;
   const { rawData } = data;
@@ -177,6 +229,35 @@ export function getMovedPosAndIndex(
     offsetTop: offsetTop - scrollTop + headerHeight,
     targetRow: rawData[index],
     moveToLast,
+  };
+}
+
+export function getMovedPosAndIndexOfColumn(
+  store: Store,
+  { pageX, pageY, scrollTop, scrollLeft }: PosInfo,
+  offsetLeftOfDragColumn?: number,
+  floatingColumnSize?: FloatingColumnSize
+): MovedIndexAndPosInfoOfColumn {
+  const { dimension, column } = store;
+  const { offsetLeft: containerLeft, width: containerWidth } = dimension;
+  const { width: floatingWidth = 0 } = floatingColumnSize || {};
+
+  const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
+  const index = findColumnIndexByPosition(store, viewInfo);
+  const targetColumn = column.allColumns[index];
+
+  let offsetLeft = pageX - (offsetLeftOfDragColumn || 0) - containerLeft;
+
+  if (offsetLeft < 0) {
+    offsetLeft = 0;
+  } else if (offsetLeft + floatingWidth > containerWidth) {
+    offsetLeft = containerWidth - floatingWidth;
+  }
+
+  return {
+    index,
+    offsetLeft,
+    targetColumn,
   };
 }
 

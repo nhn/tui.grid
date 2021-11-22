@@ -8,7 +8,7 @@ import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { initFocus } from './focus';
+import { initFocus, setFocusInfo } from './focus';
 import { isObservable, notify } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
@@ -23,8 +23,10 @@ import {
   initMaxTextMap,
 } from '../store/helper/data';
 import { getTreeIndentWidth } from '../store/helper/tree';
-import { getDepth } from '../query/tree';
+import { getDepth, isTreeColumnName } from '../query/tree';
 import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
+import { isRowHeader } from '../helper/column';
+import { isAllColumnsVisible } from '../query/column';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -268,4 +270,34 @@ function setColumnWidthByText({ data, column }: Store, columnName: string) {
 
   allColumnMap[columnName].baseWidth = Math.max(allColumnMap[columnName].minWidth, width);
   allColumnMap[columnName].fixedWidth = true;
+}
+
+export function moveColumn(store: Store, columnName: string, targetIndex: number) {
+  const { column } = store;
+  const { allColumns } = column;
+
+  if (!isAllColumnsVisible(column) || column.complexColumnHeaders.length > 0) {
+    return;
+  }
+  const originIndex = allColumns.findIndex((columnInfo) => columnInfo.name === columnName);
+
+  if (originIndex < 0 || targetIndex < 0 || targetIndex >= allColumns.length) {
+    return;
+  }
+
+  const columnToMove = allColumns[originIndex];
+  const { name: targetColumnName } = allColumns[targetIndex];
+
+  if (
+    columnName === targetColumnName ||
+    isRowHeader(targetColumnName) ||
+    isTreeColumnName(store.column, targetColumnName)
+  ) {
+    return;
+  }
+
+  setFocusInfo(store, null, null, false);
+  initSelection(store);
+  allColumns.splice(originIndex, 1);
+  allColumns.splice(targetIndex, 0, columnToMove);
 }

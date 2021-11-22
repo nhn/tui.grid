@@ -14,11 +14,21 @@ import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getInstance } from '../instance';
-import { isParentColumnHeader } from '../query/column';
+import { isColumnDraggable, isParentColumnHeader } from '../query/column';
 import { ComplexHeader } from './complexHeader';
 import { ColumnHeader } from './columnHeader';
 import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
 import Grid from '../grid';
+import {
+  createDraggableColumnInfo,
+  DraggableColumnInfo,
+  FloatingColumnSize,
+  getMovedPosAndIndexOfColumn,
+  PosInfo,
+} from '../query/draggable';
+import { findOffsetIndex } from '../helper/common';
+import GridEvent from '../event/gridEvent';
+import { EventBus, getEventBus } from '../event/eventBus';
 
 interface OwnProps {
   side: Side;
@@ -32,21 +42,67 @@ interface StoreProps {
   grid: Grid;
   columnSelectionRange: Range | null;
   complexColumnHeaders: ComplexColumnInfo[];
+  eventBus: EventBus;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
+interface MovedIndexInfo {
+  index: number;
+  columnName: string | null;
+}
+
+const DRAGGING_CLASS = 'dragging';
+
 class HeaderAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private container: HTMLElement | null = null;
+
+  private dragColumnInfo: DraggableColumnInfo | null = null;
+
+  private floatingColumnSize: FloatingColumnSize | null = null;
+
   private startSelectedName: string | null = null;
+
+  private offsetLeft: number | null = null;
+
+  private movedIndexInfo: MovedIndexInfo | null = null;
 
   private handleDblClick = (ev: MouseEvent) => {
     ev.stopPropagation();
   };
 
-  private handleMouseMove = (ev: MouseEvent) => {
+  private getPosInfo(ev: MouseEvent, el: HTMLElement): PosInfo {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    const { scrollTop, scrollLeft } = el;
+    const { top, left } = el.getBoundingClientRect();
+
+    return { pageX, pageY, left, top, scrollLeft, scrollTop };
+  }
+
+  private handleMouseMove = (ev: MouseEvent) => {
+    const {
+      context: { store },
+    } = this;
+
+    this.offsetLeft = ev.offsetX;
+
+    const posInfo = this.getPosInfo(ev, this.el!);
+    const { pageX, pageY, scrollTop, top } = posInfo;
+    const {
+      targetColumn: { name: currentColumnName },
+    } = getMovedPosAndIndexOfColumn(store, posInfo, this.offsetLeft!);
+
+    if (
+      currentColumnName === this.startSelectedName &&
+      isColumnDraggable(store, currentColumnName) &&
+      findOffsetIndex(store.rowCoords.offsets, pageY - top + scrollTop) > 0
+    ) {
+      this.startToDragColumn(posInfo);
+      return;
+    }
+
     this.props.dispatch('dragMoveHeader', { pageX, pageY }, this.startSelectedName!);
   };
 
@@ -103,6 +159,113 @@ class HeaderAreaComp extends Component<Props> {
     const [start, end] = columnSelectionRange;
     return index >= start && index <= end;
   }
+
+  private startToDragColumn = (posInfo: PosInfo) => {
+    const { dispatch } = this.props;
+    this.container = this.el?.parentElement?.parentElement!;
+
+    posInfo.container = this.container;
+
+    const draggableInfo = createDraggableColumnInfo(this.context.store, posInfo);
+    const { column, columnName } = draggableInfo;
+
+    const gridEvent = new GridEvent({ columnName, floatingColumn: column });
+    /**
+     * Occurs when starting to drag the column
+     * @event Grid#dragStart
+     * @property {Grid} instance - Current grid instance
+     * @property {string} columnName - The column name of the column to drag
+     * @property {HTMLElement} floatingColumn - The floating column DOM element
+     */
+    this.props.eventBus.trigger('dragStart', gridEvent);
+
+    if (!gridEvent.isStopped()) {
+      this.container.appendChild(column);
+
+      this.floatingColumnSize = { width: column.clientWidth };
+      this.dragColumnInfo = draggableInfo;
+
+      dispatch('addColumnClassName', columnName, DRAGGING_CLASS);
+      dispatch('setFocusInfo', null, null, false);
+      dispatch('initSelection');
+
+      document.removeEventListener('mousemove', this.handleMouseMove);
+      document.addEventListener('mousemove', this.dragColumn);
+      document.addEventListener('mouseup', this.dropColumn);
+    }
+  };
+
+  private dragColumn = (ev: MouseEvent) => {
+    const posInfo = this.getPosInfo(ev, this.el!);
+    const { index, offsetLeft, targetColumn } = getMovedPosAndIndexOfColumn(
+      this.context.store,
+      posInfo,
+      this.offsetLeft!,
+      this.floatingColumnSize!
+    );
+
+    const { column, columnName } = this.dragColumnInfo!;
+    column.style.left = `${offsetLeft}px`;
+
+    this.movedIndexInfo = { index, columnName: targetColumn.name };
+    this.props.dispatch('moveColumn', columnName, index);
+
+    const gridEvent = new GridEvent({
+      columnName,
+      targetColumnName: targetColumn.name,
+    });
+
+    /**
+     * Occurs when dragging the column
+     * @event Grid#drag
+     * @property {Grid} instance - Current grid instance
+     * @property {string} columnName - The column name of the dragging column
+     * @property {string} targetColumnName - The column name of the column at current dragging position
+     */
+    this.props.eventBus.trigger('drag', gridEvent);
+  };
+
+  private dropColumn = () => {
+    const { columnName } = this.dragColumnInfo!;
+
+    if (this.movedIndexInfo) {
+      const { index, columnName: targetColumnName } = this.movedIndexInfo;
+
+      const gridEvent = new GridEvent({
+        columnName,
+        targetColumnName,
+      });
+
+      /**
+       * Occurs when dropping the column
+       * @event Grid#drop
+       * @property {Grid} instance - Current grid instance
+       * @property {string} columnName - The column name of the dragging column
+       * @property {string} targetColumnName - The column name of the column at current dragging position
+       */
+      this.props.eventBus.trigger('drop', gridEvent);
+
+      if (!gridEvent.isStopped()) {
+        this.props.dispatch('moveColumn', columnName, index);
+      }
+    }
+
+    this.props.dispatch('removeColumnClassName', this.dragColumnInfo!.columnName!, DRAGGING_CLASS);
+
+    this.clearDraggableInfo();
+  };
+
+  private clearDraggableInfo = () => {
+    this.container!.removeChild(this.dragColumnInfo!.column);
+    this.dragColumnInfo = null;
+    this.container = null;
+    this.floatingColumnSize = null;
+    this.offsetLeft = null;
+    this.movedIndexInfo = null;
+
+    document.removeEventListener('mousemove', this.dragColumn);
+    document.removeEventListener('mouseup', this.dropColumn);
+  };
 
   public componentDidUpdate() {
     this.el!.scrollLeft = this.props.scrollLeft;
@@ -162,5 +325,6 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     grid: getInstance(id),
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
     complexColumnHeaders,
+    eventBus: getEventBus(id),
   };
 })(HeaderAreaComp);

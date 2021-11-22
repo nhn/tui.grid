@@ -3,6 +3,7 @@ import { RowKey, Row } from '@t/store/data';
 import { Observable, getOriginObject } from '../helper/observable';
 import { findRowByRowKey, findIndexByRowKey } from './data';
 import { isUndefined, isNull, findProp } from '../helper/common';
+import { Column } from '@t/store/column';
 
 export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
   const { data, column, id } = store;
@@ -103,6 +104,10 @@ export function getChildRowKeys(row: Row) {
   const { tree } = row._attributes;
 
   return tree ? tree.childRowKeys.slice() : [];
+}
+
+export function isTreeColumnName(column: Column, columnName: string) {
+  return column.treeColumnName === columnName;
 }
 
 export function isHidden({ _attributes }: Row) {

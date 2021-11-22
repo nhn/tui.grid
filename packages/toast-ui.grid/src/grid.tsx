@@ -1753,4 +1753,15 @@ export default class Grid implements TuiGrid {
   public export(format: 'csv' | 'xlsx', options?: OptExport) {
     this.dispatch('execExport', format, options);
   }
+
+  /**
+   * Move the column identified by the specified column name to target index.
+   * If there is hidden columns or use complex columns, this couldn't be used.
+   * If the column of column name is row header column or tree column, this couldn't be used.
+   * @param {string} columnName - The column name of the column
+   * @param {number} targetIndex - Target index for moving
+   */
+  public moveColumn(columnName: string, targetIndex: number) {
+    this.dispatch('moveColumn', columnName, targetIndex);
+  }
 }

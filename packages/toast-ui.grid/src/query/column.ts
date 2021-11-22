@@ -1,5 +1,7 @@
+import { Store } from '@t/store';
 import { ComplexColumnInfo, ColumnInfo, Column } from '@t/store/column';
 import { findProp, includes, mapProp, some, someProp } from '../helper/common';
+import { isTreeColumnName } from './tree';
 
 type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
 
@@ -108,4 +110,26 @@ export function getChildHeaderCount(
 
 export function getColumnSide(column: Column, columnName: string) {
   return someProp('name', columnName, column.visibleColumnsBySideWithRowHeader.R) ? 'R' : 'L';
+}
+
+export function isAllColumnsVisible(column: Column) {
+  const { columnsWithoutRowHeader, visibleColumns } = column;
+  return columnsWithoutRowHeader.length === visibleColumns.length;
+}
+
+export function isDisabledColumn(column: Column, columnName: string) {
+  const targetColumn = column.allColumns.find((columnInfo) => columnInfo.name === columnName);
+
+  return !!targetColumn?.disabled;
+}
+
+export function isColumnDraggable(store: Store, columnName: string) {
+  const { column } = store;
+  return (
+    column.draggable &&
+    isAllColumnsVisible(column) &&
+    column.complexColumnHeaders.length === 0 &&
+    !isTreeColumnName(column, columnName) &&
+    !isDisabledColumn(column, columnName)
+  );
 }
