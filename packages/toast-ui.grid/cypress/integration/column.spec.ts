@@ -1,6 +1,7 @@
 import { OptColumn } from '@t/options';
 import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
+import { dragAndDropColumn } from '../helper/util';
 
 export {};
 
@@ -32,6 +33,11 @@ function assertColumnClassName(columnName: string, className: string) {
   cy.getColumnCells(columnName).each(($el) => {
     cy.wrap($el).should('have.class', className);
   });
+}
+
+function assertColumnHeaderAndData(headerData: string[][], cellData: string[][]) {
+  cy.getRsideHeader().should('have.headerData', headerData);
+  cy.getRsideBody().should('have.cellData', cellData);
 }
 
 before(() => {
@@ -287,5 +293,188 @@ describe('column disable', () => {
     cy.gridInstance().invoke('disableColumn', 'age');
 
     assertDisabledColumn('age', true);
+  });
+});
+
+describe('move column', () => {
+  function getActiveFocusLayer() {
+    return cy.getByCls('layer-focus');
+  }
+
+  function getActiveSelectionlayer() {
+    return cy.getByCls('layer-selection');
+  }
+
+  const data = [
+    { name: 'Kim', age: 10, price: 100 },
+    { name: 'Lee', age: 20, price: 200 },
+    { name: 'Ryu', age: 30, price: 300 },
+    { name: 'Han', age: 40, price: 400 },
+  ];
+  const columns = [{ name: 'name' }, { name: 'age' }, { name: 'price' }];
+
+  const originalHeader = [['name', 'age', 'price']];
+  const originalData = [
+    ['Kim', '10', '100'],
+    ['Lee', '20', '200'],
+    ['Ryu', '30', '300'],
+    ['Han', '40', '400'],
+  ];
+
+  ['UI(D&D)', 'API'].forEach((type) => {
+    describe(`Default by ${type}`, () => {
+      beforeEach(() => {
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+        });
+      });
+
+      it('should move the column by dragging the column(left direction)', () => {
+        assertColumnHeaderAndData(originalHeader, originalData);
+
+        if (type === 'API') {
+          cy.gridInstance().invoke('moveColumn', 'age', 1);
+        } else {
+          dragAndDropColumn('age', 150);
+        }
+
+        assertColumnHeaderAndData(
+          [['age', 'name', 'price']],
+          [
+            ['10', 'Kim', '100'],
+            ['20', 'Lee', '200'],
+            ['30', 'Ryu', '300'],
+            ['40', 'Han', '400'],
+          ]
+        );
+      });
+
+      it('should move the column by dragging the column(right direction)', () => {
+        assertColumnHeaderAndData(originalHeader, originalData);
+
+        if (type === 'API') {
+          cy.gridInstance().invoke('moveColumn', 'age', 3);
+        } else {
+          dragAndDropColumn('age', 650);
+        }
+
+        assertColumnHeaderAndData(
+          [['name', 'price', 'age']],
+          [
+            ['Kim', '100', '10'],
+            ['Lee', '200', '20'],
+            ['Ryu', '300', '30'],
+            ['Han', '400', '40'],
+          ]
+        );
+      });
+
+      it('should remove the focus when starting to drag element', () => {
+        cy.gridInstance().invoke('focus', 1, 'name');
+
+        if (type === 'API') {
+          cy.gridInstance().invoke('moveColumn', 'age', 1);
+        } else {
+          dragAndDropColumn('age', 150);
+        }
+
+        getActiveFocusLayer().should('not.exist');
+      });
+
+      it('should remove the selection when starting to drag element', () => {
+        cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 1] });
+
+        if (type === 'API') {
+          cy.gridInstance().invoke('moveColumn', 'age', 1);
+        } else {
+          dragAndDropColumn('age', 150);
+        }
+
+        getActiveSelectionlayer().should('not.exist');
+      });
+
+      if (type === 'UI(D&D)') {
+        it('should not move the column by dragging the column if it is disabled', () => {
+          assertColumnHeaderAndData(originalHeader, originalData);
+
+          cy.gridInstance().invoke('disableColumn', 'name');
+
+          dragAndDropColumn('name', 650);
+
+          assertColumnHeaderAndData(originalHeader, originalData);
+        });
+      }
+    });
+
+    describe(`With row header by ${type}`, () => {
+      beforeEach(() => {
+        const rowHeaders = [
+          {
+            type: 'rowNum',
+          },
+          {
+            type: 'checkbox',
+          },
+        ];
+
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+          rowHeaders,
+        });
+      });
+
+      ['_number', '_checked', '_draggable'].forEach((rowHeaderName) => {
+        it(`should not move the column by dragging the column if it is row header column (${rowHeaderName})`, () => {
+          assertColumnHeaderAndData(originalHeader, originalData);
+
+          if (type === 'API') {
+            cy.gridInstance().invoke('moveColumn', rowHeaderName, 4);
+          } else {
+            dragAndDropColumn(rowHeaderName, 650);
+          }
+
+          assertColumnHeaderAndData(originalHeader, originalData);
+        });
+      });
+    });
+
+    describe(`With complex columns by ${type}`, () => {
+      const originalComplexHeader = [
+        ['human', 'price'],
+        ['name', 'age'],
+      ];
+
+      function createGridWithComplexColumn() {
+        const complexColumns = [{ header: 'human', name: 'human', childNames: ['name', 'age'] }];
+
+        cy.createGrid({
+          data,
+          columns,
+          bodyHeight: 400,
+          draggable: true,
+          header: { height: 80, complexColumns },
+        });
+      }
+
+      it('should not move the column by dragging the column if it has complex columns', () => {
+        createGridWithComplexColumn();
+
+        assertColumnHeaderAndData(originalComplexHeader, originalData);
+
+        if (type === 'API') {
+          cy.gridInstance().invoke('moveColumn', 'name', 3);
+        } else {
+          dragAndDropColumn('name', 650);
+        }
+
+        assertColumnHeaderAndData(originalComplexHeader, originalData);
+      });
+    });
   });
 });

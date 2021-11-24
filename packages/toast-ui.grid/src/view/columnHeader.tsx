@@ -8,7 +8,7 @@ import { isRowHeader, isCheckboxColumn } from '../helper/column';
 import { HeaderRenderer, ColumnHeaderInfo } from '@t/renderer';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
-import { isColumnDraggable } from '../query/column';
+import { isDraggableColumn } from '../query/column';
 
 interface OwnProps {
   columnInfo: ColumnHeaderInfo;
@@ -101,7 +101,7 @@ export class ColumnHeader extends Component<Props> {
           'cell-header',
           [!isRowHeader(name) && selected, 'cell-selected'],
           [isRowHeader(name), 'cell-row-header'],
-          [isColumnDraggable(this.context.store, name) && !isRowHeader(name), 'header-draggable']
+          [isDraggableColumn(this.context.store, name) && !isRowHeader(name), 'header-draggable']
         )}
         {...(!!colspan && { colspan })}
         {...(!!rowspan && { rowspan })}

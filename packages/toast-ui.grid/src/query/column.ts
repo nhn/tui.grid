@@ -1,6 +1,6 @@
 import { Store } from '@t/store';
 import { ComplexColumnInfo, ColumnInfo, Column } from '@t/store/column';
-import { findProp, includes, mapProp, some, someProp } from '../helper/common';
+import { find, findProp, includes, mapProp, some, someProp } from '../helper/common';
 import { isTreeColumnName } from './tree';
 
 type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
@@ -118,12 +118,12 @@ export function isAllColumnsVisible(column: Column) {
 }
 
 export function isDisabledColumn(column: Column, columnName: string) {
-  const targetColumn = column.allColumns.find((columnInfo) => columnInfo.name === columnName);
+  const targetColumn = find(({ name }) => name === columnName, column.allColumns);
 
   return !!targetColumn?.disabled;
 }
 
-export function isColumnDraggable(store: Store, columnName: string) {
+export function isDraggableColumn(store: Store, columnName: string) {
   const { column } = store;
   return (
     column.draggable &&

@@ -49,10 +49,6 @@ export interface FloatingRowSize {
   height: number;
 }
 
-export interface FloatingColumnSize {
-  width: number;
-}
-
 interface FloatingRowOffsets {
   offsetLeft: number;
   offsetTop: number;
@@ -72,12 +68,12 @@ function createRow(height: string) {
   return row;
 }
 
-function createColumn(height: string, width: string) {
+function createColumn(height: number, width: number) {
   const column = document.createElement('div');
 
   column.className = cls('floating-column');
-  column.style.width = width;
-  column.style.lineHeight = height;
+  column.style.width = `${width}px`;
+  column.style.lineHeight = `${height}px`;
 
   return column;
 }
@@ -152,7 +148,7 @@ function createFloatingDraggableColumn(store: Store, colunmName: string, posInfo
   const { clientHeight, clientWidth } = cell;
   const { left } = cell.getBoundingClientRect();
 
-  const column = createColumn(`${clientHeight}px`, `${clientWidth}px`);
+  const column = createColumn(clientHeight, clientWidth);
 
   column.className = cls('floating-column');
   column.style.left = `${left - store.dimension.offsetLeft}px`;
@@ -236,17 +232,18 @@ export function getMovedPosAndIndexOfColumn(
   store: Store,
   { pageX, pageY, scrollTop, scrollLeft }: PosInfo,
   offsetLeftOfDragColumn?: number,
-  floatingColumnSize?: FloatingColumnSize
+  floatingColumnWidth?: number
 ): MovedIndexAndPosInfoOfColumn {
   const { dimension, column } = store;
   const { offsetLeft: containerLeft, width: containerWidth } = dimension;
-  const { width: floatingWidth = 0 } = floatingColumnSize || {};
+  const floatingWidth = floatingColumnWidth || 0;
+  const offsetLeftOfFloatingColumn = offsetLeftOfDragColumn || 0;
 
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const index = findColumnIndexByPosition(store, viewInfo);
   const targetColumn = column.allColumns[index];
 
-  let offsetLeft = pageX - (offsetLeftOfDragColumn || 0) - containerLeft;
+  let offsetLeft = pageX - offsetLeftOfFloatingColumn - containerLeft;
 
   if (offsetLeft < 0) {
     offsetLeft = 0;

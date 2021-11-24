@@ -13,7 +13,7 @@ import { isObservable, notify } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
-import { findProp } from '../helper/common';
+import { findIndex, findProp } from '../helper/common';
 import { initScrollPosition } from './viewport';
 import { getTextWidth, getComputedFontStyle } from '../helper/dom';
 import {
@@ -279,11 +279,8 @@ export function moveColumn(store: Store, columnName: string, targetIndex: number
   if (!isAllColumnsVisible(column) || column.complexColumnHeaders.length > 0) {
     return;
   }
-  const originIndex = allColumns.findIndex((columnInfo) => columnInfo.name === columnName);
 
-  if (originIndex < 0 || targetIndex < 0 || targetIndex >= allColumns.length) {
-    return;
-  }
+  const originIndex = findIndex(({ name }) => name === columnName, allColumns);
 
   const columnToMove = allColumns[originIndex];
   const { name: targetColumnName } = allColumns[targetIndex];
@@ -291,7 +288,7 @@ export function moveColumn(store: Store, columnName: string, targetIndex: number
   if (
     columnName === targetColumnName ||
     isRowHeader(targetColumnName) ||
-    isTreeColumnName(store.column, targetColumnName)
+    isTreeColumnName(column, targetColumnName)
   ) {
     return;
   }

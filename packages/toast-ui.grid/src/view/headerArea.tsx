@@ -14,7 +14,7 @@ import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getInstance } from '../instance';
-import { isColumnDraggable, isParentColumnHeader } from '../query/column';
+import { isDraggableColumn, isParentColumnHeader } from '../query/column';
 import { ComplexHeader } from './complexHeader';
 import { ColumnHeader } from './columnHeader';
 import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
@@ -22,7 +22,6 @@ import Grid from '../grid';
 import {
   createDraggableColumnInfo,
   DraggableColumnInfo,
-  FloatingColumnSize,
   getMovedPosAndIndexOfColumn,
   PosInfo,
 } from '../query/draggable';
@@ -61,7 +60,7 @@ class HeaderAreaComp extends Component<Props> {
 
   private dragColumnInfo: DraggableColumnInfo | null = null;
 
-  private floatingColumnSize: FloatingColumnSize | null = null;
+  private floatingColumnWidth: number | null = null;
 
   private startSelectedName: string | null = null;
 
@@ -82,9 +81,7 @@ class HeaderAreaComp extends Component<Props> {
   }
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const {
-      context: { store },
-    } = this;
+    const { store } = this.context;
 
     this.offsetLeft = ev.offsetX;
 
@@ -96,7 +93,7 @@ class HeaderAreaComp extends Component<Props> {
 
     if (
       currentColumnName === this.startSelectedName &&
-      isColumnDraggable(store, currentColumnName) &&
+      isDraggableColumn(store, currentColumnName) &&
       findOffsetIndex(store.rowCoords.offsets, pageY - top + scrollTop) > 0
     ) {
       this.startToDragColumn(posInfo);
@@ -182,7 +179,7 @@ class HeaderAreaComp extends Component<Props> {
     if (!gridEvent.isStopped()) {
       this.container.appendChild(column);
 
-      this.floatingColumnSize = { width: column.clientWidth };
+      this.floatingColumnWidth = column.clientWidth;
       this.dragColumnInfo = draggableInfo;
 
       dispatch('addColumnClassName', columnName, DRAGGING_CLASS);
@@ -201,7 +198,7 @@ class HeaderAreaComp extends Component<Props> {
       this.context.store,
       posInfo,
       this.offsetLeft!,
-      this.floatingColumnSize!
+      this.floatingColumnWidth!
     );
 
     const { column, columnName } = this.dragColumnInfo!;
@@ -259,7 +256,7 @@ class HeaderAreaComp extends Component<Props> {
     this.container!.removeChild(this.dragColumnInfo!.column);
     this.dragColumnInfo = null;
     this.container = null;
-    this.floatingColumnSize = null;
+    this.floatingColumnWidth = null;
     this.offsetLeft = null;
     this.movedIndexInfo = null;
 

@@ -9,7 +9,7 @@ import {
   assertToggleButtonExpanded,
   assertModifiedRowsLength,
 } from '../helper/assert';
-import { dragAndDropRow } from '../helper/util';
+import { dragAndDropColumn, dragAndDropRow } from '../helper/util';
 
 const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
@@ -54,6 +54,11 @@ function assertHasChildren(rowKey: RowKey, columnName: string, exist: boolean) {
   cy.getCell(rowKey, columnName).within(() => {
     cy.getByCls('btn-tree').should(exist ? 'exist' : 'not.be.exist');
   });
+}
+
+function assertColumnHeaderAndData(headerData: string[][], cellData: string[][]) {
+  cy.getRsideHeader().should('have.headerData', headerData);
+  cy.getRsideBody().should('have.cellData', cellData);
 }
 
 function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'>) {
@@ -1347,6 +1352,84 @@ describe('move tree row', () => {
         { c1: 'qux' },
         { c1: 'quxx' },
       ],
+    });
+  });
+});
+
+describe('move column with tree', () => {
+  const originalHeader = [['genre', 'name', 'price']];
+  const originalData = [
+    ['Pop', '2002', '100'],
+    ['Rock', 'radioactive', '200'],
+    ['R&B', 'something', '300'],
+    ['Rap', '99 problems', '400'],
+  ];
+
+  beforeEach(() => {
+    const treeData = [
+      { genre: 'Pop', name: '2002', price: 100 },
+      { genre: 'Rock', name: 'radioactive', price: 200 },
+      { genre: 'R&B', name: 'something', price: 300 },
+      { genre: 'Rap', name: '99 problems', price: 400 },
+    ];
+    const treeColumns = [{ name: 'genre' }, { name: 'name' }, { name: 'price' }];
+    const treeColumnOptions = {
+      name: 'genre',
+      useCascadingCheckbox: true,
+    };
+
+    cy.createGrid({
+      data: treeData,
+      columns: treeColumns,
+      bodyHeight: 400,
+      draggable: true,
+      treeColumnOptions,
+    });
+  });
+
+  ['UI(D&D)', 'API'].forEach((type) => {
+    it(`should not move the column by ${type} if it is tree columns`, () => {
+      assertColumnHeaderAndData(originalHeader, originalData);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveColumn', 'genre', 3);
+      } else {
+        dragAndDropColumn('genre', 550);
+      }
+
+      assertColumnHeaderAndData(originalHeader, originalData);
+    });
+
+    it(`should move the column by ${type} if it has tree columns but it is not tree column`, () => {
+      assertColumnHeaderAndData(originalHeader, originalData);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveColumn', 'name', 3);
+      } else {
+        dragAndDropColumn('name', 550);
+      }
+
+      assertColumnHeaderAndData(
+        [['genre', 'price', 'name']],
+        [
+          ['Pop', '100', '2002'],
+          ['Rock', '200', 'radioactive'],
+          ['R&B', '300', 'something'],
+          ['Rap', '400', '99 problems'],
+        ]
+      );
+    });
+
+    it(`should not move the column by ${type} if the column of target position is tree column`, () => {
+      assertColumnHeaderAndData(originalHeader, originalData);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('moveColumn', 'name', 1);
+      } else {
+        dragAndDropColumn('name', 100);
+      }
+
+      assertColumnHeaderAndData(originalHeader, originalData);
     });
   });
 });

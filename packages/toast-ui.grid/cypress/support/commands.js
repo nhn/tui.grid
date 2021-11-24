@@ -103,6 +103,8 @@ Cypress.Commands.add('getCells', (rowKey) => cy.get(`td[data-row-key=${rowKey}]`
 
 Cypress.Commands.add('getRsideBody', () => cy.getByCls('rside-area', 'body-area'));
 
+Cypress.Commands.add('getRsideHeader', () => cy.getByCls('rside-area', 'header-area'));
+
 Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
   cy.getByCls('column-resize-handle')
     .eq(index)
