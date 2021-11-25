@@ -2,7 +2,7 @@ import { OptGrid } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
-import { invokeFilter, applyAliasHeaderCheckbox, dragAndDrop } from '../helper/util';
+import { invokeFilter, applyAliasHeaderCheckbox, dragAndDropRow } from '../helper/util';
 import { assertGridHasRightRowNumber, assertHeaderCheckboxStatus } from '../helper/assert';
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
@@ -1045,62 +1045,64 @@ describe('D&D', () => {
     return cy.getByCls('layer-focus');
   }
 
-  beforeEach(() => {
-    const largeData = [
-      { name: 'Kim', age: 10 },
-      { name: 'Lee', age: 20 },
-      { name: 'Ryu', age: 30 },
-      { name: 'Han', age: 40 },
-    ];
-    const columns = [
-      { name: 'name', editor: 'text', sortable: true, filter: 'text' },
-      { name: 'age', editor: 'text', sortable: true },
-    ];
+  describe('Row', () => {
+    beforeEach(() => {
+      const largeData = [
+        { name: 'Kim', age: 10 },
+        { name: 'Lee', age: 20 },
+        { name: 'Ryu', age: 30 },
+        { name: 'Han', age: 40 },
+      ];
+      const columns = [
+        { name: 'name', editor: 'text', sortable: true, filter: 'text' },
+        { name: 'age', editor: 'text', sortable: true },
+      ];
 
-    cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
-  });
+      cy.createGrid({ data: largeData, columns, scrollY: true, bodyHeight: 400, draggable: true });
+    });
 
-  it('should move the row by dragging the row(bottom direction)', () => {
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Lee', '20'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
+    it('should move the row by dragging the row(bottom direction)', () => {
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Lee', '20'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
 
-    dragAndDrop(1, 140);
+      dragAndDropRow(1, 140);
 
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Ryu', '30'],
-      ['Lee', '20'],
-      ['Han', '40'],
-    ]);
-  });
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Ryu', '30'],
+        ['Lee', '20'],
+        ['Han', '40'],
+      ]);
+    });
 
-  it('should move the row by dragging the row(top direction)', () => {
-    cy.getRsideBody().should('have.cellData', [
-      ['Kim', '10'],
-      ['Lee', '20'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
+    it('should move the row by dragging the row(top direction)', () => {
+      cy.getRsideBody().should('have.cellData', [
+        ['Kim', '10'],
+        ['Lee', '20'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
 
-    dragAndDrop(1, 40);
+      dragAndDropRow(1, 40);
 
-    cy.getRsideBody().should('have.cellData', [
-      ['Lee', '20'],
-      ['Kim', '10'],
-      ['Ryu', '30'],
-      ['Han', '40'],
-    ]);
-  });
+      cy.getRsideBody().should('have.cellData', [
+        ['Lee', '20'],
+        ['Kim', '10'],
+        ['Ryu', '30'],
+        ['Han', '40'],
+      ]);
+    });
 
-  it('should remove the focus when triggering mousedown to drag element', () => {
-    cy.gridInstance().invoke('focus', 1, 'name');
+    it('should remove the focus when triggering mousedown to drag element', () => {
+      cy.gridInstance().invoke('focus', 1, 'name');
 
-    dragAndDrop(1, 40);
+      dragAndDropRow(1, 40);
 
-    getActiveFocusLayer().should('not.exist');
+      getActiveFocusLayer().should('not.exist');
+    });
   });
 });

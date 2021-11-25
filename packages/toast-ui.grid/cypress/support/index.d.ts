@@ -37,6 +37,8 @@ declare namespace Cypress {
 
     getRsideBody(): Chainable<any>;
 
+    getRsideHeader(): Chainable<any>;
+
     dragColumnResizeHandle(index: number, distance: number): Chainable<any>;
 
     getBodyCells(): Chainable<any>;

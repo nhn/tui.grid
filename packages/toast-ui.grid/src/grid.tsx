@@ -43,7 +43,15 @@ import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getInvalidRows } from './query/validation';
 import { cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
+import {
+  findPropIndex,
+  isUndefined,
+  mapProp,
+  hasOwnProp,
+  pick,
+  deepCopy,
+  find,
+} from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -67,6 +75,7 @@ import {
   getAncestorRows,
   getDescendantRows,
   getDepth,
+  isTreeColumnName,
 } from './query/tree';
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
@@ -1752,5 +1761,29 @@ export default class Grid implements TuiGrid {
    */
   public export(format: 'csv' | 'xlsx', options?: OptExport) {
     this.dispatch('execExport', format, options);
+  }
+
+  /**
+   * Move the column identified by the specified column name to target index.
+   * If there is hidden columns or use complex columns, this couldn't be used.
+   * If the column of column name is row header column or tree column, this couldn't be used.
+   * @param {string} columnName - The column name of the column
+   * @param {number} targetIndex - Target index for moving
+   */
+  public moveColumn(columnName: string, targetIndex: number) {
+    const { allColumns } = this.store.column;
+    const column = find(({ name }) => name === columnName, allColumns);
+
+    if (
+      !column ||
+      targetIndex < 0 ||
+      targetIndex >= allColumns.length ||
+      isRowHeader(columnName) ||
+      isTreeColumnName(this.store.column, columnName)
+    ) {
+      return;
+    }
+
+    this.dispatch('moveColumn', columnName, targetIndex);
   }
 }

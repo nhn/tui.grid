@@ -40,6 +40,18 @@ chai.use((_chai) => {
     new _chai.Assertion(actual).to.be.eql(cellData);
   });
 
+  _chai.Assertion.addMethod('headerData', function (headerData) {
+    const table = this._obj[0];
+
+    new _chai.Assertion(table).to.be.exist;
+
+    const actual = [...table.querySelectorAll('tr')].map((row) =>
+      [...row.querySelectorAll('th')].map((cell) => cell.textContent)
+    );
+
+    new _chai.Assertion(actual).to.be.eql(headerData);
+  });
+
   _chai.Assertion.addMethod('sameColumnData', function (columnData) {
     new _chai.Assertion(columnData).to.be.exist;
     const cells = this._obj;
