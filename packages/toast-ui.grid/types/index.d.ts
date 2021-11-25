@@ -190,6 +190,8 @@ declare namespace tui {
 
     public getData(): Omit<Row, InternalProp>[];
 
+    public getFilteredData(): Omit<Row, InternalProp>[];
+
     public getRowCount(): number;
 
     public clear(): void;
@@ -284,6 +286,8 @@ declare namespace tui {
     public getPaginationTotalCount(): number;
 
     public export(format: 'csv' | 'xlsx', options?: OptExport): void;
+
+    public moveColumn(columnName: string, targetIndex: number): void;
   }
 }
 
