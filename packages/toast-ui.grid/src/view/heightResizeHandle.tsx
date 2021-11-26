@@ -44,7 +44,7 @@ class HeightResizeHandleComp extends Component<Props> {
   public render() {
     return (
       <div class={cls('height-resize-handle')} onMouseDown={this.handleMouseDown}>
-        <button>
+        <button type="button">
           <span />
         </button>
       </div>
