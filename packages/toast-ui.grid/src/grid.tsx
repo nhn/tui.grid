@@ -1076,7 +1076,7 @@ export default class Grid implements TuiGrid {
 
   /**
    * Disable the row identified by the specified rowKey to not be able to check.
-   * @param {number|string} rowKey - The unique keyof the row.
+   * @param {number|string} rowKey - The unique key of the row.
    */
   public disableRowCheck(rowKey: RowKey) {
     this.dispatch('setRowCheckDisabled', true, rowKey);
@@ -1104,6 +1104,24 @@ export default class Grid implements TuiGrid {
    */
   public enableColumn(columnName: string) {
     this.dispatch('setColumnDisabled', false, columnName);
+  }
+
+  /**
+   * Disable the cell identified by the row key and column name.
+   * @param {number|string} rowKey - The unique key of the row.
+   * @param {string} columnName - column name
+   */
+  public disableCell(rowKey: RowKey, columnName: string) {
+    this.dispatch('setCellDisabled', true, rowKey, columnName);
+  }
+
+  /**
+   * Enable the cell identified by the row key and column name.
+   * @param {number|string} rowKey - The unique key of the row.
+   * @param {string} columnName - column name
+   */
+  public enableCell(rowKey: RowKey, columnName: string) {
+    this.dispatch('setCellDisabled', false, rowKey, columnName);
   }
 
   /**

@@ -130,7 +130,11 @@ function createViewCell(
   const className = [...classNameAttr.row, ...columnClassName].join(' ');
 
   let cellDisabled = rowDisabled || columnDisabled;
-  if (!isUndefined(row._disabledPriority[name])) {
+  if (row._disabledPriority[name] === 'CELL') {
+    cellDisabled = true;
+  } else if (row._disabledPriority[name] === '') {
+    cellDisabled = false;
+  } else if (!isUndefined(row._disabledPriority[name])) {
     cellDisabled = row._disabledPriority[name] === 'COLUMN' ? columnDisabled : rowDisabled;
   }
 

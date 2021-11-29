@@ -59,7 +59,7 @@ import {
 } from './summary';
 import { initFilter, resetFilterState } from './filter';
 import { initScrollPosition } from './viewport';
-import { isRowHeader } from '../helper/column';
+import { isCheckboxColumn, isDragColumn, isRowHeader, isRowNumColumn } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
 import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
 import { createObservableData } from './lazyObservable';
@@ -488,6 +488,36 @@ export function setColumnDisabled({ data, column }: Store, disabled: boolean, co
     row._disabledPriority[columnName] = 'COLUMN';
   });
   setRowOrColumnDisabled(column.allColumnMap[columnName], disabled);
+}
+
+export function setCellDisabled(
+  store: Store,
+  disabled: boolean,
+  rowKey: RowKey,
+  columnName: string
+) {
+  const { data, column, id } = store;
+
+  if (isRowNumColumn(columnName) || isDragColumn(columnName)) {
+    return;
+  }
+
+  const row = findRowByRowKey(data, column, id, rowKey, false);
+
+  if (!row) {
+    return;
+  }
+
+  const { _attributes, _disabledPriority } = row;
+
+  _disabledPriority[columnName] = disabled ? 'CELL' : '';
+
+  if (isCheckboxColumn(columnName)) {
+    _attributes.checkDisabled = disabled;
+    setDisabledAllCheckbox(store);
+  }
+
+  notify(row, '_disabledPriority');
 }
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
