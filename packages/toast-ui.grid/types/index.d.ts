@@ -120,6 +120,8 @@ declare namespace tui {
 
     public getSummaryValues(columnName: string): SummaryValueMap | null;
 
+    public getColumn(columnName: string): ColumnInfo | null;
+
     public getColumns(): ColumnInfo[];
 
     public setColumns(columns: OptColumn[]): void;
