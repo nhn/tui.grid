@@ -1105,7 +1105,7 @@ describe('D&D', () => {
   });
 });
 
-describe.only('enableCell() / disableCell()', () => {
+describe('enableCell() / disableCell()', () => {
   beforeEach(() => {
     createGrid();
   });

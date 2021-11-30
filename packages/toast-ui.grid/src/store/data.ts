@@ -128,14 +128,15 @@ function createViewCell(
   const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
   const className = [...classNameAttr.row, ...columnClassName].join(' ');
+  const _disabledPriority = row._disabledPriority[name];
 
   let cellDisabled = rowDisabled || columnDisabled;
-  if (row._disabledPriority[name] === 'CELL') {
+  if (_disabledPriority === 'CELL') {
     cellDisabled = true;
-  } else if (row._disabledPriority[name] === '') {
+  } else if (_disabledPriority === '') {
     cellDisabled = false;
-  } else if (!isUndefined(row._disabledPriority[name])) {
-    cellDisabled = row._disabledPriority[name] === 'COLUMN' ? columnDisabled : rowDisabled;
+  } else if (!isUndefined(_disabledPriority)) {
+    cellDisabled = _disabledPriority === 'COLUMN' ? columnDisabled : rowDisabled;
   }
 
   return {
