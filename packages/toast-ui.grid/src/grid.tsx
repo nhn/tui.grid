@@ -828,9 +828,7 @@ export default class Grid implements TuiGrid {
    * @returns {Object|null} - A column model.
    */
   public getColumn(columnName: string) {
-    const column = find(({ name }) => {
-      return name === columnName;
-    }, this.store.column.allColumns);
+    const column = find(({ name }) => name === columnName, this.store.column.allColumns);
 
     return column ? getOriginObject(column as Observable<ColumnInfo>) : null;
   }

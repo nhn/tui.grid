@@ -113,6 +113,11 @@ describe('API', () => {
     cy.gridInstance().invoke('getColumnValues', 'name').should('eql', ['Kim', 'Lee']);
   });
 
+  it('getColumn()', () => {
+    cy.gridInstance().invoke('getColumn', 'score').should('have.deep.property', 'name', 'score');
+    cy.gridInstance().invoke('getColumn', 'notExistColumn').should('eq', null);
+  });
+
   context('setColumnValues()', () => {
     it('should change values of specific column', () => {
       cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
