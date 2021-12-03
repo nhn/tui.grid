@@ -98,12 +98,18 @@ export function getMaxRowSpanRange(
 export function getRowRangeWithRowSpan(
   rowRange: Range,
   colRange: Range,
-  visibleColumnsWithRowHeader: ColumnInfo[],
+  column: Column,
   rowIndex: number | null,
   data: Data
 ): Range {
-  if (isRowSpanEnabled(data.sortState)) {
-    return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
+  if (isRowSpanEnabled(data.sortState, column)) {
+    return getMaxRowSpanRange(
+      rowRange,
+      colRange,
+      column.visibleColumnsWithRowHeader,
+      rowIndex,
+      data
+    );
   }
 
   return rowRange;
@@ -183,8 +189,10 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
   );
 }
 
-export function isRowSpanEnabled(sortState: SortState) {
-  return sortState.columns[0].columnName === 'sortKey';
+export function isRowSpanEnabled(sortState: SortState, column?: Column) {
+  return (
+    sortState.columns[0].columnName === 'sortKey' || !!column?.visibleRowSpanEnabledColumns.length
+  );
 }
 
 export function getRowSpanOfColumn(data: ViewRow[] | OptRow[], columnName: string) {

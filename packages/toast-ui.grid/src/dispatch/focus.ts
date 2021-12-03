@@ -121,7 +121,7 @@ export function changeFocus(
   if (!gridEvent.isStopped()) {
     let focusRowKey = rowKey;
 
-    if (rowKey && columnName && isRowSpanEnabled(sortState)) {
+    if (rowKey && columnName && isRowSpanEnabled(sortState, column)) {
       const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
       if (rowSpan) {
         focusRowKey = rowSpan.mainRowKey;

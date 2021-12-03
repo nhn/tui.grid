@@ -90,13 +90,8 @@ export function moveTabFocus(store: Store, command: TabCommandType) {
 }
 
 export function moveSelection(store: Store, command: KeyboardEventCommandType) {
-  const {
-    selection,
-    focus,
-    data,
-    column: { visibleColumnsWithRowHeader, rowHeaderCount },
-    id,
-  } = store;
+  const { selection, focus, data, column, id } = store;
+  const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const { filteredViewData, sortState } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
   let { inputRange: currentInputRange } = selection;
@@ -126,7 +121,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (isRowSpanEnabled(sortState)) {
+    if (isRowSpanEnabled(sortState, column)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,
@@ -146,7 +141,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
     [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
       [startRowIndex, endRowIndex],
       [columnStartIndex, nextColumnIndex],
-      visibleColumnsWithRowHeader,
+      column,
       focus.rowIndex,
       data
     );

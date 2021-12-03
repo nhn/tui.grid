@@ -205,7 +205,7 @@ export function setValue(
   updateSummaryValueByCell(store, columnName, { orgValue, value });
   getDataManager(id).push('UPDATE', targetRow);
 
-  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
+  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState, column)) {
     const { spanCount } = rowSpanMap[columnName];
     // update sub rows value
     for (let count = 1; count < spanCount; count += 1) {
@@ -500,7 +500,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
-  const { data, id } = store;
+  const { data, column, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
@@ -518,7 +518,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   sortByCurrentState(store);
 
-  if (prevRow && isRowSpanEnabled(sortState)) {
+  if (prevRow && isRowSpanEnabled(sortState, column)) {
     updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -553,7 +553,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
   initSelection(store);
 
-  if (nextRow && isRowSpanEnabled(sortState)) {
+  if (nextRow && isRowSpanEnabled(sortState, column)) {
     updateRowSpanWhenRemoving(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
@@ -752,7 +752,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   sortByCurrentState(store);
 
-  if (prevRow && isRowSpanEnabled(sortState)) {
+  if (prevRow && isRowSpanEnabled(sortState, column)) {
     updateRowSpanWhenAppending(rawData, prevRow, false);
   }
 
@@ -854,7 +854,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
     removeUniqueInfoMap(id, removedRow, column);
 
     if (nextRow) {
-      if (isRowSpanEnabled(sortState)) {
+      if (isRowSpanEnabled(sortState, column)) {
         updateRowSpanWhenRemoving(rawData, removedRow, nextRow, false);
       }
     }

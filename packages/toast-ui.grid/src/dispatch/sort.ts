@@ -10,6 +10,7 @@ import { updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
+import { updateRowSpan } from './rowSpan';
 
 function createSoretedViewData(rawData: Row[]) {
   return rawData.map(
@@ -165,6 +166,8 @@ export function sort(
   applySortedData(store);
 
   emitAfterSort(store, cancelSort, columnName);
+
+  updateRowSpan(store);
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
@@ -189,6 +192,8 @@ export function unsort(store: Store, columnName = 'sortKey') {
   }
   applySortedData(store);
   emitAfterSort(store, true, columnName);
+
+  updateRowSpan(store);
 }
 
 export function initSortState(data: Data) {

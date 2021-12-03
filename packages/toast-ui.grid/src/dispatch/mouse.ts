@@ -92,7 +92,6 @@ function updateSelection(store: Store, dragData: PagePosition) {
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
-  const { visibleColumnsWithRowHeader } = column;
 
   let startRowIndex, startColumnIndex, endRowIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
@@ -116,7 +115,7 @@ function updateSelection(store: Store, dragData: PagePosition) {
   [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [startRowIndex, endRowIndex],
     [startColumnIndex, endColumnIndex],
-    visibleColumnsWithRowHeader,
+    column,
     store.focus.rowIndex,
     data
   );
@@ -283,7 +282,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [rowIndexPerPage, rowIndexPerPage],
     [rowHeaderCount, endColumnIndex],
-    visibleColumnsWithRowHeader,
+    column,
     null,
     data
   );
@@ -303,7 +302,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
 export function dragMoveRowHeader(store: Store, dragData: PagePosition) {
   const { viewport, selection, id, data, column } = store;
   const { scrollTop, scrollLeft } = viewport;
-  const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
+  const { rowHeaderCount } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
 
@@ -319,7 +318,7 @@ export function dragMoveRowHeader(store: Store, dragData: PagePosition) {
   [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [startRowIndex, endRowIndex],
     [rowHeaderCount, columnIndex],
-    visibleColumnsWithRowHeader,
+    column,
     null,
     data
   );

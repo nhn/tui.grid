@@ -112,7 +112,7 @@ export function create({
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);
 
-      if (isRowSpanEnabled(sortState) && rowSpan) {
+      if (isRowSpanEnabled(sortState, column) && rowSpan) {
         const verticalPos = getVerticalPosWithRowSpan(
           columnName,
           rowSpan,

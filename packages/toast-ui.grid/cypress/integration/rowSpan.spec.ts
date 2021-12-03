@@ -333,7 +333,7 @@ describe('Dynamic RowSpan', () => {
   ];
   const columnsForDynamicRowSpan = [
     { name: 'name' },
-    { name: 'age', filter: 'number' },
+    { name: 'age', filter: 'number', sortingType: 'asc', sortable: true },
     { name: 'value' },
   ];
 
@@ -421,6 +421,48 @@ describe('Dynamic RowSpan', () => {
 
       cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
       cy.getCell(5, 'age').should('have.attr', 'rowSpan', '2');
+    });
+  });
+
+  describe('With sort', () => {
+    it('should render rowSpan cell properly after sorting (asc)', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+      });
+
+      cy.gridInstance().invoke('sort', 'age', true);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after sorting (desc)', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+      });
+
+      cy.gridInstance().invoke('sort', 'age', false);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after unsorting', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+      });
+
+      cy.gridInstance().invoke('sort', 'age', true);
+      cy.gridInstance().invoke('unsort', 'age');
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
     });
   });
 });
