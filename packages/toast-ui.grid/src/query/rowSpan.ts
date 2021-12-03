@@ -6,13 +6,19 @@ import {
   SortState,
   RowSpanAttributeValue,
   CellValue,
+  ViewRow,
 } from '@t/store/data';
 import { ColumnInfo } from '@t/store/column';
 import { RowCoords } from '@t/store/rowCoords';
 import { Range } from '@t/store/selection';
-import { findPropIndex, isEmpty, isNull } from '../helper/common';
+import { findPropIndex, isEmpty, isNil, isNull } from '../helper/common';
 import { getSortedRange } from './selection';
-import { Dictionary } from '@t/options';
+import { OptRow, Dictionary } from '@t/options';
+
+interface OptGetRowSpan {
+  rowKey: RowKey;
+  value: CellValue;
+}
 
 function getMainRowSpan(columnName: string, rowSpan: RowSpan, data: Row[]) {
   const { mainRow, mainRowKey } = rowSpan;
@@ -181,9 +187,13 @@ export function isRowSpanEnabled(sortState: SortState) {
   return sortState.columns[0].columnName === 'sortKey';
 }
 
-export function getRowSpanOfColumn(data: Data, columnName: string) {
-  const values = data.filteredViewData.map((row) => {
-    return { rowKey: row.rowKey, value: row.valueMap[columnName].formattedValue };
+export function getRowSpanOfColumn(data: ViewRow[] | OptRow[], columnName: string) {
+  const values: OptGetRowSpan[] = data.map((row, index) => {
+    return {
+      rowKey: (isNil(row.rowKey) ? index : row.rowKey) as RowKey,
+      value: ((row as OptRow)[columnName] ||
+        (row as ViewRow).valueMap[columnName].formattedValue) as CellValue,
+    };
   });
   const rowSpans: Dictionary<RowSpanAttributeValue> = {};
   let rowSpan: RowSpanAttributeValue = {};

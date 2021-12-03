@@ -160,6 +160,7 @@ function exportCallback(
     exportCSV(fileName, targetText);
   } else {
     if (!XLSX?.writeFile) {
+      // eslint-disable-next-line no-console
       console.error(
         '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
       );
@@ -204,6 +205,7 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
     exportCSV(fileName, targetText);
   } else {
     if (!XLSX?.writeFile) {
+      // eslint-disable-next-line no-console
       console.error(
         '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
       );

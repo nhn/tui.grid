@@ -33,6 +33,7 @@ import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
+import { getRowSpanOfColumn } from '../query/rowSpan';
 
 interface DataOption {
   data: OptRow[];
@@ -296,6 +297,24 @@ export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnIn
   row._relationListItemMap = relationListItemMap;
 }
 
+function setRowSpanToRow(data: OptRow[], column: Column) {
+  column.rowSpanEnabledColumns.forEach(({ name }) => {
+    const rowSpan = getRowSpanOfColumn(data, name);
+
+    Object.keys(rowSpan).forEach((key) => {
+      const rowIndex = parseInt(key, 10);
+
+      if (!data[rowIndex]?._attributes) {
+        data[rowIndex]._attributes = { rowSpan: {} };
+      } else if (!data[rowIndex]._attributes?.rowSpan) {
+        data[rowIndex]._attributes!.rowSpan = {};
+      }
+
+      data[rowIndex]._attributes!.rowSpan![name] = rowSpan[rowIndex]![name];
+    });
+  });
+}
+
 function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
   const mainRowSpanMap: RowSpanMap = {};
 
@@ -389,6 +408,7 @@ export function createData(
   { lazyObservable = false, prevRows, disabled = false }: DataCreationOption
 ) {
   generateDataCreationKey();
+  setRowSpanToRow(data, column);
   const { keyColumnName, treeColumnName = '' } = column;
   let rawData: Row[];
 

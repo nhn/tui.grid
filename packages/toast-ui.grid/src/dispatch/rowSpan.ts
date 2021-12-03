@@ -84,7 +84,7 @@ export function updateRowSpan(store: Store) {
   resetRowSpan(store);
 
   column.rowSpanEnabledColumns.forEach(({ name }) => {
-    const rowSpanOfColumn = getRowSpanOfColumn(data, name);
+    const rowSpanOfColumn = getRowSpanOfColumn(data.filteredViewData, name);
 
     Object.keys(rowSpanOfColumn).forEach((rowKey) => {
       if (allRowSpans[rowKey]) {
@@ -116,9 +116,7 @@ export function updateMainRowSpan(data: Row[], mainRow: Row, rowSpan: RowSpanAtt
   Object.keys(rowSpan).forEach((columnName) => {
     const spanCount = rowSpan[columnName];
 
-    const span = createRowSpan(true, rowKey, spanCount, spanCount);
-
-    rowSpanMap[columnName] = span;
+    rowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
     updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
   });
 }

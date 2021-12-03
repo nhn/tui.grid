@@ -334,8 +334,6 @@ export default class Grid implements TuiGrid {
 
     this.gridEl = render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
     this.dispatch('setColumnWidthsByText');
-
-    setTimeout(() => this.dispatch('updateRowSpan'));
   }
 
   /**
