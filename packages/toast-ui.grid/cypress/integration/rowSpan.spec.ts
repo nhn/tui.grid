@@ -1,7 +1,7 @@
 import { RowKey, RowSpan } from '@t/store/data';
 import { data as sample } from '../../samples/basic';
 import { OptRow } from '@t/options';
-import { invokeFilter } from '../helper/util';
+import { invokeFilter, dragAndDrop } from '../helper/util';
 
 function createDataWithRowSpanAttr(): OptRow[] {
   const optRows: OptRow[] = sample.slice();
@@ -359,8 +359,9 @@ describe('Dynamic RowSpan', () => {
 
     cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
     cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
-    cy.getCell(0, 'value').should('not.have.attr', 'rowSpan', '4');
-    cy.getCell(4, 'value').should('not.have.attr', 'rowSpan', '2');
+    cy.getColumnCells('value').each(($el) => {
+      cy.wrap($el).should('not.have.attr', 'rowSpan');
+    });
   });
 
   describe('With filter', () => {
@@ -368,20 +369,19 @@ describe('Dynamic RowSpan', () => {
       cy.createGrid({
         data: dataForDynamicRowSpan,
         columns: columnsForDynamicRowSpan,
-        rowSpan: 'all',
+        rowSpan: ['age'],
       });
 
       invokeFilter('age', [{ code: 'eq', value: 10 }]);
 
       cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
-      cy.getCell(0, 'value').should('have.attr', 'rowSpan', '2');
     });
 
     it('should render rowSpan cell properly with unfilter', () => {
       cy.createGrid({
         data: dataForDynamicRowSpan,
         columns: columnsForDynamicRowSpan,
-        rowSpan: 'all',
+        rowSpan: ['age'],
       });
 
       invokeFilter('age', [{ code: 'eq', value: 10 }]);
@@ -390,8 +390,37 @@ describe('Dynamic RowSpan', () => {
 
       cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
       cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
-      cy.getCell(0, 'value').should('have.attr', 'rowSpan', '4');
-      cy.getCell(4, 'value').should('have.attr', 'rowSpan', '2');
+    });
+  });
+
+  describe('With row D&D', () => {
+    it('should reset rowSpan when row drag started', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+        draggable: true,
+      });
+
+      cy.getCell(0, '_draggable').trigger('mousedown');
+
+      cy.getColumnCells('age').each(($el) => {
+        cy.wrap($el).should('not.have.attr', 'rowSpan');
+      });
+    });
+
+    it('should render rowSpan cell properly after D&D', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+        draggable: true,
+      });
+
+      dragAndDrop(0, 250);
+
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(5, 'age').should('have.attr', 'rowSpan', '2');
     });
   });
 });

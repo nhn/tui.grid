@@ -217,6 +217,8 @@ class BodyAreaComp extends Component<Props> {
   private startToDragRow = (posInfo: PosInfo) => {
     const container = this.el.parentElement!.parentElement!;
     posInfo.container = container;
+    this.props.dispatch('resetRowSpan', true);
+
     const draggableInfo = createDraggableInfo(this.context.store, posInfo);
 
     if (draggableInfo) {
@@ -373,6 +375,7 @@ class BodyAreaComp extends Component<Props> {
     }
     // clear floating element and draggable info
     this.clearDraggableInfo();
+    this.props.dispatch('updateRowSpan');
   };
 
   private clearDraggableInfo() {
