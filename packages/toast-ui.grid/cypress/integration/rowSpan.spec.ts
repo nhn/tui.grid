@@ -320,3 +320,33 @@ it('render rowSpan cell properly by calling setColumns API', () => {
   cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
   cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
 });
+
+describe.only('Dynamic RowSpan', () => {
+  const data = [
+    { name: 'Han', age: 10, value: 1 },
+    { name: 'Kim', age: 10, value: 1 },
+    { name: 'Cho', age: 20, value: 1 },
+    { name: 'Ryu', age: 15, value: 1 },
+    { name: 'Lee', age: 15, value: 2 },
+    { name: 'Park', age: 10, value: 2 },
+  ];
+  const columns = [{ name: 'name' }, { name: 'age' }, { name: 'value' }];
+
+  it("should render rowSpan cell properly for all columns (rowSpan: 'all')", () => {
+    cy.createGrid({ data, columns, rowSpan: 'all' });
+
+    cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+    cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    cy.getCell(0, 'value').should('have.attr', 'rowSpan', '4');
+    cy.getCell(4, 'value').should('have.attr', 'rowSpan', '2');
+  });
+
+  it("should render rowSpan cell properly for specific columns (rowSpan: ['age'])", () => {
+    cy.createGrid({ data, columns, rowSpan: ['age'] });
+
+    cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+    cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    cy.getCell(0, 'value').should('not.have.attr', 'rowSpan', '4');
+    cy.getCell(4, 'value').should('not.have.attr', 'rowSpan', '2');
+  });
+});
