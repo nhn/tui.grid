@@ -59,9 +59,9 @@ interface ViewCellInfo {
   valueMap: Dictionary<CellRenderData>;
 }
 
-const DISABLEDPRIORITY_BLANK = '';
-const DISABLEDPRIORITY_CELL = 'CELL';
-const DISABLEDPRIORITY_COLUMN = 'COLUMN';
+const DISABLED_PRIORITY_BLANK = '';
+const DISABLED_PRIORITY_CELL = 'CELL';
+const DISABLED_PRIORITY_COLUMN = 'COLUMN';
 
 let dataCreationKey = '';
 
@@ -135,12 +135,12 @@ function createViewCell(
   const _disabledPriority = row._disabledPriority[name];
 
   let cellDisabled = rowDisabled || columnDisabled;
-  if (_disabledPriority === DISABLEDPRIORITY_CELL) {
+  if (_disabledPriority === DISABLED_PRIORITY_CELL) {
     cellDisabled = true;
-  } else if (_disabledPriority === DISABLEDPRIORITY_BLANK) {
+  } else if (_disabledPriority === DISABLED_PRIORITY_BLANK) {
     cellDisabled = false;
   } else if (!isUndefined(_disabledPriority)) {
-    cellDisabled = _disabledPriority === DISABLEDPRIORITY_COLUMN ? columnDisabled : rowDisabled;
+    cellDisabled = _disabledPriority === DISABLED_PRIORITY_COLUMN ? columnDisabled : rowDisabled;
   }
 
   return {
