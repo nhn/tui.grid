@@ -21,6 +21,7 @@ import { setCheckedAllRows, updateHeights } from './data';
 import { updateAllSummaryValues } from './summary';
 import { createFilterEvent, EventType, EventParams } from '../query/filter';
 import { updatePageOptions } from './pagination';
+import { updateRowSpan } from './rowSpan';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;
@@ -197,6 +198,8 @@ export function filter(
   initLayerAndScrollAfterFiltering(store);
   updateAllSummaryValues(store);
   emitAfterFilter(store, 'afterFilter', columnName);
+
+  updateRowSpan(store);
 }
 
 export function updateFilters({ data }: Store, columnName: string, nextColumnFilterState: Filter) {
@@ -259,6 +262,8 @@ export function unfilter(store: Store, columnName?: string) {
     updateAllSummaryValues(store);
     emitAfterFilter(store, 'afterUnfilter', columnName);
   }
+
+  updateRowSpan(store);
 }
 
 export function setFilter(

@@ -1,6 +1,7 @@
 import { RowKey, RowSpan } from '@t/store/data';
 import { data as sample } from '../../samples/basic';
 import { OptRow } from '@t/options';
+import { invokeFilter } from '../helper/util';
 
 function createDataWithRowSpanAttr(): OptRow[] {
   const optRows: OptRow[] = sample.slice();
@@ -330,7 +331,11 @@ describe('Dynamic RowSpan', () => {
     { name: 'Lee', age: 15, value: 2 },
     { name: 'Park', age: 10, value: 2 },
   ];
-  const columnsForDynamicRowSpan = [{ name: 'name' }, { name: 'age' }, { name: 'value' }];
+  const columnsForDynamicRowSpan = [
+    { name: 'name' },
+    { name: 'age', filter: 'number' },
+    { name: 'value' },
+  ];
 
   it("should render rowSpan cell properly for all columns (rowSpan: 'all')", () => {
     cy.createGrid({
@@ -356,5 +361,37 @@ describe('Dynamic RowSpan', () => {
     cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
     cy.getCell(0, 'value').should('not.have.attr', 'rowSpan', '4');
     cy.getCell(4, 'value').should('not.have.attr', 'rowSpan', '2');
+  });
+
+  describe('With filter', () => {
+    it('should render rowSpan cell properly with filter', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: 'all',
+      });
+
+      invokeFilter('age', [{ code: 'eq', value: 10 }]);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(0, 'value').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly with unfilter', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: 'all',
+      });
+
+      invokeFilter('age', [{ code: 'eq', value: 10 }]);
+
+      cy.gridInstance().invoke('unfilter', 'age');
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(0, 'value').should('have.attr', 'rowSpan', '4');
+      cy.getCell(4, 'value').should('have.attr', 'rowSpan', '2');
+    });
   });
 });
