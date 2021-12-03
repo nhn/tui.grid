@@ -160,6 +160,7 @@ export interface ColumnInfo extends CommonColumnInfo {
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
   autoResizing: boolean;
+  rowSpan?: boolean;
 }
 
 export interface ComplexColumnInfo {
@@ -200,6 +201,7 @@ export interface Column {
   readonly columnsWithoutRowHeader: ColumnInfo[];
   readonly emptyRow: Record<string, null>;
   readonly autoResizingColumn: ColumnInfo[];
+  readonly rowSpanEnabledColumns: ColumnInfo[];
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;

@@ -1,6 +1,10 @@
-import { Row } from '@t/store/data';
+import { Row, RowAttributes, RowSpanAttribute, RowSpanAttributeValue } from '@t/store/data';
 import { createRowSpan } from '../store/data';
-import { findProp, isEmpty, findPropIndex } from '../helper/common';
+import { findProp, isEmpty, findPropIndex, find } from '../helper/common';
+import { Store } from '@t/store';
+import { Dictionary, RecursivePartial } from '@t/options';
+import { notify } from '../helper/observable';
+import { getRowSpanOfColumn } from '../query/rowSpan';
 
 export function updateRowSpanWhenAppending(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -73,6 +77,52 @@ export function updateRowSpanWhenRemoving(
   });
 }
 
+export function updateRowSpan(store: Store) {
+  const { data, column } = store;
+  const allRowSpans: Dictionary<RowSpanAttributeValue> = {};
+
+  resetRowSpan(store);
+
+  column.rowSpanEnabledColumns.forEach(({ name }) => {
+    const rowSpanOfColumn = getRowSpanOfColumn(data, name);
+
+    Object.keys(rowSpanOfColumn).forEach((rowKey) => {
+      if (allRowSpans[rowKey]) {
+        allRowSpans[rowKey]![name] = rowSpanOfColumn[rowKey]![name];
+      } else {
+        allRowSpans[rowKey] = rowSpanOfColumn[rowKey];
+      }
+    });
+  });
+
+  Object.keys(allRowSpans).forEach((rowKey) => {
+    const row = find(({ rowKey: key }) => `${key}` === rowKey, data.rawData);
+
+    updateMainRowSpan(data.filteredRawData, row!, allRowSpans[rowKey]);
+  });
+
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+}
+
+export function updateMainRowSpan(data: Row[], mainRow: Row, rowSpan: RowSpanAttributeValue) {
+  if (!rowSpan) {
+    return;
+  }
+
+  const { rowKey, rowSpanMap, _attributes } = mainRow;
+
+  (_attributes as RecursivePartial<RowAttributes & RowSpanAttribute>).rowSpan = rowSpan;
+
+  Object.keys(rowSpan).forEach((columnName) => {
+    const spanCount = rowSpan[columnName];
+
+    const span = createRowSpan(true, rowKey, spanCount, spanCount);
+
+    rowSpanMap[columnName] = span;
+    updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
+  });
+}
+
 function updateSubRowSpan(
   data: Row[],
   mainRow: Row,
@@ -85,5 +135,24 @@ function updateSubRowSpan(
   for (let offset = startOffset; offset < spanCount; offset += 1) {
     const row = data[mainRowIndex + offset];
     row.rowSpanMap[columnName] = createRowSpan(false, mainRow.rowKey, -offset, spanCount);
+  }
+}
+
+export function resetRowSpan({ data, column }: Store, isNotify = false) {
+  column.rowSpanEnabledColumns.forEach(({ name }) => {
+    data.rawData.forEach((row) => {
+      const _attributes = row._attributes as RecursivePartial<RowAttributes & RowSpanAttribute>;
+      if (row.rowSpanMap[name]) {
+        delete row.rowSpanMap[name];
+      }
+
+      if (_attributes.rowSpan) {
+        delete _attributes.rowSpan;
+      }
+    });
+  });
+
+  if (isNotify) {
+    notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
   }
 }

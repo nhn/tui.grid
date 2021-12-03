@@ -9,6 +9,7 @@ import {
   Dictionary,
   OptFilter,
   OptRowHeaderColumn,
+  OptRowSpan,
 } from '@t/options';
 import {
   ColumnOptions,
@@ -214,7 +215,8 @@ export function createColumn(
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
   columnHeaderInfo: ColumnHeaderInfo,
-  disabled: boolean
+  disabled: boolean,
+  rowSpan: boolean
 ): ColumnInfo {
   const {
     name,
@@ -288,6 +290,7 @@ export function createColumn(
     disabled,
     comparator,
     autoResizing: width === 'auto',
+    rowSpan,
   });
 }
 
@@ -387,6 +390,7 @@ interface ColumnOption {
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
   draggable: boolean;
+  rowSpanOption?: OptRowSpan;
 }
 
 export function create({
@@ -402,6 +406,7 @@ export function create({
   columnHeaders,
   disabled,
   draggable,
+  rowSpanOption,
 }: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -429,17 +434,27 @@ export function create({
     rowHeaderInfos.push(createRowHeader(rowHeader, columnHeaderInfo))
   );
 
-  const columnInfos = columns.map((column) =>
-    createColumn(
+  const columnInfos = columns.map((column) => {
+    let rowSpan = false;
+
+    if (
+      (Array.isArray(rowSpanOption) && includes(rowSpanOption, column.name)) ||
+      rowSpanOption === 'all'
+    ) {
+      rowSpan = true;
+    }
+
+    return createColumn(
       column,
       columnOptions,
       relationColumns,
       copyOptions,
       treeColumnOptions,
       columnHeaderInfo,
-      !!(disabled || column.disabled)
-    )
-  );
+      !!(disabled || column.disabled),
+      rowSpan
+    );
+  });
 
   validateRelationColumn(columnInfos);
 
@@ -553,6 +568,10 @@ export function create({
 
     get autoResizingColumn() {
       return this.columnsWithoutRowHeader.filter(({ autoResizing }) => autoResizing);
+    },
+
+    get rowSpanEnabledColumns() {
+      return this.columnsWithoutRowHeader.filter(({ rowSpan }) => rowSpan);
     },
 
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox }),

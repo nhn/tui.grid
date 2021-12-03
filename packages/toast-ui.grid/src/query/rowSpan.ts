@@ -1,9 +1,18 @@
-import { RowSpan, Row, Data, RowKey, SortState } from '@t/store/data';
+import {
+  RowSpan,
+  Row,
+  Data,
+  RowKey,
+  SortState,
+  RowSpanAttributeValue,
+  CellValue,
+} from '@t/store/data';
 import { ColumnInfo } from '@t/store/column';
 import { RowCoords } from '@t/store/rowCoords';
 import { Range } from '@t/store/selection';
 import { findPropIndex, isEmpty, isNull } from '../helper/common';
 import { getSortedRange } from './selection';
+import { Dictionary } from '@t/options';
 
 function getMainRowSpan(columnName: string, rowSpan: RowSpan, data: Row[]) {
   const { mainRow, mainRowKey } = rowSpan;
@@ -170,4 +179,34 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
 
 export function isRowSpanEnabled(sortState: SortState) {
   return sortState.columns[0].columnName === 'sortKey';
+}
+
+export function getRowSpanOfColumn(data: Data, columnName: string) {
+  const values = data.filteredViewData.map((row) => {
+    return { rowKey: row.rowKey, value: row.valueMap[columnName].formattedValue };
+  });
+  const rowSpans: Dictionary<RowSpanAttributeValue> = {};
+  let rowSpan: RowSpanAttributeValue = {};
+  let mainRowKey: RowKey | null = null;
+  let mainRowValue: CellValue = null;
+
+  values.forEach((value) => {
+    if (mainRowValue !== value.value) {
+      if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
+        rowSpans[mainRowKey] = rowSpan;
+      }
+      rowSpan = {};
+      rowSpan[columnName] = 1;
+      mainRowKey = value.rowKey;
+      mainRowValue = value.value;
+    } else {
+      rowSpan![columnName] += 1;
+    }
+  });
+
+  if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
+    rowSpans[mainRowKey] = rowSpan;
+  }
+
+  return rowSpans;
 }

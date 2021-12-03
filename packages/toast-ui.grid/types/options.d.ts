@@ -115,6 +115,7 @@ export interface OptGrid {
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
   contextMenu?: CreateMenuGroups;
+  rowSpan?: OptRowSpan;
 }
 
 export interface OptRow {
@@ -188,6 +189,8 @@ export interface OptHeader {
   valign?: VAlignType;
   columns?: OptColumnHeaderInfo[];
 }
+
+export type OptRowSpan = string[] | 'all';
 
 export interface OptComplexColumnInfo extends Omit<ComplexColumnInfo, 'headerRenderer'> {
   renderer?: HeaderRendererClass;

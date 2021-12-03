@@ -14,6 +14,7 @@ import * as filter from './filter';
 import * as pagination from './pagination';
 import * as contextMenu from './contextMenu';
 import * as exportData from './export';
+import * as rowSpan from './rowSpan';
 import { Store } from '@t/store';
 
 const dispatchMap = {
@@ -33,6 +34,7 @@ const dispatchMap = {
   ...pagination,
   ...contextMenu,
   ...exportData,
+  ...rowSpan,
 };
 
 type DispatchMap = typeof dispatchMap;
