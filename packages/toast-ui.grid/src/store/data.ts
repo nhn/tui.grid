@@ -298,7 +298,13 @@ export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnIn
 }
 
 function setRowSpanToRow(data: OptRow[], column: Column) {
-  column.rowSpanEnabledColumns.forEach(({ name }) => {
+  data.forEach((row) => {
+    if (row.rowKey) {
+      delete row.rowKey;
+    }
+  });
+
+  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     const rowSpan = getRowSpanOfColumn(data, name);
 
     Object.keys(rowSpan).forEach((key) => {

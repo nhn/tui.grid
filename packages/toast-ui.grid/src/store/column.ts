@@ -517,6 +517,10 @@ export function create({
       };
     },
 
+    get visibleRowSpanEnabledColumns() {
+      return this.visibleColumns.filter(({ rowSpan }) => rowSpan);
+    },
+
     get defaultValues() {
       return this.allColumns
         .filter(({ defaultValue }) => Boolean(defaultValue))
@@ -568,10 +572,6 @@ export function create({
 
     get autoResizingColumn() {
       return this.columnsWithoutRowHeader.filter(({ autoResizing }) => autoResizing);
-    },
-
-    get rowSpanEnabledColumns() {
-      return this.columnsWithoutRowHeader.filter(({ rowSpan }) => rowSpan);
     },
 
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox }),

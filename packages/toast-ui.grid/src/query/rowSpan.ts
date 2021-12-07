@@ -8,7 +8,7 @@ import {
   CellValue,
   ViewRow,
 } from '@t/store/data';
-import { ColumnInfo } from '@t/store/column';
+import { Column, ColumnInfo } from '@t/store/column';
 import { RowCoords } from '@t/store/rowCoords';
 import { Range } from '@t/store/selection';
 import { findPropIndex, isEmpty, isNil, isNull } from '../helper/common';
@@ -41,21 +41,22 @@ function getRowSpanRange(
   let [startRowIndex, endRowIndex] = rowRange;
 
   for (let index = startColumnIndex; index <= endColumnIndex; index += 1) {
-    const { rawData } = data;
-    const { rowSpanMap: startRowSpanMap } = rawData[startRowIndex];
-    const { rowSpanMap: endRowSpanMap } = rawData[endRowIndex];
+    const { filteredRawData } = data;
+    const { rowSpanMap: startRowSpanMap } = filteredRawData[startRowIndex];
+    const { rowSpanMap: endRowSpanMap } = filteredRawData[endRowIndex];
     const columnName = visibleColumns[index].name;
 
     // get top row index of topmost rowSpan
     if (startRowSpanMap[columnName]) {
       const { mainRowKey } = startRowSpanMap[columnName];
-      const topRowSpanIndex = findPropIndex('rowKey', mainRowKey, rawData);
+      const topRowSpanIndex = findPropIndex('rowKey', mainRowKey, filteredRawData);
       startRowIndex = startRowIndex > topRowSpanIndex ? topRowSpanIndex : startRowIndex;
     }
     // get bottom row index of bottommost rowSpan
     if (endRowSpanMap[columnName]) {
       const { mainRowKey, spanCount } = endRowSpanMap[columnName];
-      const bottomRowSpanIndex = findPropIndex('rowKey', mainRowKey, rawData) + spanCount - 1;
+      const bottomRowSpanIndex =
+        findPropIndex('rowKey', mainRowKey, filteredRawData) + spanCount - 1;
       endRowIndex = endRowIndex < bottomRowSpanIndex ? bottomRowSpanIndex : endRowIndex;
     }
   }
@@ -200,7 +201,7 @@ export function getRowSpanOfColumn(data: ViewRow[] | OptRow[], columnName: strin
     return {
       rowKey: (isNil(row.rowKey) ? index : row.rowKey) as RowKey,
       value: ((row as OptRow)[columnName] ||
-        (row as ViewRow).valueMap[columnName].formattedValue) as CellValue,
+        (row as ViewRow)?.valueMap?.[columnName]?.value) as CellValue,
     };
   });
   const rowSpans: Dictionary<RowSpanAttributeValue> = {};

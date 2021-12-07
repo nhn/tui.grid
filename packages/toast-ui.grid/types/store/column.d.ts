@@ -194,6 +194,7 @@ export interface Column {
   readonly visibleFrozenCount: number;
   readonly visibleColumnsBySide: VisibleColumnsBySide;
   readonly visibleColumnsBySideWithRowHeader: VisibleColumnsBySide;
+  readonly visibleRowSpanEnabledColumns: ColumnInfo[];
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
@@ -201,7 +202,6 @@ export interface Column {
   readonly columnsWithoutRowHeader: ColumnInfo[];
   readonly emptyRow: Record<string, null>;
   readonly autoResizingColumn: ColumnInfo[];
-  readonly rowSpanEnabledColumns: ColumnInfo[];
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;

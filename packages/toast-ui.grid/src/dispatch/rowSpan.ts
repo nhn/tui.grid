@@ -83,7 +83,7 @@ export function updateRowSpan(store: Store) {
 
   resetRowSpan(store);
 
-  column.rowSpanEnabledColumns.forEach(({ name }) => {
+  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     const rowSpanOfColumn = getRowSpanOfColumn(data.filteredViewData, name);
 
     Object.keys(rowSpanOfColumn).forEach((rowKey) => {
@@ -137,7 +137,7 @@ function updateSubRowSpan(
 }
 
 export function resetRowSpan({ data, column }: Store, isNotify = false) {
-  column.rowSpanEnabledColumns.forEach(({ name }) => {
+  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     data.rawData.forEach((row) => {
       const _attributes = row._attributes as RecursivePartial<RowAttributes & RowSpanAttribute>;
       if (row.rowSpanMap[name]) {
