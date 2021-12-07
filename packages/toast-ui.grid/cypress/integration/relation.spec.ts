@@ -318,3 +318,23 @@ describe(`throw error`, () => {
     });
   });
 });
+
+describe('Dynamic rowSpan', () => {
+  const rowSpanData = deepCopyArray(data);
+  rowSpanData[0].category1 = '02';
+  rowSpanData[0].category2 = '02_03';
+
+  it('should not apply dynamic rowSpan to child relation column on ordered relation columns', () => {
+    cy.createGrid({ data: rowSpanData, columns: orderedRelationColumns, rowSpan: 'all' });
+
+    cy.getCell(0, 'category1').should('have.attr', 'rowSpan', 2);
+    cy.getCell(0, 'category2').should('not.have.attr', 'rowSpan');
+  });
+
+  it('should not apply dynamic rowSpan to child relation column on unordered relation columns', () => {
+    cy.createGrid({ data: rowSpanData, columns: unorderedRelationColumns1, rowSpan: 'all' });
+
+    cy.getCell(0, 'category1').should('have.attr', 'rowSpan', 2);
+    cy.getCell(0, 'category2').should('not.have.attr', 'rowSpan');
+  });
+});

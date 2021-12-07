@@ -33,7 +33,6 @@ import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
-import { getRowSpanOfColumn } from '../query/rowSpan';
 import { DEFAULT_PER_PAGE } from '../helper/constant';
 
 interface DataOption {

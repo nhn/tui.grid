@@ -443,7 +443,11 @@ export function create({
   const columnInfos = columns.map((column) => {
     let rowSpan = false;
 
-    if (!treeColumnOptions.name && isRowSpanApplyingColumn(column.name, rowSpanOption)) {
+    if (
+      !treeColumnOptions.name &&
+      !includes(relationColumns, column.name) &&
+      isRowSpanApplyingColumn(column.name, rowSpanOption)
+    ) {
       rowSpan = true;
     }
 
