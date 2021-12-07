@@ -298,36 +298,6 @@ export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnIn
   row._relationListItemMap = relationListItemMap;
 }
 
-function setRowSpanToRow(data: OptRow[], column: Column, userPageOptions: PageOptions) {
-  let perPage: number | undefined;
-
-  if (!isEmpty(userPageOptions)) {
-    perPage = userPageOptions.perPage || DEFAULT_PER_PAGE;
-  }
-
-  data.forEach((row) => {
-    if (row.rowKey) {
-      delete row.rowKey;
-    }
-  });
-
-  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
-    const rowSpan = getRowSpanOfColumn(data, name, perPage);
-
-    Object.keys(rowSpan).forEach((key) => {
-      const rowIndex = parseInt(key, 10);
-
-      if (!data[rowIndex]?._attributes) {
-        data[rowIndex]._attributes = { rowSpan: {} };
-      } else if (!data[rowIndex]._attributes?.rowSpan) {
-        data[rowIndex]._attributes!.rowSpan = {};
-      }
-
-      data[rowIndex]._attributes!.rowSpan![name] = rowSpan[rowIndex]![name];
-    });
-  });
-}
-
 function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
   const mainRowSpanMap: RowSpanMap = {};
 
@@ -518,8 +488,6 @@ export function create({
   disabled,
   id,
 }: DataOption) {
-  setRowSpanToRow(data, column, userPageOptions);
-
   const { rawData, viewData } = createData(id, data, column, { lazyObservable: true, disabled });
 
   const sortState: SortState = {
