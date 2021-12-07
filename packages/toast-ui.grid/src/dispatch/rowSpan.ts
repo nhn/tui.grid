@@ -5,6 +5,7 @@ import { Store } from '@t/store';
 import { Dictionary, RecursivePartial } from '@t/options';
 import { notify } from '../helper/observable';
 import { getRowSpanOfColumn } from '../query/rowSpan';
+import { DEFAULT_PER_PAGE } from '../helper/constant';
 
 export function updateRowSpanWhenAppending(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -79,12 +80,15 @@ export function updateRowSpanWhenRemoving(
 
 export function updateRowSpan(store: Store) {
   const { data, column } = store;
+  const { filteredRawData, pageOptions } = data;
   const allRowSpans: Dictionary<RowSpanAttributeValue> = {};
+  const perPage =
+    !isEmpty(pageOptions) && !pageOptions.perPage ? DEFAULT_PER_PAGE : pageOptions.perPage;
 
   resetRowSpan(store);
 
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
-    const rowSpanOfColumn = getRowSpanOfColumn(data.filteredViewData, name);
+    const rowSpanOfColumn = getRowSpanOfColumn(filteredRawData, name, perPage);
 
     Object.keys(rowSpanOfColumn).forEach((rowKey) => {
       if (allRowSpans[rowKey]) {
@@ -96,9 +100,9 @@ export function updateRowSpan(store: Store) {
   });
 
   Object.keys(allRowSpans).forEach((rowKey) => {
-    const row = find(({ rowKey: key }) => `${key}` === rowKey, data.rawData);
+    const row = find(({ rowKey: key }) => `${key}` === rowKey, filteredRawData);
 
-    updateMainRowSpan(data.filteredRawData, row!, allRowSpans[rowKey]);
+    updateMainRowSpan(filteredRawData, row!, allRowSpans[rowKey]);
   });
 
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');

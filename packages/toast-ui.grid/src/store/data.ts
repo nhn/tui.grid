@@ -34,6 +34,7 @@ import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
 import { getRowSpanOfColumn } from '../query/rowSpan';
+import { DEFAULT_PER_PAGE } from '../helper/constant';
 
 interface DataOption {
   data: OptRow[];
@@ -297,7 +298,13 @@ export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnIn
   row._relationListItemMap = relationListItemMap;
 }
 
-function setRowSpanToRow(data: OptRow[], column: Column) {
+function setRowSpanToRow(data: OptRow[], column: Column, userPageOptions: PageOptions) {
+  let perPage: number | undefined;
+
+  if (!isEmpty(userPageOptions)) {
+    perPage = userPageOptions.perPage || DEFAULT_PER_PAGE;
+  }
+
   data.forEach((row) => {
     if (row.rowKey) {
       delete row.rowKey;
@@ -305,7 +312,7 @@ function setRowSpanToRow(data: OptRow[], column: Column) {
   });
 
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
-    const rowSpan = getRowSpanOfColumn(data, name);
+    const rowSpan = getRowSpanOfColumn(data, name, perPage);
 
     Object.keys(rowSpan).forEach((key) => {
       const rowIndex = parseInt(key, 10);
@@ -414,7 +421,6 @@ export function createData(
   { lazyObservable = false, prevRows, disabled = false }: DataCreationOption
 ) {
   generateDataCreationKey();
-  setRowSpanToRow(data, column);
   const { keyColumnName, treeColumnName = '' } = column;
   let rawData: Row[];
 
@@ -490,7 +496,7 @@ function createPageOptions(userPageOptions: PageOptions, rawData: Row[]) {
     : {
         useClient: false,
         page: 1,
-        perPage: 20,
+        perPage: DEFAULT_PER_PAGE,
         type: 'pagination',
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!,
@@ -512,6 +518,8 @@ export function create({
   disabled,
   id,
 }: DataOption) {
+  setRowSpanToRow(data, column, userPageOptions);
+
   const { rawData, viewData } = createData(id, data, column, { lazyObservable: true, disabled });
 
   const sortState: SortState = {

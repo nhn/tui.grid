@@ -18,6 +18,7 @@ import { OptRow, Dictionary } from '@t/options';
 interface OptGetRowSpan {
   rowKey: RowKey;
   value: CellValue;
+  index: number;
 }
 
 function getMainRowSpan(columnName: string, rowSpan: RowSpan, data: Row[]) {
@@ -196,21 +197,28 @@ export function isRowSpanEnabled(sortState: SortState, column?: Column) {
   );
 }
 
-export function getRowSpanOfColumn(data: ViewRow[] | OptRow[], columnName: string) {
-  const values: OptGetRowSpan[] = data.map((row, index) => {
-    return {
-      rowKey: (isNil(row.rowKey) ? index : row.rowKey) as RowKey,
-      value: ((row as OptRow)[columnName] ||
-        (row as ViewRow)?.valueMap?.[columnName]?.value) as CellValue,
-    };
-  });
+export function getRowSpanOfColumn(
+  data: ViewRow[] | OptRow[],
+  columnName: string,
+  perPage?: number
+) {
+  const values: OptGetRowSpan[] = data.map((row, index) => ({
+    rowKey: (isNil(row.rowKey) ? index : row.rowKey) as RowKey,
+    value: ((row as OptRow)[columnName] ||
+      (row as ViewRow)?.valueMap?.[columnName]?.value) as CellValue,
+    index,
+  }));
+
   const rowSpans: Dictionary<RowSpanAttributeValue> = {};
   let rowSpan: RowSpanAttributeValue = {};
   let mainRowKey: RowKey | null = null;
   let mainRowValue: CellValue = null;
 
   values.forEach((value) => {
-    if (mainRowValue !== value.value) {
+    if (
+      mainRowValue !== value.value ||
+      (perPage && value.index !== 0 && value.index % perPage === 0)
+    ) {
       if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
         rowSpans[mainRowKey] = rowSpan;
       }

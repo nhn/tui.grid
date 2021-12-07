@@ -465,4 +465,36 @@ describe('Dynamic RowSpan', () => {
       cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
     });
   });
+
+  describe('With pagination', () => {
+    it('should render rowSpan cell properly with pagination', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+        pageOptions: {
+          useClient: true,
+          perPage: 5,
+        },
+      });
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should not apply rowSpan to another page cell', () => {
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsForDynamicRowSpan,
+        rowSpan: ['age'],
+        pageOptions: {
+          useClient: true,
+          perPage: 4,
+        },
+      });
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('not.have.attr', 'rowSpan');
+    });
+  });
 });
