@@ -69,7 +69,7 @@ export function createStore(id: number, options: OptGrid): Store {
     columnHeaders,
     disabled,
     draggable,
-    rowSpanOption: rowSpan,
+    rowSpanOption: rowSpan || [],
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],

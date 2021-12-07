@@ -1506,3 +1506,18 @@ it('should update row number after calling appendTreeRow()', () => {
     ['test1'],
   ]);
 });
+
+it('should not apply dynamic rowSpan', () => {
+  createGrid({
+    treeColumnOptions: {
+      name: 'c1',
+    },
+    rowSpan: 'all',
+  });
+
+  ['c1', 'c2'].forEach((columnName) => {
+    cy.getColumnCells(columnName).each(($el) => {
+      cy.wrap($el).should('not.have.attr', 'rowSpan');
+    });
+  });
+});

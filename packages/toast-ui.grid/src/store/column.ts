@@ -377,6 +377,12 @@ function createDraggableRowHeader(rowHeaderColumn: OptRowHeader | null) {
   return draggableColumn;
 }
 
+function isRowSpanApplyingColumn(columnName: string, rowSpanOption: OptRowSpan) {
+  return (
+    (Array.isArray(rowSpanOption) && includes(rowSpanOption, columnName)) || rowSpanOption === 'all'
+  );
+}
+
 interface ColumnOption {
   columns: OptColumn[];
   columnOptions: ColumnOptions;
@@ -390,7 +396,7 @@ interface ColumnOption {
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
   draggable: boolean;
-  rowSpanOption?: OptRowSpan;
+  rowSpanOption: OptRowSpan;
 }
 
 export function create({
@@ -437,10 +443,7 @@ export function create({
   const columnInfos = columns.map((column) => {
     let rowSpan = false;
 
-    if (
-      (Array.isArray(rowSpanOption) && includes(rowSpanOption, column.name)) ||
-      rowSpanOption === 'all'
-    ) {
+    if (!treeColumnOptions.name && isRowSpanApplyingColumn(column.name, rowSpanOption)) {
       rowSpan = true;
     }
 
