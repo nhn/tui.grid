@@ -217,7 +217,7 @@ class BodyAreaComp extends Component<Props> {
   private startToDragRow = (posInfo: PosInfo) => {
     const container = this.el.parentElement!.parentElement!;
     posInfo.container = container;
-    this.props.dispatch('resetRowSpan', false);
+    this.props.dispatch('resetRowSpan');
     const draggableInfo = createDraggableRowInfo(this.context.store, posInfo);
 
     if (draggableInfo) {

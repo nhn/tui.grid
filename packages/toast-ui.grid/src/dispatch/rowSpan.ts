@@ -89,7 +89,7 @@ export function updateRowSpan(store: Store) {
     return;
   }
 
-  resetRowSpan(store);
+  resetRowSpan(store, true);
 
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     const rowSpanOfColumn = getRowSpanOfColumn(filteredRawData, name, perPage);
@@ -144,7 +144,7 @@ function updateSubRowSpan(
   }
 }
 
-export function resetRowSpan({ data, column }: Store, slient = true) {
+export function resetRowSpan({ data, column }: Store, slient = false) {
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     data.rawData.forEach((row) => {
       const _attributes = row._attributes as RecursivePartial<RowAttributes & RowSpanAttribute>;
