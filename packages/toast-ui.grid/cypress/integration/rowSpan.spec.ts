@@ -1,7 +1,7 @@
 import { RowKey, RowSpan } from '@t/store/data';
 import { data as sample } from '../../samples/basic';
 import { OptColumn, OptGrid, OptRow } from '@t/options';
-import { invokeFilter, dragAndDrop } from '../helper/util';
+import { invokeFilter, dragAndDropRow } from '../helper/util';
 import { deepCopyArray } from '@/helper/common';
 
 function createDataWithRowSpanAttr(): OptRow[] {
@@ -410,7 +410,7 @@ describe('Dynamic RowSpan', () => {
     it('should render rowSpan cell properly after D&D', () => {
       createGridWithRowSpan({ draggable: true });
 
-      dragAndDrop(0, 250);
+      dragAndDropRow(0, 250);
 
       cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
       cy.getCell(5, 'age').should('have.attr', 'rowSpan', '2');

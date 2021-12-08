@@ -33,8 +33,8 @@ import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
-import { DEFAULT_PER_PAGE } from '../helper/constant';
 import {
+  DEFAULT_PER_PAGE,
   DISABLED_PRIORITY_CELL,
   DISABLED_PRIORITY_COLUMN,
   DISABLED_PRIORITY_NONE,
