@@ -21,7 +21,7 @@ export type Row = Dictionary<CellValue> & {
   _leaf?: boolean;
 };
 export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
-export type DisabledPriority = Dictionary<'CELL' | 'ROW' | 'COLUMN' | ''>;
+export type DisabledPriority = Dictionary<'CELL' | 'ROW' | 'COLUMN' | 'NONE'>;
 export type LoadingState = 'DONE' | 'EMPTY' | 'LOADING';
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 

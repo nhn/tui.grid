@@ -72,6 +72,12 @@ import {
 } from '../store/helper/validation';
 import { setColumnWidthsByText, setAutoResizingColumnWidths } from './column';
 import { fitRowHeightWhenMovingRow } from './renderState';
+import {
+  DISABLED_PRIORITY_CELL,
+  DISABLED_PRIORITY_COLUMN,
+  DISABLED_PRIORITY_NONE,
+  DISABLED_PRIORITY_ROW,
+} from '../helper/constant';
 
 function getIndexRangeOfCheckbox(
   { data, column, id }: Store,
@@ -468,7 +474,7 @@ export function setRowDisabled(
     const { _attributes, _disabledPriority } = row;
 
     column.allColumns.forEach((columnInfo) => {
-      _disabledPriority[columnInfo.name] = 'ROW';
+      _disabledPriority[columnInfo.name] = DISABLED_PRIORITY_ROW;
     });
 
     if (withCheckbox) {
@@ -485,7 +491,7 @@ export function setColumnDisabled({ data, column }: Store, disabled: boolean, co
   }
 
   data.rawData.forEach((row) => {
-    row._disabledPriority[columnName] = 'COLUMN';
+    row._disabledPriority[columnName] = DISABLED_PRIORITY_COLUMN;
   });
   setRowOrColumnDisabled(column.allColumnMap[columnName], disabled);
 }
@@ -504,20 +510,18 @@ export function setCellDisabled(
 
   const row = findRowByRowKey(data, column, id, rowKey, false);
 
-  if (!row) {
-    return;
+  if (row) {
+    const { _attributes, _disabledPriority } = row;
+
+    _disabledPriority[columnName] = disabled ? DISABLED_PRIORITY_CELL : DISABLED_PRIORITY_NONE;
+
+    if (isCheckboxColumn(columnName)) {
+      _attributes.checkDisabled = disabled;
+      setDisabledAllCheckbox(store);
+    }
+
+    notify(row, '_disabledPriority');
   }
-
-  const { _attributes, _disabledPriority } = row;
-
-  _disabledPriority[columnName] = disabled ? 'CELL' : '';
-
-  if (isCheckboxColumn(columnName)) {
-    _attributes.checkDisabled = disabled;
-    setDisabledAllCheckbox(store);
-  }
-
-  notify(row, '_disabledPriority');
 }
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
