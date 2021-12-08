@@ -7,6 +7,7 @@ import {
 } from '../../samples/relations';
 import Grid from '@/grid';
 import { deepCopyArray } from '@/helper/common';
+import { OptColumn } from '@t/options';
 
 function changeCellValues(rowKey: number) {
   // changed fixed value to remove unnecessary paramter for values
@@ -325,14 +326,30 @@ describe('Dynamic rowSpan', () => {
   rowSpanData[0].category2 = '02_03';
 
   it('should not apply dynamic rowSpan to child relation column on ordered relation columns', () => {
-    cy.createGrid({ data: rowSpanData, columns: orderedRelationColumns, rowSpan: 'all' });
+    const orderedRelationColumnsWithRowSpan = orderedRelationColumns.map((column) => {
+      (column as OptColumn).rowSpan = true;
+      return column;
+    });
+    cy.createGrid({
+      data: rowSpanData,
+      columns: orderedRelationColumnsWithRowSpan,
+      rowSpan: 'all',
+    });
 
     cy.getCell(0, 'category1').should('have.attr', 'rowSpan', 2);
     cy.getCell(0, 'category2').should('not.have.attr', 'rowSpan');
   });
 
   it('should not apply dynamic rowSpan to child relation column on unordered relation columns', () => {
-    cy.createGrid({ data: rowSpanData, columns: unorderedRelationColumns1, rowSpan: 'all' });
+    const unorderedRelationColumnsWithRowSpan = unorderedRelationColumns1.map((column) => {
+      (column as OptColumn).rowSpan = true;
+      return column;
+    });
+    cy.createGrid({
+      data: rowSpanData,
+      columns: unorderedRelationColumnsWithRowSpan,
+      rowSpan: 'all',
+    });
 
     cy.getCell(0, 'category1').should('have.attr', 'rowSpan', 2);
     cy.getCell(0, 'category2').should('not.have.attr', 'rowSpan');

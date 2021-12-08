@@ -323,7 +323,7 @@ it('render rowSpan cell properly by calling setColumns API', () => {
   cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
 });
 
-describe.only('Dynamic RowSpan', () => {
+describe('Dynamic RowSpan', () => {
   const dataForDynamicRowSpan = [
     { name: 'Han', age: 10, value: 1 },
     { name: 'Kim', age: 10, value: 1 },
@@ -332,23 +332,32 @@ describe.only('Dynamic RowSpan', () => {
     { name: 'Lee', age: 15, value: 2 },
     { name: 'Park', age: 10, value: 2 },
   ];
-  const columnsForDynamicRowSpan: OptColumn[] = [
+  const columnsForDynamicRowSpanToAll: OptColumn[] = [
+    { name: 'name', rowSpan: true },
+    { name: 'age', filter: 'number', sortingType: 'asc', sortable: true, rowSpan: true },
+    { name: 'value', rowSpan: true },
+  ];
+  const columnsForDynamicRowSpanToAge: OptColumn[] = [
     { name: 'name' },
-    { name: 'age', filter: 'number', sortingType: 'asc', sortable: true },
+    { name: 'age', filter: 'number', sortingType: 'asc', sortable: true, rowSpan: true },
     { name: 'value' },
   ];
 
-  function createGridWithRowSpan(options?: Omit<OptGrid, 'el' | 'columns'>) {
+  function createGridWithRowSpan(
+    options?: Omit<OptGrid, 'el' | 'columns'>,
+    columnsOptions?: OptColumn[]
+  ) {
+    const rowSpanColumns = columnsOptions ?? columnsForDynamicRowSpanToAge;
+
     cy.createGrid({
       data: dataForDynamicRowSpan,
-      columns: columnsForDynamicRowSpan,
-      rowSpan: ['age'],
+      columns: rowSpanColumns,
       ...options,
     });
   }
 
   it("should render rowSpan cell properly for all columns (rowSpan: 'all')", () => {
-    createGridWithRowSpan({ rowSpan: 'all' });
+    createGridWithRowSpan({}, columnsForDynamicRowSpanToAll);
 
     cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
     cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
@@ -466,13 +475,9 @@ describe.only('Dynamic RowSpan', () => {
 
   describe('With other data modifying APIs', () => {
     it('should render rowSpan cell properly after showColumn()', () => {
-      const columnsWithHideAge = deepCopyArray(columnsForDynamicRowSpan);
+      const columnsWithHideAge = deepCopyArray(columnsForDynamicRowSpanToAge);
       columnsWithHideAge[1].hidden = true;
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsWithHideAge,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan({}, columnsWithHideAge);
 
       cy.gridInstance().invoke('showColumn', 'age');
 

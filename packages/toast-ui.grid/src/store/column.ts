@@ -9,7 +9,6 @@ import {
   Dictionary,
   OptFilter,
   OptRowHeaderColumn,
-  OptRowSpan,
 } from '@t/options';
 import {
   ColumnOptions,
@@ -377,12 +376,6 @@ function createDraggableRowHeader(rowHeaderColumn: OptRowHeader | null) {
   return draggableColumn;
 }
 
-function isRowSpanApplyingColumn(columnName: string, rowSpanOption: OptRowSpan) {
-  return (
-    (Array.isArray(rowSpanOption) && includes(rowSpanOption, columnName)) || rowSpanOption === 'all'
-  );
-}
-
 interface ColumnOption {
   columns: OptColumn[];
   columnOptions: ColumnOptions;
@@ -396,7 +389,6 @@ interface ColumnOption {
   columnHeaders: OptColumnHeaderInfo[];
   disabled: boolean;
   draggable: boolean;
-  rowSpanOption: OptRowSpan;
 }
 
 export function create({
@@ -412,7 +404,6 @@ export function create({
   columnHeaders,
   disabled,
   draggable,
-  rowSpanOption,
 }: ColumnOption) {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -441,14 +432,10 @@ export function create({
   );
 
   const columnInfos = columns.map((column) => {
-    let rowSpan = false;
+    let rowSpan = !!column.rowSpan;
 
-    if (
-      !treeColumnOptions.name &&
-      !includes(relationColumns, column.name) &&
-      isRowSpanApplyingColumn(column.name, rowSpanOption)
-    ) {
-      rowSpan = true;
+    if (treeColumnOptions.name || includes(relationColumns, column.name)) {
+      rowSpan = false;
     }
 
     return createColumn(

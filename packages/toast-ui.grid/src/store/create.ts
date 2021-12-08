@@ -45,7 +45,6 @@ export function createStore(id: number, options: OptGrid): Store {
     disabled = false,
     draggable = false,
     contextMenu: createMenuGroups,
-    rowSpan,
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -69,7 +68,6 @@ export function createStore(id: number, options: OptGrid): Store {
     columnHeaders,
     disabled,
     draggable,
-    rowSpanOption: rowSpan || [],
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],

@@ -1508,11 +1508,16 @@ it('should update row number after calling appendTreeRow()', () => {
 });
 
 it('should not apply dynamic rowSpan', () => {
-  createGrid({
+  const treeColumnsWithRowSpan = columns.map((column) => {
+    column.rowSpan = true;
+    return column;
+  });
+  cy.createGrid({
+    data,
+    columns: treeColumnsWithRowSpan,
     treeColumnOptions: {
       name: 'c1',
     },
-    rowSpan: 'all',
   });
 
   ['c1', 'c2'].forEach((columnName) => {
