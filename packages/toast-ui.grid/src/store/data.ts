@@ -33,6 +33,12 @@ import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
+import {
+  DISABLED_PRIORITY_CELL,
+  DISABLED_PRIORITY_COLUMN,
+  DISABLED_PRIORITY_NONE,
+  DISABLED_PRIORITY_ROW,
+} from '../helper/constant';
 
 interface DataOption {
   data: OptRow[];
@@ -128,10 +134,17 @@ function createViewCell(
   const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
   const className = [...classNameAttr.row, ...columnClassName].join(' ');
+  const _disabledPriority = row._disabledPriority[name];
 
   let cellDisabled = rowDisabled || columnDisabled;
-  if (!isUndefined(row._disabledPriority[name])) {
-    cellDisabled = row._disabledPriority[name] === 'COLUMN' ? columnDisabled : rowDisabled;
+  if (_disabledPriority === DISABLED_PRIORITY_CELL) {
+    cellDisabled = true;
+  } else if (_disabledPriority === DISABLED_PRIORITY_NONE) {
+    cellDisabled = false;
+  } else if (_disabledPriority === DISABLED_PRIORITY_COLUMN) {
+    cellDisabled = columnDisabled;
+  } else if (_disabledPriority === DISABLED_PRIORITY_ROW) {
+    cellDisabled = rowDisabled;
   }
 
   return {

@@ -1106,3 +1106,37 @@ describe('D&D', () => {
     });
   });
 });
+
+describe('enableCell() / disableCell()', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+  it('should disable cell after calling disableCell() and enable cell after calling enableCell()', () => {
+    createGrid();
+    cy.gridInstance().invoke('disableCell', 0, 'name');
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-disabled'));
+
+    cy.gridInstance().invoke('enableCell', 0, 'name');
+
+    cy.getCell(0, 'name').should('have.not.class', cls('cell-disabled'));
+  });
+
+  it('should not disable cell if it row number cell or draggable cell', () => {
+    createGrid({ rowHeaders: [{ type: 'rowNum' }], draggable: true });
+
+    cy.gridInstance().invoke('disableCell', 0, '_number');
+    cy.gridInstance().invoke('disableCell', 0, '_draggable');
+
+    cy.getRowHeaderCell(0, '_number').should('have.not.class', cls('cell-disabled'));
+    cy.getRowHeaderCell(0, '_draggable').should('have.not.class', cls('cell-disabled'));
+  });
+
+  it('should disable check box after calling disableCell() to check box cell', () => {
+    createGrid({ rowHeaders: [{ type: 'checkbox' }] });
+
+    cy.gridInstance().invoke('disableCell', 0, '_checked');
+
+    cy.getRowHeaderCell(0, '_checked').should('have.class', cls('cell-disabled'));
+  });
+});

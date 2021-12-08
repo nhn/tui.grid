@@ -174,6 +174,10 @@ declare namespace tui {
 
     public enableColumn(columnName: string): void;
 
+    public disableCell(rowKey: RowKey, columnName: string): void;
+
+    public enableCell(rowKey: RowKey, columnName: string): void;
+
     public disableRowCheck(rowKey: RowKey): void;
 
     public enableRowCheck(rowKey: RowKey): void;
