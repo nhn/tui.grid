@@ -470,6 +470,7 @@ export function create({
     complexColumnHeaders,
     columnHeaderInfo,
     frozenCount: columnOptions.frozenCount || 0,
+    draggable,
 
     dataForColumnCreation: {
       copyOptions,

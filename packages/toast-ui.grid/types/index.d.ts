@@ -120,6 +120,8 @@ declare namespace tui {
 
     public getSummaryValues(columnName: string): SummaryValueMap | null;
 
+    public getColumn(columnName: string): ColumnInfo | null;
+
     public getColumns(): ColumnInfo[];
 
     public setColumns(columns: OptColumn[]): void;
@@ -172,6 +174,10 @@ declare namespace tui {
 
     public enableColumn(columnName: string): void;
 
+    public disableCell(rowKey: RowKey, columnName: string): void;
+
+    public enableCell(rowKey: RowKey, columnName: string): void;
+
     public disableRowCheck(rowKey: RowKey): void;
 
     public enableRowCheck(rowKey: RowKey): void;
@@ -189,6 +195,8 @@ declare namespace tui {
     public getIndexOfRow(rowKey: RowKey): number;
 
     public getData(): Omit<Row, InternalProp>[];
+
+    public getFilteredData(): Omit<Row, InternalProp>[];
 
     public getRowCount(): number;
 
@@ -284,6 +292,8 @@ declare namespace tui {
     public getPaginationTotalCount(): number;
 
     public export(format: 'csv' | 'xlsx', options?: OptExport): void;
+
+    public moveColumn(columnName: string, targetIndex: number): void;
   }
 }
 

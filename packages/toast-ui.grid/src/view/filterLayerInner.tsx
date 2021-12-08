@@ -126,6 +126,7 @@ export class FilterLayerInnerComp extends Component<Props> {
               onClick={() => {
                 dispatch('clearActiveFilterState');
               }}
+              type="button"
             >
               {i18n.get('filter.clear')}
             </button>
@@ -136,6 +137,7 @@ export class FilterLayerInnerComp extends Component<Props> {
               onClick={() => {
                 dispatch('applyActiveFilterState');
               }}
+              type="button"
             >
               {i18n.get('filter.apply')}
             </button>

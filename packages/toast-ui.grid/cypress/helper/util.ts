@@ -37,9 +37,17 @@ export function setSelectionUsingMouse(start: Address, end: Address) {
     });
 }
 
-export function dragAndDrop(rowKey: RowKey, position: number) {
+export function dragAndDropRow(rowKey: RowKey, position: number) {
   cy.getCell(rowKey, '_draggable')
     .trigger('mousedown')
     .trigger('mousemove', { pageY: position, force: true })
+    .trigger('mouseup', { force: true });
+}
+
+export function dragAndDropColumn(columnName: string, position: number) {
+  cy.getHeaderCell(columnName)
+    .trigger('mousedown')
+    .trigger('mousemove', { pageY: 200, force: true })
+    .trigger('mousemove', { pageX: position, force: true })
     .trigger('mouseup', { force: true });
 }

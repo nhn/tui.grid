@@ -43,7 +43,15 @@ import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getInvalidRows } from './query/validation';
 import { cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
+import {
+  findPropIndex,
+  isUndefined,
+  mapProp,
+  hasOwnProp,
+  pick,
+  deepCopy,
+  find,
+} from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -67,6 +75,7 @@ import {
   getAncestorRows,
   getDescendantRows,
   getDepth,
+  isTreeColumnName,
 } from './query/tree';
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
@@ -816,6 +825,17 @@ export default class Grid implements TuiGrid {
   }
 
   /**
+   * Return a specific column model.
+   * @param {string} columnName - The name of the column
+   * @returns {Object|null} - A column model.
+   */
+  public getColumn(columnName: string) {
+    const column = find(({ name }) => name === columnName, this.store.column.allColumns);
+
+    return column ? getOriginObject(column as Observable<ColumnInfo>) : null;
+  }
+
+  /**
    * Return a list of the column model.
    * @returns {Array} - A list of the column model.
    */
@@ -1078,7 +1098,7 @@ export default class Grid implements TuiGrid {
 
   /**
    * Disable the row identified by the specified rowKey to not be able to check.
-   * @param {number|string} rowKey - The unique keyof the row.
+   * @param {number|string} rowKey - The unique key of the row.
    */
   public disableRowCheck(rowKey: RowKey) {
     this.dispatch('setRowCheckDisabled', true, rowKey);
@@ -1106,6 +1126,24 @@ export default class Grid implements TuiGrid {
    */
   public enableColumn(columnName: string) {
     this.dispatch('setColumnDisabled', false, columnName);
+  }
+
+  /**
+   * Disable the cell identified by the row key and column name.
+   * @param {number|string} rowKey - The unique key of the row.
+   * @param {string} columnName - column name
+   */
+  public disableCell(rowKey: RowKey, columnName: string) {
+    this.dispatch('setCellDisabled', true, rowKey, columnName);
+  }
+
+  /**
+   * Enable the cell identified by the row key and column name.
+   * @param {number|string} rowKey - The unique key of the row.
+   * @param {string} columnName - column name
+   */
+  public enableCell(rowKey: RowKey, columnName: string) {
+    this.dispatch('setCellDisabled', false, rowKey, columnName);
   }
 
   /**
@@ -1757,7 +1795,27 @@ export default class Grid implements TuiGrid {
     this.dispatch('execExport', format, options);
   }
 
-  public updateRowSpan() {
-    this.dispatch('updateRowSpan');
+  /**
+   * Move the column identified by the specified column name to target index.
+   * If there is hidden columns or use complex columns, this couldn't be used.
+   * If the column of column name is row header column or tree column, this couldn't be used.
+   * @param {string} columnName - The column name of the column
+   * @param {number} targetIndex - Target index for moving
+   */
+  public moveColumn(columnName: string, targetIndex: number) {
+    const { allColumns } = this.store.column;
+    const column = find(({ name }) => name === columnName, allColumns);
+
+    if (
+      !column ||
+      targetIndex < 0 ||
+      targetIndex >= allColumns.length ||
+      isRowHeader(columnName) ||
+      isTreeColumnName(this.store.column, columnName)
+    ) {
+      return;
+    }
+
+    this.dispatch('moveColumn', columnName, targetIndex);
   }
 }

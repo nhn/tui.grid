@@ -1,10 +1,10 @@
 import { h, Component } from 'preact';
 import { Side } from '@t/store/focus';
 import {
-  createDraggableInfo,
-  DraggableInfo,
-  getMovedPosAndIndex,
-  MovedIndexAndPosInfo,
+  createDraggableRowInfo,
+  DraggableRowInfo,
+  getMovedPosAndIndexOfRow,
+  MovedIndexAndPosInfoOfRow,
   PosInfo,
   getResolvedOffsets,
   FloatingRowSize,
@@ -102,7 +102,7 @@ class BodyAreaComp extends Component<Props> {
   private prevScrollLeft = 0;
 
   // draggable info when start to move the row
-  private draggableInfo: DraggableInfo | null = null;
+  private draggableInfo: DraggableRowInfo | null = null;
 
   // floating row width and height for dragging
   private floatingRowSize: FloatingRowSize | null = null;
@@ -146,7 +146,7 @@ class BodyAreaComp extends Component<Props> {
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const { el, boundingRect, props } = this;
       const { scrollTop, scrollLeft } = el!;
-      const movedPosAndIndex = getMovedPosAndIndex(this.context.store, {
+      const movedPosAndIndex = getMovedPosAndIndexOfRow(this.context.store, {
         scrollLeft,
         scrollTop,
         left: boundingRect!.left,
@@ -192,7 +192,7 @@ class BodyAreaComp extends Component<Props> {
     }
   };
 
-  private setTreeMovedIndexInfo(movedPosAndIndex: MovedIndexAndPosInfo) {
+  private setTreeMovedIndexInfo(movedPosAndIndex: MovedIndexAndPosInfoOfRow) {
     const { line } = this.draggableInfo!;
     const { index, offsetTop, height, targetRow, moveToLast } = movedPosAndIndex;
     const { rowKey } = targetRow;
@@ -218,8 +218,7 @@ class BodyAreaComp extends Component<Props> {
     const container = this.el.parentElement!.parentElement!;
     posInfo.container = container;
     this.props.dispatch('resetRowSpan', false);
-
-    const draggableInfo = createDraggableInfo(this.context.store, posInfo);
+    const draggableInfo = createDraggableRowInfo(this.context.store, posInfo);
 
     if (draggableInfo) {
       const { row, rowKey, line } = draggableInfo;
@@ -247,6 +246,7 @@ class BodyAreaComp extends Component<Props> {
 
         this.props.dispatch('addRowClassName', rowKey, DRAGGING_CLASS);
         this.props.dispatch('setFocusInfo', null, null, false);
+        this.props.dispatch('initSelection');
 
         document.addEventListener('mousemove', this.dragRow);
         document.addEventListener('mouseup', this.dropRow);
