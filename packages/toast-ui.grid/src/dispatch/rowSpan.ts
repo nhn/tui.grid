@@ -144,7 +144,7 @@ function updateSubRowSpan(
   }
 }
 
-export function resetRowSpan({ data, column }: Store, isNotify = false) {
+export function resetRowSpan({ data, column }: Store, slient = true) {
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     data.rawData.forEach((row) => {
       const _attributes = row._attributes as RecursivePartial<RowAttributes & RowSpanAttribute>;
@@ -158,7 +158,7 @@ export function resetRowSpan({ data, column }: Store, isNotify = false) {
     });
   });
 
-  if (isNotify) {
+  if (!slient) {
     notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
   }
 }

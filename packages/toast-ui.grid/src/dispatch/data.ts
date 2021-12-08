@@ -162,7 +162,7 @@ export function setValue(
     }
   }
 
-  resetRowSpan(store, true);
+  resetRowSpan(store, false);
 
   const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
