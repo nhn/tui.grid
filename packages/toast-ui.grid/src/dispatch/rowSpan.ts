@@ -81,9 +81,13 @@ export function updateRowSpanWhenRemoving(
 export function updateRowSpan(store: Store) {
   const { data, column } = store;
   const { filteredRawData, pageOptions } = data;
-  const allRowSpans: Dictionary<RowSpanAttributeValue> = {};
+  const rowSpans: Dictionary<RowSpanAttributeValue> = {};
   const perPage =
     !isEmpty(pageOptions) && !pageOptions.perPage ? DEFAULT_PER_PAGE : pageOptions.perPage;
+
+  if (column.visibleRowSpanEnabledColumns.length < 1) {
+    return;
+  }
 
   resetRowSpan(store);
 
@@ -91,18 +95,18 @@ export function updateRowSpan(store: Store) {
     const rowSpanOfColumn = getRowSpanOfColumn(filteredRawData, name, perPage);
 
     Object.keys(rowSpanOfColumn).forEach((rowKey) => {
-      if (allRowSpans[rowKey]) {
-        allRowSpans[rowKey]![name] = rowSpanOfColumn[rowKey]![name];
+      if (rowSpans[rowKey]) {
+        rowSpans[rowKey]![name] = rowSpanOfColumn[rowKey]![name];
       } else {
-        allRowSpans[rowKey] = rowSpanOfColumn[rowKey];
+        rowSpans[rowKey] = rowSpanOfColumn[rowKey];
       }
     });
   });
 
-  Object.keys(allRowSpans).forEach((rowKey) => {
+  Object.keys(rowSpans).forEach((rowKey) => {
     const row = find(({ rowKey: key }) => `${key}` === rowKey, filteredRawData);
 
-    updateMainRowSpan(filteredRawData, row!, allRowSpans[rowKey]);
+    updateMainRowSpan(filteredRawData, row!, rowSpans[rowKey]);
   });
 
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');

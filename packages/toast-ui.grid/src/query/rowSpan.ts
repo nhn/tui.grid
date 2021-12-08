@@ -6,14 +6,13 @@ import {
   SortState,
   RowSpanAttributeValue,
   CellValue,
-  ViewRow,
 } from '@t/store/data';
 import { Column, ColumnInfo } from '@t/store/column';
 import { RowCoords } from '@t/store/rowCoords';
 import { Range } from '@t/store/selection';
-import { findPropIndex, isEmpty, isNil, isNull } from '../helper/common';
+import { findPropIndex, isEmpty, isNull } from '../helper/common';
 import { getSortedRange } from './selection';
-import { OptRow, Dictionary } from '@t/options';
+import { Dictionary } from '@t/options';
 
 interface OptGetRowSpan {
   rowKey: RowKey;
@@ -197,43 +196,29 @@ export function isRowSpanEnabled(sortState: SortState, column?: Column) {
   );
 }
 
-export function getRowSpanOfColumn(
-  data: ViewRow[] | OptRow[],
-  columnName: string,
-  perPage?: number
-) {
-  const values: OptGetRowSpan[] = data.map((row, index) => ({
-    rowKey: (isNil(row.rowKey) ? index : row.rowKey) as RowKey,
-    value: ((row as OptRow)[columnName] ||
-      (row as ViewRow)?.valueMap?.[columnName]?.value) as CellValue,
-    index,
-  }));
-
-  const rowSpans: Dictionary<RowSpanAttributeValue> = {};
+export function getRowSpanOfColumn(data: Row[], columnName: string, perPage?: number) {
+  const rowSpanOfColumn: Dictionary<RowSpanAttributeValue> = {};
   let rowSpan: RowSpanAttributeValue = {};
   let mainRowKey: RowKey | null = null;
   let mainRowValue: CellValue = null;
 
-  values.forEach((value) => {
-    if (
-      mainRowValue !== value.value ||
-      (perPage && value.index !== 0 && value.index % perPage === 0)
-    ) {
+  data.forEach(({ rowKey, [columnName]: value }, index) => {
+    if (mainRowValue !== value || (perPage && index !== 0 && index % perPage === 0)) {
       if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
-        rowSpans[mainRowKey] = rowSpan;
+        rowSpanOfColumn[mainRowKey] = rowSpan;
       }
       rowSpan = {};
       rowSpan[columnName] = 1;
-      mainRowKey = value.rowKey;
-      mainRowValue = value.value;
+      mainRowKey = rowKey;
+      mainRowValue = value;
     } else {
       rowSpan![columnName] += 1;
     }
   });
 
   if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
-    rowSpans[mainRowKey] = rowSpan;
+    rowSpanOfColumn[mainRowKey] = rowSpan;
   }
 
-  return rowSpans;
+  return rowSpanOfColumn;
 }

@@ -145,6 +145,7 @@ export interface CommonColumnInfo {
   onBeforeChange?: GridEventListener;
   onAfterChange?: GridEventListener;
   comparator?: Comparator;
+  rowSpan?: boolean;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {
@@ -160,7 +161,6 @@ export interface ColumnInfo extends CommonColumnInfo {
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
   autoResizing: boolean;
-  rowSpan?: boolean;
 }
 
 export interface ComplexColumnInfo {

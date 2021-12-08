@@ -61,7 +61,12 @@ import { initFilter, resetFilterState } from './filter';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
-import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
+import {
+  resetRowSpan,
+  updateRowSpan,
+  updateRowSpanWhenAppending,
+  updateRowSpanWhenRemoving,
+} from './rowSpan';
 import { createObservableData } from './lazyObservable';
 import {
   removeUniqueInfoMap,
@@ -157,6 +162,8 @@ export function setValue(
     }
   }
 
+  resetRowSpan(store, true);
+
   const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
 
@@ -166,6 +173,7 @@ export function setValue(
     targetColumn.onBeforeChange(gridEvent);
 
     if (gridEvent.isStopped()) {
+      updateRowSpan(store);
       return;
     }
   }
@@ -182,6 +190,7 @@ export function setValue(
    */
   eventBus.trigger('beforeChange', gridEvent);
   if (gridEvent.isStopped()) {
+    updateRowSpan(store);
     return;
   }
 
@@ -235,6 +244,8 @@ export function setValue(
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('afterChange', gridEvent);
+
+  setTimeout(() => updateRowSpan(store));
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -318,6 +329,7 @@ export function setColumnValues(
   updateSummaryValueByColumn(store, columnName, { value });
   forceValidateUniquenessOfColumn(data.rawData, column, columnName);
   setAutoResizingColumnWidths(store);
+  updateRowSpan(store);
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -518,8 +530,11 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   sortByCurrentState(store);
 
-  if (prevRow && isRowSpanEnabled(sortState, column)) {
-    updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
+  if (isRowSpanEnabled(sortState, column)) {
+    if (prevRow) {
+      updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
+    }
+    updateRowSpan(store);
   }
 
   getDataManager(id).push('CREATE', rawRow, inserted);
@@ -614,6 +629,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
   setColumnWidthsByText(store);
+  updateRowSpan(store);
 
   setTimeout(() => {
     /**
@@ -817,15 +833,19 @@ export function scrollToNext(store: Store) {
 export function appendRows(store: Store, inputData: OptRow[]) {
   const { data, column, id } = store;
 
+  const startIndex = data.rawData.length;
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
+
   if (!column.keyColumnName) {
     const rowKey = getMaxRowKey(data);
-    inputData.forEach((row, index) => {
+    rawData.forEach((row, index) => {
+      row.rowKey = rowKey + index;
+    });
+
+    viewData.forEach((row, index) => {
       row.rowKey = rowKey + index;
     });
   }
-
-  const startIndex = data.rawData.length;
-  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
 
   const newRawData = data.rawData.concat(rawData);
   const newViewData = data.viewData.concat(viewData);
@@ -837,6 +857,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   sortByCurrentState(store);
   updateHeights(store);
   postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
+  updateRowSpan(store);
 }
 
 export function removeRows(store: Store, targetRows: RemoveTargetRows) {

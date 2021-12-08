@@ -25,6 +25,7 @@ import {
 import { getTreeIndentWidth } from '../store/helper/tree';
 import { getDepth } from '../query/tree';
 import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
+import { updateRowSpan } from './rowSpan';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -119,7 +120,8 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       copyOptions,
       treeColumnOptions,
       column.columnHeaderInfo,
-      !!optColumn.disabled
+      !!optColumn.disabled,
+      optColumn.rowSpan
     )
   );
 
@@ -191,8 +193,9 @@ export function hideColumn(store: Store, columnName: string) {
   setColumnsHiddenValue(column, columnName, true);
 }
 
-export function showColumn({ column }: Store, columnName: string) {
-  setColumnsHiddenValue(column, columnName, false);
+export function showColumn(store: Store, columnName: string) {
+  setColumnsHiddenValue(store.column, columnName, false);
+  updateRowSpan(store);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

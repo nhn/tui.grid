@@ -1682,6 +1682,7 @@ export default class Grid implements TuiGrid {
     } else {
       this.dispatch('moveRow', rowKey, targetIndex);
     }
+    this.dispatch('updateRowSpan');
   }
 
   /**
@@ -1754,5 +1755,9 @@ export default class Grid implements TuiGrid {
    */
   public export(format: 'csv' | 'xlsx', options?: OptExport) {
     this.dispatch('execExport', format, options);
+  }
+
+  public updateRowSpan() {
+    this.dispatch('updateRowSpan');
   }
 }

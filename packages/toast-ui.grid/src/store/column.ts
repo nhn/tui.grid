@@ -216,7 +216,7 @@ export function createColumn(
   treeColumnOptions: OptTree,
   columnHeaderInfo: ColumnHeaderInfo,
   disabled: boolean,
-  rowSpan: boolean
+  rowSpan?: boolean
 ): ColumnInfo {
   const {
     name,

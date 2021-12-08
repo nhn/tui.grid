@@ -1,7 +1,8 @@
 import { RowKey, RowSpan } from '@t/store/data';
 import { data as sample } from '../../samples/basic';
-import { OptRow } from '@t/options';
+import { OptColumn, OptGrid, OptRow } from '@t/options';
 import { invokeFilter, dragAndDrop } from '../helper/util';
+import { deepCopyArray } from '@/helper/common';
 
 function createDataWithRowSpanAttr(): OptRow[] {
   const optRows: OptRow[] = sample.slice();
@@ -322,7 +323,7 @@ it('render rowSpan cell properly by calling setColumns API', () => {
   cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
 });
 
-describe('Dynamic RowSpan', () => {
+describe.only('Dynamic RowSpan', () => {
   const dataForDynamicRowSpan = [
     { name: 'Han', age: 10, value: 1 },
     { name: 'Kim', age: 10, value: 1 },
@@ -331,18 +332,23 @@ describe('Dynamic RowSpan', () => {
     { name: 'Lee', age: 15, value: 2 },
     { name: 'Park', age: 10, value: 2 },
   ];
-  const columnsForDynamicRowSpan = [
+  const columnsForDynamicRowSpan: OptColumn[] = [
     { name: 'name' },
     { name: 'age', filter: 'number', sortingType: 'asc', sortable: true },
     { name: 'value' },
   ];
 
-  it("should render rowSpan cell properly for all columns (rowSpan: 'all')", () => {
+  function createGridWithRowSpan(options?: Omit<OptGrid, 'el' | 'columns'>) {
     cy.createGrid({
       data: dataForDynamicRowSpan,
       columns: columnsForDynamicRowSpan,
-      rowSpan: 'all',
+      rowSpan: ['age'],
+      ...options,
     });
+  }
+
+  it("should render rowSpan cell properly for all columns (rowSpan: 'all')", () => {
+    createGridWithRowSpan({ rowSpan: 'all' });
 
     cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
     cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
@@ -351,11 +357,7 @@ describe('Dynamic RowSpan', () => {
   });
 
   it("should render rowSpan cell properly for specific columns (rowSpan: ['age'])", () => {
-    cy.createGrid({
-      data: dataForDynamicRowSpan,
-      columns: columnsForDynamicRowSpan,
-      rowSpan: ['age'],
-    });
+    createGridWithRowSpan();
 
     cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
     cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
@@ -366,11 +368,7 @@ describe('Dynamic RowSpan', () => {
 
   describe('With filter', () => {
     it('should render rowSpan cell properly with filter', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan();
 
       invokeFilter('age', [{ code: 'eq', value: 10 }]);
 
@@ -378,11 +376,7 @@ describe('Dynamic RowSpan', () => {
     });
 
     it('should render rowSpan cell properly with unfilter', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan();
 
       invokeFilter('age', [{ code: 'eq', value: 10 }]);
 
@@ -395,12 +389,7 @@ describe('Dynamic RowSpan', () => {
 
   describe('With row D&D', () => {
     it('should reset rowSpan when row drag started', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-        draggable: true,
-      });
+      createGridWithRowSpan({ draggable: true });
 
       cy.getCell(0, '_draggable').trigger('mousedown');
 
@@ -410,12 +399,7 @@ describe('Dynamic RowSpan', () => {
     });
 
     it('should render rowSpan cell properly after D&D', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-        draggable: true,
-      });
+      createGridWithRowSpan({ draggable: true });
 
       dragAndDrop(0, 250);
 
@@ -426,11 +410,7 @@ describe('Dynamic RowSpan', () => {
 
   describe('With sort', () => {
     it('should render rowSpan cell properly after sorting (asc)', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan();
 
       cy.gridInstance().invoke('sort', 'age', true);
 
@@ -439,11 +419,7 @@ describe('Dynamic RowSpan', () => {
     });
 
     it('should render rowSpan cell properly after sorting (desc)', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan();
 
       cy.gridInstance().invoke('sort', 'age', false);
 
@@ -452,11 +428,7 @@ describe('Dynamic RowSpan', () => {
     });
 
     it('should render rowSpan cell properly after unsorting', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
-      });
+      createGridWithRowSpan();
 
       cy.gridInstance().invoke('sort', 'age', true);
       cy.gridInstance().invoke('unsort', 'age');
@@ -468,10 +440,7 @@ describe('Dynamic RowSpan', () => {
 
   describe('With pagination', () => {
     it('should render rowSpan cell properly with pagination', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
+      createGridWithRowSpan({
         pageOptions: {
           useClient: true,
           perPage: 5,
@@ -483,10 +452,7 @@ describe('Dynamic RowSpan', () => {
     });
 
     it('should not apply rowSpan to another page cell', () => {
-      cy.createGrid({
-        data: dataForDynamicRowSpan,
-        columns: columnsForDynamicRowSpan,
-        rowSpan: ['age'],
+      createGridWithRowSpan({
         pageOptions: {
           useClient: true,
           perPage: 4,
@@ -495,6 +461,103 @@ describe('Dynamic RowSpan', () => {
 
       cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
       cy.getCell(3, 'age').should('not.have.attr', 'rowSpan');
+    });
+  });
+
+  describe('With other data modifying APIs', () => {
+    it('should render rowSpan cell properly after showColumn()', () => {
+      const columnsWithHideAge = deepCopyArray(columnsForDynamicRowSpan);
+      columnsWithHideAge[1].hidden = true;
+      cy.createGrid({
+        data: dataForDynamicRowSpan,
+        columns: columnsWithHideAge,
+        rowSpan: ['age'],
+      });
+
+      cy.gridInstance().invoke('showColumn', 'age');
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after setValue()', () => {
+      createGridWithRowSpan();
+
+      cy.gridInstance().invoke('setValue', 2, 'age', 10);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after setColumnValues()', () => {
+      createGridWithRowSpan();
+
+      cy.gridInstance().invoke('setColumnValues', 'age', 10);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '6');
+    });
+
+    it('should render rowSpan cell properly after appendRow()', () => {
+      createGridWithRowSpan();
+
+      const appendedRow = { name: 'Choi', age: 10, value: 3 };
+
+      cy.gridInstance().invoke('appendRow', appendedRow);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(5, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after prependRow()', () => {
+      createGridWithRowSpan();
+
+      const prependedRow = { name: 'Choi', age: 10, value: 3 };
+
+      cy.gridInstance().invoke('prependRow', prependedRow);
+
+      cy.getCell(6, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after removeRow()', () => {
+      createGridWithRowSpan();
+
+      cy.gridInstance().invoke('removeRow', 0);
+
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after setRow()', () => {
+      createGridWithRowSpan();
+
+      const setRow = { name: 'Cho', age: 10, value: 1 };
+
+      cy.gridInstance().invoke('setRow', 2, setRow);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '3');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after appendRows()', () => {
+      createGridWithRowSpan();
+
+      const appendedRow = [{ name: 'Choi', age: 10, value: 3 }];
+
+      cy.gridInstance().invoke('appendRows', appendedRow);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(5, 'age').should('have.attr', 'rowSpan', '2');
+    });
+
+    it('should render rowSpan cell properly after resetData()', () => {
+      createGridWithRowSpan();
+
+      cy.gridInstance().invoke('resetData', dataForDynamicRowSpan);
+
+      cy.getCell(0, 'age').should('have.attr', 'rowSpan', '2');
+      cy.getCell(3, 'age').should('have.attr', 'rowSpan', '2');
     });
   });
 });
