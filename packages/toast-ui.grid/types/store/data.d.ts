@@ -1,4 +1,4 @@
-import { Dictionary } from '../options';
+import { Dictionary, RecursivePartial } from '../options';
 import { Filter } from './filterLayerState';
 import { InvalidColumn, Comparator, ErrorInfo } from './column';
 import { Range } from './selection';
@@ -53,6 +53,8 @@ export interface RowAttributes {
 export interface RowSpanAttribute {
   rowSpan?: Dictionary<number>;
 }
+
+export type RecursivePartialRowAttributes = RecursivePartial<RowAttributes & RowSpanAttribute>;
 
 export interface RowSpan {
   mainRow: boolean;

@@ -214,8 +214,7 @@ export function createColumn(
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
   columnHeaderInfo: ColumnHeaderInfo,
-  disabled: boolean,
-  rowSpan?: boolean
+  disabled: boolean
 ): ColumnInfo {
   const {
     name,
@@ -253,6 +252,12 @@ export function createColumn(
     name,
     columnHeaderInfo
   );
+
+  let rowSpan = column.rowSpan;
+
+  if (!column.rowSpan || treeColumnOptions.name || includes(relationColumns, column.name)) {
+    rowSpan = false;
+  }
 
   return observable({
     name,
@@ -432,12 +437,6 @@ export function create({
   );
 
   const columnInfos = columns.map((column) => {
-    let rowSpan = !!column.rowSpan;
-
-    if (treeColumnOptions.name || includes(relationColumns, column.name)) {
-      rowSpan = false;
-    }
-
     return createColumn(
       column,
       columnOptions,
@@ -445,8 +444,7 @@ export function create({
       copyOptions,
       treeColumnOptions,
       columnHeaderInfo,
-      !!(disabled || column.disabled),
-      rowSpan
+      !!(disabled || column.disabled)
     );
   });
 

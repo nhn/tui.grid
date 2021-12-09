@@ -1,6 +1,13 @@
 import { DataSource } from './dataSource';
 import { EditingEvent, TabMode } from './store/focus';
-import { PageOptions, RowKey, CellValue, RowAttributes, RowSpanAttribute } from './store/data';
+import {
+  PageOptions,
+  RowKey,
+  CellValue,
+  RowAttributes,
+  RowSpanAttribute,
+  RecursivePartialRowAttributes,
+} from './store/data';
 import {
   ColumnOptions,
   ClipboardCopyOptions,
@@ -118,8 +125,8 @@ export interface OptGrid {
 }
 
 export interface OptRow {
-  [prop: string]: CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
-  _attributes?: RecursivePartial<RowAttributes & RowSpanAttribute>;
+  [prop: string]: CellValue | RecursivePartialRowAttributes | OptRow[];
+  _attributes?: RecursivePartialRowAttributes;
   _children?: OptRow[];
 }
 

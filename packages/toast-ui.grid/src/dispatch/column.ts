@@ -122,8 +122,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       copyOptions,
       treeColumnOptions,
       column.columnHeaderInfo,
-      !!optColumn.disabled,
-      optColumn.rowSpan
+      !!optColumn.disabled
     )
   );
 

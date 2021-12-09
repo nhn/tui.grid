@@ -548,7 +548,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
-  const { at = rawData.length } = options;
+  const { at = rawData.length, extendPrevRowSpan } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
   const inserted = at !== rawData.length;
 
@@ -566,7 +566,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   if (isRowSpanEnabled(sortState, column)) {
     if (prevRow) {
-      updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
+      updateRowSpanWhenAppending(rawData, prevRow, extendPrevRowSpan || false);
     }
     updateRowSpan(store);
   }

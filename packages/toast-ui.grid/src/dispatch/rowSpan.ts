@@ -1,8 +1,8 @@
-import { Row, RowAttributes, RowSpanAttribute, RowSpanAttributeValue } from '@t/store/data';
+import { RecursivePartialRowAttributes, Row, RowSpanAttributeValue } from '@t/store/data';
 import { createRowSpan } from '../store/data';
 import { findProp, isEmpty, findPropIndex, find } from '../helper/common';
 import { Store } from '@t/store';
-import { Dictionary, RecursivePartial } from '@t/options';
+import { Dictionary } from '@t/options';
 import { notify } from '../helper/observable';
 import { getRowSpanOfColumn } from '../query/rowSpan';
 import { DEFAULT_PER_PAGE } from '../helper/constant';
@@ -81,9 +81,9 @@ export function updateRowSpanWhenRemoving(
 export function updateRowSpan(store: Store) {
   const { data, column } = store;
   const { filteredRawData, pageOptions } = data;
+  const { perPage: perPageOption } = pageOptions;
   const rowSpans: Dictionary<RowSpanAttributeValue> = {};
-  const perPage =
-    !isEmpty(pageOptions) && !pageOptions.perPage ? DEFAULT_PER_PAGE : pageOptions.perPage;
+  const perPage = !isEmpty(pageOptions) && !perPageOption ? DEFAULT_PER_PAGE : perPageOption;
 
   if (column.visibleRowSpanEnabledColumns.length < 1) {
     return;
@@ -119,7 +119,7 @@ export function updateMainRowSpan(data: Row[], mainRow: Row, rowSpan: RowSpanAtt
 
   const { rowKey, rowSpanMap, _attributes } = mainRow;
 
-  (_attributes as RecursivePartial<RowAttributes & RowSpanAttribute>).rowSpan = rowSpan;
+  (_attributes as RecursivePartialRowAttributes).rowSpan = rowSpan;
 
   Object.keys(rowSpan).forEach((columnName) => {
     const spanCount = rowSpan[columnName];
@@ -147,7 +147,7 @@ function updateSubRowSpan(
 export function resetRowSpan({ data, column }: Store, slient = false) {
   column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
     data.rawData.forEach((row) => {
-      const _attributes = row._attributes as RecursivePartial<RowAttributes & RowSpanAttribute>;
+      const _attributes = row._attributes as RecursivePartialRowAttributes;
       if (row.rowSpanMap[name]) {
         delete row.rowSpanMap[name];
       }
