@@ -249,6 +249,8 @@ if ((module as any).hot) {
  *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
  *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
  *              the text line is broken by fitting to the column's width and new line characters.(This option will be deprecated)
+ *          @param {boolean} [options.columns.rowSpan=false] - If set to true, apply dynamic rowspan to column data.
+ *              If it is not a top-level relational column of a column relationship or the grid has tree data, dynamic rowspan is not applied.
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
  *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
