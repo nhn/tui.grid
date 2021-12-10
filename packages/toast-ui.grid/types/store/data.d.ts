@@ -51,7 +51,7 @@ export interface RowAttributes {
 }
 
 export interface RowSpanAttribute {
-  rowSpan?: Dictionary<number>;
+  rowSpan: Dictionary<number>;
 }
 
 export interface RowSpan {

@@ -204,7 +204,7 @@ export function getRowSpanOfColumn(data: Row[], columnName: string, perPage?: nu
 
   data.forEach(({ rowKey, [columnName]: value }, index) => {
     if (mainRowValue !== value || (perPage && index !== 0 && index % perPage === 0)) {
-      if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
+      if (!isNull(mainRowKey) && rowSpan[columnName] !== 1) {
         rowSpanOfColumn[mainRowKey] = rowSpan;
       }
       rowSpan = {};
@@ -212,11 +212,11 @@ export function getRowSpanOfColumn(data: Row[], columnName: string, perPage?: nu
       mainRowKey = rowKey;
       mainRowValue = value;
     } else {
-      rowSpan![columnName] += 1;
+      rowSpan[columnName] += 1;
     }
   });
 
-  if (!isNull(mainRowKey) && rowSpan![columnName] !== 1) {
+  if (!isNull(mainRowKey) && rowSpan[columnName] !== 1) {
     rowSpanOfColumn[mainRowKey] = rowSpan;
   }
 

@@ -435,8 +435,8 @@ export function create({
     rowHeaderInfos.push(createRowHeader(rowHeader, columnHeaderInfo))
   );
 
-  const columnInfos = columns.map((column) => {
-    return createColumn(
+  const columnInfos = columns.map((column) =>
+    createColumn(
       column,
       columnOptions,
       relationColumns,
@@ -444,8 +444,8 @@ export function create({
       treeColumnOptions,
       columnHeaderInfo,
       !!(disabled || column.disabled)
-    );
-  });
+    )
+  );
 
   validateRelationColumn(columnInfos);
 

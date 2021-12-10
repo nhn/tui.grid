@@ -85,46 +85,42 @@ export function updateRowSpan(store: Store) {
   const rowSpans: Dictionary<RowSpanAttributeValue> = {};
   const perPage = !isEmpty(pageOptions) && !perPageOption ? DEFAULT_PER_PAGE : perPageOption;
 
-  if (column.visibleRowSpanEnabledColumns.length < 1) {
-    return;
-  }
+  if (column.visibleRowSpanEnabledColumns.length > 0) {
+    resetRowSpan(store, true);
 
-  resetRowSpan(store, true);
+    column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
+      const rowSpanOfColumn = getRowSpanOfColumn(filteredRawData, name, perPage);
 
-  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
-    const rowSpanOfColumn = getRowSpanOfColumn(filteredRawData, name, perPage);
-
-    Object.keys(rowSpanOfColumn).forEach((rowKey) => {
-      if (rowSpans[rowKey]) {
-        rowSpans[rowKey]![name] = rowSpanOfColumn[rowKey]![name];
-      } else {
-        rowSpans[rowKey] = rowSpanOfColumn[rowKey];
-      }
+      Object.keys(rowSpanOfColumn).forEach((rowKey) => {
+        if (rowSpans[rowKey]) {
+          rowSpans[rowKey][name] = rowSpanOfColumn[rowKey][name];
+        } else {
+          rowSpans[rowKey] = rowSpanOfColumn[rowKey];
+        }
+      });
     });
-  });
 
-  Object.keys(rowSpans).forEach((rowKey) => {
-    const row = find(({ rowKey: key }) => `${key}` === rowKey, filteredRawData);
+    Object.keys(rowSpans).forEach((rowKey) => {
+      const row = find(({ rowKey: key }) => `${key}` === rowKey, filteredRawData);
 
-    updateMainRowSpan(filteredRawData, row!, rowSpans[rowKey]);
-  });
+      updateMainRowSpan(filteredRawData, row!, rowSpans[rowKey]);
+    });
 
-  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+    notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+  }
 }
 
 export function updateMainRowSpan(data: Row[], mainRow: Row, rowSpan: RowSpanAttributeValue) {
-  if (!rowSpan) {
-    return;
+  if (rowSpan) {
+    const { rowKey, rowSpanMap } = mainRow;
+
+    Object.keys(rowSpan).forEach((columnName) => {
+      const spanCount = rowSpan[columnName];
+
+      rowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
+      updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
+    });
   }
-
-  const { rowKey, rowSpanMap } = mainRow;
-
-  Object.keys(rowSpan).forEach((columnName) => {
-    const spanCount = rowSpan[columnName];
-
-    rowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
-    updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
-  });
 }
 
 function updateSubRowSpan(

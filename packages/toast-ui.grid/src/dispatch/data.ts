@@ -251,7 +251,7 @@ export function setValue(
    */
   eventBus.trigger('afterChange', gridEvent);
 
-  setTimeout(() => updateRowSpan(store));
+  updateRowSpan(store);
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -813,6 +813,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   });
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   postUpdateAfterManipulation(store, rowIndex, 'DONE');
+  updateRowSpan(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
