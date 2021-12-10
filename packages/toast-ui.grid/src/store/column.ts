@@ -253,11 +253,10 @@ export function createColumn(
     columnHeaderInfo
   );
 
-  let rowSpan = column.rowSpan;
+  const useRowSpanOption =
+    column.rowSpan && !treeColumnOptions.name && !includes(relationColumns, column.name);
 
-  if (!column.rowSpan || treeColumnOptions.name || includes(relationColumns, column.name)) {
-    rowSpan = false;
-  }
+  let rowSpan = useRowSpanOption ? column.rowSpan : false;
 
   return observable({
     name,

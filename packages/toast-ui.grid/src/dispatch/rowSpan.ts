@@ -117,9 +117,7 @@ export function updateMainRowSpan(data: Row[], mainRow: Row, rowSpan: RowSpanAtt
     return;
   }
 
-  const { rowKey, rowSpanMap, _attributes } = mainRow;
-
-  (_attributes as RecursivePartialRowAttributes).rowSpan = rowSpan;
+  const { rowKey, rowSpanMap } = mainRow;
 
   Object.keys(rowSpan).forEach((columnName) => {
     const spanCount = rowSpan[columnName];
@@ -144,17 +142,10 @@ function updateSubRowSpan(
   }
 }
 
-export function resetRowSpan({ data, column }: Store, slient = false) {
-  column.visibleRowSpanEnabledColumns.forEach(({ name }) => {
-    data.rawData.forEach((row) => {
-      const _attributes = row._attributes as RecursivePartialRowAttributes;
-      if (row.rowSpanMap[name]) {
-        delete row.rowSpanMap[name];
-      }
-
-      if (_attributes.rowSpan) {
-        delete _attributes.rowSpan;
-      }
+export function resetRowSpan({ data }: Store, slient = false) {
+  data.rawData.forEach(({ rowSpanMap }) => {
+    Object.keys(rowSpanMap).forEach((columnName) => {
+      delete rowSpanMap[columnName];
     });
   });
 
