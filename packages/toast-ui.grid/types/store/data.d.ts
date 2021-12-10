@@ -54,8 +54,6 @@ export interface RowSpanAttribute {
   rowSpan?: Dictionary<number>;
 }
 
-export type RecursivePartialRowAttributes = RecursivePartial<RowAttributes & RowSpanAttribute>;
-
 export interface RowSpan {
   mainRow: boolean;
   mainRowKey: RowKey;

@@ -256,7 +256,7 @@ export function createColumn(
   const useRowSpanOption =
     column.rowSpan && !treeColumnOptions.name && !includes(relationColumns, column.name);
 
-  let rowSpan = useRowSpanOption ? column.rowSpan : false;
+  const rowSpan = useRowSpanOption ? column.rowSpan : false;
 
   return observable({
     name,

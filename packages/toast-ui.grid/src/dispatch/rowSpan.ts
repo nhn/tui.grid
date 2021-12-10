@@ -1,4 +1,4 @@
-import { RecursivePartialRowAttributes, Row, RowSpanAttributeValue } from '@t/store/data';
+import { Row, RowSpanAttributeValue } from '@t/store/data';
 import { createRowSpan } from '../store/data';
 import { findProp, isEmpty, findPropIndex, find } from '../helper/common';
 import { Store } from '@t/store';
