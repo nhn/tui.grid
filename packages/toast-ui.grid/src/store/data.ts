@@ -34,6 +34,7 @@ import { addUniqueInfoMap, getValidationCode } from './helper/validation';
 import { isScrollPagination } from '../query/data';
 import { getFormattedValue, setMaxTextMap } from './helper/data';
 import {
+  DEFAULT_PER_PAGE,
   DISABLED_PRIORITY_CELL,
   DISABLED_PRIORITY_COLUMN,
   DISABLED_PRIORITY_NONE,
@@ -363,12 +364,9 @@ export function createRawRow(
   options: RawRowOptions = {}
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
-  let rowSpan: RowSpanAttributeValue;
-  const { keyColumnName, prevRow, lazyObservable = false, disabled = false } = options;
+  const rowSpan = row._attributes?.rowSpan as RowSpanAttributeValue;
 
-  if (row._attributes) {
-    rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
-  }
+  const { keyColumnName, prevRow, lazyObservable = false, disabled = false } = options;
 
   if (keyColumnName) {
     row.rowKey = row[keyColumnName];
@@ -404,6 +402,15 @@ export function createData(
   generateDataCreationKey();
   const { keyColumnName, treeColumnName = '' } = column;
   let rawData: Row[];
+
+  // Notify when using deprecated option "_attribute.rowSpan".
+  const isUseRowSpanOption = data.some((row) => row._attributes?.rowSpan);
+  if (isUseRowSpanOption) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      'The option "_attribute.rowSpan" is deprecated. Please use rowSpan option of column.\nFollow example: http://nhn.github.io/tui.grid/latest/tutorial-example29-dynamic-row-span'
+    );
+  }
 
   if (treeColumnName) {
     rawData = createTreeRawData({
@@ -477,7 +484,7 @@ function createPageOptions(userPageOptions: PageOptions, rawData: Row[]) {
     : {
         useClient: false,
         page: 1,
-        perPage: 20,
+        perPage: DEFAULT_PER_PAGE,
         type: 'pagination',
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!,

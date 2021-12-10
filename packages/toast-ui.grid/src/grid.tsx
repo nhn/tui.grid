@@ -343,6 +343,8 @@ export default class Grid implements TuiGrid {
 
     this.gridEl = render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
     this.dispatch('setColumnWidthsByText');
+
+    this.dispatch('updateRowSpan');
   }
 
   /**
@@ -1718,6 +1720,7 @@ export default class Grid implements TuiGrid {
     } else {
       this.dispatch('moveRow', rowKey, targetIndex);
     }
+    this.dispatch('updateRowSpan');
   }
 
   /**

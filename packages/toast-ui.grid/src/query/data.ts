@@ -17,7 +17,6 @@ import {
   omit,
 } from '../helper/common';
 import { getDataManager } from '../instance';
-import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { createRawRow, generateDataCreationKey } from '../store/data';
 import { getFormattedValue as formattedValue } from '../store/helper/data';
@@ -101,12 +100,12 @@ export function findIndexByRowKey(
     return -1;
   }
 
-  const { filteredRawData, rawData, sortState } = data;
+  const { filteredRawData, rawData } = data;
   const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
   const modified = dataManager ? dataManager.isMixedOrder() : false;
 
-  if (!isRowSpanEnabled(sortState) || column.keyColumnName || modified) {
+  if (isSorted(data) || column.keyColumnName || modified) {
     return findPropIndex('rowKey', rowKey, targetData);
   }
 

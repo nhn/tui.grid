@@ -28,12 +28,8 @@ export function changeSelectionRange(
 }
 
 export function setSelection(store: Store, range: { start: Range; end: Range }) {
-  const {
-    selection,
-    data,
-    column: { visibleColumnsWithRowHeader, rowHeaderCount },
-    id,
-  } = store;
+  const { selection, data, column, id } = store;
+  const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const { viewData } = data;
   const rowLength = viewData.length;
   const columnLength = visibleColumnsWithRowHeader.length;
@@ -46,7 +42,7 @@ export function setSelection(store: Store, range: { start: Range; end: Range }) 
   [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [startRowIndex, endRowIndex],
     [startColumnIndex, endColumnIndex],
-    visibleColumnsWithRowHeader,
+    column,
     null,
     data
   );

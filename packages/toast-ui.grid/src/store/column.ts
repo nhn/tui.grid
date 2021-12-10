@@ -253,6 +253,11 @@ export function createColumn(
     columnHeaderInfo
   );
 
+  const useRowSpanOption =
+    column.rowSpan && !treeColumnOptions.name && !includes(relationColumns, column.name);
+
+  const rowSpan = useRowSpanOption ? column.rowSpan : false;
+
   return observable({
     name,
     escapeHTML,
@@ -288,6 +293,7 @@ export function createColumn(
     disabled,
     comparator,
     autoResizing: width === 'auto',
+    rowSpan,
   });
 }
 
@@ -501,6 +507,10 @@ export function create({
         L: this.visibleColumnsWithRowHeader.slice(0, frozenLastIndex),
         R: this.visibleColumnsWithRowHeader.slice(frozenLastIndex),
       };
+    },
+
+    get visibleRowSpanEnabledColumns() {
+      return this.visibleColumns.filter(({ rowSpan }) => rowSpan);
     },
 
     get defaultValues() {

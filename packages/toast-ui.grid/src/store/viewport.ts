@@ -19,19 +19,29 @@ interface ViewportOption {
   showDummyRows: boolean;
 }
 
+interface CalculateRangeOption {
+  scrollPos: number;
+  totalSize: number;
+  offsets: number[];
+  data: Data;
+  column: Column;
+  rowCalculation?: boolean;
+}
+
 function findIndexByPosition(offsets: number[], position: number) {
   const rowOffset = findIndex((offset) => offset > position, offsets);
 
   return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
 }
 
-function calculateRange(
-  scrollPos: number,
-  totalSize: number,
-  offsets: number[],
-  data: Data,
-  rowCalculation?: boolean
-): Range {
+function calculateRange({
+  scrollPos,
+  totalSize,
+  offsets,
+  data,
+  column,
+  rowCalculation,
+}: CalculateRangeOption): Range {
   // safari uses negative scroll position for bouncing effect
   scrollPos = Math.max(scrollPos, 0);
 
@@ -44,7 +54,7 @@ function calculateRange(
     [start, end] = pageRowRange;
   }
 
-  if (dataLength && dataLength >= start && rowCalculation && isRowSpanEnabled(sortState)) {
+  if (dataLength && dataLength >= start && rowCalculation && isRowSpanEnabled(sortState, column)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, filteredRawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
@@ -94,12 +104,13 @@ export function create({
 
     // only for right side columns
     get colRange() {
-      const range = calculateRange(
-        this.scrollLeft,
-        columnCoords.areaWidth.R,
-        columnCoords.offsets.R,
-        data
-      );
+      const range = calculateRange({
+        scrollPos: this.scrollLeft,
+        totalSize: columnCoords.areaWidth.R,
+        offsets: columnCoords.offsets.R,
+        data,
+        column,
+      });
 
       return getCachedRange(this.__storage__.colRange, range);
     },
@@ -114,13 +125,14 @@ export function create({
     },
 
     get rowRange() {
-      const range = calculateRange(
-        this.scrollTop,
-        dimension.bodyHeight,
-        rowCoords.offsets,
+      const range = calculateRange({
+        scrollPos: this.scrollTop,
+        totalSize: dimension.bodyHeight,
+        offsets: rowCoords.offsets,
         data,
-        true
-      );
+        column,
+        rowCalculation: true,
+      });
 
       return getCachedRange(this.__storage__.rowRange, range);
     },

@@ -145,6 +145,7 @@ export interface CommonColumnInfo {
   onBeforeChange?: GridEventListener;
   onAfterChange?: GridEventListener;
   comparator?: Comparator;
+  rowSpan?: boolean;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {
@@ -193,6 +194,7 @@ export interface Column {
   readonly visibleFrozenCount: number;
   readonly visibleColumnsBySide: VisibleColumnsBySide;
   readonly visibleColumnsBySideWithRowHeader: VisibleColumnsBySide;
+  readonly visibleRowSpanEnabledColumns: ColumnInfo[];
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];

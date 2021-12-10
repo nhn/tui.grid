@@ -69,7 +69,8 @@
       "example25-large-data-performance": "25. Large Data Performance",
       "example26-infinite-scroll": "26. infinite scroll",
       "example27-export": "27. Export",
-      "example28-drag-and-drop": "28. Drag and Drop"
+      "example28-drag-and-drop": "28. Drag and Drop",
+      "example29-dynamic-row-span": "29. Dynamic rowSpan"
     },
     "globalErrorLogVariable": "errorLogs"
   },

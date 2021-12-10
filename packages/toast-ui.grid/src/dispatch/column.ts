@@ -25,6 +25,7 @@ import {
 import { getTreeIndentWidth } from '../store/helper/tree';
 import { getDepth, isTreeColumnName } from '../query/tree';
 import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
+import { updateRowSpan } from './rowSpan';
 import { isRowHeader } from '../helper/column';
 import { isAllColumnsVisible } from '../query/column';
 
@@ -193,8 +194,9 @@ export function hideColumn(store: Store, columnName: string) {
   setColumnsHiddenValue(column, columnName, true);
 }
 
-export function showColumn({ column }: Store, columnName: string) {
-  setColumnsHiddenValue(column, columnName, false);
+export function showColumn(store: Store, columnName: string) {
+  setColumnsHiddenValue(store.column, columnName, false);
+  updateRowSpan(store);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

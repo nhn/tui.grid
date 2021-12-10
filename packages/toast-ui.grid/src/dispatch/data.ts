@@ -61,7 +61,12 @@ import { initFilter, resetFilterState } from './filter';
 import { initScrollPosition } from './viewport';
 import { isCheckboxColumn, isDragColumn, isRowHeader, isRowNumColumn } from '../helper/column';
 import { updatePageOptions, updatePageWhenRemovingRow, resetPageState } from './pagination';
-import { updateRowSpanWhenAppending, updateRowSpanWhenRemoving } from './rowSpan';
+import {
+  resetRowSpan,
+  updateRowSpan,
+  updateRowSpanWhenAppending,
+  updateRowSpanWhenRemoving,
+} from './rowSpan';
 import { createObservableData } from './lazyObservable';
 import {
   removeUniqueInfoMap,
@@ -163,6 +168,8 @@ export function setValue(
     }
   }
 
+  resetRowSpan(store);
+
   const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
 
@@ -172,6 +179,7 @@ export function setValue(
     targetColumn.onBeforeChange(gridEvent);
 
     if (gridEvent.isStopped()) {
+      updateRowSpan(store);
       return;
     }
   }
@@ -188,6 +196,7 @@ export function setValue(
    */
   eventBus.trigger('beforeChange', gridEvent);
   if (gridEvent.isStopped()) {
+    updateRowSpan(store);
     return;
   }
 
@@ -211,7 +220,7 @@ export function setValue(
   updateSummaryValueByCell(store, columnName, { orgValue, value });
   getDataManager(id).push('UPDATE', targetRow);
 
-  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
+  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState, column)) {
     const { spanCount } = rowSpanMap[columnName];
     // update sub rows value
     for (let count = 1; count < spanCount; count += 1) {
@@ -241,6 +250,8 @@ export function setValue(
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('afterChange', gridEvent);
+
+  updateRowSpan(store);
 }
 
 export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
@@ -324,6 +335,7 @@ export function setColumnValues(
   updateSummaryValueByColumn(store, columnName, { value });
   forceValidateUniquenessOfColumn(data.rawData, column, columnName);
   setAutoResizingColumnWidths(store);
+  updateRowSpan(store);
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -534,9 +546,9 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
-  const { data, id } = store;
+  const { data, column, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
-  const { at = rawData.length } = options;
+  const { at = rawData.length, extendPrevRowSpan } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
   const inserted = at !== rawData.length;
 
@@ -552,8 +564,11 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   sortByCurrentState(store);
 
-  if (prevRow && isRowSpanEnabled(sortState)) {
-    updateRowSpanWhenAppending(rawData, prevRow, options.extendPrevRowSpan || false);
+  if (isRowSpanEnabled(sortState, column)) {
+    if (prevRow) {
+      updateRowSpanWhenAppending(rawData, prevRow, extendPrevRowSpan || false);
+    }
+    updateRowSpan(store);
   }
 
   getDataManager(id).push('CREATE', rawRow, inserted);
@@ -587,7 +602,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
   initSelection(store);
 
-  if (nextRow && isRowSpanEnabled(sortState)) {
+  if (nextRow && isRowSpanEnabled(sortState, column)) {
     updateRowSpanWhenRemoving(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
@@ -648,6 +663,7 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
   setColumnWidthsByText(store);
+  updateRowSpan(store);
 
   setTimeout(() => {
     /**
@@ -786,7 +802,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   sortByCurrentState(store);
 
-  if (prevRow && isRowSpanEnabled(sortState)) {
+  if (prevRow && isRowSpanEnabled(sortState, column)) {
     updateRowSpanWhenAppending(rawData, prevRow, false);
   }
 
@@ -797,6 +813,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   });
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   postUpdateAfterManipulation(store, rowIndex, 'DONE');
+  updateRowSpan(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
@@ -851,15 +868,19 @@ export function scrollToNext(store: Store) {
 export function appendRows(store: Store, inputData: OptRow[]) {
   const { data, column, id } = store;
 
+  const startIndex = data.rawData.length;
+  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
+
   if (!column.keyColumnName) {
     const rowKey = getMaxRowKey(data);
-    inputData.forEach((row, index) => {
+    rawData.forEach((row, index) => {
+      row.rowKey = rowKey + index;
+    });
+
+    viewData.forEach((row, index) => {
       row.rowKey = rowKey + index;
     });
   }
-
-  const startIndex = data.rawData.length;
-  const { rawData, viewData } = createData(id, inputData, column, { lazyObservable: true });
 
   const newRawData = data.rawData.concat(rawData);
   const newViewData = data.viewData.concat(viewData);
@@ -871,6 +892,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   sortByCurrentState(store);
   updateHeights(store);
   postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
+  updateRowSpan(store);
 }
 
 export function removeRows(store: Store, targetRows: RemoveTargetRows) {
@@ -888,7 +910,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
     removeUniqueInfoMap(id, removedRow, column);
 
     if (nextRow) {
-      if (isRowSpanEnabled(sortState)) {
+      if (isRowSpanEnabled(sortState, column)) {
         updateRowSpanWhenRemoving(rawData, removedRow, nextRow, false);
       }
     }

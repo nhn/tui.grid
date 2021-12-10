@@ -41,10 +41,10 @@ export function getNextCellIndex(
 ): CellIndex {
   const {
     data,
-    column: { visibleColumnsWithRowHeader, rowHeaderCount },
+    column,
     rowCoords: { heights },
   } = store;
-
+  const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const { sortState, filteredRawData, pageRowRange } = data;
 
   const lastRowIndex =
@@ -57,13 +57,13 @@ export function getNextCellIndex(
 
   switch (command) {
     case 'up':
-      if (isRowSpanEnabled(sortState)) {
+      if (isRowSpanEnabled(sortState, column)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, filteredRawData);
       }
       rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
-      if (isRowSpanEnabled(sortState)) {
+      if (isRowSpanEnabled(sortState, column)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, filteredRawData);
       }
       rowIndex = getNextRowIndex(rowIndex, heights);
@@ -101,7 +101,7 @@ export function getNextCellIndex(
         break;
       }
       if (lastColumn) {
-        if (isRowSpanEnabled(sortState)) {
+        if (isRowSpanEnabled(sortState, column)) {
           rowIndex = getRowSpanBottomIndex(rowIndex, columnName, filteredRawData);
         }
         rowIndex = getNextRowIndex(rowIndex, heights);
@@ -115,7 +115,7 @@ export function getNextCellIndex(
         break;
       }
       if (firstColumn) {
-        if (isRowSpanEnabled(sortState)) {
+        if (isRowSpanEnabled(sortState, column)) {
           rowIndex = getRowSpanTopIndex(rowIndex, columnName, filteredRawData);
         }
         rowIndex = getPrevRowIndex(rowIndex, heights);

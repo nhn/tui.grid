@@ -4,6 +4,7 @@ import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { BodyCell } from './bodyCell';
+import { isRowSpanEnabled } from '../query/rowSpan';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -43,10 +44,12 @@ export class RowSpanCellComp extends Component<Props> {
   }
 }
 
-export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, columnInfo }) => {
-  const { sortState } = data;
-  const rowSpan = (viewRow.rowSpanMap && viewRow.rowSpanMap[columnInfo.name]) || null;
-  const enableRowSpan = sortState.columns[0].columnName === 'sortKey';
+export const RowSpanCell = connect<StoreProps, OwnProps>(
+  ({ data, column }, { viewRow, columnInfo }) => {
+    const { sortState } = data;
+    const rowSpan = (viewRow.rowSpanMap && viewRow.rowSpanMap[columnInfo.name]) || null;
+    const enableRowSpan = isRowSpanEnabled(sortState, column);
 
-  return { rowSpan, enableRowSpan };
-})(RowSpanCellComp);
+    return { rowSpan, enableRowSpan };
+  }
+)(RowSpanCellComp);

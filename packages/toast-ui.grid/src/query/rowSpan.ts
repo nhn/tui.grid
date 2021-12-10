@@ -1,9 +1,24 @@
-import { RowSpan, Row, Data, RowKey, SortState } from '@t/store/data';
-import { ColumnInfo } from '@t/store/column';
+import {
+  RowSpan,
+  Row,
+  Data,
+  RowKey,
+  SortState,
+  RowSpanAttributeValue,
+  CellValue,
+} from '@t/store/data';
+import { Column, ColumnInfo } from '@t/store/column';
 import { RowCoords } from '@t/store/rowCoords';
 import { Range } from '@t/store/selection';
 import { findPropIndex, isEmpty, isNull } from '../helper/common';
 import { getSortedRange } from './selection';
+import { Dictionary } from '@t/options';
+
+interface OptGetRowSpan {
+  rowKey: RowKey;
+  value: CellValue;
+  index: number;
+}
 
 function getMainRowSpan(columnName: string, rowSpan: RowSpan, data: Row[]) {
   const { mainRow, mainRowKey } = rowSpan;
@@ -26,21 +41,22 @@ function getRowSpanRange(
   let [startRowIndex, endRowIndex] = rowRange;
 
   for (let index = startColumnIndex; index <= endColumnIndex; index += 1) {
-    const { rawData } = data;
-    const { rowSpanMap: startRowSpanMap } = rawData[startRowIndex];
-    const { rowSpanMap: endRowSpanMap } = rawData[endRowIndex];
+    const { filteredRawData } = data;
+    const { rowSpanMap: startRowSpanMap } = filteredRawData[startRowIndex];
+    const { rowSpanMap: endRowSpanMap } = filteredRawData[endRowIndex];
     const columnName = visibleColumns[index].name;
 
     // get top row index of topmost rowSpan
     if (startRowSpanMap[columnName]) {
       const { mainRowKey } = startRowSpanMap[columnName];
-      const topRowSpanIndex = findPropIndex('rowKey', mainRowKey, rawData);
+      const topRowSpanIndex = findPropIndex('rowKey', mainRowKey, filteredRawData);
       startRowIndex = startRowIndex > topRowSpanIndex ? topRowSpanIndex : startRowIndex;
     }
     // get bottom row index of bottommost rowSpan
     if (endRowSpanMap[columnName]) {
       const { mainRowKey, spanCount } = endRowSpanMap[columnName];
-      const bottomRowSpanIndex = findPropIndex('rowKey', mainRowKey, rawData) + spanCount - 1;
+      const bottomRowSpanIndex =
+        findPropIndex('rowKey', mainRowKey, filteredRawData) + spanCount - 1;
       endRowIndex = endRowIndex < bottomRowSpanIndex ? bottomRowSpanIndex : endRowIndex;
     }
   }
@@ -83,12 +99,18 @@ export function getMaxRowSpanRange(
 export function getRowRangeWithRowSpan(
   rowRange: Range,
   colRange: Range,
-  visibleColumnsWithRowHeader: ColumnInfo[],
+  column: Column,
   rowIndex: number | null,
   data: Data
 ): Range {
-  if (isRowSpanEnabled(data.sortState)) {
-    return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
+  if (isRowSpanEnabled(data.sortState, column)) {
+    return getMaxRowSpanRange(
+      rowRange,
+      colRange,
+      column.visibleColumnsWithRowHeader,
+      rowIndex,
+      data
+    );
   }
 
   return rowRange;
@@ -168,6 +190,36 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
   );
 }
 
-export function isRowSpanEnabled(sortState: SortState) {
-  return sortState.columns[0].columnName === 'sortKey';
+export function isRowSpanEnabled(sortState: SortState, column?: Column) {
+  return (
+    sortState.columns[0].columnName === 'sortKey' || !!column?.visibleRowSpanEnabledColumns.length
+  );
+}
+
+export function getRowSpanOfColumn(data: Row[], columnName: string, perPage?: number) {
+  const rowSpanOfColumn: Dictionary<RowSpanAttributeValue> = {};
+  let rowSpan: RowSpanAttributeValue = {};
+  let mainRowKey: RowKey | null = null;
+  let mainRowValue: CellValue = null;
+
+  data.forEach(({ rowKey, [columnName]: value }, index) => {
+    const isRowInNextPage = perPage && index !== 0 && index % perPage === 0;
+    if (mainRowValue !== value || isRowInNextPage) {
+      if (!isNull(mainRowKey) && rowSpan[columnName] !== 1) {
+        rowSpanOfColumn[mainRowKey] = rowSpan;
+      }
+      rowSpan = {};
+      rowSpan[columnName] = 1;
+      mainRowKey = rowKey;
+      mainRowValue = value;
+    } else {
+      rowSpan[columnName] += 1;
+    }
+  });
+
+  if (!isNull(mainRowKey) && rowSpan[columnName] !== 1) {
+    rowSpanOfColumn[mainRowKey] = rowSpan;
+  }
+
+  return rowSpanOfColumn;
 }
