@@ -203,7 +203,8 @@ export function getRowSpanOfColumn(data: Row[], columnName: string, perPage?: nu
   let mainRowValue: CellValue = null;
 
   data.forEach(({ rowKey, [columnName]: value }, index) => {
-    if (mainRowValue !== value || (perPage && index !== 0 && index % perPage === 0)) {
+    const isRowInNextPage = perPage && index !== 0 && index % perPage === 0;
+    if (mainRowValue !== value || isRowInNextPage) {
       if (!isNull(mainRowKey) && rowSpan[columnName] !== 1) {
         rowSpanOfColumn[mainRowKey] = rowSpan;
       }
