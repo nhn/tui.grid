@@ -447,6 +447,7 @@ describe('summary', () => {
 
         cy.getCellByIdx(0, 1).click();
         clipboardType(`{${key}}`);
+
         cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
           avg: 2.8,
           cnt: 5,
