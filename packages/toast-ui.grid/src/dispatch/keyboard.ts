@@ -14,7 +14,7 @@ import { forceValidateUniquenessOfColumns } from '../store/helper/validation';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
 import { CellChange, Origin } from '@t/event';
-import { updateSummaryValueByCell } from './summary';
+import { updateAllSummaryValues } from './summary';
 import { updateHeights } from './data';
 
 type ChangeValueFn = () => number;
@@ -223,10 +223,6 @@ function applyCopiedData(store: Store, copiedData: string[][], range: SelectionR
         prevChanges.push(prevChange);
         nextChanges.push(nextChange);
         changeValueFns.push(changeValue);
-        updateSummaryValueByCell(store, name, {
-          orgValue: targetRow[name],
-          value: copiedData[rowIndex][columnIndex],
-        });
       }
     }
   }
@@ -275,6 +271,7 @@ export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: Cha
       manager.push('UPDATE', filteredRawData[index]);
     }
   });
+  updateAllSummaryValues(store);
   forceValidateUniquenessOfColumns(rawData, column);
   updateHeights(store);
 

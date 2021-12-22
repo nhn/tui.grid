@@ -2,6 +2,7 @@ import { cls, dataAttr } from '../../src/helper/dom';
 import { OptGrid, OptSummaryData, Dictionary } from '@t/options';
 import { SummaryValueMap } from '@t/store/summary';
 import { deepMergedCopy } from '../../src/helper/common';
+import { clipboardType } from '../helper/util';
 
 const CONTENT_WIDTH = 700;
 
@@ -429,6 +430,32 @@ describe('summary', () => {
       max: 5,
       min: 1,
       sum: 15,
+    });
+  });
+
+  describe('Keyboard', () => {
+    ['backspace', 'del'].forEach((key) => {
+      it(`should change summary by delete with passing ${key}`, () => {
+        const defaultOptions = createDefaultOptions({
+          columns: [
+            { name: 'name', editor: 'text' },
+            { name: 'price', editor: 'text' },
+            { name: 'downloadCount', editor: 'text' },
+          ],
+        });
+        cy.createGrid(defaultOptions);
+
+        cy.getCellByIdx(0, 1).click();
+        clipboardType(`{${key}}`);
+
+        cy.gridInstance().invoke('getSummaryValues', 'price').should('have.subset', {
+          avg: 2.8,
+          cnt: 5,
+          max: 5,
+          min: 0,
+          sum: 14,
+        });
+      });
     });
   });
 });
