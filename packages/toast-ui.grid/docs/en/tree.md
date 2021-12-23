@@ -47,10 +47,14 @@ The `treeColumnOptions` option is used to configure tree columns, and has three 
 | `name` | Configures the name of the column represented in tree structure. |
 | `useIcon` | Determines whether to display the Icon or not. |
 | `useCascadingCheckbox` | Determines whether to change the state of the checkbox or not while maintaining the parent-child relationship. |
+| `indentWidth` | Determines the default width of the indentation width to be set for child nodes. |
+
 
 The default value for `useIcon` is set to `true`, and the parent and the children row are represented in a folder iceon and in a file icon, respectively. 
 
 The default value for `useCascadingCheckbox` is set to `true`, and if all children rows are selected, the corresponding parent row is selected as well, and vice versa. If it is set to `false`, each row can be checked individually. 
+
+The default value of `indentWidth` is `22`. Child nodes have an indent width that is multiple the depth of the base width.
 
 Aforementioned options can be configured using the Grid constructor option. 
 
