@@ -17,6 +17,7 @@ interface StoreProps {
   leaf: boolean;
   expanded: boolean;
   useIcon: boolean;
+  treeIndentWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -44,7 +45,7 @@ export class TreeCellContentsComp extends Component<Props> {
           {i === len - 1 && !leaf && (
             <button
               class={cls('btn-tree')}
-              style={{ left: i * TREE_INDENT_WIDTH }}
+              style={{ left: i * this.props.treeIndentWidth }}
               onClick={this.handleClick}
               type="button"
             >
@@ -82,7 +83,7 @@ export class TreeCellContentsComp extends Component<Props> {
 
 export const TreeCellContents = connect<StoreProps, OwnProps>(
   ({ column }, { treeInfo, rowKey }) => {
-    const { treeIcon: useIcon = true } = column;
+    const { treeIcon: useIcon = true, treeIndentWidth = TREE_INDENT_WIDTH } = column;
     const { depth, indentWidth, leaf, expanded = false } = treeInfo;
 
     return {
@@ -92,6 +93,7 @@ export const TreeCellContents = connect<StoreProps, OwnProps>(
       leaf,
       expanded,
       useIcon,
+      treeIndentWidth,
     };
   }
 )(TreeCellContentsComp);

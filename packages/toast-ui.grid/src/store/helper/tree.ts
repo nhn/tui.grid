@@ -68,9 +68,9 @@ function insertChildRowKey(row: Row, childRow: Row, offset: number) {
   row._leaf = false;
 }
 
-function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
+function getTreeCellInfo(rawData: Row[], row: Row, treeIndentWidth?: number, useIcon?: boolean) {
   const depth = getDepth(rawData, row);
-  const indentWidth = getTreeIndentWidth(depth, useIcon);
+  const indentWidth = getTreeIndentWidth(depth, treeIndentWidth, useIcon);
 
   return {
     depth,
@@ -175,10 +175,11 @@ export function createTreeRawData({
 export function createTreeCellInfo(
   rawData: Row[],
   row: Row,
+  treeIndentWidth?: number,
   useIcon?: boolean,
   lazyObservable = false
 ) {
-  const treeCellInfo = getTreeCellInfo(rawData, row, useIcon);
+  const treeCellInfo = getTreeCellInfo(rawData, row, treeIndentWidth, useIcon);
   const treeInfo = lazyObservable ? treeCellInfo : observable(treeCellInfo);
 
   if (!lazyObservable) {
@@ -191,6 +192,7 @@ export function createTreeCellInfo(
   return treeInfo;
 }
 
-export function getTreeIndentWidth(depth: number, showIcon?: boolean) {
-  return depth * TREE_INDENT_WIDTH + (showIcon ? TREE_INDENT_WIDTH : 0);
+export function getTreeIndentWidth(depth: number, treeIndentWidth?: number, showIcon?: boolean) {
+  const indentWidth = treeIndentWidth ?? TREE_INDENT_WIDTH;
+  return TREE_INDENT_WIDTH + (depth - 1) * indentWidth + (showIcon ? TREE_INDENT_WIDTH : 0);
 }
