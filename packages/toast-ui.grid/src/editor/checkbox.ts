@@ -1,10 +1,16 @@
-import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
+import {
+  CellEditor,
+  CellEditorProps,
+  GridRectForDropDownLayerPos,
+  LayerPos,
+  PortalEditingKeydown,
+} from '@t/editor';
 import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';
 import { findIndex, isNil } from '../helper/common';
-import { getContainerElement, setLayerPosition, setOpacity } from './dom';
+import { getContainerElement, setLayerPosition, setOpacity, moveLayer } from './dom';
 
 const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
 const LIST_ITEM_CLASSNAME = cls('editor-checkbox');
@@ -26,6 +32,8 @@ export class CheckboxEditor implements CellEditor {
   private portalEditingKeydown: PortalEditingKeydown;
 
   private elementIds: string[] = [];
+
+  private initLayerPos: LayerPos | null = null;
 
   public constructor(props: CellEditorProps) {
     const { columnInfo, width, formattedValue, portalEditingKeydown } = props;
@@ -159,6 +167,12 @@ export class CheckboxEditor implements CellEditor {
       this.layer.querySelector('input')) as HTMLInputElement;
   }
 
+  public moveDropdownLayer(gridRect: GridRectForDropDownLayerPos) {
+    if (this.initLayerPos) {
+      moveLayer(this.layer, this.initLayerPos, gridRect);
+    }
+  }
+
   public getElement() {
     return this.el;
   }
@@ -189,7 +203,7 @@ export class CheckboxEditor implements CellEditor {
     // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
-    setLayerPosition(this.el, this.layer);
+    this.initLayerPos = setLayerPosition(this.el, this.layer);
 
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {
@@ -204,5 +218,6 @@ export class CheckboxEditor implements CellEditor {
     this.layer.removeEventListener('mouseover', this.onMouseover);
     this.layer.removeEventListener('keydown', this.onKeydown);
     getContainerElement(this.el).removeChild(this.layer);
+    this.initLayerPos = null;
   }
 }

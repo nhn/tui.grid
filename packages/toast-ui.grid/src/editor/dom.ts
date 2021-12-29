@@ -1,8 +1,21 @@
+import { GridRectForDropDownLayerPos, LayerPos } from '@t/editor';
+import { isBetween } from '../helper/common';
 import { findParentByClassName } from '../helper/dom';
 
 const INDENT = 5;
 const SCROLL_BAR_WIDTH = 17;
 const SCROLL_BAR_HEIGHT = 17;
+
+function isHidden(
+  top: number,
+  left: number,
+  { bodyHeight, bodyWidth, headerHeight, leftSideWidth }: GridRectForDropDownLayerPos
+) {
+  return !(
+    isBetween(top, headerHeight, bodyHeight + headerHeight) &&
+    isBetween(left, leftSideWidth, bodyWidth)
+  );
+}
 
 export function setOpacity(el: HTMLElement, opacity: number | string) {
   el.style.opacity = String(opacity);
@@ -10,6 +23,23 @@ export function setOpacity(el: HTMLElement, opacity: number | string) {
 
 export function getContainerElement(el: HTMLElement) {
   return findParentByClassName(el, 'container')!;
+}
+
+export function moveLayer(
+  layerEl: HTMLElement,
+  initLayerPos: LayerPos,
+  gridRect: GridRectForDropDownLayerPos
+) {
+  if (initLayerPos) {
+    const { top, left } = initLayerPos;
+    const { initBodyScrollTop, initBodyScrollLeft, bodyScrollTop, bodyScrollLeft } = gridRect;
+    const newTop = top + initBodyScrollTop - bodyScrollTop;
+    const newLeft = left + initBodyScrollLeft - bodyScrollLeft;
+
+    layerEl.style.display = isHidden(newTop, newLeft, gridRect) ? 'none' : '';
+    layerEl.style.top = `${newTop}px`;
+    layerEl.style.left = `${newLeft}px`;
+  }
 }
 
 export function setLayerPosition(
@@ -34,15 +64,18 @@ export function setLayerPosition(
   const totalHeight = layerHeight + childElHeight;
   const totalWidth = layerWidth || childElWidth;
 
-  layerEl.style.top = `${
+  const newLayerTop =
     (layerTop + totalHeight > innerHeight - SCROLL_BAR_WIDTH
       ? innerHeight - totalHeight - INDENT - SCROLL_BAR_WIDTH
-      : layerTop) - containerRect.top
-  }px`;
-
-  layerEl.style.left = `${
+      : layerTop) - containerRect.top;
+  const newLayerLeft =
     (left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
       ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
-      : left) - containerRect.left
-  }px`;
+      : left) - containerRect.left;
+
+  layerEl.style.top = `${newLayerTop}px`;
+  layerEl.style.left = `${newLayerLeft}px`;
+  layerEl.style.display = '';
+
+  return { top: newLayerTop, left: newLayerLeft };
 }

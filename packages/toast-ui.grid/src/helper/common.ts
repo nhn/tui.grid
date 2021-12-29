@@ -433,3 +433,7 @@ export function convertDataToText(data: string[][], delimiter: string) {
 export function silentSplice<T>(arr: T[], start: number, deleteCount: number, ...items: T[]): T[] {
   return Array.prototype.splice.call(arr, start, deleteCount, ...items);
 }
+
+export function isBetween(value: number, start: number, end: number) {
+  return value >= start && value <= end;
+}
