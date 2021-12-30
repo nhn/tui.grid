@@ -153,6 +153,7 @@ export interface OptTree {
   name: string;
   useIcon?: boolean;
   useCascadingCheckbox?: boolean;
+  indentWidth?: number;
 }
 
 export interface OptColumn extends Partial<CommonColumnInfo> {

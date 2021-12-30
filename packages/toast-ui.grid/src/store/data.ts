@@ -209,7 +209,7 @@ function createRelationViewCell(
 export function createViewRow(id: number, row: Row, rawData: Row[], column: Column) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
   const { columnMapWithRelation: columnMap } = column;
-  const { treeColumnName = '', treeIcon = true } = column;
+  const { treeColumnName, treeIcon = true, treeIndentWidth } = column;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach((name) => {
@@ -250,7 +250,9 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
     rowSpanMap,
     valueMap,
     __unobserveFns__,
-    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) }),
+    ...(treeColumnName && {
+      treeInfo: createTreeCellInfo(rawData, row, treeIndentWidth, treeIcon),
+    }),
   };
 }
 

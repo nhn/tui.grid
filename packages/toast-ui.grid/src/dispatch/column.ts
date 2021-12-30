@@ -257,7 +257,7 @@ export function setColumnWidthsByText(store: Store) {
 }
 
 function setColumnWidthByText({ data, column }: Store, columnName: string) {
-  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const { allColumnMap, treeColumnName, treeIcon, treeIndentWidth } = column;
   const maxTextMap = getMaxTextMap();
   const { formattedValue, row } = maxTextMap[columnName];
   let width = getTextWidth(
@@ -267,7 +267,8 @@ function setColumnWidthByText({ data, column }: Store, columnName: string) {
 
   if (treeColumnName) {
     width +=
-      getTreeIndentWidth(getDepth(data.rawData, row), treeIcon) + TREE_CELL_HORIZONTAL_PADDING;
+      getTreeIndentWidth(getDepth(data.rawData, row), treeIndentWidth, treeIcon) +
+      TREE_CELL_HORIZONTAL_PADDING;
   }
 
   allColumnMap[columnName].baseWidth = Math.max(allColumnMap[columnName].minWidth, width);

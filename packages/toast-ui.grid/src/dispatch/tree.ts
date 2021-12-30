@@ -125,7 +125,7 @@ function updateTreeColumnWidth(
   dimension: Dimension,
   rawData: Row[]
 ) {
-  const { visibleColumnsBySideWithRowHeader, treeIcon, allColumnMap } = column;
+  const { visibleColumnsBySideWithRowHeader, treeIcon, allColumnMap, treeIndentWidth } = column;
   const treeColumnName = column.treeColumnName!;
   const treeColumnSide = getColumnSide(column, treeColumnName);
   const treeColumnIndex = findPropIndex(
@@ -139,7 +139,13 @@ function updateTreeColumnWidth(
   // @TODO: auto resizing is operated with 'autoResizing' option
   // 'resizable' condition should be deprecated in next version
   if (columnInfo.resizable || columnInfo.autoResizing) {
-    const maxWidth = getChildTreeNodeMaxWidth(childRowKeys, rawData, columnInfo, treeIcon);
+    const maxWidth = getChildTreeNodeMaxWidth(
+      childRowKeys,
+      rawData,
+      columnInfo,
+      treeIndentWidth,
+      treeIcon
+    );
     const prevWidth =
       columnCoords.widths[treeColumnSide][treeColumnIndex] + dimension.cellBorderWidth;
 
@@ -152,6 +158,7 @@ function getChildTreeNodeMaxWidth(
   childRowKeys: RowKey[],
   rawData: Row[],
   column: ColumnInfo,
+  treeIndentWidth?: number,
   useIcon?: boolean
 ) {
   let maxLength = 0;
@@ -167,7 +174,7 @@ function getChildTreeNodeMaxWidth(
         maxLength = formattedValue.length;
         acc = () =>
           getTextWidth(formattedValue, computedFontStyle) +
-          getTreeIndentWidth(getDepth(rawData, row), useIcon) +
+          getTreeIndentWidth(getDepth(rawData, row), treeIndentWidth, useIcon) +
           TREE_CELL_HORIZONTAL_PADDING;
       }
 

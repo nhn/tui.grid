@@ -138,6 +138,7 @@ if ((module as any).hot) {
  *          the left side of the tree cell data.
  *      @param {boolean} [options.treeColumnOptions.useCascadingCheckbox] - If set to true, a cascading relationship is
  *          created in the checkbox between parent and child rows.
+ *      @param {boolean} [options.treeColumnOptions.indentWidth=22] - Base indent width to set for child nodes
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
