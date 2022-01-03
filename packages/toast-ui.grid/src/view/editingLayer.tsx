@@ -112,16 +112,17 @@ export class EditingLayerComp extends Component<Props> {
     }
   }
 
+  private setInitScrollPos() {
+    const { bodyScrollTop, bodyScrollLeft } = this.props;
+
+    this.initBodyScroll = {
+      initBodyScrollTop: bodyScrollTop,
+      initBodyScrollLeft: bodyScrollLeft,
+    };
+  }
+
   private createEditor() {
-    const {
-      allColumnMap,
-      filteredViewData,
-      editingAddress,
-      grid,
-      cellPosRect,
-      bodyScrollTop,
-      bodyScrollLeft,
-    } = this.props;
+    const { allColumnMap, filteredViewData, editingAddress, grid, cellPosRect } = this.props;
 
     const { rowKey, columnName } = editingAddress!;
     const { right, left } = cellPosRect!;
@@ -150,10 +151,7 @@ export class EditingLayerComp extends Component<Props> {
         // To access the actual mounted DOM elements
         setTimeout(() => {
           cellEditor.mounted!();
-          this.initBodyScroll = {
-            initBodyScrollTop: bodyScrollTop,
-            initBodyScrollLeft: bodyScrollLeft,
-          };
+          this.setInitScrollPos();
         });
       }
     }
