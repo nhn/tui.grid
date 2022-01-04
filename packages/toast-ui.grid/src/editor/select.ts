@@ -12,7 +12,7 @@ import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './dom';
 import { getKeyStrokeString } from '../helper/keyboard';
-import { includes, isNil } from '../helper/common';
+import { includes, isNil, pixelToNumber } from '../helper/common';
 
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -120,7 +120,13 @@ export class SelectEditor implements CellEditor {
     // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
-    this.initLayerPos = setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+    setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+
+    this.initLayerPos = {
+      top: pixelToNumber(this.layer.style.top),
+      left: pixelToNumber(this.layer.style.left),
+    };
+
     this.focusSelectBox();
     this.isMounted = true;
     // To show the layer which has appropriate position

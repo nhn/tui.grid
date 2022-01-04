@@ -30,16 +30,14 @@ export function moveLayer(
   initLayerPos: LayerPos,
   gridRect: GridRectForDropDownLayerPos
 ) {
-  if (initLayerPos) {
-    const { top, left } = initLayerPos;
-    const { initBodyScrollTop, initBodyScrollLeft, bodyScrollTop, bodyScrollLeft } = gridRect;
-    const newTop = top + initBodyScrollTop - bodyScrollTop;
-    const newLeft = left + initBodyScrollLeft - bodyScrollLeft;
+  const { top, left } = initLayerPos;
+  const { initBodyScrollTop, initBodyScrollLeft, bodyScrollTop, bodyScrollLeft } = gridRect;
+  const newTop = top + initBodyScrollTop - bodyScrollTop;
+  const newLeft = left + initBodyScrollLeft - bodyScrollLeft;
 
-    layerEl.style.display = isHidden(newTop, newLeft, gridRect) ? 'none' : '';
-    layerEl.style.top = `${newTop}px`;
-    layerEl.style.left = `${newLeft}px`;
-  }
+  layerEl.style.display = isHidden(newTop, newLeft, gridRect) ? 'none' : '';
+  layerEl.style.top = `${newTop}px`;
+  layerEl.style.left = `${newLeft}px`;
 }
 
 export function setLayerPosition(
@@ -64,18 +62,15 @@ export function setLayerPosition(
   const totalHeight = layerHeight + childElHeight;
   const totalWidth = layerWidth || childElWidth;
 
-  const newLayerTop =
+  layerEl.style.top = `${
     (layerTop + totalHeight > innerHeight - SCROLL_BAR_WIDTH
       ? innerHeight - totalHeight - INDENT - SCROLL_BAR_WIDTH
-      : layerTop) - containerRect.top;
-  const newLayerLeft =
+      : layerTop) - containerRect.top
+  }px`;
+
+  layerEl.style.left = `${
     (left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
       ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
-      : left) - containerRect.left;
-
-  layerEl.style.top = `${newLayerTop}px`;
-  layerEl.style.left = `${newLayerLeft}px`;
-  layerEl.style.display = '';
-
-  return { top: newLayerTop, left: newLayerLeft };
+      : left) - containerRect.left
+  }px`;
 }

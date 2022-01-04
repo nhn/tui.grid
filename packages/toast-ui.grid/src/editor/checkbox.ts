@@ -9,7 +9,7 @@ import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';
-import { findIndex, isNil } from '../helper/common';
+import { findIndex, isNil, pixelToNumber } from '../helper/common';
 import { getContainerElement, setLayerPosition, setOpacity, moveLayer } from './dom';
 
 const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
@@ -203,7 +203,12 @@ export class CheckboxEditor implements CellEditor {
     // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
-    this.initLayerPos = setLayerPosition(this.el, this.layer);
+    setLayerPosition(this.el, this.layer);
+
+    this.initLayerPos = {
+      top: pixelToNumber(this.layer.style.top),
+      left: pixelToNumber(this.layer.style.left),
+    };
 
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {

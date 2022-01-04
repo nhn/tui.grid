@@ -2,7 +2,7 @@ import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '@t/options';
 import { CellEditor, CellEditorProps, GridRectForDropDownLayerPos, LayerPos } from '@t/editor';
 import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString, isNil } from '../helper/common';
+import { deepMergedCopy, isNumber, isString, isNil, pixelToNumber } from '../helper/common';
 import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './dom';
 
 export class DatePickerEditor implements CellEditor {
@@ -126,12 +126,12 @@ export class DatePickerEditor implements CellEditor {
     this.datePickerEl.open();
 
     // `this.layer.firstElementChild` is real datePicker layer(it is need to get total height)
-    this.initLayerPos = setLayerPosition(
-      this.el,
-      this.layer,
-      this.layer.firstElementChild as HTMLElement,
-      true
-    );
+    setLayerPosition(this.el, this.layer, this.layer.firstElementChild as HTMLElement, true);
+
+    this.initLayerPos = {
+      top: pixelToNumber(this.layer.style.top),
+      left: pixelToNumber(this.layer.style.left),
+    };
 
     // To show the layer which has appropriate position
     setOpacity(this.layer, 1);

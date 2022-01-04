@@ -589,9 +589,7 @@ describe('original cell value should be kept', () => {
 
 describe('Scroll with editor that has drop-down layer', () => {
   function scrollTo(position: Cypress.PositionType) {
-    cy.get(`.${cls('rside-area')} .${cls('body-area')}`)
-      .wait(0)
-      .scrollTo(position);
+    cy.getByCls('rside-area', 'body-area').wait(0).scrollTo(position);
   }
 
   beforeEach(() => {
@@ -625,10 +623,7 @@ describe('Scroll with editor that has drop-down layer', () => {
         minWidth: 100,
       },
       { name: 'age', minWidth: 100 },
-      {
-        name: 'grade',
-        minWidth: 100,
-      },
+      { name: 'grade', minWidth: 100 },
     ];
 
     cy.createGrid({ data, columns, width: 200, bodyHeight: 150 });

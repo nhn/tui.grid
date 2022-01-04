@@ -435,5 +435,10 @@ export function silentSplice<T>(arr: T[], start: number, deleteCount: number, ..
 }
 
 export function isBetween(value: number, start: number, end: number) {
-  return value >= start && value <= end;
+  return start <= value && value <= end;
+}
+
+export function pixelToNumber(pixelString: string) {
+  const regExp = new RegExp(/[0-9]+px/);
+  return regExp.test(pixelString) ? parseInt(pixelString.replace('px', '')) : 0;
 }
