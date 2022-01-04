@@ -3,7 +3,6 @@ import { CellValue } from '@t/store/data';
 import { createCustomLayerEditor, CustomTextEditor } from '../helper/customEditor';
 import { GridEventProps } from '@t/event';
 import { clickFilterBtn } from '../helper/util';
-import { cls } from '@/helper/dom';
 
 before(() => {
   cy.visit('/dist');

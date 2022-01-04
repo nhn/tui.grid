@@ -440,5 +440,5 @@ export function isBetween(value: number, start: number, end: number) {
 
 export function pixelToNumber(pixelString: string) {
   const regExp = new RegExp(/[0-9]+px/);
-  return regExp.test(pixelString) ? parseInt(pixelString.replace('px', '')) : 0;
+  return regExp.test(pixelString) ? parseInt(pixelString.replace('px', ''), 10) : 0;
 }
