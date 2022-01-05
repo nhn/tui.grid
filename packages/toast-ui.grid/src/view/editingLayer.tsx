@@ -206,6 +206,10 @@ export class EditingLayerComp extends Component<Props> {
 
   public render({ active, cellPosRect, cellBorderWidth }: Props) {
     if (!active) {
+      const { isMounted, beforeDestroy } = this.editor || {};
+      if (isMounted && beforeDestroy) {
+        beforeDestroy();
+      }
       return null;
     }
 
