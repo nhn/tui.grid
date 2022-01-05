@@ -345,8 +345,8 @@ it('should do synchronous rendering of the editing cell', () => {
 });
 
 describe('select, checkbox, radio editor', () => {
+  const dataForGridWithType = [{ name: '1' }, { name: '2' }, { name: '3' }, { name: '4' }];
   function createGridWithType(type: string) {
-    const data = [{ name: '1' }, { name: '2' }, { name: '3' }, { name: '4' }];
     const columns = [
       {
         name: 'name',
@@ -364,7 +364,7 @@ describe('select, checkbox, radio editor', () => {
       },
     ];
 
-    cy.createGrid({ data, columns });
+    cy.createGrid({ data: dataForGridWithType, columns });
   }
 
   context('UI', () => {
@@ -450,6 +450,26 @@ describe('select, checkbox, radio editor', () => {
       cy.getByCls('editor-checkbox').eq(2).trigger('mouseover');
 
       assertOptionHighlighted(3);
+    });
+  });
+
+  describe('remove drop-down layer', () => {
+    ['radio', 'select', 'checkbox'].forEach((type) => {
+      it(`should remove drop-down layer when calling cancelEditing() API (${type})`, () => {
+        createGridWithType(type);
+
+        cy.gridInstance().invoke('cancelEditing');
+
+        cy.getByCls('editor-select-box-layer').should('be.not.visible');
+      });
+
+      it(`should remove drop-down layer when calling resetData() API (${type})`, () => {
+        createGridWithType(type);
+
+        cy.gridInstance().invoke('resetData', dataForGridWithType);
+
+        cy.getByCls('editor-select-box-layer').should('be.not.visible');
+      });
     });
   });
 });
