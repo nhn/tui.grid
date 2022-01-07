@@ -205,5 +205,6 @@ export interface Column {
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;
+  readonly treeIndentWidth?: number;
   readonly draggable: boolean;
 }

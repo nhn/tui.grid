@@ -659,7 +659,7 @@ describe('Scroll with editor that has drop-down layer', () => {
 
       scrollTo(position as Cypress.PositionType);
 
-      cy.getByCls('editor-select-box-layer').should('be.not.visible');
+      cy.getByCls('editor-select-box-layer').should('have.css', 'z-index', '-100');
     });
   });
 });

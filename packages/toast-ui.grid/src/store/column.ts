@@ -44,6 +44,7 @@ import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 import { RowHeaderDraggableRenderer } from '../renderer/rowHeaderDraggable';
+import { TREE_INDENT_WIDTH } from '../helper/constant';
 
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 const ROW_HEADER = 40;
@@ -455,6 +456,7 @@ export function create({
     name: treeColumnName,
     useIcon: treeIcon = true,
     useCascadingCheckbox: treeCascadingCheckbox = true,
+    indentWidth: treeIndentWidth = TREE_INDENT_WIDTH,
   } = treeColumnOptions;
 
   const complexColumnHeaders = complexColumns.map((column) =>
@@ -566,6 +568,6 @@ export function create({
       return this.columnsWithoutRowHeader.filter(({ autoResizing }) => autoResizing);
     },
 
-    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox }),
+    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox, treeIndentWidth }),
   });
 }
