@@ -26,7 +26,6 @@ export interface CellEditor {
   mounted?(): void;
   beforeDestroy?(): void;
   el?: HTMLElement;
-  isMounted?: boolean;
 }
 
 export interface ListItemOptions {

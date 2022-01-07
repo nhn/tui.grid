@@ -88,9 +88,6 @@ export class EditingLayerComp extends Component<Props> {
   private cancelEditing() {
     const { rowKey, columnName, value } = this.getEditingCellInfo();
 
-    // eslint-disable-next-line no-unused-expressions
-    this.editor?.beforeDestroy?.();
-
     this.props.dispatch('finishEditing', rowKey, columnName, value, {
       save: false,
       triggeredByKey: true,
@@ -104,10 +101,6 @@ export class EditingLayerComp extends Component<Props> {
       const { rowKey, columnName, value } = this.getEditingCellInfo();
 
       dispatch('setValue', rowKey, columnName, value);
-
-      // eslint-disable-next-line no-unused-expressions
-      this.editor?.beforeDestroy?.();
-
       dispatch('finishEditing', rowKey, columnName, value, { save: true, triggeredByKey });
     }
   }
@@ -195,6 +188,11 @@ export class EditingLayerComp extends Component<Props> {
     } = this.props;
     const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
+    if (prevActive && !active) {
+      // eslint-disable-next-line no-unused-expressions
+      this.editor?.beforeDestroy?.();
+    }
+
     if (
       (prevActive && !active && forcedDestroyEditing) ||
       (prevActive &&
@@ -206,9 +204,6 @@ export class EditingLayerComp extends Component<Props> {
 
   public render({ active, cellPosRect, cellBorderWidth }: Props) {
     if (!active) {
-      if (this.editor && this.editor.isMounted && this.editor.beforeDestroy) {
-        this.editor.beforeDestroy();
-      }
       return null;
     }
 

@@ -17,13 +17,13 @@ import { includes, isNil, pixelToNumber } from '../helper/common';
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
 
-  public isMounted = false;
-
   private layer: HTMLDivElement;
 
   private selectBoxEl!: SelectBox;
 
   private selectFinish = false;
+
+  private isMounted = false;
 
   private portalEditingKeydown: PortalEditingKeydown;
 
@@ -138,6 +138,5 @@ export class SelectEditor implements CellEditor {
     this.layer.removeEventListener('keydown', this.onKeydown);
     getContainerElement(this.el).removeChild(this.layer);
     this.initLayerPos = null;
-    this.isMounted = false;
   }
 }
