@@ -12,6 +12,11 @@ import { findProp, isNull } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 
+interface InitBodyScroll {
+  initBodyScrollTop: number;
+  initBodyScrollLeft: number;
+}
+
 interface StoreProps {
   active: boolean;
   grid: Grid;
@@ -23,6 +28,12 @@ interface StoreProps {
   allColumnMap: Dictionary<ColumnInfo>;
   editingAddress: EditingAddress;
   cellPosRect?: Rect | null;
+  bodyScrollTop: number;
+  bodyScrollLeft: number;
+  bodyHeight: number;
+  bodyWidth: number;
+  headerHeight: number;
+  leftSideWidth: number;
 }
 
 interface OwnProps {
@@ -35,6 +46,8 @@ export class EditingLayerComp extends Component<Props> {
   private editor?: CellEditor;
 
   private contentEl?: HTMLElement;
+
+  private initBodyScrollPos: InitBodyScroll = { initBodyScrollTop: 0, initBodyScrollLeft: 0 };
 
   private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
     const { dispatch } = this.props;
@@ -99,6 +112,15 @@ export class EditingLayerComp extends Component<Props> {
     }
   }
 
+  private setInitScrollPos() {
+    const { bodyScrollTop, bodyScrollLeft } = this.props;
+
+    this.initBodyScrollPos = {
+      initBodyScrollTop: bodyScrollTop,
+      initBodyScrollLeft: bodyScrollLeft,
+    };
+  }
+
   private createEditor() {
     const { allColumnMap, filteredViewData, editingAddress, grid, cellPosRect } = this.props;
 
@@ -129,18 +151,39 @@ export class EditingLayerComp extends Component<Props> {
         // To access the actual mounted DOM elements
         setTimeout(() => {
           cellEditor.mounted!();
+          this.setInitScrollPos();
         });
       }
     }
   }
 
   public componentDidUpdate(prevProps: Props) {
-    if (
-      !prevProps.active &&
-      this.props.active &&
-      this.props.editingAddress?.columnName === this.props.focusedColumnName
-    ) {
+    const {
+      active,
+      editingAddress,
+      focusedColumnName,
+      bodyHeight,
+      bodyWidth,
+      bodyScrollTop,
+      bodyScrollLeft,
+      headerHeight,
+      leftSideWidth,
+    } = this.props;
+
+    if (!prevProps.active && active && editingAddress?.columnName === focusedColumnName) {
       this.createEditor();
+    }
+
+    if (this.editor?.moveDropdownLayer) {
+      this.editor.moveDropdownLayer({
+        bodyHeight,
+        bodyWidth,
+        bodyScrollTop,
+        bodyScrollLeft,
+        headerHeight,
+        leftSideWidth,
+        ...this.initBodyScrollPos,
+      });
     }
   }
 
@@ -192,7 +235,7 @@ export class EditingLayerComp extends Component<Props> {
 }
 
 export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { data, column, id, focus, dimension } = store;
+  const { data, column, id, focus, dimension, viewport, columnCoords } = store;
   const {
     editingAddress,
     side: focusSide,
@@ -201,6 +244,15 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     forcedDestroyEditing,
     cellPosRect,
   } = focus;
+  const { scrollTop, scrollLeft } = viewport;
+  const {
+    cellBorderWidth,
+    bodyHeight,
+    width,
+    scrollXHeight,
+    scrollYWidth,
+    headerHeight,
+  } = dimension;
 
   return {
     grid: getInstance(id),
@@ -209,9 +261,15 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     focusedColumnName,
     forcedDestroyEditing,
     cellPosRect,
-    cellBorderWidth: dimension.cellBorderWidth,
+    cellBorderWidth,
     editingAddress,
     filteredViewData: data.filteredViewData,
     allColumnMap: column.allColumnMap,
+    bodyScrollTop: scrollTop,
+    bodyScrollLeft: scrollLeft,
+    bodyHeight: bodyHeight - scrollXHeight,
+    bodyWidth: width - scrollYWidth,
+    headerHeight,
+    leftSideWidth: side === 'L' ? 0 : columnCoords.areaWidth.L,
   };
 }, true)(EditingLayerComp);

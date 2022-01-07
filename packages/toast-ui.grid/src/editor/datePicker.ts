@@ -1,9 +1,9 @@
 import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '@t/options';
-import { CellEditor, CellEditorProps } from '@t/editor';
+import { CellEditor, CellEditorProps, GridRectForDropDownLayerPos, LayerPos } from '@t/editor';
 import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString, isNil } from '../helper/common';
-import { setLayerPosition, getContainerElement, setOpacity } from './dom';
+import { deepMergedCopy, isNumber, isString, isNil, pixelToNumber } from '../helper/common';
+import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './dom';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -15,6 +15,8 @@ export class DatePickerEditor implements CellEditor {
   private datePickerEl: TuiDatePicker;
 
   private iconEl?: HTMLElement;
+
+  private initLayerPos: LayerPos | null = null;
 
   private createInputElement() {
     const inputEl = document.createElement('input');
@@ -102,6 +104,12 @@ export class DatePickerEditor implements CellEditor {
     this.datePickerEl.on('close', () => this.focus());
   }
 
+  public moveDropdownLayer(gridRect: GridRectForDropDownLayerPos) {
+    if (this.initLayerPos) {
+      moveLayer(this.layer, this.initLayerPos, gridRect);
+    }
+  }
+
   public getElement() {
     return this.el;
   }
@@ -119,6 +127,12 @@ export class DatePickerEditor implements CellEditor {
 
     // `this.layer.firstElementChild` is real datePicker layer(it is need to get total height)
     setLayerPosition(this.el, this.layer, this.layer.firstElementChild as HTMLElement, true);
+
+    this.initLayerPos = {
+      top: pixelToNumber(this.layer.style.top),
+      left: pixelToNumber(this.layer.style.left),
+    };
+
     // To show the layer which has appropriate position
     setOpacity(this.layer, 1);
   }
@@ -129,5 +143,6 @@ export class DatePickerEditor implements CellEditor {
     }
     this.datePickerEl.destroy();
     getContainerElement(this.el).removeChild(this.layer);
+    this.initLayerPos = null;
   }
 }

@@ -1,8 +1,21 @@
+import { GridRectForDropDownLayerPos, LayerPos } from '@t/editor';
+import { isBetween } from '../helper/common';
 import { findParentByClassName } from '../helper/dom';
 
 const INDENT = 5;
 const SCROLL_BAR_WIDTH = 17;
 const SCROLL_BAR_HEIGHT = 17;
+
+function exceedGridViewport(
+  top: number,
+  left: number,
+  { bodyHeight, bodyWidth, headerHeight, leftSideWidth }: GridRectForDropDownLayerPos
+) {
+  return !(
+    isBetween(top, headerHeight, bodyHeight + headerHeight) &&
+    isBetween(left, leftSideWidth, bodyWidth)
+  );
+}
 
 export function setOpacity(el: HTMLElement, opacity: number | string) {
   el.style.opacity = String(opacity);
@@ -10,6 +23,27 @@ export function setOpacity(el: HTMLElement, opacity: number | string) {
 
 export function getContainerElement(el: HTMLElement) {
   return findParentByClassName(el, 'container')!;
+}
+
+export function moveLayer(
+  layerEl: HTMLElement,
+  initLayerPos: LayerPos,
+  gridRect: GridRectForDropDownLayerPos
+) {
+  const { top, left } = initLayerPos;
+  const { initBodyScrollTop, initBodyScrollLeft, bodyScrollTop, bodyScrollLeft } = gridRect;
+  const newTop = top + initBodyScrollTop - bodyScrollTop;
+  const newLeft = left + initBodyScrollLeft - bodyScrollLeft;
+
+  if (exceedGridViewport(newTop, newLeft, gridRect)) {
+    layerEl.style.zIndex = '-100';
+    layerEl.style.top = '0px';
+    layerEl.style.left = '0px';
+  } else {
+    layerEl.style.zIndex = '';
+    layerEl.style.top = `${newTop}px`;
+    layerEl.style.left = `${newLeft}px`;
+  }
 }
 
 export function setLayerPosition(

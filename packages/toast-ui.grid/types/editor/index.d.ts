@@ -22,6 +22,7 @@ export interface CellEditorProps {
 export interface CellEditor {
   getElement(): HTMLElement | undefined;
   getValue(): CellValue;
+  moveDropdownLayer?(gridRect: GridRectForDropDownLayerPos): void;
   mounted?(): void;
   beforeDestroy?(): void;
   el?: HTMLElement;
@@ -34,4 +35,20 @@ export interface ListItemOptions {
 
 export interface CellEditorClass {
   new (props: CellEditorProps): CellEditor;
+}
+
+export interface GridRectForDropDownLayerPos {
+  initBodyScrollTop: number;
+  initBodyScrollLeft: number;
+  bodyHeight: number;
+  bodyWidth: number;
+  bodyScrollTop: number;
+  bodyScrollLeft: number;
+  headerHeight: number;
+  leftSideWidth: number;
+}
+
+export interface LayerPos {
+  top: number;
+  left: number;
 }

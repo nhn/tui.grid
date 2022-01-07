@@ -1,12 +1,18 @@
 import SelectBox from '@toast-ui/select-box';
 import '@toast-ui/select-box/dist/toastui-select-box.css';
-import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
+import {
+  CellEditor,
+  CellEditorProps,
+  GridRectForDropDownLayerPos,
+  LayerPos,
+  PortalEditingKeydown,
+} from '@t/editor';
 import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
-import { setLayerPosition, getContainerElement, setOpacity } from './dom';
+import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './dom';
 import { getKeyStrokeString } from '../helper/keyboard';
-import { includes, isNil } from '../helper/common';
+import { includes, isNil, pixelToNumber } from '../helper/common';
 
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -20,6 +26,8 @@ export class SelectEditor implements CellEditor {
   private isMounted = false;
 
   private portalEditingKeydown: PortalEditingKeydown;
+
+  private initLayerPos: LayerPos | null = null;
 
   public constructor(props: CellEditorProps) {
     const { width, formattedValue, portalEditingKeydown } = props;
@@ -93,6 +101,12 @@ export class SelectEditor implements CellEditor {
     this.selectBoxEl.input.focus();
   }
 
+  public moveDropdownLayer(gridRect: GridRectForDropDownLayerPos) {
+    if (this.initLayerPos) {
+      moveLayer(this.layer, this.initLayerPos, gridRect);
+    }
+  }
+
   public getElement() {
     return this.el;
   }
@@ -107,6 +121,12 @@ export class SelectEditor implements CellEditor {
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+
+    this.initLayerPos = {
+      top: pixelToNumber(this.layer.style.top),
+      left: pixelToNumber(this.layer.style.left),
+    };
+
     this.focusSelectBox();
     this.isMounted = true;
     // To show the layer which has appropriate position
@@ -117,5 +137,6 @@ export class SelectEditor implements CellEditor {
     this.selectBoxEl.destroy();
     this.layer.removeEventListener('keydown', this.onKeydown);
     getContainerElement(this.el).removeChild(this.layer);
+    this.initLayerPos = null;
   }
 }
