@@ -47,7 +47,7 @@ export class EditingLayerComp extends Component<Props> {
 
   private contentEl?: HTMLElement;
 
-  private initBodyScroll: InitBodyScroll = { initBodyScrollTop: 0, initBodyScrollLeft: 0 };
+  private initBodyScrollPos: InitBodyScroll = { initBodyScrollTop: 0, initBodyScrollLeft: 0 };
 
   private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
     const { dispatch } = this.props;
@@ -115,7 +115,7 @@ export class EditingLayerComp extends Component<Props> {
   private setInitScrollPos() {
     const { bodyScrollTop, bodyScrollLeft } = this.props;
 
-    this.initBodyScroll = {
+    this.initBodyScrollPos = {
       initBodyScrollTop: bodyScrollTop,
       initBodyScrollLeft: bodyScrollLeft,
     };
@@ -182,7 +182,7 @@ export class EditingLayerComp extends Component<Props> {
         bodyScrollLeft,
         headerHeight,
         leftSideWidth,
-        ...this.initBodyScroll,
+        ...this.initBodyScrollPos,
       });
     }
   }

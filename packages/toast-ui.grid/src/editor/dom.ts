@@ -6,7 +6,7 @@ const INDENT = 5;
 const SCROLL_BAR_WIDTH = 17;
 const SCROLL_BAR_HEIGHT = 17;
 
-function isHidden(
+function exceedGridViewport(
   top: number,
   left: number,
   { bodyHeight, bodyWidth, headerHeight, leftSideWidth }: GridRectForDropDownLayerPos
@@ -35,9 +35,15 @@ export function moveLayer(
   const newTop = top + initBodyScrollTop - bodyScrollTop;
   const newLeft = left + initBodyScrollLeft - bodyScrollLeft;
 
-  layerEl.style.display = isHidden(newTop, newLeft, gridRect) ? 'none' : '';
-  layerEl.style.top = `${newTop}px`;
-  layerEl.style.left = `${newLeft}px`;
+  if (exceedGridViewport(newTop, newLeft, gridRect)) {
+    layerEl.style.zIndex = '-100';
+    layerEl.style.top = '0px';
+    layerEl.style.left = '0px';
+  } else {
+    layerEl.style.zIndex = '';
+    layerEl.style.top = `${newTop}px`;
+    layerEl.style.left = `${newLeft}px`;
+  }
 }
 
 export function setLayerPosition(

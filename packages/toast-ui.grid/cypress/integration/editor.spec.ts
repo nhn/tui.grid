@@ -586,7 +586,7 @@ describe('original cell value should be kept', () => {
   });
 });
 
-describe('Scroll with editor that has drop-down layer', () => {
+describe.only('Scroll with editor that has drop-down layer', () => {
   function scrollTo(position: Cypress.PositionType) {
     cy.getByCls('rside-area', 'body-area').wait(0).scrollTo(position);
   }
@@ -639,7 +639,7 @@ describe('Scroll with editor that has drop-down layer', () => {
 
       scrollTo(position as Cypress.PositionType);
 
-      cy.getByCls('editor-select-box-layer').should('be.not.visible');
+      cy.getByCls('editor-select-box-layer').should('have.css', 'z-index', '-100');
     });
   });
 });
