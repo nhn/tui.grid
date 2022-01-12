@@ -340,6 +340,34 @@ it('should check the validation of cell - combined', () => {
   cy.getCell(0, 'price').should('not.have.class', cls('cell-invalid'));
 });
 
+it.only('should not check the validation of cell when adding class names', () => {
+  const stub = cy.stub().returns(true);
+  cy.window().then((win: WindowWithGrid) => {
+    cy.createGrid({
+      data,
+      columns: [
+        {
+          name: 'name',
+          validation: {
+            validatorFn: () => {
+              if (win.grid) {
+                stub();
+              }
+              return true;
+            },
+          },
+        },
+      ],
+    });
+
+    cy.gridInstance().invoke('addRowClassName', 0, 'some-class');
+    cy.gridInstance().invoke('addColumnClassName', 'name', 'some-class');
+    cy.gridInstance().invoke('addCellClassName', 0, 'name', 'some-class');
+
+    cy.wrap(stub).should('not.be.called');
+  });
+});
+
 it('should check the validation of cell after editing', () => {
   cy.createGrid({
     data,
