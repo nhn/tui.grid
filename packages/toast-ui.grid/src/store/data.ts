@@ -11,8 +11,9 @@ import {
   Data,
   SortState,
   RawRowOptions,
+  CellValue,
 } from '@t/store/data';
-import { Column, ColumnInfo } from '@t/store/column';
+import { Column, ColumnInfo, ErrorInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
 import { OptRow, Dictionary } from '@t/options';
 import { Range } from '@t/store/selection';
@@ -28,6 +29,7 @@ import {
   assign,
   isNull,
   isNil,
+  arrayEqual,
 } from '../helper/common';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
@@ -64,6 +66,12 @@ interface RelationInfo {
 interface ViewCellInfo {
   columnMap: Dictionary<ColumnInfo>;
   valueMap: Dictionary<CellRenderData>;
+}
+
+interface ViewCellCreationOpt {
+  isDataModified?: boolean;
+  prevInvalidStates?: ErrorInfo[];
+  relationInfo?: RelationInfo;
 }
 
 let dataCreationKey = '';
@@ -115,7 +123,7 @@ function createViewCell(
   id: number,
   row: Row,
   column: ColumnInfo,
-  relationInfo: RelationInfo = {}
+  { isDataModified = false, prevInvalidStates, relationInfo = {} }: ViewCellCreationOpt
 ): CellRenderData {
   const { relationMatched = true, relationListItems } = relationInfo;
   const { name, formatter, editor, validation, defaultValue } = column;
@@ -148,11 +156,16 @@ function createViewCell(
     cellDisabled = rowDisabled;
   }
 
+  const usePrevInvalidStates = isDataModified && !isNil(prevInvalidStates);
+  const invalidStates = usePrevInvalidStates
+    ? (prevInvalidStates as ErrorInfo[])
+    : getValidationCode({ id, value: row[name], row, validation, columnName: name });
+
   return {
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode({ id, value: row[name], row, validation, columnName: name }),
+    invalidStates,
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value,
   };
@@ -186,8 +199,10 @@ function createRelationViewCell(
       : true;
 
     const cellData = createViewCell(id, row, columnMap[targetName], {
-      relationMatched,
-      relationListItems: targetListItems,
+      relationInfo: {
+        relationMatched,
+        relationListItems: targetListItems,
+      },
     });
 
     if (!targetEditable) {
@@ -206,6 +221,22 @@ function createRelationViewCell(
   });
 }
 
+function getValuesByColumnName(
+  rawData: Row[],
+  columnMap: Dictionary<ColumnInfo>,
+  columnName?: string
+) {
+  const values: Dictionary<CellValue[]> = {};
+
+  Object.keys(columnMap).forEach((name) => {
+    if (isUndefined(columnName) || columnName === name) {
+      values[name] = rawData.map((row) => row[name]);
+    }
+  });
+
+  return values;
+}
+
 export function createViewRow(id: number, row: Row, rawData: Row[], column: Column) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
   const { columnMapWithRelation: columnMap } = column;
@@ -215,6 +246,9 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
   Object.keys(columnMap).forEach((name) => {
     initValueMap[name] = null;
   });
+
+  const cachedValues = getValuesByColumnName(rawData, columnMap);
+  const cachedValueMap: Dictionary<CellRenderData> = {};
 
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
   const __unobserveFns__: Function[] = [];
@@ -229,7 +263,16 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
     if (!related) {
       __unobserveFns__.push(
         observe(() => {
-          valueMap[name] = createViewCell(id, row, columnMap[name]);
+          const currentValues = getValuesByColumnName(rawData, columnMap, name);
+          const isDataModified = arrayEqual(cachedValues[name], currentValues[name]);
+
+          cachedValueMap[name] = createViewCell(id, row, columnMap[name], {
+            isDataModified,
+            prevInvalidStates: cachedValueMap[name]?.invalidStates,
+          });
+
+          cachedValues[name] = currentValues[name];
+          valueMap[name] = cachedValueMap[name];
         })
       );
     }
