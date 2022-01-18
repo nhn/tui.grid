@@ -340,7 +340,7 @@ it('should check the validation of cell - combined', () => {
   cy.getCell(0, 'price').should('not.have.class', cls('cell-invalid'));
 });
 
-it.only('should not check the validation of cell when adding class names', () => {
+it('should not check the validation of cell when adding class names', () => {
   const stub = cy.stub().returns(true);
   cy.window().then((win: WindowWithGrid) => {
     cy.createGrid({
@@ -449,19 +449,6 @@ describe('should check the validation of cell - unique', () => {
     cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
     cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
-  });
-
-  it('check `unique` validation after calling appendRows', () => {
-    cy.gridInstance().invoke('appendRows', [
-      { name: 'pen', price: 100 },
-      { name: 'eraser', price: 3200 },
-    ]);
-
-    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
-    cy.getCell(1, 'name').should('have.class', cls('cell-invalid'));
-    cy.getCell(2, 'name').should('have.class', cls('cell-invalid'));
-    cy.getCell(3, 'name').should('have.class', cls('cell-invalid'));
-    cy.getCell(4, 'name').should('not.have.class', cls('cell-invalid'));
   });
 
   it('check `unique` validation after calling appendRows', () => {
