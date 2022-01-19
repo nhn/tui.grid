@@ -9,6 +9,7 @@ interface ObserverInfo {
   targetObserverIdSets: BooleanSet[];
   sync: boolean;
   name?: string;
+  key?: string;
 }
 
 export type Observable<T extends Dictionary<any>> = T & {
@@ -62,8 +63,9 @@ export function getRunningObservers() {
 
 function callObserver(observerId: string) {
   observerIdStack.push(observerId);
-  observerInfoMap[observerId].fn();
+  observerInfoMap[observerId].fn(observerInfoMap[observerId].key);
   observerIdStack.pop();
+  delete observerInfoMap[observerId].key;
 }
 
 function flush() {
@@ -78,8 +80,9 @@ function flush() {
   clearQueue();
 }
 
-function run(observerId: string) {
+function run(observerId: string, key?: any) {
   const { sync } = observerInfoMap[observerId];
+  observerInfoMap[observerId].key = key;
 
   if (sync) {
     callObserver(observerId);
@@ -208,7 +211,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 
 function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K) {
   Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
-    run(observerId);
+    run(observerId, key);
   });
 }
 

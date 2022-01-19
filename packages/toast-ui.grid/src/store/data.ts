@@ -11,7 +11,6 @@ import {
   Data,
   SortState,
   RawRowOptions,
-  CellValue,
 } from '@t/store/data';
 import { Column, ColumnInfo, ErrorInfo } from '@t/store/column';
 import { Filter } from '@t/store/filterLayerState';
@@ -29,7 +28,6 @@ import {
   assign,
   isNull,
   isNil,
-  arrayEqual,
 } from '../helper/common';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { addUniqueInfoMap, getValidationCode } from './helper/validation';
@@ -156,7 +154,7 @@ function createViewCell(
     cellDisabled = rowDisabled;
   }
 
-  const usePrevInvalidStates = isDataModified && !isNil(prevInvalidStates);
+  const usePrevInvalidStates = !isDataModified && !isNil(prevInvalidStates);
   const invalidStates = usePrevInvalidStates
     ? (prevInvalidStates as ErrorInfo[])
     : getValidationCode({ id, value: row[name], row, validation, columnName: name });
@@ -221,22 +219,6 @@ function createRelationViewCell(
   });
 }
 
-function getValuesByColumnName(
-  rawData: Row[],
-  columnMap: Dictionary<ColumnInfo>,
-  columnName?: string
-) {
-  const values: Dictionary<CellValue[]> = {};
-
-  Object.keys(columnMap).forEach((name) => {
-    if (isUndefined(columnName) || columnName === name) {
-      values[name] = rawData.map((row) => row[name]);
-    }
-  });
-
-  return values;
-}
-
 export function createViewRow(id: number, row: Row, rawData: Row[], column: Column) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
   const { columnMapWithRelation: columnMap } = column;
@@ -247,7 +229,6 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
     initValueMap[name] = null;
   });
 
-  const cachedValues = getValuesByColumnName(rawData, columnMap);
   const cachedValueMap: Dictionary<CellRenderData> = {};
 
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
@@ -262,16 +243,14 @@ export function createViewRow(id: number, row: Row, rawData: Row[], column: Colu
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       __unobserveFns__.push(
-        observe(() => {
-          const currentValues = getValuesByColumnName(rawData, columnMap, name);
-          const isDataModified = arrayEqual(cachedValues[name], currentValues[name]);
+        observe((calledBy: string) => {
+          const isDataModified = calledBy !== 'className';
 
           cachedValueMap[name] = createViewCell(id, row, columnMap[name], {
             isDataModified,
             prevInvalidStates: cachedValueMap[name]?.invalidStates,
           });
 
-          cachedValues[name] = currentValues[name];
           valueMap[name] = cachedValueMap[name];
         })
       );
