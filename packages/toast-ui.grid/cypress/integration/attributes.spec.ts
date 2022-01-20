@@ -94,6 +94,29 @@ describe('className', () => {
       cy.wrap($el).should('not.have.class', 'tui-grid-row-test');
     });
   });
+
+  it('getRowClassName() / getColumnClassName() / getCellClassName()', () => {
+    cy.gridInstance().invoke('addRowClassName', 0, 'tui-grid-row-test');
+    cy.gridInstance().invoke('addColumnClassName', 'age', 'tui-grid-column-test');
+    cy.gridInstance().invoke('addCellClassName', 0, 'age', 'tui-grid-cell-test');
+
+    cy.gridInstance()
+      .invoke('getRowClassName', 0)
+      .should('deep.equal', ['row-test-a', 'tui-grid-row-test']);
+
+    cy.gridInstance()
+      .invoke('getColumnClassName', 'age')
+      .should('deep.equal', ['tui-grid-column-test']);
+
+    cy.gridInstance()
+      .invoke('getCellClassName', 0, 'age')
+      .should('deep.equal', [
+        'row-test-a',
+        'tui-grid-row-test',
+        'tui-grid-cell-test',
+        'tui-grid-column-test',
+      ]);
+  });
 });
 
 describe('row disabled', () => {
