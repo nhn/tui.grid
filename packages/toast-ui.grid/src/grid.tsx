@@ -1328,6 +1328,12 @@ export default class Grid implements TuiGrid {
     this.dispatch('removeRowClassName', rowKey, className);
   }
 
+  /**
+   * Return a list of class names of specific cell.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {Array} - A list of class names
+   */
   public getCellClassName(rowKey: RowKey, columnName: string) {
     const targetRow = this.getRow(rowKey);
     const isExistColumnName = this.store.column.allColumns.some(({ name }) => name === columnName);
@@ -1341,6 +1347,11 @@ export default class Grid implements TuiGrid {
     return [];
   }
 
+  /**
+   * Return a list of class names of specific row.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array} - A list of class names
+   */
   public getRowClassName(rowKey: RowKey) {
     const targetRow = this.getRow(rowKey);
 
@@ -1709,6 +1720,11 @@ export default class Grid implements TuiGrid {
     this.dispatch('removeColumnClassName', columnName, className);
   }
 
+  /**
+   * Return a list of class names of specific column.
+   * @param {string} columnName - The name of the column
+   * @returns {Array} - A list of class names
+   */
   public getColumnClassName(columnName: string) {
     const { rawData } = this.store.data;
     const classNamesOfFirstRow: string[] = rawData[0]._attributes.className.column[columnName];
