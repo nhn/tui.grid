@@ -51,6 +51,9 @@ import {
   pick,
   deepCopy,
   find,
+  includes,
+  isEmpty,
+  isNil,
 } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -1325,6 +1328,25 @@ export default class Grid implements TuiGrid {
     this.dispatch('removeRowClassName', rowKey, className);
   }
 
+  public getCellClassName(rowKey: RowKey, columnName: string) {
+    const targetRow = this.getRow(rowKey);
+    const isExistColumnName = this.store.column.allColumns.some(({ name }) => name === columnName);
+
+    if (!isNil(targetRow) && isExistColumnName) {
+      const { row, column } = targetRow._attributes.className;
+
+      return [...row, ...(column[columnName] ?? [])];
+    }
+
+    return [];
+  }
+
+  public getRowClassName(rowKey: RowKey) {
+    const targetRow = this.getRow(rowKey);
+
+    return isNil(targetRow) ? [] : targetRow._attributes.className.row;
+  }
+
   /**
    * Add custom event to grid.
    * @param {string} eventName - custom event name
@@ -1685,6 +1707,27 @@ export default class Grid implements TuiGrid {
    */
   public removeColumnClassName(columnName: string, className: string) {
     this.dispatch('removeColumnClassName', columnName, className);
+  }
+
+  public getColumnClassName(columnName: string) {
+    const { rawData } = this.store.data;
+    const classNamesOfFirstRow: string[] = rawData[0]._attributes.className.column[columnName];
+
+    if (!isEmpty(classNamesOfFirstRow)) {
+      return rawData.slice(1).reduce((acc, row, _, arr) => {
+        const classNames = row._attributes.className.column[columnName];
+
+        if (!isEmpty(classNames) && !isEmpty(acc)) {
+          return acc.filter((className) => includes(classNames, className));
+        }
+
+        arr.splice(0);
+
+        return [];
+      }, classNamesOfFirstRow);
+    }
+
+    return [];
   }
 
   /**
