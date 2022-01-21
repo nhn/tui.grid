@@ -608,45 +608,41 @@ describe('original cell value should be kept', () => {
 
 describe('Scroll with editor that has drop-down layer', () => {
   function scrollTo(position: Cypress.PositionType) {
-    cy.getByCls('rside-area', 'body-area').wait(0).scrollTo(position);
+    cy.getByCls('rside-area', 'body-area').wait(100).scrollTo(position);
   }
 
-  beforeEach(() => {
-    const data = [
-      { id: '1', name: 'Kim', age: '10', school: '1', grade: 'First' },
-      { id: '2', name: 'Lee', age: '11', school: '1', grade: 'Second' },
-      { id: '3', name: 'Park', age: '12', school: '1', grade: 'First' },
-      { id: '4', name: 'Choi', age: '13', school: '1', grade: 'Second' },
-      { id: '5', name: 'Cho', age: '14', school: '1', grade: 'Third' },
-      { id: '6', name: 'Han', age: '14', school: '1', grade: 'Second' },
-      { id: '7', name: 'Lim', age: '14', school: '1', grade: 'First' },
-      { id: '8', name: 'Ahn', age: '14', school: '1', grade: 'Second' },
-      { id: '9', name: 'Ryu', age: '14', school: '1', grade: 'First' },
-    ];
-    const columns = [
-      { name: 'id', minWidth: 100 },
-      { name: 'name', minWidth: 100 },
-      {
-        name: 'school',
-        formatter: 'listItemText',
-        editor: {
-          type: 'select',
-          options: {
-            listItems: [
-              { text: 'Primary', value: '1' },
-              { text: 'Middle', value: '2' },
-              { text: 'High', value: '3' },
-            ],
-          },
+  const data = [
+    { id: '1', name: 'Kim', age: '10', school: '1', grade: 'First' },
+    { id: '2', name: 'Lee', age: '11', school: '1', grade: 'Second' },
+    { id: '3', name: 'Park', age: '12', school: '1', grade: 'First' },
+    { id: '4', name: 'Choi', age: '13', school: '1', grade: 'Second' },
+    { id: '5', name: 'Cho', age: '14', school: '1', grade: 'Third' },
+    { id: '6', name: 'Han', age: '14', school: '1', grade: 'Second' },
+    { id: '7', name: 'Lim', age: '14', school: '1', grade: 'First' },
+    { id: '8', name: 'Ahn', age: '14', school: '1', grade: 'Second' },
+    { id: '9', name: 'Ryu', age: '14', school: '1', grade: 'First' },
+  ];
+  const columns = [
+    { name: 'id', minWidth: 100 },
+    { name: 'name', minWidth: 100 },
+    {
+      name: 'school',
+      formatter: 'listItemText',
+      editor: {
+        type: 'select',
+        options: {
+          listItems: [
+            { text: 'Primary', value: '1' },
+            { text: 'Middle', value: '2' },
+            { text: 'High', value: '3' },
+          ],
         },
-        minWidth: 100,
       },
-      { name: 'age', minWidth: 100 },
-      { name: 'grade', minWidth: 100 },
-    ];
-
-    cy.createGrid({ data, columns, width: 200, bodyHeight: 150 });
-  });
+      minWidth: 100,
+    },
+    { name: 'age', minWidth: 100 },
+    { name: 'grade', minWidth: 100 },
+  ];
 
   [
     { direcion: 'down', position: 'bottom' },
@@ -655,6 +651,7 @@ describe('Scroll with editor that has drop-down layer', () => {
     { direcion: 'left', position: 'left' },
   ].forEach(({ direcion, position }) => {
     it(`should hides the drop-down layer when scrolling ${direcion}`, () => {
+      cy.createGrid({ data, columns, width: 200, bodyHeight: 150 });
       cy.gridInstance().invoke('startEditing', 4, 'school');
 
       scrollTo(position as Cypress.PositionType);
