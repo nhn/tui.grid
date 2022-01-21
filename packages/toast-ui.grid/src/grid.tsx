@@ -1729,21 +1729,21 @@ export default class Grid implements TuiGrid {
     const { rawData } = this.store.data;
     const classNamesOfFirstRow: string[] = rawData[0]._attributes.className.column[columnName];
 
-    if (!isEmpty(classNamesOfFirstRow)) {
-      return rawData.slice(1).reduce((acc, row, _, arr) => {
-        const classNames = row._attributes.className.column[columnName];
+    if (isEmpty(classNamesOfFirstRow)) {
+      return [];
+    }
 
-        if (!isEmpty(classNames) && !isEmpty(acc)) {
-          return acc.filter((className) => includes(classNames, className));
-        }
+    return rawData.slice(1).reduce((acc, row, _, arr) => {
+      const classNames = row._attributes.className.column[columnName];
 
+      if (isEmpty(classNames) || isEmpty(acc)) {
         arr.splice(0);
 
         return [];
-      }, classNamesOfFirstRow);
-    }
+      }
 
-    return [];
+      return acc.filter((className) => includes(classNames, className));
+    }, classNamesOfFirstRow);
   }
 
   /**
