@@ -212,6 +212,10 @@ declare namespace tui {
 
     public removeRowClassName(rowKey: RowKey, className: string): void;
 
+    public getCellClassName(rowKey: RowKey, columnName: string): string[];
+
+    public getRowClassName(rowKey: RowKey): string[];
+
     public on(eventName: GridEventName, fn: GridEventListener): void;
 
     public off(eventName: GridEventName, fn?: GridEventListener): void;
@@ -274,6 +278,8 @@ declare namespace tui {
     public addColumnClassName(columnName: string, className: string): void;
 
     public removeColumnClassName(columnName: string, className: string): void;
+
+    public getColumnClassName(columnName: string): string[];
 
     public setRow(rowKey: RowKey, row: OptRow): void;
 
