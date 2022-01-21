@@ -80,7 +80,7 @@ function flush() {
   clearQueue();
 }
 
-function run(observerId: string, key?: any) {
+function run(observerId: string, key: string) {
   const { sync } = observerInfoMap[observerId];
   observerInfoMap[observerId].key = key;
 
@@ -104,7 +104,7 @@ function setValue<T, K extends keyof T>(
     }
     storage[key] = value;
     Object.keys(observerIdSet).forEach((observerId) => {
-      run(observerId);
+      run(observerId, 'setValue');
     });
   }
 }
@@ -116,7 +116,7 @@ export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
 export function observe(fn: Function, sync = false, name = '') {
   const observerId = generateObserverId();
   observerInfoMap[observerId] = { fn, targetObserverIdSets: [], sync, name };
-  run(observerId);
+  run(observerId, 'observe');
 
   // return unobserve function
   return () => {
@@ -211,7 +211,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 
 function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K) {
   Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
-    run(observerId, key);
+    run(observerId, key.toString());
   });
 }
 
