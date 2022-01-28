@@ -14,6 +14,6 @@
     "build:react": "lerna run build --scope @toast-ui/react-grid",
     "build:vue": "lerna run build --scope @toast-ui/vue-grid",
     "note": "tui-note",
-    "update:wrappers": "lerna run update:wrapper --scope tui-grid && npm install --prefix packages/toast-ui.react-grid && npm install --prefix packages/toast-ui.vue-grid"
+    "update:wrappers": "lerna run update:wrapper --scope tui-grid && npm install --prefix packages/toast-ui.react-grid && npm install --prefix packages/toast-ui.vue-grid && npm run build:react && npm run build:vue"
   }
 }
