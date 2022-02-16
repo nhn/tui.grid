@@ -188,17 +188,17 @@ export class EditingLayerComp extends Component<Props> {
     } = this.props;
     const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
-    if (prevActive && !active) {
-      // eslint-disable-next-line no-unused-expressions
-      this.editor?.beforeDestroy?.();
-    }
-
     if (
       (prevActive && !active && forcedDestroyEditing) ||
       (prevActive &&
         (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey))
     ) {
       this.saveAndFinishEditing();
+    }
+
+    if (prevActive && !active) {
+      // eslint-disable-next-line no-unused-expressions
+      this.editor?.beforeDestroy?.();
     }
   }
 
