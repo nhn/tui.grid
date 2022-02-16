@@ -388,10 +388,10 @@ describe('select, checkbox, radio editor', () => {
         cy.gridInstance().invoke('startEditing', 1, 'name');
 
         if (type === 'select') {
-          cy.get('.tui-select-box-dropdown').eq(0).click();
+          cy.get('.tui-select-box-item').eq(0).click();
           cy.getCellByIdx(0, 0).click();
 
-          cy.getCellByIdx(0, 0).should('have.text', 'A');
+          cy.getCellByIdx(1, 0).should('have.text', 'A');
         } else {
           cy.getByCls(`editor-label-icon-${type}`).eq(0).click();
           cy.getCellByIdx(0, 0).click();
