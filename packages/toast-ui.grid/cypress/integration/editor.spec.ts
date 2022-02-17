@@ -362,6 +362,7 @@ describe('select, checkbox, radio editor', () => {
           },
         },
       },
+      { name: 'isHuman', defaultValue: true },
     ];
 
     cy.createGrid({ data: dataForGridWithType, columns });
@@ -387,10 +388,10 @@ describe('select, checkbox, radio editor', () => {
         cy.gridInstance().invoke('startEditing', 1, 'name');
 
         if (type === 'select') {
-          cy.get('.tui-select-box-dropdown').eq(0).click();
+          cy.get('.tui-select-box-item').eq(0).click();
           cy.getCellByIdx(0, 0).click();
 
-          cy.getCellByIdx(0, 0).should('have.text', 'A');
+          cy.getCellByIdx(1, 0).should('have.text', 'A');
         } else {
           cy.getByCls(`editor-label-icon-${type}`).eq(0).click();
           cy.getCellByIdx(0, 0).click();
@@ -399,6 +400,28 @@ describe('select, checkbox, radio editor', () => {
             cy.getCellByIdx(1, 0).should('have.text', 'A');
           } else {
             cy.getCellByIdx(1, 0).should('have.text', 'A,B');
+          }
+        }
+      });
+
+      it(`should apply selected value properly when changing focus from left to right(${type})`, () => {
+        createGridWithType(type);
+        cy.gridInstance().invoke('setFrozenColumnCount', 1);
+        cy.gridInstance().invoke('startEditing', 1, 'name');
+
+        if (type === 'select') {
+          cy.get('.tui-select-box-item').eq(0).click();
+          cy.getCell(0, 'isHuman').click();
+
+          cy.getCell(1, 'name').should('have.text', 'A');
+        } else {
+          cy.getByCls(`editor-label-icon-${type}`).eq(0).click();
+          cy.getCell(0, 'isHuman').click();
+
+          if (type === 'radio') {
+            cy.getCell(1, 'name').should('have.text', 'A');
+          } else {
+            cy.getCell(1, 'name').should('have.text', 'A,B');
           }
         }
       });
