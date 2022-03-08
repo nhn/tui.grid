@@ -403,7 +403,8 @@ export function createRawRow(
   row._attributes = getAttributes(row, index, lazyObservable, disabled);
   row._attributes.rowSpan = rowSpan;
   row._disabledPriority = row._disabledPriority || {};
-  (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
+
+  (row as Row).rowSpanMap = (row as Row).rowSpanMap ?? createRowSpanMap(row, rowSpan, prevRow);
 
   setRowRelationListItems(row as Row, column.columnMapWithRelation);
 
