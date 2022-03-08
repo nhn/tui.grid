@@ -4,6 +4,10 @@ import { OptColumn, OptGrid, OptRow } from '@t/options';
 import { invokeFilter, dragAndDropRow } from '../helper/util';
 import { deepCopyArray } from '@/helper/common';
 
+function scrollTo(position: Cypress.PositionType) {
+  cy.getByCls('rside-area', 'body-area').wait(100).scrollTo(position);
+}
+
 function createDataWithRowSpanAttr(): OptRow[] {
   const optRows: OptRow[] = sample.slice();
   optRows[0]._attributes = {
@@ -373,6 +377,17 @@ describe('Dynamic RowSpan', () => {
     cy.getColumnCells('value').each(($el) => {
       cy.wrap($el).should('not.have.attr', 'rowSpan');
     });
+  });
+
+  it.only('should render rowSpan cell properly when scroll', () => {
+    createGridWithRowSpan({
+      data: dataForDynamicRowSpan.concat(dataForDynamicRowSpan),
+      bodyHeight: 200,
+    });
+
+    scrollTo('bottomLeft');
+
+    cy.getCell(9, 'age').should('have.attr', 'rowSpan', '2');
   });
 
   describe('With filter', () => {
