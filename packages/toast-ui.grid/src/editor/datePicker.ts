@@ -8,6 +8,8 @@ import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
 
+  public isMounted = false;
+
   private layer: HTMLDivElement;
 
   private inputEl: HTMLInputElement;
@@ -133,6 +135,7 @@ export class DatePickerEditor implements CellEditor {
       left: pixelToNumber(this.layer.style.left),
     };
 
+    this.isMounted = true;
     // To show the layer which has appropriate position
     setOpacity(this.layer, 1);
   }
@@ -144,5 +147,6 @@ export class DatePickerEditor implements CellEditor {
     this.datePickerEl.destroy();
     getContainerElement(this.el).removeChild(this.layer);
     this.initLayerPos = null;
+    this.isMounted = false;
   }
 }

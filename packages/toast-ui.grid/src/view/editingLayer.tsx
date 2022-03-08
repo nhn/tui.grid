@@ -8,7 +8,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { findProp, isNull } from '../helper/common';
+import { findProp, isNull, isUndefined } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 
@@ -196,9 +196,14 @@ export class EditingLayerComp extends Component<Props> {
       this.saveAndFinishEditing();
     }
 
-    if (prevActive && !active) {
+    if (
+      this.editor &&
+      prevActive &&
+      !active &&
+      (isUndefined(this.editor.isMounted) || this.editor.isMounted)
+    ) {
       // eslint-disable-next-line no-unused-expressions
-      this.editor?.beforeDestroy?.();
+      this.editor.beforeDestroy?.();
     }
   }
 

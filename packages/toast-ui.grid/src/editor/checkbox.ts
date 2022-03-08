@@ -23,6 +23,8 @@ const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;
 
+  public isMounted = false;
+
   private layer: HTMLUListElement;
 
   private readonly inputType: 'checkbox' | 'radio';
@@ -214,6 +216,8 @@ export class CheckboxEditor implements CellEditor {
     if (checkedInput) {
       this.highlightItem(`checkbox-${checkedInput.value}`);
     }
+
+    this.isMounted = true;
     // To show the layer which has appropriate position
     setOpacity(this.layer, 1);
   }
@@ -224,5 +228,6 @@ export class CheckboxEditor implements CellEditor {
     this.layer.removeEventListener('keydown', this.onKeydown);
     getContainerElement(this.el).removeChild(this.layer);
     this.initLayerPos = null;
+    this.isMounted = false;
   }
 }
