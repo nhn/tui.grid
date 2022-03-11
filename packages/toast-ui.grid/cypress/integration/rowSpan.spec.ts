@@ -379,7 +379,7 @@ describe('Dynamic RowSpan', () => {
     });
   });
 
-  it.only('should render rowSpan cell properly when scroll', () => {
+  it('should render rowSpan cell properly when scroll', () => {
     createGridWithRowSpan({
       data: dataForDynamicRowSpan.concat(dataForDynamicRowSpan),
       bodyHeight: 200,
