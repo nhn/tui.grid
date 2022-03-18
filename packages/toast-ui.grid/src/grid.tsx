@@ -875,9 +875,14 @@ export default class Grid implements TuiGrid {
 
   /**
    * Reset the width of each column by using initial setting of column models.
+   * @param {Array.<number>} [widths] - An array of column widths to set. If there's no parameter, it reset auto-resizing column width.
    */
-  public resetColumnWidths(widths: number[]) {
-    this.dispatch('resetColumnWidths', widths);
+  public resetColumnWidths(widths?: number[]) {
+    if (widths) {
+      this.dispatch('resetColumnWidths', widths);
+    } else {
+      this.dispatch('setAutoResizingColumnWidths');
+    }
   }
 
   /**
