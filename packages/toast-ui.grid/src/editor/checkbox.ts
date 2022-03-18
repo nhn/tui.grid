@@ -2,6 +2,7 @@ import {
   CellEditor,
   CellEditorProps,
   GridRectForDropDownLayerPos,
+  InstantlyAppliable,
   LayerPos,
   PortalEditingKeydown,
 } from '@t/editor';
@@ -20,7 +21,7 @@ const CHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio-checked');
 const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
 const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked');
 
-export class CheckboxEditor implements CellEditor {
+export class CheckboxEditor implements CellEditor, InstantlyAppliable {
   public el: HTMLElement;
 
   public isMounted = false;
@@ -37,7 +38,7 @@ export class CheckboxEditor implements CellEditor {
 
   private initLayerPos: LayerPos | null = null;
 
-  private instantApplyCallback?: Function;
+  instantApplyCallback: ((...args: any[]) => void) | null = null;
 
   public constructor(props: CellEditorProps) {
     const { columnInfo, width, formattedValue, portalEditingKeydown, instantApplyCallback } = props;

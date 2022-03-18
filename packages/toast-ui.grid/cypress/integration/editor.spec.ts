@@ -532,7 +532,7 @@ describe('select, checkbox, radio editor', () => {
   });
 
   describe('Inatant apply', () => {
-    function createGridWithTypeAndInstantApply(type: string) {
+    function createGridWithTypeAndInstantApply(type: 'select' | 'radio' | 'checkbox') {
       const columns = [
         {
           name: 'name',

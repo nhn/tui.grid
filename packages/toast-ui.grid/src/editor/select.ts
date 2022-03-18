@@ -4,6 +4,7 @@ import {
   CellEditor,
   CellEditorProps,
   GridRectForDropDownLayerPos,
+  InstantlyAppliable,
   LayerPos,
   PortalEditingKeydown,
 } from '@t/editor';
@@ -14,7 +15,7 @@ import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './
 import { getKeyStrokeString } from '../helper/keyboard';
 import { includes, isNil, pixelToNumber } from '../helper/common';
 
-export class SelectEditor implements CellEditor {
+export class SelectEditor implements CellEditor, InstantlyAppliable {
   public el: HTMLDivElement;
 
   public isMounted = false;
@@ -28,6 +29,8 @@ export class SelectEditor implements CellEditor {
   private portalEditingKeydown: PortalEditingKeydown;
 
   private initLayerPos: LayerPos | null = null;
+
+  instantApplyCallback: ((...args: any[]) => void) | null = null;
 
   public constructor(props: CellEditorProps) {
     const { width, formattedValue, portalEditingKeydown, columnInfo, instantApplyCallback } = props;
@@ -47,7 +50,8 @@ export class SelectEditor implements CellEditor {
     this.layer.addEventListener('keydown', this.onKeydown);
 
     if (instantApply) {
-      this.selectBoxEl.on('close', instantApplyCallback);
+      this.instantApplyCallback = instantApplyCallback;
+      this.selectBoxEl.on('close', this.instantApplyCallback);
     }
   }
 

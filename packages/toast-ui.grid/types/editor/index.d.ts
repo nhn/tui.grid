@@ -9,6 +9,8 @@ export type CheckboxOptions = ListItemOptions & {
 
 export type PortalEditingKeydown = (ev: KeyboardEvent) => void;
 
+type InstantApplyCallback = (...args: any[]) => void;
+
 export interface CellEditorProps {
   grid: TuiGrid & { usageStatistics: boolean };
   rowKey: RowKey;
@@ -17,7 +19,7 @@ export interface CellEditorProps {
   formattedValue: string;
   width: number;
   portalEditingKeydown: PortalEditingKeydown;
-  instantApplyCallback: Function;
+  instantApplyCallback: InstantApplyCallback;
 }
 
 export interface CellEditor {
@@ -53,4 +55,8 @@ export interface GridRectForDropDownLayerPos {
 export interface LayerPos {
   top: number;
   left: number;
+}
+
+export interface InstantlyAppliable {
+  instantApplyCallback: InstantApplyCallback | null;
 }
