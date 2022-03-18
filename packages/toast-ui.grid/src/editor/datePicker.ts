@@ -57,6 +57,7 @@ export class DatePickerEditor implements CellEditor {
     const {
       grid: { usageStatistics },
       columnInfo,
+      instantApplyCallback,
     } = props;
     const value = String(isNil(props.value) ? '' : props.value);
     const el = document.createElement('div');
@@ -103,7 +104,12 @@ export class DatePickerEditor implements CellEditor {
     };
 
     this.datePickerEl = new TuiDatePicker(layer, deepMergedCopy(defaultOptions, options));
-    this.datePickerEl.on('close', () => this.focus());
+    this.datePickerEl.on('close', () => {
+      this.focus();
+      if (options.instantApply) {
+        instantApplyCallback();
+      }
+    });
   }
 
   public moveDropdownLayer(gridRect: GridRectForDropDownLayerPos) {

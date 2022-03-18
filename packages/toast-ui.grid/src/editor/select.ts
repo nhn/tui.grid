@@ -30,7 +30,9 @@ export class SelectEditor implements CellEditor {
   private initLayerPos: LayerPos | null = null;
 
   public constructor(props: CellEditorProps) {
-    const { width, formattedValue, portalEditingKeydown } = props;
+    const { width, formattedValue, portalEditingKeydown, columnInfo, instantApplyCallback } = props;
+
+    const { instantApply } = columnInfo.editor?.options ?? {};
     const el = document.createElement('div');
     const value = String(isNil(props.value) ? '' : props.value);
     el.className = cls('layer-editing-inner');
@@ -43,6 +45,10 @@ export class SelectEditor implements CellEditor {
     this.el = el;
     this.layer = layer;
     this.layer.addEventListener('keydown', this.onKeydown);
+
+    if (instantApply) {
+      this.selectBoxEl.on('close', instantApplyCallback);
+    }
   }
 
   private onKeydown = (ev: KeyboardEvent) => {

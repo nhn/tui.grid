@@ -17,6 +17,7 @@ export interface CellEditorProps {
   formattedValue: string;
   width: number;
   portalEditingKeydown: PortalEditingKeydown;
+  instantApplyCallback: Function;
 }
 
 export interface CellEditor {

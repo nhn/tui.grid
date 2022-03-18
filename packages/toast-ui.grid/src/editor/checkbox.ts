@@ -37,14 +37,17 @@ export class CheckboxEditor implements CellEditor {
 
   private initLayerPos: LayerPos | null = null;
 
+  private instantApplyCallback?: Function;
+
   public constructor(props: CellEditorProps) {
-    const { columnInfo, width, formattedValue, portalEditingKeydown } = props;
+    const { columnInfo, width, formattedValue, portalEditingKeydown, instantApplyCallback } = props;
+    const { type: inputType, instantApply } = columnInfo.editor?.options ?? {};
     const el = document.createElement('div');
     const value = String(isNil(props.value) ? '' : props.value);
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
 
-    this.inputType = columnInfo.editor!.options!.type;
+    this.inputType = inputType;
 
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width);
@@ -54,6 +57,10 @@ export class CheckboxEditor implements CellEditor {
     this.layer = layer;
 
     this.setValue(value);
+
+    if (instantApply && inputType === 'radio') {
+      this.instantApplyCallback = instantApplyCallback;
+    }
   }
 
   private createLayer(listItems: ListItem[], width: number) {
@@ -119,6 +126,9 @@ export class CheckboxEditor implements CellEditor {
   private onChange = (ev: Event) => {
     const value = (ev.target as HTMLInputElement).value;
     this.setLabelClass(value);
+
+    // eslint-disable-next-line no-unused-expressions
+    this.instantApplyCallback?.();
   };
 
   private onKeydown = (ev: KeyboardEvent) => {
