@@ -2,6 +2,7 @@ import {
   CellEditor,
   CellEditorProps,
   GridRectForDropDownLayerPos,
+  InstantlyAppliable,
   LayerPos,
   PortalEditingKeydown,
 } from '@t/editor';
@@ -20,7 +21,7 @@ const CHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio-checked');
 const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
 const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked');
 
-export class CheckboxEditor implements CellEditor {
+export class CheckboxEditor implements CellEditor, InstantlyAppliable {
   public el: HTMLElement;
 
   public isMounted = false;
@@ -37,14 +38,17 @@ export class CheckboxEditor implements CellEditor {
 
   private initLayerPos: LayerPos | null = null;
 
+  instantApplyCallback: ((...args: any[]) => void) | null = null;
+
   public constructor(props: CellEditorProps) {
-    const { columnInfo, width, formattedValue, portalEditingKeydown } = props;
+    const { columnInfo, width, formattedValue, portalEditingKeydown, instantApplyCallback } = props;
+    const { type: inputType, instantApply } = columnInfo.editor?.options ?? {};
     const el = document.createElement('div');
     const value = String(isNil(props.value) ? '' : props.value);
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
 
-    this.inputType = columnInfo.editor!.options!.type;
+    this.inputType = inputType;
 
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width);
@@ -54,6 +58,10 @@ export class CheckboxEditor implements CellEditor {
     this.layer = layer;
 
     this.setValue(value);
+
+    if (instantApply && inputType === 'radio') {
+      this.instantApplyCallback = instantApplyCallback;
+    }
   }
 
   private createLayer(listItems: ListItem[], width: number) {
@@ -119,6 +127,9 @@ export class CheckboxEditor implements CellEditor {
   private onChange = (ev: Event) => {
     const value = (ev.target as HTMLInputElement).value;
     this.setLabelClass(value);
+
+    // eslint-disable-next-line no-unused-expressions
+    this.instantApplyCallback?.();
   };
 
   private onKeydown = (ev: KeyboardEvent) => {

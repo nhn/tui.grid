@@ -1,11 +1,17 @@
 import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '@t/options';
-import { CellEditor, CellEditorProps, GridRectForDropDownLayerPos, LayerPos } from '@t/editor';
+import {
+  CellEditor,
+  CellEditorProps,
+  GridRectForDropDownLayerPos,
+  InstantlyAppliable,
+  LayerPos,
+} from '@t/editor';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isNil, pixelToNumber } from '../helper/common';
 import { setLayerPosition, getContainerElement, setOpacity, moveLayer } from './dom';
 
-export class DatePickerEditor implements CellEditor {
+export class DatePickerEditor implements CellEditor, InstantlyAppliable {
   public el: HTMLDivElement;
 
   public isMounted = false;
@@ -19,6 +25,8 @@ export class DatePickerEditor implements CellEditor {
   private iconEl?: HTMLElement;
 
   private initLayerPos: LayerPos | null = null;
+
+  instantApplyCallback: ((...args: any[]) => void) | null = null;
 
   private createInputElement() {
     const inputEl = document.createElement('input');
@@ -57,6 +65,7 @@ export class DatePickerEditor implements CellEditor {
     const {
       grid: { usageStatistics },
       columnInfo,
+      instantApplyCallback,
     } = props;
     const value = String(isNil(props.value) ? '' : props.value);
     const el = document.createElement('div');
@@ -88,6 +97,10 @@ export class DatePickerEditor implements CellEditor {
       options.format = 'yyyy-MM-dd';
     }
 
+    if (options.instantApply) {
+      this.instantApplyCallback = instantApplyCallback;
+    }
+
     if (isNumber(value) || isString(value)) {
       date = new Date(value);
     }
@@ -103,7 +116,12 @@ export class DatePickerEditor implements CellEditor {
     };
 
     this.datePickerEl = new TuiDatePicker(layer, deepMergedCopy(defaultOptions, options));
-    this.datePickerEl.on('close', () => this.focus());
+    this.datePickerEl.on('close', () => {
+      this.focus();
+
+      // eslint-disable-next-line no-unused-expressions
+      this.instantApplyCallback?.();
+    });
   }
 
   public moveDropdownLayer(gridRect: GridRectForDropDownLayerPos) {

@@ -94,7 +94,7 @@ export class EditingLayerComp extends Component<Props> {
     });
   }
 
-  private saveAndFinishEditing(triggeredByKey = false) {
+  private saveAndFinishEditing = (triggeredByKey = false) => {
     const { dispatch, active } = this.props;
 
     if (this.editor && active) {
@@ -103,7 +103,7 @@ export class EditingLayerComp extends Component<Props> {
       dispatch('setValue', rowKey, columnName, value);
       dispatch('finishEditing', rowKey, columnName, value, { save: true, triggeredByKey });
     }
-  }
+  };
 
   private setInitScrollPos() {
     const { bodyScrollTop, bodyScrollLeft } = this.props;
@@ -132,6 +132,7 @@ export class EditingLayerComp extends Component<Props> {
       formattedValue,
       width: right - left,
       portalEditingKeydown: this.handleKeyDown,
+      instantApplyCallback: this.saveAndFinishEditing,
     };
     const cellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
