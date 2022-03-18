@@ -51,6 +51,10 @@ const columns = [
       },
     },
   },
+  {
+    name: 'instantApply',
+    editor: { type: 'datePicker', options: { instantApply: true } },
+  },
 ];
 const data = [
   {
@@ -60,6 +64,7 @@ const data = [
     timePickerWithTab: '2019-11-11 11:11 AM',
     monthPicker: '2019-11',
     yearPicker: '2019',
+    instantApply: '2019-11-11',
   },
 ];
 
@@ -165,4 +170,11 @@ it('focus the editing cell when datepicker layer is closed', () => {
   cy.get('.tui-calendar-date').contains('14').click();
 
   cy.get('@editingInput').should('be.focused');
+});
+
+it('should apply selected value instantly when instantApply option is true', () => {
+  cy.gridInstance().invoke('startEditing', 0, 'instantApply');
+  cy.get('.tui-calendar-date').contains('14').click();
+
+  cy.getCell(0, 'instantApply').should('have.text', '2019-11-14');
 });

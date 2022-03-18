@@ -530,6 +530,77 @@ describe('select, checkbox, radio editor', () => {
       });
     });
   });
+
+  describe('Inatant apply', () => {
+    function createGridWithTypeAndInstantApply(type: string) {
+      const columns = [
+        {
+          name: 'name',
+          formatter: 'listItemText',
+          editor: {
+            type,
+            options: {
+              listItems: [
+                { text: 'A', value: '1' },
+                { text: 'B', value: '2' },
+                { text: 'C', value: '3' },
+              ],
+              instantApply: true,
+            },
+          },
+        },
+        {
+          name: 'isHuman',
+          defaultValue: '2',
+          formatter: 'listItemText',
+          editor: {
+            type,
+            options: {
+              listItems: [
+                { text: 'true', value: '1' },
+                { text: 'false', value: '2' },
+              ],
+              instantApply: true,
+            },
+          },
+        },
+      ];
+
+      cy.createGrid({ data: dataForGridWithType, columns });
+    }
+
+    it('should apply selected value instantly when instantApply option is true(select)', () => {
+      createGridWithTypeAndInstantApply('select');
+      cy.gridInstance().invoke('setFrozenColumnCount', 1);
+      cy.gridInstance().invoke('startEditing', 1, 'isHuman');
+
+      cy.get('.tui-select-box-item').eq(0).click();
+
+      cy.getByCls('editor-select-box-layer').should('be.not.visible');
+      cy.getCell(1, 'isHuman').should('have.text', 'true');
+    });
+
+    it('should apply selected value instantly when instantApply option is true(radio)', () => {
+      createGridWithTypeAndInstantApply('radio');
+      cy.gridInstance().invoke('setFrozenColumnCount', 1);
+      cy.gridInstance().invoke('startEditing', 1, 'isHuman');
+
+      cy.getByCls(`editor-label-icon-radio`).eq(0).click();
+
+      cy.getByCls('editor-checkbox-list-layer').should('be.not.visible');
+      cy.getCell(1, 'isHuman').should('have.text', 'true');
+    });
+
+    it('should not apply selected value instantly when instantApply option is true(checkbox)', () => {
+      createGridWithTypeAndInstantApply('checkbox');
+      cy.gridInstance().invoke('setFrozenColumnCount', 1);
+      cy.gridInstance().invoke('startEditing', 1, 'isHuman');
+
+      cy.getByCls(`editor-label-icon-checkbox`).eq(0).click();
+
+      cy.getByCls('editor-checkbox-list-layer').should('be.visible');
+    });
+  });
 });
 
 // @TODO: should rewrite test case after modifying casting editing value
