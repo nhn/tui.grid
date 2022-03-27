@@ -39,7 +39,7 @@ class CustomColumnHeader {
   }
 
   render(props) {
-     el.textContent = `custom_${props.columnInfo.header}`;
+     this.el.textContent = `custom_${props.columnInfo.header}`;
   }
 }
 ```
