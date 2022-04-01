@@ -1,7 +1,7 @@
 /*!
  * TOAST UI Grid
- * @version 4.21.0 | Thu Mar 24 2022
- * @author NHN. FE Development Lab
+ * @version 4.21.0 | Fri Apr 01 2022
+ * @author NHN Cloud. FE Development Lab
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
