@@ -34,13 +34,14 @@
     "tui",
     "application",
     "grid",
-    "tui-grid"
+    "tui-grid",
+    "nhn cloud"
   ],
   "files": [
     "dist",
     "types"
   ],
-  "author": "NHN. FE Development Lab",
+  "author": "NHN Cloud. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
     "@applitools/eyes-storybook": "^3.5.3",

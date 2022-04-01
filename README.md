@@ -2,7 +2,7 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN Cloud](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN_CLOUD-ff1414.svg)](https://github.com/nhn)
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -23,9 +23,9 @@
 
 The functionality of TOAST UI Grid is available when using the Plain javaScript, React, Vue Component.
 
-- [toast-ui.grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid) - Plain JavaScript component implemented by NHN.
-- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN.
-- [toast-ui.react-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.react-grid) - **React** wrapper component implemented by NHN.
+- [toast-ui.grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid) - Plain JavaScript component implemented by NHN Cloud.
+- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN Cloud.
+- [toast-ui.react-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.react-grid) - **React** wrapper component implemented by NHN Cloud.
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
@@ -206,4 +206,4 @@ For more information on PR's steps, please see links in the Contributing section
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhn/tui.grid/blob/master/LICENSE) © [NHN](https://github.com/nhn).
+This software is licensed under the [MIT](https://github.com/nhn/tui.grid/blob/master/LICENSE) © [NHN Cloud](https://github.com/nhn).
