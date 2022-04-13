@@ -22,9 +22,9 @@ TOAST UI products are available over the CDN powered by [NHN Cloud](https://www.
 You can use the CDN as below.
 
 ``` html
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
 ...
-<script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -32,13 +32,13 @@ If you want to use a specific version, use the tag name instead of `latest` in t
 The CDN directory has the following structure.
 
 ```
-tui-grid/
+grid/
 ├─ latest/
 │  ├─ tui-grid.css
 │  ├─ tui-grid.min.css
 │  ├─ tui-grid.js
 │  └─ tui-grid.min.js
-├─ v3.8.0/
+├─ v4.21.0/
 │  ├─ ...
 ```
 

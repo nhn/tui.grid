@@ -19,9 +19,9 @@ $ npm install --save tui-grid # Latest version
 TOAST UI 제품들은 [NHN Cloud](https://www.toast.com/kr)를 통해 CDN을 제공하고 있다. 아래의 코드로 CDN을 이용할 수 있다.
 
 ```html
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
 ...
-<script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 ```
 
 특정 버전을 사용할 때는 `latest` 대신 버전에 해당하는 태그 네임을 URL에 사용한다.
@@ -29,13 +29,13 @@ TOAST UI 제품들은 [NHN Cloud](https://www.toast.com/kr)를 통해 CDN을 제
 CDN은 아래의 디렉토리 구조로 구성되어 있다.
 
 ```
-tui-grid/
+grid/
 ├─ latest/
 │  ├─ tui-grid.css
 │  ├─ tui-grid.min.css
 │  ├─ tui-grid.js
 │  └─ tui-grid.min.js
-├─ v3.8.0/
+├─ v4.21.0/
 │  ├─ ...
 ```
 
