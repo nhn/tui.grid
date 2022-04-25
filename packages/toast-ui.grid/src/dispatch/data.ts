@@ -891,6 +891,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
   updateHeights(store);
+  rawData.forEach((rawRow) => getDataManager(id).push('CREATE', rawRow));
   postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
   updateRowSpan(store);
 }
