@@ -66,6 +66,7 @@ import {
   getRowHeight,
   getFormattedValue,
   getOmittedInternalProp,
+  getRowInfoList,
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -1207,6 +1208,19 @@ export default class Grid implements TuiGrid {
       this.removeTreeRow(rowKey);
     } else {
       this.dispatch('removeRow', rowKey, options);
+    }
+  }
+
+  /**
+   * Remove the rows identified by the specified rowKeys.
+   * @param {Array<RowKey>} rowKeys - The array of unique keys of the row
+   */
+  public removeRows(rowKeys: RowKey[]) {
+    const removeRowInfoList = getRowInfoList(this.store, rowKeys);
+    const removeRowsCount = removeRowInfoList.rows.length;
+
+    if (removeRowsCount > 0) {
+      this.dispatch('removeRows', removeRowInfoList);
     }
   }
 
