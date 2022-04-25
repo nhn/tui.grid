@@ -894,6 +894,17 @@ describe('appendRows()', () => {
 
     assertHeaderCheckboxStatus(false);
   });
+
+  it('should add appended rows to modified data', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Han', age: 21 },
+      { name: 'Ryu', age: 25 },
+    ]);
+
+    cy.gridInstance().invoke('getModifiedRows').its('createdRows').should('have.length', 2);
+  });
 });
 
 describe('setValue()', () => {
