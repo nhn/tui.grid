@@ -138,14 +138,16 @@ function updateSubRowSpan(
   }
 }
 
-export function resetRowSpan({ data }: Store, slient = false) {
-  data.rawData.forEach(({ rowSpanMap }) => {
-    Object.keys(rowSpanMap).forEach((columnName) => {
-      delete rowSpanMap[columnName];
+export function resetRowSpan({ data, column }: Store, slient = false) {
+  if (column.visibleRowSpanEnabledColumns.length > 0) {
+    data.rawData.forEach(({ rowSpanMap }) => {
+      Object.keys(rowSpanMap).forEach((columnName) => {
+        delete rowSpanMap[columnName];
+      });
     });
-  });
 
-  if (!slient) {
-    notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+    if (!slient) {
+      notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+    }
   }
 }
