@@ -139,15 +139,17 @@ function updateSubRowSpan(
 }
 
 export function resetRowSpan({ data, column }: Store, slient = false) {
-  if (column.visibleRowSpanEnabledColumns.length > 0) {
-    data.rawData.forEach(({ rowSpanMap }) => {
-      Object.keys(rowSpanMap).forEach((columnName) => {
-        delete rowSpanMap[columnName];
-      });
-    });
+  if (column.visibleRowSpanEnabledColumns.length <= 0) {
+    return;
+  }
 
-    if (!slient) {
-      notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
-    }
+  data.rawData.forEach(({ rowSpanMap }) => {
+    Object.keys(rowSpanMap).forEach((columnName) => {
+      delete rowSpanMap[columnName];
+    });
+  });
+
+  if (!slient) {
+    notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
   }
 }
