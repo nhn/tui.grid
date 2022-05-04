@@ -899,7 +899,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
 export function removeRows(store: Store, targetRows: RemoveTargetRows) {
   const { data, id, focus, column } = store;
   const { sortState, viewData, rawData } = data;
-  const { rowIndexes, rows, nextRows } = targetRows;
+  const { rowIndices: rowIndexes, rows, nextRows } = targetRows;
   const deletedCount = rowIndexes.length;
 
   updatePageWhenRemovingRow(store, deletedCount);

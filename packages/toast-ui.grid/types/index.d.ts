@@ -188,6 +188,8 @@ declare namespace tui {
 
     public removeRow(rowKey: RowKey, options?: OptRemoveRow): void;
 
+    public removeRows(rowKeys: RowKey[]): void;
+
     public getRow(rowKey: RowKey): Row | null;
 
     public getRowAt(rowIdx: number): Row | null;

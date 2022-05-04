@@ -54,15 +54,35 @@ export function isEditableCell(store: Store, rowIndex: number, columnName: strin
 
 export function getCheckedRowInfoList({ data }: Store) {
   const targetRows: RemoveTargetRows = {
-    rowIndexes: [],
+    rowIndices: [],
     rows: [],
     nextRows: [],
   };
   data.rawData.reduce((acc, row, index) => {
     if (row._attributes.checked) {
-      acc.rowIndexes.push(index);
+      acc.rowIndices.push(index);
       acc.rows.push(row);
       acc.nextRows.push(data.rawData[index + 1]);
+    }
+    return acc;
+  }, targetRows);
+
+  return targetRows;
+}
+
+export function getRemoveRowInfoList({ data }: Store, rowKeys: RowKey[]) {
+  const targetRows: RemoveTargetRows = {
+    rowIndices: [],
+    rows: [],
+    nextRows: [],
+  };
+  data.rawData.reduce((acc, row, index) => {
+    const rowKeyIndex = rowKeys.indexOf(row.rowKey);
+    if (rowKeyIndex !== -1) {
+      acc.rowIndices.push(index);
+      acc.rows.push(row);
+      acc.nextRows.push(data.rawData[index + 1]);
+      rowKeys.splice(rowKeyIndex, 1);
     }
     return acc;
   }, targetRows);

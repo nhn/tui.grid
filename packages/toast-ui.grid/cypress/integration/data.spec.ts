@@ -387,6 +387,24 @@ describe('removeRow()', () => {
   });
 });
 
+describe('removeRows', () => {
+  it('should remove rows matching given row keys', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('removeRows', [0, 1]);
+
+    cy.getCellByIdx(0, 0).should('not.exist');
+  });
+
+  it('should add removed rows to modified data', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('removeRows', [0, 1]);
+
+    cy.gridInstance().invoke('getModifiedRows').its('deletedRows').should('have.length', 2);
+  });
+});
+
 describe('removeCheckedRows()', () => {
   beforeEach(() => {
     // @ts-ignore
