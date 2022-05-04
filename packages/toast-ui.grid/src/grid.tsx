@@ -66,7 +66,7 @@ import {
   getRowHeight,
   getFormattedValue,
   getOmittedInternalProp,
-  getRowInfoList,
+  getRemoveRowInfoList,
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -1216,7 +1216,7 @@ export default class Grid implements TuiGrid {
    * @param {Array<RowKey>} rowKeys - The array of unique keys of the row
    */
   public removeRows(rowKeys: RowKey[]) {
-    const removeRowInfoList = getRowInfoList(this.store, rowKeys);
+    const removeRowInfoList = getRemoveRowInfoList(this.store, rowKeys);
     const removeRowsCount = removeRowInfoList.rows.length;
 
     if (removeRowsCount > 0) {

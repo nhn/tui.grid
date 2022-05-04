@@ -140,7 +140,7 @@ export interface Data {
 }
 
 export type RemoveTargetRows = {
-  rowIndexes: number[];
+  rowIndices: number[];
   rows: Row[];
   nextRows: Row[];
 };
