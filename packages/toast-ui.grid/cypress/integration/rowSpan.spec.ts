@@ -65,6 +65,19 @@ it('render rowSpan cell properly', () => {
   cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
 });
 
+it('should render rowSpan cell properly after some cell edited', () => {
+  cy.createGrid({ data, columns });
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.getByCls('content-text').type('Kim');
+  cy.gridInstance().invoke('finishEditing', 0, 'name');
+
+  cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
+  cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
+  cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
+  cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
+});
+
 describe('getRowSpanData()', () => {
   beforeEach(() => {
     cy.createGrid({ data, columns });

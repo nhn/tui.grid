@@ -138,7 +138,11 @@ function updateSubRowSpan(
   }
 }
 
-export function resetRowSpan({ data }: Store, slient = false) {
+export function resetRowSpan({ data, column }: Store, slient = false) {
+  if (column.visibleRowSpanEnabledColumns.length <= 0) {
+    return;
+  }
+
   data.rawData.forEach(({ rowSpanMap }) => {
     Object.keys(rowSpanMap).forEach((columnName) => {
       delete rowSpanMap[columnName];
