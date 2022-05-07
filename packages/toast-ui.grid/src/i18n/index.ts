@@ -50,6 +50,48 @@ const messages: OptI18nLanguage = {
       excelExport: 'Excel Export',
     },
   },
+  pt: {
+    display: {
+      noData: 'Nenhuma informação.',
+      loadingData: 'Carregando informações.',
+      resizeHandleGuide:
+        'Você pode alterar a largura da coluna arrastando o mouse e inicializar a largura clicando duas vezes.',
+    },
+    net: {
+      confirmCreate: 'Tem certeza que deseja criar {{count}} dados?',
+      confirmUpdate: 'Tem ceretza que deseja atualizar {{count}} dados?',
+      confirmDelete: 'Tem certeza que deseja apagar {{count}} dados?',
+      confirmModify: 'Tem certeza que deseja modificar {{count}} dados?',
+      noDataToCreate: 'Não há informação a criar.',
+      noDataToUpdate: 'Não há informação a atualizar.',
+      noDataToDelete: 'Não há informação a apagar.',
+      noDataToModify: 'Não há informação a modificar.',
+      failResponse: 'Um erro ocorreu euquanto processava sua solicitação.\nPor favor, tente novamente.',
+    },
+    filter: {
+      contains: 'Contém',
+      eq: 'Igual',
+      ne: 'Diferente de',
+      start: 'Começa com',
+      end: 'Termina com',
+      after: 'Depois',
+      afterEq: 'Depois ou igual',
+      before: 'Antes',
+      beforeEq: 'Antes ou igual',
+      apply: 'Aplicar',
+      clear: 'Limpar',
+      selectAll: 'Selecionar tudo',
+      emptyValue: 'Está vazio',
+    },
+    contextMenu: {
+      copy: 'Copiar',
+      copyColumns: 'Copiar colunas',
+      copyRows: 'Copiar linhas',
+      export: 'Exportar',
+      csvExport: 'Exportar CSV',
+      excelExport: 'Exportar Excel',
+    },
+  },
   es: {
     display: {
       noData: 'No hay información.',
@@ -211,3 +253,4 @@ export default {
     return replaceText(message, replacements);
   },
 };
+
