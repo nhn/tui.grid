@@ -66,7 +66,8 @@ const messages: OptI18nLanguage = {
       noDataToUpdate: 'Não há informação a atualizar.',
       noDataToDelete: 'Não há informação a apagar.',
       noDataToModify: 'Não há informação a modificar.',
-      failResponse: 'Um erro ocorreu euquanto processava sua solicitação.\nPor favor, tente novamente.',
+      failResponse:
+       'Um erro ocorreu euquanto processava sua solicitação.\nPor favor, tente novamente.',
     },
     filter: {
       contains: 'Contém',
@@ -253,4 +254,3 @@ export default {
     return replaceText(message, replacements);
   },
 };
-
