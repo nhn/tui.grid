@@ -442,3 +442,9 @@ export function pixelToNumber(pixelString: string) {
   const regExp = new RegExp(/[0-9]+px/);
   return regExp.test(pixelString) ? parseInt(pixelString.replace('px', ''), 10) : 0;
 }
+
+export function getLongestText(texts: string[]) {
+  return texts.reduce((acc, text) => {
+    return text.length > acc.length ? text : acc;
+  }, '');
+}

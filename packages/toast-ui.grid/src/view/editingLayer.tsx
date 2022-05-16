@@ -6,11 +6,13 @@ import { EditingAddress, Rect, Side } from '@t/store/focus';
 import { CellEditor } from '@t/editor';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { cls } from '../helper/dom';
+import { cls, getTextWidth } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { findProp, isNull, isUndefined } from '../helper/common';
+import { findProp, isNil, isNull, isUndefined, getLongestText } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
+import { getListItems } from '../helper/editor';
+import { HORIZONTAL_PADDING_OF_CELL } from '../helper/constant';
 
 interface InitBodyScroll {
   initBodyScrollTop: number;
@@ -48,6 +50,8 @@ export class EditingLayerComp extends Component<Props> {
   private contentEl?: HTMLElement;
 
   private initBodyScrollPos: InitBodyScroll = { initBodyScrollTop: 0, initBodyScrollLeft: 0 };
+
+  private longestTextWidths: { [columnName: string]: number } = {};
 
   private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
     const { dispatch } = this.props;
@@ -124,13 +128,17 @@ export class EditingLayerComp extends Component<Props> {
       columnName
     ]!;
     const EditorClass = columnInfo.editor!.type;
+    const width = Math.max(
+      right - left - HORIZONTAL_PADDING_OF_CELL,
+      this.longestTextWidths[columnName] ?? 0
+    );
     const editorProps = {
       grid,
       rowKey,
       columnInfo,
       value,
       formattedValue,
-      width: right - left,
+      width,
       portalEditingKeydown: this.handleKeyDown,
       instantApplyCallback: this.saveAndFinishEditing,
     };
@@ -149,6 +157,32 @@ export class EditingLayerComp extends Component<Props> {
         });
       }
     }
+  }
+
+  public componentDidMount() {
+    const { allColumnMap, grid } = this.props;
+    const dummyCellEditorProps = {
+      grid,
+      rowKey: 0,
+      value: 0,
+      formattedValue: '0',
+      width: 0,
+      portalEditingKeydown: this.handleKeyDown,
+      instantApplyCallback: () => {},
+    };
+
+    Object.keys(allColumnMap).forEach((columnName) => {
+      const columnInfo = allColumnMap[columnName];
+      if (columnInfo.editor) {
+        const listItems = getListItems({ columnInfo, ...dummyCellEditorProps });
+
+        if (!isNil(listItems)) {
+          const longestItem = getLongestText(listItems.map((item) => item.text));
+          this.longestTextWidths[columnName] =
+            getTextWidth(longestItem) + HORIZONTAL_PADDING_OF_CELL;
+        }
+      }
+    });
   }
 
   public componentDidUpdate(prevProps: Props) {
