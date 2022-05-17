@@ -316,10 +316,14 @@ export function setClipboardSelection(node: ChildNode) {
   }
 }
 
-export function getTextWidth(text: string, font?: string) {
+export function getTextWidth(text: string) {
   const bodyArea = document.querySelector(
     `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
   );
+
+  if (!bodyArea) {
+    return 0;
+  }
 
   const tdForMeasure = document.createElement('td');
   tdForMeasure.className = cls('cell', 'cell-has-input');
@@ -330,11 +334,11 @@ export function getTextWidth(text: string, font?: string) {
   cellForMeasure.className = cls('cell-content');
 
   tdForMeasure.appendChild(cellForMeasure);
-  bodyArea?.appendChild(tdForMeasure);
+  bodyArea.appendChild(tdForMeasure);
 
   const width = cellForMeasure.clientWidth;
 
-  bodyArea?.removeChild(tdForMeasure);
+  bodyArea.removeChild(tdForMeasure);
 
   return Math.ceil(width);
 }

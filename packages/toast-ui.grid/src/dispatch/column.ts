@@ -15,7 +15,7 @@ import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
 import { findIndex, findProp } from '../helper/common';
 import { initScrollPosition } from './viewport';
-import { getTextWidth, getComputedFontStyle } from '../helper/dom';
+import { getTextWidth } from '../helper/dom';
 import {
   getMaxTextMap,
   createFormattedValue,
@@ -260,10 +260,7 @@ function setColumnWidthByText({ data, column }: Store, columnName: string) {
   const { allColumnMap, treeColumnName, treeIcon, treeIndentWidth } = column;
   const maxTextMap = getMaxTextMap();
   const { formattedValue, row } = maxTextMap[columnName];
-  let width = getTextWidth(
-    formattedValue,
-    getComputedFontStyle(treeColumnName ? 'tree-wrapper-relative' : 'cell')
-  );
+  let width = getTextWidth(formattedValue);
 
   if (treeColumnName) {
     width +=
