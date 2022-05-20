@@ -316,11 +316,7 @@ export function setClipboardSelection(node: ChildNode) {
   }
 }
 
-export function getTextWidth(text: string) {
-  const bodyArea = document.querySelector(
-    `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
-  );
-
+export function getTextWidth(text: string, bodyArea: HTMLElement | null) {
   if (!bodyArea) {
     return 0;
   }

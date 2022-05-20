@@ -38,7 +38,7 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
 import { findProp, findPropIndex, removeArrayItem, some, silentSplice } from '../helper/common';
-import { getTextWidth } from '../helper/dom';
+import { cls, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
 import { createFormattedValue } from '../store/helper/data';
@@ -160,6 +160,9 @@ function getChildTreeNodeMaxWidth(
   useIcon?: boolean
 ) {
   let maxLength = 0;
+  const bodyArea = document.querySelector(
+    `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
+  ) as HTMLElement;
 
   const getMaxWidth = childRowKeys.reduce(
     (acc: () => number, rowKey) => {
@@ -169,7 +172,7 @@ function getChildTreeNodeMaxWidth(
       if (formattedValue.length > maxLength) {
         maxLength = formattedValue.length;
         acc = () =>
-          getTextWidth(formattedValue) +
+          getTextWidth(formattedValue, bodyArea) +
           getTreeIndentWidth(getDepth(rawData, row), treeIndentWidth, useIcon) +
           TREE_CELL_HORIZONTAL_PADDING;
       }

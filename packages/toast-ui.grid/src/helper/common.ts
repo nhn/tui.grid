@@ -444,7 +444,5 @@ export function pixelToNumber(pixelString: string) {
 }
 
 export function getLongestText(texts: string[]) {
-  return texts.reduce((acc, text) => {
-    return text.length > acc.length ? text : acc;
-  }, '');
+  return texts.reduce((acc, text) => (text.length > acc.length ? text : acc), '');
 }

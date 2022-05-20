@@ -171,6 +171,10 @@ export class EditingLayerComp extends Component<Props> {
       instantApplyCallback: () => {},
     };
 
+    const bodyArea = document.querySelector(
+      `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
+    ) as HTMLElement;
+
     Object.keys(allColumnMap).forEach((columnName) => {
       const columnInfo = allColumnMap[columnName];
       if (columnInfo.editor) {
@@ -179,7 +183,7 @@ export class EditingLayerComp extends Component<Props> {
         if (!isNil(listItems)) {
           const longestItem = getLongestText(listItems.map((item) => item.text));
           this.longestTextWidths[columnName] =
-            getTextWidth(longestItem) + HORIZONTAL_PADDING_OF_CELL;
+            getTextWidth(longestItem, bodyArea) + HORIZONTAL_PADDING_OF_CELL;
         }
       }
     });

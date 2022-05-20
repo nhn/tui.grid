@@ -15,7 +15,7 @@ import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
 import { findIndex, findProp } from '../helper/common';
 import { initScrollPosition } from './viewport';
-import { getTextWidth } from '../helper/dom';
+import { cls, getTextWidth } from '../helper/dom';
 import {
   getMaxTextMap,
   createFormattedValue,
@@ -248,19 +248,26 @@ export function setAutoResizingColumnWidths(store: Store, targetData?: Row[]) {
 
 export function setColumnWidthsByText(store: Store) {
   const { autoResizingColumn } = store.column;
+  const bodyArea = document.querySelector(
+    `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
+  ) as HTMLElement;
 
   if (store.data.rawData.length && autoResizingColumn.length) {
     autoResizingColumn.forEach(({ name }) => {
-      setColumnWidthByText(store, name);
+      setColumnWidthByText(store, name, bodyArea);
     });
   }
 }
 
-function setColumnWidthByText({ data, column }: Store, columnName: string) {
+function setColumnWidthByText(
+  { data, column }: Store,
+  columnName: string,
+  bodyArea: HTMLElement | null
+) {
   const { allColumnMap, treeColumnName, treeIcon, treeIndentWidth } = column;
   const maxTextMap = getMaxTextMap();
   const { formattedValue, row } = maxTextMap[columnName];
-  let width = getTextWidth(formattedValue);
+  let width = getTextWidth(formattedValue, bodyArea);
 
   if (treeColumnName) {
     width +=
