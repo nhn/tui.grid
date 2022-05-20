@@ -270,7 +270,7 @@ describe('auto calculate column widths (container: 600)', () => {
     it('initial rendering', () => {
       createGrid();
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling resetData()', () => {
@@ -278,7 +278,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('resetData', [{ c1: 'looooooooooooooong contents' }]);
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling setColumns()', () => {
@@ -289,7 +289,7 @@ describe('auto calculate column widths (container: 600)', () => {
       columns[0].width = 'auto';
       cy.gridInstance().invoke('setColumns', columns);
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling setValue()', () => {
@@ -297,7 +297,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('setValue', 0, 'c1', 'looooooooooooooong contents');
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling setRow()', () => {
@@ -305,7 +305,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('setRow', 0, { c1: 'looooooooooooooong contents' });
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling appendRow()', () => {
@@ -313,7 +313,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('appendRow', { c1: 'looooooooooooooong contents' });
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling removeRow()', () => {
@@ -330,7 +330,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('appendRows', [{ c1: 'looooooooooooooong contents' }]);
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
 
     it('after calling setColumnValues()', () => {
@@ -338,7 +338,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
       cy.gridInstance().invoke('setColumnValues', 'c1', 'looooooooooooooong contents');
 
-      assertColumnWidth([197, 150, 150, 150, 150]);
+      assertColumnWidth([189, 150, 150, 150, 150]);
     });
   });
 });

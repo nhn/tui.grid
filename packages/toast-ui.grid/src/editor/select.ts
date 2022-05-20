@@ -75,7 +75,7 @@ export class SelectEditor implements CellEditor, InstantlyAppliable {
   private createLayer(listItems: ListItem[], width: number, value: CellValue) {
     const layer = document.createElement('div');
     layer.className = cls('editor-select-box-layer');
-    layer.style.minWidth = `${width - 10}px`;
+    layer.style.minWidth = `${width}px`;
     // To hide the initial layer which is having the position which is not calculated properly
     setOpacity(layer, 0);
 

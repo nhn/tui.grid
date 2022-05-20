@@ -38,14 +38,12 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
 import { findProp, findPropIndex, removeArrayItem, some, silentSplice } from '../helper/common';
-import { getComputedFontStyle, getTextWidth } from '../helper/dom';
+import { cls, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
 import { createFormattedValue } from '../store/helper/data';
 import { TREE_CELL_HORIZONTAL_PADDING } from '../helper/constant';
 import { setAutoResizingColumnWidths } from './column';
-
-let computedFontStyle = '';
 
 interface TriggerByMovingRow {
   movingRow?: boolean;
@@ -162,8 +160,9 @@ function getChildTreeNodeMaxWidth(
   useIcon?: boolean
 ) {
   let maxLength = 0;
-
-  computedFontStyle = computedFontStyle || getComputedFontStyle('tree-wrapper-relative');
+  const bodyArea = document.querySelector(
+    `.${cls('rside-area')} .${cls('body-container')} .${cls('table')}`
+  ) as HTMLElement;
 
   const getMaxWidth = childRowKeys.reduce(
     (acc: () => number, rowKey) => {
@@ -173,7 +172,7 @@ function getChildTreeNodeMaxWidth(
       if (formattedValue.length > maxLength) {
         maxLength = formattedValue.length;
         acc = () =>
-          getTextWidth(formattedValue, computedFontStyle) +
+          getTextWidth(formattedValue, bodyArea) +
           getTreeIndentWidth(getDepth(rawData, row), treeIndentWidth, useIcon) +
           TREE_CELL_HORIZONTAL_PADDING;
       }

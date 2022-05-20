@@ -316,10 +316,25 @@ export function setClipboardSelection(node: ChildNode) {
   }
 }
 
-export function getTextWidth(text: string, font: string) {
-  const context = document.createElement('canvas').getContext('2d')!;
-  context.font = font;
-  const { width } = context.measureText(String(text));
+export function getTextWidth(text: string, bodyArea: HTMLElement | null) {
+  if (!bodyArea) {
+    return 0;
+  }
+
+  const tdForMeasure = document.createElement('td');
+  tdForMeasure.className = cls('cell', 'cell-has-input');
+  tdForMeasure.style.position = 'absolute';
+
+  const cellForMeasure = document.createElement('div');
+  cellForMeasure.textContent = text;
+  cellForMeasure.className = cls('cell-content');
+
+  tdForMeasure.appendChild(cellForMeasure);
+  bodyArea.appendChild(tdForMeasure);
+
+  const width = cellForMeasure.clientWidth;
+
+  bodyArea.removeChild(tdForMeasure);
 
   return Math.ceil(width);
 }
