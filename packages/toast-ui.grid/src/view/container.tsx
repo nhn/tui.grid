@@ -338,7 +338,11 @@ export class ContainerComp extends Component<Props> {
 
   handleContextMenu = (ev: MouseEvent) => {
     if (
-      isParentExistWithClassNames(ev.target as HTMLElement, ['cell-header', 'cell-dummy']) ||
+      isParentExistWithClassNames(ev.target as HTMLElement, [
+        'cell-header',
+        'cell-dummy',
+        'context-menu',
+      ]) ||
       !this.context.store.contextMenu.createMenuGroups
     ) {
       emitMouseup(this.el!);
@@ -348,13 +352,19 @@ export class ContainerComp extends Component<Props> {
     ev.preventDefault();
 
     const { offsetLeft, offsetTop } = this.props;
-    const pos = { left: ev.clientX - offsetLeft, top: ev.clientY - offsetTop };
-
+    const { innerWidth, innerHeight } = window;
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const bodyArea = findParentByClassName(ev.target as HTMLElement, 'body-area')!;
     const side: Side = findParentByClassName(bodyArea, 'lside-area') ? 'L' : 'R';
     const { scrollTop, scrollLeft } = bodyArea;
     const { top, left } = bodyArea.getBoundingClientRect();
+
+    const pos = {
+      top: ev.clientY - offsetTop,
+      left: ev.clientX - offsetLeft,
+      bottom: innerHeight - pageY,
+      right: innerWidth - pageX,
+    };
 
     const elementInfo = { scrollTop, scrollLeft, side, top, left };
     const eventInfo = { pageX, pageY };
