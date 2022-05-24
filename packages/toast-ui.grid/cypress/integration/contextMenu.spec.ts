@@ -7,6 +7,22 @@ before(() => {
   cy.visit('/dist');
 });
 
+function createGridWithManyData() {
+  const data = [];
+  const columns = [
+    { name: 'name' },
+    { name: 'age' },
+    { name: 'city', defaultValue: 'seoul' },
+    { name: 'job', defaultValue: 'unemployed' },
+  ];
+
+  for (let i = 0; i < 100; i += 1) {
+    data.push({ name: `Lee${i}`, age: i });
+  }
+
+  cy.createGrid({ data, columns });
+}
+
 function createGridWithContextMenu(contextMenu?: CreateMenuGroups) {
   i18n.setLanguage('en');
 
@@ -222,5 +238,26 @@ describe('context menu', () => {
 
     showContextMenu(0, 'name');
     cy.getByCls('context-menu').should('be.not.visible');
+  });
+
+  it('should always display inside viewport', () => {
+    createGridWithManyData();
+
+    showContextMenu(0, 'job');
+
+    cy.isInViewport(`.${cls('context-menu')}`);
+  });
+
+  it.only('should change displaying direction of sub menus when there is no spaces to dispaly sub context menu', () => {
+    createGridWithManyData();
+
+    showContextMenu(0, 'job');
+    getMenuItemByText('Export').trigger('mouseenter');
+
+    cy.get(`.${cls('context-menu')} .${cls('context-menu')}`).should(($el) => {
+      const left = parseInt($el.css('left').replace('px', ''));
+
+      expect(left).to.lessThan(0);
+    });
   });
 });

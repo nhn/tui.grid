@@ -46,6 +46,8 @@ declare namespace Cypress {
     focusAndWait(rowKey: RowKey, columnName: string): Chainable<any>;
 
     destroyGrid(): Chainable<any>;
+
+    isInViewport(element: string): Chainable<any>;
   }
 }
 
