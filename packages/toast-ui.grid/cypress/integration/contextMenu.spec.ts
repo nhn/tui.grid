@@ -248,14 +248,14 @@ describe('context menu', () => {
     cy.isInViewport(`.${cls('context-menu')}`);
   });
 
-  it.only('should change displaying direction of sub menus when there is no spaces to dispaly sub context menu', () => {
+  it('should change displaying direction of sub menus when there is no spaces to dispaly sub context menu', () => {
     createGridWithManyData();
 
     showContextMenu(0, 'job');
     getMenuItemByText('Export').trigger('mouseenter');
 
     cy.get(`.${cls('context-menu')} .${cls('context-menu')}`).should(($el) => {
-      const left = parseInt($el.css('left').replace('px', ''));
+      const left = parseInt($el.css('left').replace('px', ''), 10);
 
       expect(left).to.lessThan(0);
     });

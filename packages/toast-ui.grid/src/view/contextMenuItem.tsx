@@ -38,10 +38,10 @@ class ContextMenuItemComp extends Component<Props, State> {
       do {
         element = element.parentElement!;
 
-        const { offsetTop, offsetLeft } = element;
+        const { offsetTop: parentOffsetTop, offsetLeft: parentOffsetLeft } = element;
 
-        right -= offsetLeft;
-        bottom -= offsetTop;
+        right -= parentOffsetLeft;
+        bottom -= parentOffsetTop;
       } while (!includes(element.className.split(' '), cls('container')));
 
       const needReverse = this.container!.offsetWidth > right || parentElement!.offsetLeft < 0;
@@ -105,7 +105,9 @@ class ContextMenuItemComp extends Component<Props, State> {
 
     return (
       <li
-        ref={(ref) => (this.container = ref)}
+        ref={(ref) => {
+          this.container = ref;
+        }}
         class={classNames}
         onClick={getListener(this.execAction)}
         onMouseEnter={getListener(this.showSubMenu)}

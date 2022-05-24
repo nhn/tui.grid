@@ -51,7 +51,12 @@ export class ContextMenuComp extends Component<Props> {
 
     if (pos) {
       return (
-        <ul ref={(ref) => (this.container = ref)} class={cls('context-menu')}>
+        <ul
+          ref={(ref) => {
+            this.container = ref;
+          }}
+          class={cls('context-menu')}
+        >
           {menuItems!.map((menuItem) => (
             <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
           ))}
