@@ -17,7 +17,7 @@ type Props = DispatchProps & StoreProps;
 export class ContextMenuComp extends Component<Props> {
   private container: HTMLElement | null = null;
 
-  private getComputedPos() {
+  private adjustPos() {
     const { pos } = this.props;
 
     const { left, top, right, bottom } = pos!;
@@ -25,24 +25,19 @@ export class ContextMenuComp extends Component<Props> {
     const computedTop = offsetHeight > bottom ? top + bottom - offsetHeight : top;
     const computedLeft = offsetWidth > right ? left + right - offsetWidth : left;
 
-    return { computedTop, computedLeft };
-  }
-
-  private adjustPosition() {
-    const { computedTop, computedLeft } = this.getComputedPos();
     this.container!.style.top = `${computedTop}px`;
     this.container!.style.left = `${computedLeft}px`;
   }
 
   componentDidMount() {
     if (this.props.pos) {
-      this.adjustPosition();
+      this.adjustPos();
     }
   }
 
   componentDidUpdate() {
     if (this.props.pos) {
-      this.adjustPosition();
+      this.adjustPos();
     }
   }
 

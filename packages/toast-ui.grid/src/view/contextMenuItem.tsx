@@ -2,10 +2,10 @@ import { h, Component } from 'preact';
 import { MenuItem, MenuPos } from '@t/store/contextMenu';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { includes, isString } from '../helper/common';
+import { isString } from '../helper/common';
 import { ContextMenu } from './contextMenu';
 import { cls } from '../helper/dom';
-import { DEFATULT_SUB_CONTEXT_MENU_TOP } from '../helper/constant';
+import { DEFAULT_SUB_CONTEXT_MENU_TOP } from '../helper/constant';
 
 interface OwnProps {
   menuItem: MenuItem;
@@ -30,7 +30,7 @@ class ContextMenuItemComp extends Component<Props, State> {
       const { offsetWidth, offsetTop, parentElement } = ev.target as HTMLElement;
       const { innerWidth, innerHeight, scrollX, scrollY } = window;
 
-      let bottom = innerHeight + scrollY - (offsetTop + DEFATULT_SUB_CONTEXT_MENU_TOP);
+      let bottom = innerHeight + scrollY - (offsetTop + DEFAULT_SUB_CONTEXT_MENU_TOP);
       let right = innerWidth + scrollX - offsetWidth;
 
       let element = ev.target as HTMLElement;
@@ -42,12 +42,12 @@ class ContextMenuItemComp extends Component<Props, State> {
 
         right -= parentOffsetLeft;
         bottom -= parentOffsetTop;
-      } while (!includes(element.className.split(' '), cls('container')));
+      } while (!element.className.match(cls('container')));
 
       const needReverse = this.container!.offsetWidth > right || parentElement!.offsetLeft < 0;
 
       const resultPos = {
-        top: DEFATULT_SUB_CONTEXT_MENU_TOP,
+        top: DEFAULT_SUB_CONTEXT_MENU_TOP,
         left: needReverse ? -parentElement!.offsetWidth : offsetWidth,
         right: needReverse ? right + offsetWidth : right,
         bottom,
