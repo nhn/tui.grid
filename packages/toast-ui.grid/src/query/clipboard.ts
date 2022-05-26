@@ -4,7 +4,7 @@ import { ListItemOptions } from '@t/editor';
 import { Store } from '@t/store';
 import { SelectionRange, Range } from '@t/store/selection';
 import { find, isNull, isNil } from '../helper/common';
-import { makeObservable } from '../dispatch/data';
+import { appendRows, makeObservable } from '../dispatch/data';
 import { isObservable, notify } from '../helper/observable';
 
 function getCustomValue(
@@ -118,9 +118,16 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     startColumnIndex = totalColumnIndex!;
   }
 
-  const endRowIndex = Math.min(pasteData.length + startRowIndex, viewData.length) - 1;
+  const endRowIndex = pasteData.length + startRowIndex - 1;
   const endColumnIndex =
     Math.min(pasteData[0].length + startColumnIndex, visibleColumnsWithRowHeader.length) - 1;
+
+  if (endRowIndex > viewData.length - 1) {
+    appendRows(
+      store,
+      [...Array(endRowIndex - viewData.length + 1)].map(() => ({}))
+    );
+  }
 
   return {
     row: [startRowIndex, endRowIndex],
