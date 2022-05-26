@@ -15,12 +15,43 @@ type OwnProps = Partial<StoreProps>;
 type Props = DispatchProps & StoreProps;
 
 export class ContextMenuComp extends Component<Props> {
+  private container: HTMLElement | null = null;
+
+  private adjustPos() {
+    const { pos } = this.props;
+
+    const { left, top, right, bottom } = pos!;
+    const { offsetHeight, offsetWidth } = this.container!;
+    const computedTop = offsetHeight > bottom ? top + bottom - offsetHeight : top;
+    const computedLeft = offsetWidth > right ? left + right - offsetWidth : left;
+
+    this.container!.style.top = `${computedTop}px`;
+    this.container!.style.left = `${computedLeft}px`;
+  }
+
+  componentDidMount() {
+    if (this.props.pos) {
+      this.adjustPos();
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.pos) {
+      this.adjustPos();
+    }
+  }
+
   render() {
     const { pos, menuItems } = this.props;
 
     if (pos) {
       return (
-        <ul class={cls('context-menu')} style={pos}>
+        <ul
+          ref={(ref) => {
+            this.container = ref;
+          }}
+          class={cls('context-menu')}
+        >
           {menuItems!.map((menuItem) => (
             <ContextMenuItem key={menuItem.name} menuItem={menuItem} />
           ))}

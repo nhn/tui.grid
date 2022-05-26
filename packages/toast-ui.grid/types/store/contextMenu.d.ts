@@ -3,6 +3,8 @@ import { RowKey } from './data';
 export interface MenuPos {
   left: number;
   top: number;
+  bottom: number;
+  right: number;
 }
 
 export interface MenuItem {

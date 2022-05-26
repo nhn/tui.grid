@@ -4,6 +4,8 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { isString } from '../helper/common';
 import { ContextMenu } from './contextMenu';
+import { cls } from '../helper/dom';
+import { DEFAULT_SUB_CONTEXT_MENU_TOP } from '../helper/constant';
 
 interface OwnProps {
   menuItem: MenuItem;
@@ -19,13 +21,39 @@ interface State {
 }
 
 class ContextMenuItemComp extends Component<Props, State> {
+  private container: HTMLElement | null = null;
+
   private showSubMenu = (ev: MouseEvent) => {
     const { menuItem } = this.props;
 
     if (menuItem.subMenu?.length) {
-      const { offsetWidth } = ev.target as HTMLElement;
-      const pos = { top: -6, left: offsetWidth };
-      const subMenuInfo = { menuItems: menuItem.subMenu, pos };
+      const { offsetWidth, offsetTop, parentElement } = ev.target as HTMLElement;
+      const { innerWidth, innerHeight, scrollX, scrollY } = window;
+
+      let bottom = innerHeight + scrollY - (offsetTop + DEFAULT_SUB_CONTEXT_MENU_TOP);
+      let right = innerWidth + scrollX - offsetWidth;
+
+      let element = ev.target as HTMLElement;
+
+      do {
+        element = element.parentElement!;
+
+        const { offsetTop: parentOffsetTop, offsetLeft: parentOffsetLeft } = element;
+
+        right -= parentOffsetLeft;
+        bottom -= parentOffsetTop;
+      } while (!element.className.match(cls('container')));
+
+      const needReverse = this.container!.offsetWidth > right || parentElement!.offsetLeft < 0;
+
+      const resultPos = {
+        top: DEFAULT_SUB_CONTEXT_MENU_TOP,
+        left: needReverse ? -parentElement!.offsetWidth : offsetWidth,
+        right: needReverse ? right + offsetWidth : right,
+        bottom,
+      };
+
+      const subMenuInfo = { menuItems: menuItem.subMenu, pos: resultPos };
 
       this.setState({ subMenuInfo });
     }
@@ -77,6 +105,9 @@ class ContextMenuItemComp extends Component<Props, State> {
 
     return (
       <li
+        ref={(ref) => {
+          this.container = ref;
+        }}
         class={classNames}
         onClick={getListener(this.execAction)}
         onMouseEnter={getListener(this.showSubMenu)}
