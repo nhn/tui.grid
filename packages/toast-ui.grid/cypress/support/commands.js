@@ -131,14 +131,3 @@ Cypress.Commands.add('destroyGrid', () => {
     delete win.grid;
   });
 });
-
-Cypress.Commands.add('isInViewport', (element) => {
-  cy.get(element).should(($el) => {
-    const height = 600;
-    const width = 800;
-    const rect = $el[0].getBoundingClientRect();
-
-    expect(rect.top + rect.height).to.most(height);
-    expect(rect.left + rect.width).to.most(width);
-  });
-});
