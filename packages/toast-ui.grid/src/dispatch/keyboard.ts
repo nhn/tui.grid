@@ -15,7 +15,7 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { mapProp } from '../helper/common';
 import { CellChange, Origin } from '@t/event';
 import { updateAllSummaryValues } from './summary';
-import { updateHeights } from './data';
+import { appendRows, updateHeights } from './data';
 
 type ChangeValueFn = () => number;
 interface ChangeInfo {
@@ -230,7 +230,11 @@ function applyCopiedData(store: Store, copiedData: string[][], range: SelectionR
 }
 
 export function paste(store: Store, copiedData: string[][]) {
-  const { selection, id } = store;
+  const {
+    selection,
+    id,
+    data: { viewData },
+  } = store;
   const { originalRange } = selection;
 
   if (originalRange) {
@@ -238,6 +242,15 @@ export function paste(store: Store, copiedData: string[][]) {
   }
 
   const rangeToPaste = getRangeToPaste(store, copiedData);
+  const endRowIndex = rangeToPaste.row[1];
+
+  if (endRowIndex > viewData.length - 1) {
+    appendRows(
+      store,
+      [...Array(endRowIndex - viewData.length + 1)].map(() => ({}))
+    );
+  }
+
   applyCopiedData(store, copiedData, rangeToPaste);
   changeSelectionRange(selection, rangeToPaste, id);
 }

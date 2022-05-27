@@ -106,7 +106,6 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     selection: { originalRange },
     focus: { totalColumnIndex, originalRowIndex },
     column: { visibleColumnsWithRowHeader },
-    data: { viewData },
   } = store;
   let startRowIndex, startColumnIndex;
 
@@ -118,7 +117,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     startColumnIndex = totalColumnIndex!;
   }
 
-  const endRowIndex = Math.min(pasteData.length + startRowIndex, viewData.length) - 1;
+  const endRowIndex = pasteData.length + startRowIndex - 1;
   const endColumnIndex =
     Math.min(pasteData[0].length + startColumnIndex, visibleColumnsWithRowHeader.length) - 1;
 
