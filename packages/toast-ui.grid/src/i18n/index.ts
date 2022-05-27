@@ -177,6 +177,48 @@ const messages: OptI18nLanguage = {
       excelExport: '엑셀로 내보내기',
     },
   },
+  nl: {
+    display: {
+      noData: 'Geen data.',
+      loadingData: 'Data aan het laden.',
+      resizeHandleGuide:
+        'Je kunt de kolombreedte verschuiven met de muis, of terugbrengen naar standaard door dubbel te klikken',
+    },
+    net: {
+      confirmCreate: 'Weet je zeker dat je {{count}} nieuwe wilt maken?',
+      confirmUpdate: 'Weet je zeker dat je {{count}} stuk(s) wilt bijwerken?',
+      confirmDelete: 'Weet je zeker dat je {{count}} stuk(s) wilt verwijderen?',
+      confirmModify: 'Weet je zeker dat je {{count}} stuk(s) wilt aanpassen?',
+      noDataToCreate: 'Niets om aan te maken.',
+      noDataToUpdate: 'Niets om bij te werken.',
+      noDataToDelete: 'Niets om te verwijderen.',
+      noDataToModify: 'Niets om aan te passen.',
+      failResponse: 'Er ging iets mis tijdens het ophalen van de data.\nProbeer het nog eens.',
+    },
+    filter: {
+      contains: 'Bevat',
+      eq: 'Is',
+      ne: 'Is niet',
+      start: 'Begint met',
+      end: 'Eindigt met',
+      after: 'Na',
+      afterEq: 'Na of gelijk aan',
+      before: 'Voor',
+      beforeEq: 'Voor of gelijk aan',
+      apply: 'Toepassen',
+      clear: 'Leeg maken',
+      selectAll: 'Selecteer alle',
+      emptyValue: 'Lege waarde',
+    },
+    contextMenu: {
+      copy: 'Kopieer',
+      copyColumns: 'Kopieer kolommen',
+      copyRows: 'Kopieer rijen',
+      export: 'Exporteer',
+      csvExport: 'Maak CSV Export',
+      excelExport: 'Maak Excel Export',
+    },
+  },
 };
 
 let messageMap: MessageMapType = {};
