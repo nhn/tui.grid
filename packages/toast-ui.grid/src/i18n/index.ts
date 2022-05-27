@@ -176,7 +176,6 @@ const messages: OptI18nLanguage = {
       excelExport: 'Maak Excel Export',
     },
   },
-
 };
 
 let messageMap: MessageMapType = {};
