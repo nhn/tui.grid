@@ -419,6 +419,8 @@ export function checkAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', true, allPage);
   setCheckedAllRows(store);
+  notify(store.data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -434,6 +436,8 @@ export function uncheckAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', false, allPage);
   setCheckedAllRows(store);
+  notify(store.data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
+
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
