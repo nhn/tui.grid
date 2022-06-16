@@ -57,7 +57,10 @@ class BodyRowComp extends Component<Props> {
     return (
       rowHeight > 0 && (
         <tr
-          style={{ height: rowHeight, lineHeight: autoRowHeight ? '' : `${rowHeight - 9}px` }}
+          style={{
+            height: rowHeight,
+            lineHeight: autoRowHeight || rowHeight >= 40 ? '' : `${rowHeight - 9}px`,
+          }}
           class={cls(
             [isOddRow, 'row-odd'],
             [!isOddRow, 'row-even'],
