@@ -219,6 +219,48 @@ const messages: OptI18nLanguage = {
       excelExport: 'Maak Excel Export',
     },
   },
+  it: {
+    display: {
+      noData: 'Nessun dato.',
+      loadingData: 'Caricamento dati.',
+      resizeHandleGuide:
+        'È possibile modificare la larghezza della colonna trascinando il mouse e inizializzare la larghezza facendo doppio clic.',
+    },
+    net: {
+      confirmCreate: 'Sei sicuro di voler creare {{count}} dati?',
+      confirmUpdate: 'Sei sicuro di voler aggiornare {{count}} dati?',
+      confirmDelete: 'Sei sicuro di voler eliminare {{count}} dati?',
+      confirmModify: 'Sei sicuro di voler modificare {{count}} dati?',
+      noDataToCreate: 'Nessun dato da creare.',
+      noDataToUpdate: 'Nessun dato da aggiornare.',
+      noDataToDelete: 'Nessun dato da eliminare.',
+      noDataToModify: 'Nessun dato da modificare.',
+      failResponse: 'Si è verificato un errore durante la richiesta dei dati.\nPer favore riprova.',
+    },
+    filter: {
+      contains: 'Contiene',
+      eq: 'Uguale',
+      ne: 'Non è uguale',
+      start: 'Inizia con',
+      end: 'Finisce con',
+      after: 'Dopo',
+      afterEq: 'Dopo o Uguale',
+      before: 'Prima',
+      beforeEq: 'Prima o Uguale',
+      apply: 'Applicare',
+      clear: 'Chiari',
+      selectAll: 'Seleziona tutto',
+      emptyValue: 'Valore vuoto',
+    },
+    contextMenu: {
+      copy: 'Copia',
+      copyColumns: 'Copia colonne',
+      copyRows: 'Copia righe',
+      export: 'Esportare',
+      csvExport: 'Esportazione CSV',
+      excelExport: 'Esportazione Excel',
+    },
+  },
 };
 
 let messageMap: MessageMapType = {};
