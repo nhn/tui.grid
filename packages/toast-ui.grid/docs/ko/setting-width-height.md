@@ -260,7 +260,7 @@ const grid = new Grid({
 
 ![08-height-rowHeight-number](https://user-images.githubusercontent.com/18183560/61211937-cd40dd00-a73b-11e9-8a6d-87ac170bc270.png)
 
-`rowHeight`의 높이를 고정하면서 기본 행 높이보다 작은 값으로 설정하려는 경우에는 다음과 같이 `minRowHeight` 옵션을 사용하면 된다.
+`rowHeight`의 높이를 고정하면서 기본 행 높이보다 작은 값으로 설정하려는 경우에는 다음과 같이 `minRowHeight` 옵션을 사용하면 된다. 단, `rowHeight`의 최소값은 `9`이다.
 
 ```js
 const grid = new Grid({
