@@ -4,7 +4,7 @@ import {
   assertHeaderCheckboxStatus,
 } from '../helper/assert';
 
-const columns = [{ name: 'name', minWidth: 150 }];
+const columns = [{ name: 'name', minWidth: 150, sortable: true }];
 
 before(() => {
   cy.visit('/dist');
@@ -38,6 +38,26 @@ describe('row header API', () => {
   });
 
   it('checkAll, uncheckAll', () => {
+    cy.gridInstance().invoke('checkAll');
+
+    cy.get('input').should(($el) => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
+      });
+    });
+
+    cy.gridInstance().invoke('uncheckAll');
+
+    cy.get('input').should(($el) => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.false;
+      });
+    });
+  });
+
+  it('checkAll, uncheckAll after sort', () => {
+    cy.gridInstance().invoke('sort', 'name', true);
+
     cy.gridInstance().invoke('checkAll');
 
     cy.get('input').should(($el) => {
