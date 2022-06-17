@@ -76,6 +76,7 @@ interface HeightInfo {
 
 interface RowHeightInfo {
   rowHeight?: number;
+  minRowHeight?: number;
   data?: OptRow[];
 }
 
@@ -406,6 +407,19 @@ describe('row height', () => {
       .find('tr')
       .each(($el) => {
         expect($el.height()).to.eql(70);
+      });
+  });
+
+  it('rowHeight: 15', () => {
+    // The default value of minRowHeight is 40.
+    // If the value of rowHeight is less than minRowHeight, the actual row height is set as minRowHeight.
+    // Therefore, the minRowHeight value also needs to be set.
+    createGridWithRowHeight({ rowHeight: 15, minRowHeight: 15 });
+
+    cy.getRsideBody()
+      .find('tr')
+      .each(($el) => {
+        expect($el.height()).to.eql(15);
       });
   });
 

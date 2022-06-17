@@ -206,7 +206,7 @@ const grid = new Grid({
 
 ![08-height-rowHeight-number](https://user-images.githubusercontent.com/18183560/61211937-cd40dd00-a73b-11e9-8a6d-87ac170bc270.png)
 
-When trying to fix the `rowHeight` to a value that is smaller than the default row height value, we can do so by using the `minRowHeight` option. 
+When trying to fix the `rowHeight` to a value that is smaller than the default row height value, we can do so by using the `minRowHeight` option. However, the minimum value of `rowHeight` is `9`.
 
 ```js
 const grid = new Grid({
