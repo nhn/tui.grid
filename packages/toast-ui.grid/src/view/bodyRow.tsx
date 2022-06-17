@@ -6,6 +6,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce, isNull } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
+import { OCCUPIED_HEIGHT_BY_CELL_LAYOUY } from '../helper/constant';
 
 interface OwnProps {
   rowIndex: number;
@@ -59,7 +60,10 @@ class BodyRowComp extends Component<Props> {
         <tr
           style={{
             height: rowHeight,
-            lineHeight: autoRowHeight || rowHeight >= 40 ? '' : `${rowHeight - 9}px`,
+            lineHeight:
+              autoRowHeight || rowHeight >= 40
+                ? ''
+                : `${rowHeight - OCCUPIED_HEIGHT_BY_CELL_LAYOUY}px`,
           }}
           class={cls(
             [isOddRow, 'row-odd'],

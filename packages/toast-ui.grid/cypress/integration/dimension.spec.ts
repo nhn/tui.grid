@@ -411,6 +411,9 @@ describe('row height', () => {
   });
 
   it('rowHeight: 15', () => {
+    // The default value of minRowHeight is 40.
+    // If the value of rowHeight is less than minRowHeight, the actual row height is set as minRowHeight.
+    // Therefore, the minRowHeight value also needs to be set.
     createGridWithRowHeight({ rowHeight: 15, minRowHeight: 15 });
 
     cy.getRsideBody()
