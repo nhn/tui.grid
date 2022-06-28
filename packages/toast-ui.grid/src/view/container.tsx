@@ -352,7 +352,7 @@ export class ContainerComp extends Component<Props> {
     ev.preventDefault();
 
     const { offsetLeft, offsetTop } = this.props;
-    const { innerWidth, innerHeight } = window;
+    const { clientHeight, clientWidth } = this.el!;
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const bodyArea = findParentByClassName(ev.target as HTMLElement, 'body-area')!;
     const side: Side = findParentByClassName(bodyArea, 'lside-area') ? 'L' : 'R';
@@ -362,8 +362,8 @@ export class ContainerComp extends Component<Props> {
     const pos = {
       top: ev.clientY - offsetTop,
       left: ev.clientX - offsetLeft,
-      bottom: innerHeight - pageY,
-      right: innerWidth - pageX,
+      bottom: clientHeight + offsetTop - pageY,
+      right: clientWidth + offsetLeft - pageX,
     };
 
     const elementInfo = { scrollTop, scrollLeft, side, top, left };
