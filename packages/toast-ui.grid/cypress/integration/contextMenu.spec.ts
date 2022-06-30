@@ -3,25 +3,13 @@ import { CreateMenuGroups } from '@t/store/contextMenu';
 import i18n from '@/i18n';
 import { cls } from '@/helper/dom';
 
+const GRID_WIDTH = 800;
+const GRID_BODY_HEIGHT = 180;
+const GRID_HEADER_HEIGHT = 40;
+
 before(() => {
   cy.visit('/dist');
 });
-
-function createGridWithLargeData() {
-  const data = [];
-  const columns = [
-    { name: 'name' },
-    { name: 'age' },
-    { name: 'city', defaultValue: 'seoul' },
-    { name: 'job', defaultValue: 'unemployed' },
-  ];
-
-  for (let i = 0; i < 100; i += 1) {
-    data.push({ name: `Lee${i}`, age: i });
-  }
-
-  cy.createGrid({ data, columns });
-}
 
 function createGridWithContextMenu(contextMenu?: CreateMenuGroups) {
   i18n.setLanguage('en');
@@ -33,7 +21,13 @@ function createGridWithContextMenu(contextMenu?: CreateMenuGroups) {
   ];
   const columns = [{ name: 'name' }, { name: 'age' }];
 
-  cy.createGrid({ data, columns, contextMenu });
+  cy.createGrid({
+    data,
+    columns,
+    contextMenu,
+    bodyHeight: GRID_BODY_HEIGHT,
+    header: { height: GRID_HEADER_HEIGHT },
+  });
 }
 
 function assertMenuItemByText(text: string) {
@@ -46,13 +40,6 @@ function showContextMenu(rowKey: RowKey, columnName: string) {
 
 function getMenuItemByText(text: string) {
   return cy.contains(`.${cls('context-menu')} .menu-item`, text);
-}
-
-function isInViewport(element: HTMLElement) {
-  const { top, left, right, bottom } = element.getBoundingClientRect();
-  const { viewportHeight, viewportWidth } = Cypress.config();
-
-  return top >= 0 && left >= 0 && bottom <= viewportHeight && right <= viewportWidth;
 }
 
 describe('context menu', () => {
@@ -247,20 +234,24 @@ describe('context menu', () => {
     cy.getByCls('context-menu').should('be.not.visible');
   });
 
-  it('should always display inside viewport', () => {
-    createGridWithLargeData();
-
-    showContextMenu(0, 'job');
+  it('should always display inside grid container', () => {
+    createGridWithContextMenu();
+    showContextMenu(0, 'age');
 
     cy.get(`.${cls('context-menu')}`).should(($el) => {
-      expect(isInViewport($el[0])).to.be.true;
+      const { offsetTop, offsetLeft, clientWidth, clientHeight } = $el[0];
+
+      expect(offsetTop).to.be.greaterThan(0);
+      expect(offsetLeft).to.be.greaterThan(0);
+      expect(offsetLeft + clientWidth).to.be.lessThan(GRID_WIDTH);
+      expect(offsetTop + clientHeight).to.be.lessThan(GRID_BODY_HEIGHT + GRID_HEADER_HEIGHT);
     });
   });
 
-  it('should change displaying direction of submenus when there is no space to diplay sub context menu', () => {
-    createGridWithLargeData();
+  it('should change displaying direction of submenus when there is no space to display sub context menu', () => {
+    createGridWithContextMenu();
 
-    showContextMenu(0, 'job');
+    showContextMenu(0, 'age');
     getMenuItemByText('Export').trigger('mouseenter');
 
     cy.get(`.${cls('context-menu')} .${cls('context-menu')}`).should(($el) => {

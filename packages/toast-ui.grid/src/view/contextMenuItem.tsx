@@ -7,11 +7,18 @@ import { ContextMenu } from './contextMenu';
 import { cls } from '../helper/dom';
 import { DEFAULT_SUB_CONTEXT_MENU_TOP } from '../helper/constant';
 
+interface StoreProps {
+  gridWidth: number;
+  gridHeight: number;
+  gridOffsetLeft: number;
+  gridOffsetTop: number;
+}
+
 interface OwnProps {
   menuItem: MenuItem;
 }
 
-type Props = OwnProps & DispatchProps;
+type Props = StoreProps & OwnProps & DispatchProps;
 
 interface State {
   subMenuInfo: {
@@ -24,25 +31,26 @@ class ContextMenuItemComp extends Component<Props, State> {
   private container: HTMLElement | null = null;
 
   private showSubMenu = (ev: MouseEvent) => {
-    const { menuItem } = this.props;
+    const { menuItem, gridHeight, gridWidth, gridOffsetLeft, gridOffsetTop } = this.props;
 
     if (menuItem.subMenu?.length) {
       const { offsetWidth, offsetTop, parentElement } = ev.target as HTMLElement;
-      const { innerWidth, innerHeight, scrollX, scrollY } = window;
+      const { scrollX, scrollY } = window;
 
-      let bottom = innerHeight + scrollY - (offsetTop + DEFAULT_SUB_CONTEXT_MENU_TOP);
-      let right = innerWidth + scrollX - offsetWidth;
+      let bottom =
+        gridHeight + gridOffsetTop + scrollY - (offsetTop + DEFAULT_SUB_CONTEXT_MENU_TOP);
+      let right = gridWidth + gridOffsetLeft + scrollX - offsetWidth;
 
       let element = ev.target as HTMLElement;
 
-      do {
+      while (!element.className.match(cls('container'))) {
         element = element.parentElement!;
 
         const { offsetTop: parentOffsetTop, offsetLeft: parentOffsetLeft } = element;
 
         right -= parentOffsetLeft;
         bottom -= parentOffsetTop;
-      } while (!element.className.match(cls('container')));
+      }
 
       const needReverse = this.container!.offsetWidth > right || parentElement!.offsetLeft < 0;
 
@@ -120,4 +128,9 @@ class ContextMenuItemComp extends Component<Props, State> {
   }
 }
 
-export const ContextMenuItem = connect<{}, OwnProps>()(ContextMenuItemComp);
+export const ContextMenuItem = connect<StoreProps, OwnProps>(({ dimension }) => ({
+  gridWidth: dimension.width,
+  gridHeight: dimension.bodyHeight + dimension.headerHeight,
+  gridOffsetLeft: dimension.offsetLeft,
+  gridOffsetTop: dimension.offsetTop,
+}))(ContextMenuItemComp);
