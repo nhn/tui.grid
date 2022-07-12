@@ -72,3 +72,17 @@ it('should apply the options to default renderer', () => {
     .should('have.attr', 'myCustom', 'my-custom')
     .should('have.attr', 'title', 'my Lee');
 });
+
+it('should render data to plain text in default renderer', () => {
+  const data = [{ tag: '<img src="" onerror="alert(123)" />' }];
+  const columns = [
+    {
+      name: 'tag',
+      escapeHTML: true,
+    },
+  ];
+
+  cy.createGrid({ data, columns });
+
+  cy.getByCls('cell-content').should('have.text', '<img src="" onerror="alert(123)" />');
+});
