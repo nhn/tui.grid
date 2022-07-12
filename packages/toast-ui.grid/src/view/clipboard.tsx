@@ -15,6 +15,7 @@ import { getText } from '../query/clipboard';
 import { convertTextToData } from '../helper/common';
 import GridEvent from '../event/gridEvent';
 import { getEventBus, EventBus } from '../event/eventBus';
+import { sanitize } from 'dompurify';
 
 interface StoreProps {
   navigating: boolean;
@@ -111,7 +112,8 @@ class ClipboardComp extends Component<Props> {
     }
 
     const { el } = this;
-    const html = clipboardData.getData('text/html');
+    const html = sanitize(clipboardData.getData('text/html'));
+
     let data;
     if (html && html.indexOf('table') !== -1) {
       // step 1: Append copied data on contenteditable element to parsing correctly table data.

@@ -1,6 +1,7 @@
 import { CellRenderer, CellRendererProps } from '@t/renderer';
 import { cls } from '../helper/dom';
 import { isFunction } from '../helper/common';
+import { sanitize } from 'dompurify';
 
 type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 0 : 1) extends <T>() => T extends Y
   ? 0
@@ -69,6 +70,6 @@ export class DefaultRenderer implements CellRenderer {
   }
 
   public render(props: CellRendererProps) {
-    this.el.innerHTML = `${props.formattedValue}`;
+    this.el.innerHTML = sanitize(`${props.formattedValue}`);
   }
 }
