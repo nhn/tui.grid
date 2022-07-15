@@ -15,6 +15,7 @@
 - [Browser Support](#-browser-support)
 - [Pull Request Steps](#-pull-request-steps)
 - [Contributing](#-contributing)
+- [Dependencies](#-dependencies)
 - [TOAST UI Family](#-toast-ui-family)
 - [Used By](#-used-by)
 - [License](#-license)
@@ -183,6 +184,10 @@ For more information on PR's steps, please see links in the Contributing section
 - [Contributing guideline](https://github.com/nhn/tui.grid/blob/master/CONTRIBUTING.md)
 - [Commit convention](https://github.com/nhn/tui.grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 - [Issue guideline](https://github.com/nhn/tui.grid/tree/master/.github/ISSUE_TEMPLATE)
+
+## 🔩 Dependencies
+
+* [DOMPurify](https://github.com/cure53/DOMPurify)
 
 ## 🍞 TOAST UI Family
 

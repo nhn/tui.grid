@@ -78,11 +78,10 @@ it('should render data to plain text in default renderer', () => {
   const columns = [
     {
       name: 'tag',
-      escapeHTML: true,
     },
   ];
 
   cy.createGrid({ data, columns });
 
-  cy.getByCls('cell-content').should('have.text', '<img src="" onerror="alert(123)" />');
+  cy.getByCls('cell-content').invoke('html').should('to.eq', '<img src="">');
 });
