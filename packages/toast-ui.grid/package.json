@@ -50,6 +50,7 @@
     "@storybook/addon-notes": "^5.3.19",
     "@storybook/html": "^5.3.19",
     "@toast-ui/select-box": "^1.0.0",
+    "@types/dompurify": "^2.3.3",
     "@types/node": "^12.0.0",
     "@types/webpack-env": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
@@ -81,6 +82,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "dompurify": "^2.3.9",
     "tui-date-picker": "^4.1.0",
     "tui-pagination": "^3.4.0",
     "xlsx": "^0.17.1"
