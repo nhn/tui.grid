@@ -94,10 +94,17 @@ function updateSummaryValue(
   const avg = sum / cnt;
   const filteredAvg = filteredSum / filteredCnt;
 
-  min = Math.min(value, min);
-  max = Math.max(value, max);
-  filteredMin = Math.min(value, filteredMin);
-  filteredMax = Math.max(value, filteredMax);
+  const columnData = data.rawData.map((row: Row) => Number(row[columnName]));
+
+  min = Math.min(value, ...columnData);
+  max = Math.max(value, ...columnData);
+
+  if (hasColumnFilter) {
+    const filteredColumnData = data.filteredRawData.map((row) => Number(row[columnName]));
+
+    filteredMin = Math.min(value, ...filteredColumnData);
+    filteredMax = Math.max(value, ...filteredColumnData);
+  }
 
   summary.summaryValues[columnName] = {
     sum,
