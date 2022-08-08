@@ -105,13 +105,15 @@ function updateSummaryValue(
     max,
     avg,
     cnt,
-    filtered: {
-      sum: filteredSum,
-      min: filteredMin,
-      max: filteredMax,
-      avg: filteredAvg,
-      cnt: filteredCnt,
-    },
+    filtered: hasColumnFilter
+      ? {
+          sum: filteredSum,
+          min: filteredMin,
+          max: filteredMax,
+          avg: filteredAvg,
+          cnt: filteredCnt,
+        }
+      : { sum, min, max, avg, cnt },
   };
 
   notify(summary, 'summaryValues');
