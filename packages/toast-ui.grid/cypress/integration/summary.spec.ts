@@ -473,6 +473,15 @@ describe('summary with filter', () => {
     cy.gridInstance().invoke('filter', 'downloadCount', [{ code: 'eq', value: 2 }]);
   });
 
+  it('should change summary when changes value if no filter is set', () => {
+    cy.gridInstance().invoke('unfilter', 'downloadCount');
+    cy.gridInstance().invoke('setValue', 0, 'downloadCount', 2);
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'downloadCount')
+      .should('have.deep.property', 'filtered', { sum: 6, min: 2, max: 2, avg: 2, cnt: 3 });
+  });
+
   it('should change summary based on the filtering result.', () => {
     assertSummaryContent(
       'downloadCount',
