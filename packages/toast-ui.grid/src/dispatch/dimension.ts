@@ -39,7 +39,9 @@ export function refreshLayout(store: Store, containerEl: HTMLElement, parentEl: 
   setWidth(store, clientWidth, autoWidth);
 
   if (fitToParentHeight && parentEl && parentEl.clientHeight !== clientHeight) {
-    setHeight(store, parentEl.clientHeight);
+    const { paddingTop, paddingBottom } = getComputedStyle(parentEl);
+
+    setHeight(store, parentEl.clientHeight - (parseFloat(paddingTop) + parseFloat(paddingBottom)));
   }
 }
 
