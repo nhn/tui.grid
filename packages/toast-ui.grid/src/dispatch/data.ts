@@ -50,6 +50,7 @@ import {
   getMaxRowKey,
   isScrollPagination,
   isFiltered,
+  getCreatedRowInfos,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -118,7 +119,12 @@ export function updateHeights(store: Store) {
     : filteredRawData.map((row) => getRowHeight(row, rowHeight));
 }
 
-export function makeObservable(store: Store, rowIndex: number, silent = false) {
+export function makeObservable(
+  store: Store,
+  rowIndex: number,
+  silent = false,
+  lazyObservable = false
+) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { treeColumnName } = column;
@@ -130,9 +136,9 @@ export function makeObservable(store: Store, rowIndex: number, silent = false) {
 
   if (treeColumnName) {
     const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[rowIndex] = createTreeRawRow(id, rawRow, parentRow || null, column);
+    rawData[rowIndex] = createTreeRawRow(id, rawRow, parentRow || null, column, { lazyObservable });
   } else {
-    rawData[rowIndex] = createRawRow(id, rawRow, rowIndex, column);
+    rawData[rowIndex] = createRawRow(id, rawRow, rowIndex, column, { lazyObservable });
   }
   viewData[rowIndex] = createViewRow(id, rawData[rowIndex], rawData, column);
 
@@ -817,6 +823,78 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   });
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   postUpdateAfterManipulation(store, rowIndex, 'DONE');
+  updateRowSpan(store);
+}
+
+export function setRows(store: Store, rows: OptRow[]) {
+  const { data, column, id } = store;
+  const { rawData, viewData, sortState } = data;
+
+  const sortedIndexedRows = rows
+    .map((row) => {
+      const rowIndex = findIndexByRowKey(data, column, id, row.rowKey as RowKey);
+      const orgRow = rawData[rowIndex];
+
+      removeUniqueInfoMap(id, orgRow, column);
+
+      row.sortKey = orgRow.sortKey;
+      return { rowIndex, row, orgRow };
+    })
+    .sort((prev, current) => prev.rowIndex - current.rowIndex);
+
+  const createdRowInfos = getCreatedRowInfos(store, sortedIndexedRows);
+
+  let currentStartIndex = 0;
+
+  createdRowInfos.slice(1).forEach(({ rowIndex }, index) => {
+    const isLast = index === createdRowInfos.length - 2;
+    const prevRowIndex = createdRowInfos[index].rowIndex;
+
+    if (rowIndex - prevRowIndex !== 1 || isLast) {
+      const rowInfoIndex = isLast ? index + 1 : index;
+
+      const startRowIndex = createdRowInfos[currentStartIndex].rowIndex;
+      const sizeOfContinuousRowInfo = createdRowInfos[rowInfoIndex].rowIndex - startRowIndex + 1;
+
+      silentSplice(
+        rawData,
+        startRowIndex,
+        sizeOfContinuousRowInfo,
+        ...createdRowInfos.slice(currentStartIndex, rowInfoIndex + 1).map(({ row }) => row.rawRow)
+      );
+      silentSplice(
+        viewData,
+        startRowIndex,
+        sizeOfContinuousRowInfo,
+        ...createdRowInfos.slice(currentStartIndex, rowInfoIndex + 1).map(({ row }) => row.viewRow)
+      );
+
+      currentStartIndex = rowInfoIndex + 1;
+    }
+  });
+
+  createdRowInfos.forEach(({ rowIndex }, index) => {
+    makeObservable(store, rowIndex, index !== createdRowInfos.length - 1, true);
+  });
+
+  createdRowInfos.forEach(({ row, orgRow }) => {
+    const { rawRow, prevRow } = row;
+
+    if (prevRow && isRowSpanEnabled(sortState, column)) {
+      updateRowSpanWhenAppending(rawData, prevRow, false);
+    }
+
+    getDataManager(id).push('UPDATE', rawRow);
+    updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
+  });
+
+  sortByCurrentState(store);
+  postUpdateAfterManipulation(store, createdRowInfos[0].rowIndex, 'DONE');
+
+  setTimeout(() => {
+    updateHeightsWithFilteredData(store);
+  });
+
   updateRowSpan(store);
 }
 
