@@ -48,7 +48,7 @@
     "@cypress/webpack-preprocessor": "^4.0.3",
     "@storybook/addon-knobs": "^5.3.19",
     "@storybook/addon-notes": "^5.3.19",
-    "@storybook/html": "^5.3.19",
+    "@storybook/html": "^6.5.12",
     "@toast-ui/select-box": "^1.0.0",
     "@types/dompurify": "^2.3.3",
     "@types/node": "^12.0.0",
