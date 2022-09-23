@@ -285,6 +285,8 @@ declare namespace tui {
 
     public setRow(rowKey: RowKey, row: OptRow): void;
 
+    public setRows(rows: OptRow[]): void;
+
     public moveRow(rowKey: RowKey, targetIndex: number, options: OptMoveRow): void;
 
     public setRequestParams(params: Dictionary<any>): void;
