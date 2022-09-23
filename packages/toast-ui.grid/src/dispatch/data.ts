@@ -846,6 +846,7 @@ export function setRows(store: Store, rows: OptRow[]) {
 
   let currentStartIndex = 0;
 
+  // https://github.com/nhn/tui.grid/pull/1786#issuecomment-1255760066
   createdRowInfos.slice(1).forEach(({ rowIndex }, index) => {
     const isLast = index === createdRowInfos.length - 2;
     const prevRowIndex = createdRowInfos[index].rowIndex;
