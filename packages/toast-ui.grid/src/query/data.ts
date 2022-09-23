@@ -242,6 +242,27 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
   return { rawRow, viewRow, prevRow };
 }
 
+export function getCreatedRowInfos(
+  store: Store,
+  indexedRows: { rowIndex: number; row: OptRow; orgRow: Row }[]
+) {
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const index = getMaxRowKey(data);
+
+  return indexedRows.map(({ rowIndex, row, orgRow }, i) => {
+    generateDataCreationKey();
+
+    const prevRow = rawData[rowIndex - 1];
+    const options = { prevRow, lazyObservable: true };
+
+    const rawRow = createRawRow(id, { ...column.emptyRow, ...row }, index + i, column, options);
+    const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
+
+    return { rowIndex, row: { rawRow, viewRow, prevRow }, orgRow };
+  });
+}
+
 export function isSorted(data: Data) {
   return data.sortState.columns[0].columnName !== 'sortKey';
 }

@@ -1776,7 +1776,17 @@ export default class Grid implements TuiGrid {
   }
 
   /**
+   * Set new data to the all rows identified by the specified rowKey.
+   * Use setRows for a lot of data, as using setRow can cause performance issues.
+   * @param {object} rows - The object that contains all values in the row with rowKey.
+   */
+  public setRows(rows: OptRow[]) {
+    this.dispatch('setRows', rows);
+  }
+
+  /**
    * Move the row identified by the specified rowKey to target index.
+   * Use setRows for a lot of data, as using setRow can cause performance issues.
    * If data is sorted or filtered, this couldn't be used.
    * @param {number|string} rowKey - The unique key of the row
    * @param {number} targetIndex - Target index for moving
