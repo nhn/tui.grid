@@ -117,8 +117,10 @@ export interface OptGrid {
   contextMenu?: CreateMenuGroups;
 }
 
+export type OptRowProp = CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
+
 export interface OptRow {
-  [prop: string]: CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
+  [prop: string]: OptRowProp;
   _attributes?: RecursivePartial<RowAttributes & RowSpanAttribute>;
   _children?: OptRow[];
 }

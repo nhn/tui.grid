@@ -5,11 +5,12 @@ import {
   RowAttributes,
   LoadingState,
   RemoveTargetRows,
+  Data,
 } from '@t/store/data';
 import { Store } from '@t/store';
 import { ColumnInfo } from '@t/store/column';
 import { Range } from '@t/store/selection';
-import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
+import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions, OptRowProp } from '@t/options';
 import {
   findProp,
   removeArrayItem,
@@ -19,6 +20,7 @@ import {
   findPropIndex,
   silentSplice,
   isNil,
+  last,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
@@ -84,6 +86,18 @@ import {
   DISABLED_PRIORITY_NONE,
   DISABLED_PRIORITY_ROW,
 } from '../helper/constant';
+
+// interface ContinuousRowInfo {
+//   rowIndex: number;
+//   rawRow: Row;
+//   viewRow: { rowKey: OptRowProp; sortKey: OptRowProp; uniqueKey: OptRowProp };
+// }
+
+interface ContinuousRowInfo {
+  rowIndices: number[];
+  rawRows: Row[];
+  viewRows: { rowKey: OptRowProp; sortKey: OptRowProp; uniqueKey: OptRowProp }[];
+}
 
 function getIndexRangeOfCheckbox(
   { data, column, id }: Store,
@@ -826,9 +840,18 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   updateRowSpan(store);
 }
 
+function spliceContinuousRowInfos(data: Data, continuousRowInfo: ContinuousRowInfo) {
+  const { rawData, viewData } = data;
+  const startRowIndex = continuousRowInfo.rowIndices[0];
+  const sizeOfContinuousRowInfos = continuousRowInfo.rowIndices.length;
+
+  silentSplice(rawData, startRowIndex, sizeOfContinuousRowInfos, ...continuousRowInfo.rawRows);
+  silentSplice(viewData, startRowIndex, sizeOfContinuousRowInfos, ...continuousRowInfo.viewRows);
+}
+
 export function setRows(store: Store, rows: OptRow[]) {
   const { data, column, id } = store;
-  const { rawData, viewData, sortState } = data;
+  const { rawData, sortState } = data;
 
   const sortedIndexedRows = rows
     .map((row) => {
@@ -844,35 +867,32 @@ export function setRows(store: Store, rows: OptRow[]) {
 
   const createdRowInfos = getCreatedRowInfos(store, sortedIndexedRows);
 
-  let currentStartIndex = 0;
+  let continuousRowInfo: ContinuousRowInfo = {
+    rowIndices: [],
+    rawRows: [],
+    viewRows: [],
+  };
 
-  // https://github.com/nhn/tui.grid/pull/1786#issuecomment-1255760066
-  createdRowInfos.slice(1).forEach(({ rowIndex }, index) => {
-    const isLast = index === createdRowInfos.length - 2;
-    const prevRowIndex = createdRowInfos[index].rowIndex;
+  createdRowInfos.forEach(({ rowIndex, row }) => {
+    const { rawRow, viewRow } = row;
 
-    if (rowIndex - prevRowIndex !== 1 || isLast) {
-      const rowInfoIndex = isLast ? index + 1 : index;
-
-      const startRowIndex = createdRowInfos[currentStartIndex].rowIndex;
-      const sizeOfContinuousRowInfo = createdRowInfos[rowInfoIndex].rowIndex - startRowIndex + 1;
-
-      silentSplice(
-        rawData,
-        startRowIndex,
-        sizeOfContinuousRowInfo,
-        ...createdRowInfos.slice(currentStartIndex, rowInfoIndex + 1).map(({ row }) => row.rawRow)
-      );
-      silentSplice(
-        viewData,
-        startRowIndex,
-        sizeOfContinuousRowInfo,
-        ...createdRowInfos.slice(currentStartIndex, rowInfoIndex + 1).map(({ row }) => row.viewRow)
-      );
-
-      currentStartIndex = rowInfoIndex + 1;
+    if (
+      continuousRowInfo.rowIndices.length === 0 ||
+      last(continuousRowInfo.rowIndices) === rowIndex - 1
+    ) {
+      continuousRowInfo.rowIndices.push(rowIndex);
+      continuousRowInfo.rawRows.push(rawRow);
+      continuousRowInfo.viewRows.push(viewRow);
+    } else {
+      spliceContinuousRowInfos(data, continuousRowInfo);
+      continuousRowInfo = {
+        rowIndices: [rowIndex],
+        rawRows: [rawRow],
+        viewRows: [viewRow],
+      };
     }
   });
+  spliceContinuousRowInfos(data, continuousRowInfo);
 
   createdRowInfos.forEach(({ rowIndex }, index) => {
     makeObservable(store, rowIndex, index !== createdRowInfos.length - 1, true);
