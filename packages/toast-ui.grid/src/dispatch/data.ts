@@ -87,10 +87,16 @@ import {
   DISABLED_PRIORITY_ROW,
 } from '../helper/constant';
 
+// interface ContinuousRowInfo {
+//   rowIndex: number;
+//   rawRow: Row;
+//   viewRow: { rowKey: OptRowProp; sortKey: OptRowProp; uniqueKey: OptRowProp };
+// }
+
 interface ContinuousRowInfo {
-  rowIndex: number;
-  rawRow: Row;
-  viewRow: { rowKey: OptRowProp; sortKey: OptRowProp; uniqueKey: OptRowProp };
+  rowIndices: number[];
+  rawRows: Row[];
+  viewRows: { rowKey: OptRowProp; sortKey: OptRowProp; uniqueKey: OptRowProp }[];
 }
 
 function getIndexRangeOfCheckbox(
@@ -834,23 +840,13 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   updateRowSpan(store);
 }
 
-function spliceContinuousRowInfos(data: Data, rowInfos: ContinuousRowInfo[]) {
+function spliceContinuousRowInfos(data: Data, continuousRowInfo: ContinuousRowInfo) {
   const { rawData, viewData } = data;
-  const startRowIndex = rowInfos[0].rowIndex;
-  const sizeOfContinuousRowInfos = rowInfos.length;
+  const startRowIndex = continuousRowInfo.rowIndices[0];
+  const sizeOfContinuousRowInfos = continuousRowInfo.rowIndices.length;
 
-  silentSplice(
-    rawData,
-    startRowIndex,
-    sizeOfContinuousRowInfos,
-    ...rowInfos.map(({ rawRow }) => rawRow)
-  );
-  silentSplice(
-    viewData,
-    startRowIndex,
-    sizeOfContinuousRowInfos,
-    ...rowInfos.map(({ viewRow }) => viewRow)
-  );
+  silentSplice(rawData, startRowIndex, sizeOfContinuousRowInfos, ...continuousRowInfo.rawRows);
+  silentSplice(viewData, startRowIndex, sizeOfContinuousRowInfos, ...continuousRowInfo.viewRows);
 }
 
 export function setRows(store: Store, rows: OptRow[]) {
@@ -871,19 +867,32 @@ export function setRows(store: Store, rows: OptRow[]) {
 
   const createdRowInfos = getCreatedRowInfos(store, sortedIndexedRows);
 
-  let continuousRowInfos: ContinuousRowInfo[] = [];
+  let continuousRowInfo: ContinuousRowInfo = {
+    rowIndices: [],
+    rawRows: [],
+    viewRows: [],
+  };
 
   createdRowInfos.forEach(({ rowIndex, row }) => {
     const { rawRow, viewRow } = row;
 
-    if (continuousRowInfos.length === 0 || last(continuousRowInfos).rowIndex === rowIndex - 1) {
-      continuousRowInfos.push({ rowIndex, rawRow, viewRow });
+    if (
+      continuousRowInfo.rowIndices.length === 0 ||
+      last(continuousRowInfo.rowIndices) === rowIndex - 1
+    ) {
+      continuousRowInfo.rowIndices.push(rowIndex);
+      continuousRowInfo.rawRows.push(rawRow);
+      continuousRowInfo.viewRows.push(viewRow);
     } else {
-      spliceContinuousRowInfos(data, continuousRowInfos);
-      continuousRowInfos = [{ rowIndex, rawRow, viewRow }];
+      spliceContinuousRowInfos(data, continuousRowInfo);
+      continuousRowInfo = {
+        rowIndices: [rowIndex],
+        rawRows: [rawRow],
+        viewRows: [viewRow],
+      };
     }
   });
-  spliceContinuousRowInfos(data, continuousRowInfos);
+  spliceContinuousRowInfos(data, continuousRowInfo);
 
   createdRowInfos.forEach(({ rowIndex }, index) => {
     makeObservable(store, rowIndex, index !== createdRowInfos.length - 1, true);
