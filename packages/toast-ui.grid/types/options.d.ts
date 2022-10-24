@@ -115,6 +115,7 @@ export interface OptGrid {
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
   contextMenu?: CreateMenuGroups;
+  autoInsertRow?: boolean;
 }
 
 export type OptRowProp = CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];

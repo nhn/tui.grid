@@ -48,6 +48,7 @@ interface DataOption {
   useClientSort: boolean;
   id: number;
   disabled: boolean;
+  autoInsertRow: boolean;
 }
 
 interface DataCreationOption {
@@ -530,6 +531,7 @@ export function create({
   useClientSort,
   disabled,
   id,
+  autoInsertRow,
 }: DataOption) {
   const { rawData, viewData } = createData(id, data, column, { lazyObservable: true, disabled });
 
@@ -549,6 +551,7 @@ export function create({
     viewData,
     sortState,
     pageOptions,
+    autoInsertRow,
     checkedAllRows: rawData.length ? !rawData.some((row) => !row._attributes.checked) : false,
     disabledAllCheckbox: disabled,
     filters: null,
