@@ -1019,8 +1019,9 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
       }
     }
     getDataManager(id).push('DELETE', removedRow);
-    updateSortKey(data, removedRow.sortKey + 1, false);
   });
+
+  resetSortKey(data, 0);
 
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
   updateHeights(store);
