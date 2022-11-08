@@ -114,6 +114,14 @@ class BodyAreaComp extends Component<Props> {
     this.props.dispatch('scrollToNext');
   }, 200);
 
+  private handleWheel = (ev: WheelEvent) => {
+    const currentTarget = ev.currentTarget as HTMLElement;
+    ev.preventDefault();
+
+    currentTarget.scrollTop += ev.deltaY;
+    currentTarget.scrollLeft += ev.deltaX;
+  };
+
   private handleScroll = (ev: UIEvent) => {
     const { scrollLeft, scrollTop, scrollHeight, clientHeight } = ev.target as HTMLElement;
     const { dispatch, eventBus, side } = this.props;
@@ -457,6 +465,7 @@ class BodyAreaComp extends Component<Props> {
         style={areaStyle}
         onScroll={this.handleScroll}
         onMouseDown={this.handleMouseDown}
+        onWheel={this.handleWheel}
         ref={(el) => {
           this.el = el;
         }}
