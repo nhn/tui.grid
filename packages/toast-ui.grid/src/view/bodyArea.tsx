@@ -116,10 +116,27 @@ class BodyAreaComp extends Component<Props> {
 
   private handleWheel = (ev: WheelEvent) => {
     const currentTarget = ev.currentTarget as HTMLElement;
-    ev.preventDefault();
+    const { deltaX, deltaY } = ev;
+    const {
+      offsetHeight,
+      offsetWidth,
+      scrollHeight,
+      scrollWidth,
+      scrollTop,
+      scrollLeft,
+    } = currentTarget;
 
-    currentTarget.scrollTop += ev.deltaY;
-    currentTarget.scrollLeft += ev.deltaX;
+    const willScrollUp = deltaY < 0 && scrollTop > 0;
+    const willScrollDown = deltaY > 0 && scrollTop + offsetHeight < scrollHeight;
+    const willScrollLeft = deltaX < 0 && scrollLeft > 0;
+    const willScrollRight = deltaX > 0 && scrollLeft + offsetWidth < scrollWidth;
+
+    if (willScrollUp || willScrollDown || willScrollLeft || willScrollRight) {
+      ev.preventDefault();
+    }
+
+    currentTarget.scrollTop += deltaY;
+    currentTarget.scrollLeft += deltaX;
   };
 
   private handleScroll = (ev: UIEvent) => {
