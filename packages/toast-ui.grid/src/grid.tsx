@@ -54,6 +54,7 @@ import {
   includes,
   isEmpty,
   isNil,
+  isNull,
 } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -1178,8 +1179,13 @@ export default class Grid implements TuiGrid {
     }
 
     if (options.focus) {
-      const rowIdx = isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
-      this.focusAt(rowIdx, 0);
+      if (!isUndefined(options.at)) {
+        this.focusAt(options.at, 0);
+      } else if (isNull(this.store.data.filters)) {
+        this.focusAt(this.getRowCount() - 1, 0);
+      } else {
+        this.focusAt(this.store.data.filteredRawData.length - 1, 0);
+      }
     }
   }
 
