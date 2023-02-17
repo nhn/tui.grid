@@ -56,7 +56,7 @@ function assertFilterBtnClass(active = false) {
   }
 }
 
-describe.only('UI: Layer', () => {
+describe('UI: Layer', () => {
   const columns = [{ name: 'id' }, { name: 'score', filter: 'number' }];
   beforeEach(() => {
     cy.createGrid({ data: [], columns, width: GRID_WIDTH });
