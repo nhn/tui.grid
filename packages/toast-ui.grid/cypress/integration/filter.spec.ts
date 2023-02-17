@@ -3,6 +3,8 @@ import { cls } from '@/helper/dom';
 import { OptRow } from '@t/options';
 import { invokeFilter, clickFilterBtn, inputFilterValue } from '../helper/util';
 
+const GRID_WIDTH = 500;
+
 before(() => {
   cy.visit('/dist');
 });
@@ -54,10 +56,10 @@ function assertFilterBtnClass(active = false) {
   }
 }
 
-describe('UI: Layer', () => {
+describe.only('UI: Layer', () => {
   const columns = [{ name: 'id' }, { name: 'score', filter: 'number' }];
   beforeEach(() => {
-    cy.createGrid({ data: [], columns });
+    cy.createGrid({ data: [], columns, width: GRID_WIDTH });
   });
 
   it('click filter button -> show layer', () => {
@@ -81,6 +83,16 @@ describe('UI: Layer', () => {
     clickFilterBtn();
     cy.getByCls('container').click();
     getFilterLayer().should('not.be.visible');
+  });
+
+  it('should always show inside of the grid', () => {
+    clickFilterBtn();
+
+    cy.getByCls('filter-container').should(($el) => {
+      const { offsetLeft, clientWidth } = $el[0];
+
+      expect(clientWidth + offsetLeft).to.be.lessThan(GRID_WIDTH);
+    });
   });
 });
 
