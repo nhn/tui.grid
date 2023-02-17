@@ -10,12 +10,14 @@ import { FilterOperator } from './filterOperator';
 import { SelectFilter } from './selectFilter';
 import { some } from '../helper/common';
 import i18n from '../i18n';
+import { FILTER_LEFT_POSITION_ADJUSTMENT } from '../helper/constant';
 
 interface StoreProps {
   filters: Filter[] | null;
   columnInfo: ColumnInfo;
   renderSecondFilter: boolean;
   currentColumnActive: boolean;
+  leftPosition: number;
 }
 
 interface OwnProps {
@@ -58,11 +60,11 @@ export class FilterLayerInnerComp extends Component<Props> {
   componentDidMount() {
     const { left } = this.el.getBoundingClientRect();
     const { clientWidth } = this.el;
-    const { innerWidth } = window;
+    const { leftPosition } = this.props;
 
-    if (innerWidth < left + clientWidth) {
+    if (leftPosition < left + clientWidth) {
       const orgLeft = this.state.left;
-      this.setState({ left: orgLeft - (left + clientWidth - innerWidth) });
+      this.setState({ left: orgLeft - (left + clientWidth - leftPosition) });
     }
   }
 
@@ -72,14 +74,14 @@ export class FilterLayerInnerComp extends Component<Props> {
     if (currentColName !== prevProp.columnAddress.name) {
       const { left } = this.el.getBoundingClientRect();
       const { clientWidth } = this.el;
-      const { innerWidth } = window;
+      const { leftPosition } = this.props;
       const diff = currentLeft - this.state.left;
 
       let resultLeft = currentLeft;
 
-      // Positioning the filter layer inside the viewport when it is out of the viewport
-      if (innerWidth < left + diff + clientWidth) {
-        resultLeft = currentLeft - (left + diff + clientWidth - innerWidth);
+      // Positioning the filter layer inside the grid when it is out of the grid
+      if (leftPosition < left + diff + clientWidth) {
+        resultLeft = currentLeft - (left + diff + clientWidth - leftPosition);
       }
 
       this.setState({ left: resultLeft });
@@ -150,7 +152,7 @@ export class FilterLayerInnerComp extends Component<Props> {
 
 export const FilterLayerInner = connect<StoreProps, OwnProps>(
   (store, { columnAddress, filterState }) => {
-    const { data, column } = store;
+    const { data, column, dimension } = store;
     const { filters } = data;
     const { allColumnMap } = column;
 
@@ -164,12 +166,15 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>(
       filterState.state[0].value.length
     );
 
+    const leftPosition = dimension.width + dimension.offsetLeft - FILTER_LEFT_POSITION_ADJUSTMENT;
+
     return {
       columnInfo: allColumnMap[columnAddress.name],
       columnAddress,
       filters,
       renderSecondFilter,
       currentColumnActive,
+      leftPosition,
     };
   }
 )(FilterLayerInnerComp);
