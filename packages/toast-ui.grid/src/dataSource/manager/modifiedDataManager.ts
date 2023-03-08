@@ -6,9 +6,9 @@ import {
   ModifiedRows,
   RequestTypeCode,
   MutationParams,
-} from '../../../types/dataSource';
-import { OptRow } from '../../../types/options';
-import { Row, RowKey } from '../../../types/store/data';
+} from '@t/dataSource';
+import { OptRow } from '@t/options';
+import { Row, RowKey } from '@t/store/data';
 import {
   someProp,
   findIndex,
@@ -16,6 +16,7 @@ import {
   omit,
   isObject,
   forEachObject,
+  isEmpty,
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
 import { getOmittedInternalProp, changeRawDataToOriginDataForTree } from '../../query/data';
@@ -62,20 +63,25 @@ export function createManager(): ModifiedDataManager {
     UPDATE: [],
     DELETE: [],
   };
-  const splice = (type: ModificationTypeCode, rowKey: RowKey, row?: Row) => {
-    const index = findIndex((createdRow) => createdRow.rowKey === rowKey, dataMap[type]);
-    if (index !== -1) {
+  const splice = (type: ModificationTypeCode, rowKey: RowKey[], row?: Row[]) => {
+    const startIndex = findIndex((createdRow) => createdRow.rowKey === rowKey[0], dataMap[type]);
+    const lastIndex = findIndex(
+      (createdRow) => createdRow.rowKey === rowKey[rowKey.length - 1],
+      dataMap[type]
+    );
+
+    if (startIndex !== -1) {
       if (isUndefined(row)) {
-        dataMap[type].splice(index, 1);
+        dataMap[type].splice(startIndex, lastIndex - startIndex + 1);
       } else {
-        dataMap[type].splice(index, 1, row);
+        dataMap[type].splice(startIndex, lastIndex - startIndex + 1, ...row);
       }
     }
   };
   const spliceAll = (rowKey: RowKey, row?: Row) => {
-    splice('CREATE', rowKey, row);
-    splice('UPDATE', rowKey, row);
-    splice('DELETE', rowKey, row);
+    splice('CREATE', [rowKey], !row ? row : [row]);
+    splice('UPDATE', [rowKey], !row ? row : [row]);
+    splice('DELETE', [rowKey], !row ? row : [row]);
   };
 
   return {
@@ -106,25 +112,36 @@ export function createManager(): ModifiedDataManager {
       return !!dataMap[type].length;
     },
 
-    push(type: ModificationTypeCode, row: Row, mixed = false) {
-      const { rowKey } = row;
+    push(type: ModificationTypeCode, rows: Row[], mixed = false) {
+      const rowKeys = rows.map((row) => row.rowKey);
       mixedOrder = mixedOrder || mixed;
       if (type === 'UPDATE' || type === 'DELETE') {
-        splice('UPDATE', rowKey);
+        splice('UPDATE', rowKeys);
+
+        const registeredRows = rows.filter(({ rowKey }) =>
+          someProp('rowKey', rowKey, dataMap.CREATE)
+        );
+
         // if the row was already registered in createdRows,
         // would update it in createdRows and not add it to updatedRows or deletedRows
-        if (someProp('rowKey', rowKey, dataMap.CREATE)) {
+        if (!isEmpty(registeredRows)) {
+          const registeredRowKeys = registeredRows.map((row) => row.rowKey);
+
           if (type === 'UPDATE') {
-            splice('CREATE', rowKey, row);
+            splice('CREATE', registeredRowKeys, registeredRows);
           } else {
-            splice('CREATE', rowKey);
+            splice('CREATE', registeredRowKeys);
           }
           return;
         }
       }
 
-      if (!someProp('rowKey', rowKey, dataMap[type])) {
-        dataMap[type].push(row);
+      const notModifiedRows = rows.filter(
+        ({ rowKey }) => !someProp('rowKey', rowKey, dataMap[type])
+      );
+
+      if (!isEmpty(notModifiedRows)) {
+        dataMap[type].push(...notModifiedRows);
       }
     },
 

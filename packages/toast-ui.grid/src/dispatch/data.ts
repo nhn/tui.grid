@@ -239,7 +239,7 @@ export function setValue(
     updateHeightsWithFilteredData(store);
   });
   updateSummaryValueByCell(store, columnName, { orgValue, value });
-  getDataManager(id).push('UPDATE', targetRow);
+  getDataManager(id).push('UPDATE', [targetRow]);
 
   if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState, column)) {
     const { spanCount } = rowSpanMap[columnName];
@@ -247,7 +247,7 @@ export function setValue(
     for (let count = 1; count < spanCount; count += 1) {
       rawData[rowIndex + count][columnName] = value;
       updateSummaryValueByCell(store, columnName, { orgValue, value });
-      getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
+      getDataManager(id).push('UPDATE', [rawData[rowIndex + count]]);
     }
   }
   setAutoResizingColumnWidths(store);
@@ -350,7 +350,7 @@ export function setColumnValues(
         value,
       });
       targetRow[columnName] = value;
-      getDataManager(id).push('UPDATE', targetRow);
+      getDataManager(id).push('UPDATE', [targetRow]);
     }
   });
   updateSummaryValueByColumn(store, columnName, { value });
@@ -596,7 +596,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateRowSpan(store);
   }
 
-  getDataManager(id).push('CREATE', rawRow, inserted);
+  getDataManager(id).push('CREATE', [rawRow], inserted);
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   postUpdateAfterManipulation(store, at, 'DONE', [rawRow]);
 }
@@ -635,7 +635,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
-  getDataManager(id).push('DELETE', removedRow);
+  getDataManager(id).push('DELETE', [removedRow]);
   updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   postUpdateAfterManipulation(store, rowIndex, getLoadingState(rawData));
 }
@@ -831,7 +831,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
     updateRowSpanWhenAppending(rawData, prevRow, false);
   }
 
-  getDataManager(id).push('UPDATE', rawRow);
+  getDataManager(id).push('UPDATE', [rawRow]);
 
   setTimeout(() => {
     updateHeightsWithFilteredData(store);
@@ -903,14 +903,17 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
 
   createdRowInfos.forEach(({ row }) => {
-    const { rawRow, prevRow } = row;
+    const { prevRow } = row;
 
     if (prevRow && isRowSpanEnabled(sortState, column)) {
       updateRowSpanWhenAppending(rawData, prevRow, false);
     }
-
-    getDataManager(id).push('UPDATE', rawRow);
   });
+
+  getDataManager(id).push(
+    'UPDATE',
+    createdRowInfos.map(({ row }) => row.rawRow)
+  );
 
   sortByCurrentState(store);
   postUpdateAfterManipulation(store, createdRowInfos[0].rowIndex, 'DONE');
@@ -950,7 +953,7 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
-  getDataManager(id).push('UPDATE', rawRow, true);
+  getDataManager(id).push('UPDATE', [rawRow], true);
 }
 
 export function scrollToNext(store: Store) {
@@ -998,7 +1001,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
   updateHeights(store);
-  rawData.forEach((rawRow) => getDataManager(id).push('CREATE', rawRow));
+  rawData.forEach((rawRow) => getDataManager(id).push('CREATE', [rawRow]));
   postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
   updateRowSpan(store);
 }
@@ -1022,7 +1025,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
         updateRowSpanWhenRemoving(rawData, removedRow, nextRow, false);
       }
     }
-    getDataManager(id).push('DELETE', removedRow);
+    getDataManager(id).push('DELETE', [removedRow]);
   });
 
   resetSortKey(data, 0);
