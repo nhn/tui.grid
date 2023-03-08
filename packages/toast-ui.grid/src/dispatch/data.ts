@@ -21,6 +21,7 @@ import {
   silentSplice,
   isNil,
   last,
+  isBetween,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
@@ -850,8 +851,9 @@ function spliceContinuousRowInfos(data: Data, continuousRowInfo: ContinuousRowIn
 }
 
 export function setRows(store: Store, rows: OptRow[]) {
-  const { data, column, id } = store;
+  const { data, column, id, viewport } = store;
   const { rawData, sortState } = data;
+  const { rowRange } = viewport;
 
   const sortedIndexedRows = rows
     .map((row) => {
@@ -894,8 +896,10 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
   spliceContinuousRowInfos(data, continuousRowInfo);
 
-  createdRowInfos.forEach(({ rowIndex }, index) => {
-    makeObservable(store, rowIndex, index !== createdRowInfos.length - 1, true);
+  createdRowInfos.forEach(({ rowIndex }) => {
+    if (isBetween(rowIndex, rowRange[0], rowRange[1])) {
+      makeObservable(store, rowIndex, false, true);
+    }
   });
 
   createdRowInfos.forEach(({ row, orgRow }) => {
