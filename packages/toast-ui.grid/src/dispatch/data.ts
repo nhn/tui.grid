@@ -902,7 +902,7 @@ export function setRows(store: Store, rows: OptRow[]) {
     }
   });
 
-  createdRowInfos.forEach(({ row, orgRow }) => {
+  createdRowInfos.forEach(({ row }) => {
     const { rawRow, prevRow } = row;
 
     if (prevRow && isRowSpanEnabled(sortState, column)) {
@@ -910,7 +910,6 @@ export function setRows(store: Store, rows: OptRow[]) {
     }
 
     getDataManager(id).push('UPDATE', rawRow);
-    updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   });
 
   sortByCurrentState(store);
@@ -921,6 +920,7 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
 
   updateRowSpan(store);
+  updateAllSummaryValues(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
