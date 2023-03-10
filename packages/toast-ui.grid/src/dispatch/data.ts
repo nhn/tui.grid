@@ -896,19 +896,15 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
   spliceContinuousRowInfos(data, continuousRowInfo);
 
-  createdRowInfos.forEach(({ rowIndex }) => {
-    if (isBetween(rowIndex, rowRange[0], rowRange[1])) {
-      makeObservable(store, rowIndex, false, true);
-    }
-  });
+  createdRowInfos
+    .filter(({ rowIndex }) => isBetween(rowIndex, rowRange[0], rowRange[1]))
+    .forEach(({ rowIndex }) => makeObservable(store, rowIndex, false, true));
 
-  createdRowInfos.forEach(({ row }) => {
-    const { prevRow } = row;
-
-    if (prevRow && isRowSpanEnabled(sortState, column)) {
-      updateRowSpanWhenAppending(rawData, prevRow, false);
-    }
-  });
+  if (isRowSpanEnabled(sortState, column)) {
+    createdRowInfos
+      .filter(({ row: { prevRow } }) => !!prevRow)
+      .forEach(({ row: { prevRow } }) => updateRowSpanWhenAppending(rawData, prevRow, false));
+  }
 
   getDataManager(id).push(
     'UPDATE',
