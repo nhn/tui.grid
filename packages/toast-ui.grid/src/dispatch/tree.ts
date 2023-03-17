@@ -372,7 +372,7 @@ export function appendTreeRow(
 
   const rowHeights = rawRows.map((rawRow) => {
     changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
-    getDataManager(id).push(modificationType, rawRow, true);
+    getDataManager(id).push(modificationType, [rawRow], true);
 
     return getRowHeight(rawRow, dimension.rowHeight);
   });
@@ -411,7 +411,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey, movingRow?: boolean)
   heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
-    getDataManager(id).push(modificationType, removedRows[i]);
+    getDataManager(id).push(modificationType, [removedRows[i]]);
   }
   postUpdateAfterManipulation(store, startIdx, rawData);
 }
@@ -457,8 +457,8 @@ export function moveTreeRow(
     removeTreeRow(store, rowKey, true);
     const originRow = getOriginObject(row as Observable<Row>);
 
-    getDataManager(id).push('UPDATE', targetRow, true);
-    getDataManager(id).push('UPDATE', row, true);
+    getDataManager(id).push('UPDATE', [targetRow], true);
+    getDataManager(id).push('UPDATE', [row], true);
 
     if (options.appended) {
       appendTreeRow(store, originRow, { parentRowKey: targetRow.rowKey, movingRow: true });

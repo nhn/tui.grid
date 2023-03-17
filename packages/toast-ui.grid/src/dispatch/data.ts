@@ -21,6 +21,7 @@ import {
   silentSplice,
   isNil,
   last,
+  isBetween,
 } from '../helper/common';
 import { createViewRow, createData, setRowRelationListItems, createRawRow } from '../store/data';
 import { notify, isObservable, batchObserver, asyncInvokeObserver } from '../helper/observable';
@@ -238,7 +239,7 @@ export function setValue(
     updateHeightsWithFilteredData(store);
   });
   updateSummaryValueByCell(store, columnName, { orgValue, value });
-  getDataManager(id).push('UPDATE', targetRow);
+  getDataManager(id).push('UPDATE', [targetRow]);
 
   if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState, column)) {
     const { spanCount } = rowSpanMap[columnName];
@@ -246,7 +247,7 @@ export function setValue(
     for (let count = 1; count < spanCount; count += 1) {
       rawData[rowIndex + count][columnName] = value;
       updateSummaryValueByCell(store, columnName, { orgValue, value });
-      getDataManager(id).push('UPDATE', rawData[rowIndex + count]);
+      getDataManager(id).push('UPDATE', [rawData[rowIndex + count]]);
     }
   }
   setAutoResizingColumnWidths(store);
@@ -349,7 +350,7 @@ export function setColumnValues(
         value,
       });
       targetRow[columnName] = value;
-      getDataManager(id).push('UPDATE', targetRow);
+      getDataManager(id).push('UPDATE', [targetRow]);
     }
   });
   updateSummaryValueByColumn(store, columnName, { value });
@@ -595,7 +596,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateRowSpan(store);
   }
 
-  getDataManager(id).push('CREATE', rawRow, inserted);
+  getDataManager(id).push('CREATE', [rawRow], inserted);
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   postUpdateAfterManipulation(store, at, 'DONE', [rawRow]);
 }
@@ -634,7 +635,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
-  getDataManager(id).push('DELETE', removedRow);
+  getDataManager(id).push('DELETE', [removedRow]);
   updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   postUpdateAfterManipulation(store, rowIndex, getLoadingState(rawData));
 }
@@ -830,7 +831,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
     updateRowSpanWhenAppending(rawData, prevRow, false);
   }
 
-  getDataManager(id).push('UPDATE', rawRow);
+  getDataManager(id).push('UPDATE', [rawRow]);
 
   setTimeout(() => {
     updateHeightsWithFilteredData(store);
@@ -850,8 +851,9 @@ function spliceContinuousRowInfos(data: Data, continuousRowInfo: ContinuousRowIn
 }
 
 export function setRows(store: Store, rows: OptRow[]) {
-  const { data, column, id } = store;
+  const { data, column, id, viewport } = store;
   const { rawData, sortState } = data;
+  const { rowRange } = viewport;
 
   const sortedIndexedRows = rows
     .map((row) => {
@@ -894,20 +896,20 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
   spliceContinuousRowInfos(data, continuousRowInfo);
 
-  createdRowInfos.forEach(({ rowIndex }, index) => {
-    makeObservable(store, rowIndex, index !== createdRowInfos.length - 1, true);
-  });
+  createdRowInfos
+    .filter(({ rowIndex }) => isBetween(rowIndex, rowRange[0], rowRange[1]))
+    .forEach(({ rowIndex }) => makeObservable(store, rowIndex, false, true));
 
-  createdRowInfos.forEach(({ row, orgRow }) => {
-    const { rawRow, prevRow } = row;
+  if (isRowSpanEnabled(sortState, column)) {
+    createdRowInfos
+      .filter(({ row: { prevRow } }) => !!prevRow)
+      .forEach(({ row: { prevRow } }) => updateRowSpanWhenAppending(rawData, prevRow, false));
+  }
 
-    if (prevRow && isRowSpanEnabled(sortState, column)) {
-      updateRowSpanWhenAppending(rawData, prevRow, false);
-    }
-
-    getDataManager(id).push('UPDATE', rawRow);
-    updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
-  });
+  getDataManager(id).push(
+    'UPDATE',
+    createdRowInfos.map(({ row }) => row.rawRow)
+  );
 
   sortByCurrentState(store);
   postUpdateAfterManipulation(store, createdRowInfos[0].rowIndex, 'DONE');
@@ -917,6 +919,7 @@ export function setRows(store: Store, rows: OptRow[]) {
   });
 
   updateRowSpan(store);
+  updateAllSummaryValues(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
@@ -946,7 +949,7 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
-  getDataManager(id).push('UPDATE', rawRow, true);
+  getDataManager(id).push('UPDATE', [rawRow], true);
 }
 
 export function scrollToNext(store: Store) {
@@ -994,7 +997,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   resetSortKey(data, startIndex);
   sortByCurrentState(store);
   updateHeights(store);
-  rawData.forEach((rawRow) => getDataManager(id).push('CREATE', rawRow));
+  rawData.forEach((rawRow) => getDataManager(id).push('CREATE', [rawRow]));
   postUpdateAfterManipulation(store, startIndex, 'DONE', rawData);
   updateRowSpan(store);
 }
@@ -1018,7 +1021,7 @@ export function removeRows(store: Store, targetRows: RemoveTargetRows) {
         updateRowSpanWhenRemoving(rawData, removedRow, nextRow, false);
       }
     }
-    getDataManager(id).push('DELETE', removedRow);
+    getDataManager(id).push('DELETE', [removedRow]);
   });
 
   resetSortKey(data, 0);

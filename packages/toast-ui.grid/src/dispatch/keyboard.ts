@@ -281,7 +281,7 @@ export function updateDataByKeyMap(store: Store, origin: Origin, changeInfo: Cha
     const targetRowIndex = changeValue();
     if (index !== targetRowIndex) {
       index = targetRowIndex;
-      manager.push('UPDATE', filteredRawData[index]);
+      manager.push('UPDATE', [filteredRawData[index]]);
     }
   });
   updateAllSummaryValues(store);
