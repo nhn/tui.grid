@@ -152,6 +152,7 @@ export function clearActiveFilterState(store: Store) {
   const activeFilterState = filterLayerState.activeFilterState!;
   activeFilterState.state = [];
   unfilter(store, activeFilterState.columnName);
+  notify(filterLayerState, 'activeFilterState');
 }
 
 export function setActiveFilterState(store: Store, state: FilterState, filterIndex: number) {
