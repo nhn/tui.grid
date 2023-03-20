@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-grid",
-  "version": "4.21.8",
+  "version": "4.21.9",
   "description": "TOAST UI Grid for React",
   "main": "dist/toastui-react-grid.js",
   "files": [
@@ -52,6 +52,6 @@
     "xhr-mock": "^2.4.1"
   },
   "dependencies": {
-    "tui-grid": "^4.21.8"
+    "tui-grid": "^4.21.9"
   }
 }
