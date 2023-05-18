@@ -1,5 +1,5 @@
-import { h, Component } from 'preact';
-import { ViewRow, RowKey } from '@t/store/data';
+import { Component, h } from 'preact';
+import { RowKey, ViewRow } from '@t/store/data';
 import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { cls } from '../helper/dom';
@@ -12,6 +12,7 @@ interface OwnProps {
   rowIndex: number;
   viewRow: ViewRow;
   columns: ColumnInfo[];
+  isVisible: boolean;
 }
 
 interface StoreProps {
@@ -52,11 +53,13 @@ class BodyRowComp extends Component<Props> {
     autoRowHeight,
     hoveredRowKey,
     focusedRowKey,
+    isVisible,
   }: Props) {
     const isOddRow = rowIndex % 2 === 0;
 
     return (
-      rowHeight > 0 && (
+      rowHeight > 0 &&
+      isVisible && (
         <tr
           style={{
             height: rowHeight,
