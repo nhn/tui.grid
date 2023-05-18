@@ -23,7 +23,10 @@ export function updateRowSpanWhenAppending(data: Row[], prevRow: Row, extendPrev
       const startOffset = keyRow || extendPrevRowSpan ? 1 : -count + 1;
 
       // keep rowSpan state when appends row in the middle of rowSpan
-      if (mainRowSpan.spanCount > startOffset) {
+      if (
+        mainRowSpan.spanCount > startOffset ||
+        (mainRowSpan.spanCount === 1 && startOffset === 1)
+      ) {
         mainRowSpan.count += 1;
         mainRowSpan.spanCount += 1;
 
