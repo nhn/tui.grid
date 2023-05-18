@@ -475,7 +475,7 @@ describe('appendTreeRow()', () => {
       cy.getCell(7, 'c1').should('have.text', 'c');
     });
 
-    it.only('specific parent that internal type.', () => {
+    it('specific parent that internal type.', () => {
       cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
       cy.gridInstance().invoke('expand', 0, true);
       cy.gridInstance().invoke('expand', 5, true);
