@@ -186,15 +186,13 @@ export function partialObservable<T extends Dictionary<any>>(obj: T, key: string
 
 export function unobservable<T extends Dictionary<any>>(obj: T, keys: Array<keyof T> = []) {
   if (isObservable(obj)) {
-    keys.forEach((key) => {
-      const value = obj[key];
+    const originObject = getOriginObject(obj) as Observable<T>;
 
+    keys.forEach((key) => {
       delete obj[key];
 
-      obj[key] = value;
+      obj[key] = originObject[key];
     });
-
-    delete obj.__storage__;
   }
 }
 
