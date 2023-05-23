@@ -1,5 +1,5 @@
 import { Dictionary } from '@t/options';
-import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction, isNull } from './common';
+import { forEachObject, hasOwnProp, isEmpty, isFunction, isNull, isObject, last } from './common';
 import { patchArrayMethods } from './array';
 
 type BooleanSet = Dictionary<boolean>;
@@ -184,6 +184,18 @@ export function partialObservable<T extends Dictionary<any>>(obj: T, key: string
   makeObservableData(obj, obj, key, storage, propObserverIdSetMap);
 }
 
+export function unobservable<T extends Dictionary<any>>(obj: T, keys: Array<keyof T> = []) {
+  if (isObservable(obj)) {
+    const originObject = getOriginObject(obj) as Observable<T>;
+
+    keys.forEach((key) => {
+      delete obj[key];
+
+      obj[key] = originObject[key];
+    });
+  }
+}
+
 export function observable<T extends Dictionary<any>>(obj: T, sync = false): Observable<T> {
   if (Array.isArray(obj)) {
     throw new Error('Array object cannot be Reactive');
@@ -198,7 +210,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
   const resultObj = {} as T;
 
   Object.defineProperties(resultObj, {
-    __storage__: { value: storage },
+    __storage__: { value: storage, configurable: true },
     __propObserverIdSetMap__: { value: propObserverIdSetMap },
   });
 

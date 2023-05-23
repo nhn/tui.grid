@@ -1,43 +1,49 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
-import { OptRow, OptAppendTreeRow, OptMoveRow } from '@t/options';
+import { OptAppendTreeRow, OptMoveRow, OptRow } from '@t/options';
 import { Column, ColumnInfo } from '@t/store/column';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { Dimension } from '@t/store/dimension';
 import { createViewRow } from '../store/data';
 import {
-  getRowHeight,
   findIndexByRowKey,
   findRowByRowKey,
   getLoadingState,
-  isSorted,
+  getRowHeight,
   isFiltered,
+  isSorted,
 } from '../query/data';
-import { notify, batchObserver, getOriginObject, Observable } from '../helper/observable';
+import {
+  batchObserver,
+  getOriginObject,
+  notify,
+  Observable,
+  unobservable,
+} from '../helper/observable';
 import { getDataManager } from '../instance';
 import {
   isUpdatableRowAttr,
-  setLoadingState,
-  updateRowNumber,
   setCheckedAllRows,
+  setLoadingState,
   uncheck,
+  updateRowNumber,
 } from './data';
 import {
-  getParentRow,
+  getChildRowKeys,
+  getDepth,
   getDescendantRows,
+  getParentRow,
   getStartIndexToAppendRow,
+  isExpanded,
+  isLeaf,
+  isRootChildRow,
   traverseAncestorRows,
   traverseDescendantRows,
-  getChildRowKeys,
-  isLeaf,
-  isExpanded,
-  isRootChildRow,
-  getDepth,
 } from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
-import { findProp, findPropIndex, removeArrayItem, some, silentSplice } from '../helper/common';
+import { findProp, findPropIndex, removeArrayItem, silentSplice, some } from '../helper/common';
 import { cls, getTextWidth } from '../helper/dom';
 import { fillMissingColumnData } from './lazyObservable';
 import { getColumnSide } from '../query/column';
@@ -218,6 +224,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
     }
 
     changeHiddenAttr(childRow, true);
+    unobservable(childRow._attributes.tree!, ['hidden']);
 
     if (!isLeaf(childRow)) {
       if (recursive) {

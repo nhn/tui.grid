@@ -1,13 +1,13 @@
-import { RowKey, CellValue } from '@t/store/data';
+import { CellValue, RowKey } from '@t/store/data';
 import { OptColumn, OptGrid, OptRow } from '@t/options';
 import GridEvent from '@/event/gridEvent';
 import { CellRenderer, CellRendererProps } from '@t/renderer';
 import { cls } from '../../src/helper/dom';
 import {
   assertGridHasRightRowNumber,
+  assertModifiedRowsLength,
   assertToggleButtonCollapsed,
   assertToggleButtonExpanded,
-  assertModifiedRowsLength,
 } from '../helper/assert';
 import { dragAndDropColumn, dragAndDropRow } from '../helper/util';
 
@@ -478,6 +478,7 @@ describe('appendTreeRow()', () => {
     it('specific parent that internal type.', () => {
       cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
       cy.gridInstance().invoke('expand', 0, true);
+      cy.gridInstance().invoke('expand', 5, true);
 
       cy.getCell(5, 'c1').should('have.text', 'a');
       cy.getCell(6, 'c1').should('have.text', 'b');
