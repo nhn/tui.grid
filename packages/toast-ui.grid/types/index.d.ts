@@ -1,36 +1,36 @@
-// Type definitions for TOAST UI Grid v4.21.9
+// Type definitions for TOAST UI Grid v4.21.10
 // TypeScript Version: 3.9.5
 
-import { CellValue, RowKey, Row, SortState, RowSpan, InvalidRow } from './store/data';
+import { CellValue, InvalidRow, Row, RowKey, RowSpan, SortState } from './store/data';
 import { SummaryColumnContentMap, SummaryValueMap } from './store/summary';
 import { ColumnInfo } from './store/column';
 import { Range } from './store/selection';
 import {
   Dictionary,
-  GridEventName,
   GridEventListener,
-  OptThemePresetNames,
-  OptPreset,
-  OptI18nData,
-  OptGrid,
+  GridEventName,
   OptAppendRow,
-  OptPrependRow,
-  OptRemoveRow,
-  OptHeader,
-  OptRow,
   OptColumn,
-  ResetOptions,
+  OptGrid,
+  OptHeader,
+  OptI18nData,
   OptMoveRow,
+  OptPrependRow,
+  OptPreset,
+  OptRemoveRow,
+  OptRow,
+  OptThemePresetNames,
+  ResetOptions,
 } from './options';
 import {
-  ModifiedRowsOptions,
-  ModifiedRows,
-  Params,
-  RequestType,
   ModificationTypeCode,
+  ModifiedRows,
+  ModifiedRowsOptions,
+  Params,
   RequestOptions,
+  RequestType,
 } from './dataSource';
-import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
+import { Filter, FilterOptionType, FilterState } from './store/filterLayerState';
 import { MenuItem } from './store/contextMenu';
 import { OptExport } from './store/export';
 
