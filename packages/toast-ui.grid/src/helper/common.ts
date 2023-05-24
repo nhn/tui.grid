@@ -265,7 +265,7 @@ export function range(end: number) {
   return arr;
 }
 
-export function last<T>(arr: T[]) {
+export function last(arr: any[]) {
   return arr[arr.length - 1];
 }
 
