@@ -101,12 +101,14 @@ export function createManager(): ModifiedDataManager {
         return acc;
       }, []);
 
-    sortedContinuousIndexedRows.reduce((accLength, indexedRows) => {
+    let accumulatedLength = 0;
+
+    sortedContinuousIndexedRows.forEach((indexedRows) => {
       const startIndex = indexedRows[0].rowIndex;
       const currentLength = last(indexedRows).rowIndex - startIndex + 1;
 
       if (isUndefined(rows)) {
-        dataMap[type].splice(startIndex - accLength, currentLength);
+        dataMap[type].splice(startIndex - accumulatedLength, currentLength);
       } else {
         dataMap[type].splice(
           startIndex,
@@ -115,8 +117,8 @@ export function createManager(): ModifiedDataManager {
         );
       }
 
-      return accLength + currentLength;
-    }, 0);
+      accumulatedLength += currentLength;
+    });
   };
   const spliceAll = (rowKey: RowKey, row?: Row) => {
     splice('CREATE', [rowKey], !row ? row : [row]);
