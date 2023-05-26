@@ -191,6 +191,19 @@ describe('appendRow()', () => {
 
     cy.getCell(2, 'name').should('have.text', 'observable');
   });
+
+  it('if a filter applied and focus option exist, set focus to the first cell of the inserted row', () => {
+    createGrid();
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 15 });
+    cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Park' }]);
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 }, { focus: true });
+
+    cy.gridInstance().invoke('getFocusedCell').should('eql', {
+      rowKey: 3,
+      columnName: 'name',
+      value: 'Park',
+    });
+  });
 });
 
 describe('prependRow()', () => {
