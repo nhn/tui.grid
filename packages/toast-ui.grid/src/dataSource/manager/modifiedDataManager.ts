@@ -1,26 +1,26 @@
 import {
-  ModifiedDataMap,
   ModificationTypeCode,
-  ModifiedRowsOptions,
   ModifiedDataManager,
+  ModifiedDataMap,
   ModifiedRows,
-  RequestTypeCode,
+  ModifiedRowsOptions,
   MutationParams,
+  RequestTypeCode,
 } from '@t/dataSource';
 import { OptRow } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import {
-  someProp,
   findIndex,
-  isUndefined,
-  omit,
-  isObject,
   forEachObject,
   isEmpty,
+  isObject,
+  isUndefined,
   last,
+  omit,
+  someProp,
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
-import { getOmittedInternalProp, changeRawDataToOriginDataForTree } from '../../query/data';
+import { changeRawDataToOriginDataForTree, getOmittedInternalProp } from '../../query/data';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
 
@@ -85,10 +85,14 @@ export function createManager(): ModifiedDataManager {
           return acc;
         }
 
-        const lastContinuousRowIndices = !acc ? acc : last(acc);
-        const lastRowIndex = !lastContinuousRowIndices ? -1 : last(lastContinuousRowIndices);
+        const lastContinuousRowIndices = last(acc) ?? [];
+        const lastRowIndex = last(lastContinuousRowIndices)?.rowIndex;
 
-        if (isUndefined(lastContinuousRowIndices) || rowIndex - lastRowIndex !== 1) {
+        if (
+          isUndefined(lastContinuousRowIndices) ||
+          isUndefined(lastRowIndex) ||
+          rowIndex - lastRowIndex !== 1
+        ) {
           acc.push([indexedRow]);
         } else {
           lastContinuousRowIndices.push(indexedRow);
@@ -97,19 +101,23 @@ export function createManager(): ModifiedDataManager {
         return acc;
       }, []);
 
+    let accumulatedLength = 0;
+
     sortedContinuousIndexedRows.forEach((indexedRows) => {
       const startIndex = indexedRows[0].rowIndex;
-      const lastIndex = last(indexedRows).rowIndex;
+      const currentLength = last(indexedRows).rowIndex - startIndex + 1;
 
       if (isUndefined(rows)) {
-        dataMap[type].splice(startIndex, lastIndex - startIndex + 1);
+        dataMap[type].splice(startIndex - accumulatedLength, currentLength);
       } else {
         dataMap[type].splice(
           startIndex,
-          lastIndex - startIndex + 1,
+          currentLength,
           ...indexedRows.reduce((acc: Row[], { row }) => (!row ? acc : [...acc, row]), [])
         );
       }
+
+      accumulatedLength += currentLength;
     });
   };
   const spliceAll = (rowKey: RowKey, row?: Row) => {
