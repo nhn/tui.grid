@@ -1,23 +1,23 @@
 import { DataSource } from './dataSource';
 import { EditingEvent, TabMode } from './store/focus';
-import { PageOptions, RowKey, CellValue, RowAttributes, RowSpanAttribute } from './store/data';
+import { CellValue, PageOptions, RowAttributes, RowKey, RowSpanAttribute } from './store/data';
 import {
-  ColumnOptions,
-  ClipboardCopyOptions,
-  CommonColumnInfo,
-  Relations,
   AlignType,
-  VAlignType,
-  RowHeaderType,
+  ClipboardCopyOptions,
   ColumnFilterOption,
+  ColumnOptions,
+  CommonColumnInfo,
   ComplexColumnInfo,
+  Relations,
+  RowHeaderType,
+  VAlignType,
 } from './store/column';
 import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';
 import { CreateMenuGroups } from './store/contextMenu';
-import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
+import { SummaryColumnContentMapOnlyFn, SummaryPosition } from './store/summary';
 import { TuiGridEvent } from './event';
-import { HeaderRendererClass, CellRendererClass, CellRendererProps } from './renderer';
+import { CellRendererClass, CellRendererProps, HeaderRendererClass } from './renderer';
 import { CellEditorClass } from './editor';
 
 export interface Dictionary<T> {
@@ -474,6 +474,7 @@ export interface OptI18nData {
     copyColumns?: string;
     copyRows?: string;
     export?: string;
+    txtExport?: string;
     csvExport?: string;
     excelExport?: string;
   };

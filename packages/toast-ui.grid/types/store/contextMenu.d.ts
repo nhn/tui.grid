@@ -11,7 +11,14 @@ export interface MenuItem {
   name: string;
   label?: string;
   disabled?: boolean;
-  action?: (() => void) | 'copy' | 'copyColumns' | 'copyRows' | 'csvExport' | 'excelExport';
+  action?:
+    | (() => void)
+    | 'copy'
+    | 'copyColumns'
+    | 'copyRows'
+    | 'csvExport'
+    | 'excelExport'
+    | 'txtExport';
   classNames?: string[];
   subMenu?: MenuItem[];
 }

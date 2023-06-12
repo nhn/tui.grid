@@ -1,4 +1,4 @@
-import { ContextMenu, MenuItem, CreateMenuGroups } from '@t/store/contextMenu';
+import { ContextMenu, CreateMenuGroups, MenuItem } from '@t/store/contextMenu';
 import { isNull } from '../helper/common';
 import { observable } from '../helper/observable';
 import i18n from '../i18n';
@@ -25,6 +25,11 @@ function createDefaultContextMenu(): MenuItem[][] {
         name: 'export',
         label: i18n.get('contextMenu.export'),
         subMenu: [
+          {
+            name: 'txtExport',
+            label: i18n.get('contextMenu.txtExport'),
+            action: 'txtExport',
+          },
           {
             name: 'csvExport',
             label: i18n.get('contextMenu.csvExport'),

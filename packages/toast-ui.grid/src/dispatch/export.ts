@@ -124,10 +124,13 @@ function getMergeRelationship(complexColumnHeaderData: string[][]) {
   return merges;
 }
 
-function exportCSV(fileName: string, targetText: string) {
-  const targetBlob = new Blob([`\ufeff${targetText}`], { type: 'text/csv;charset=utf-8;' });
+function exportText(format: 'txt' | 'csv', fileName: string, targetText: string) {
+  const targetBlob =
+    format === 'txt'
+      ? new Blob([targetText])
+      : new Blob([`\ufeff${targetText}`], { type: 'text/csv;charset=utf-8;' });
 
-  downloadBlob(targetBlob, fileName);
+  downloadBlob(targetBlob, format, fileName);
 }
 
 function exportExcel(
@@ -148,16 +151,16 @@ function exportExcel(
 
 function exportCallback(
   data: string[][],
-  format: 'csv' | 'xlsx',
+  format: 'txt' | 'csv' | 'xlsx',
   options: OptExport,
-  complexHeaderData?: string[][]
+  complexHeaderData: string[][] | null
 ) {
   const { delimiter = ',', fileName = 'grid-export' } = options || {};
 
-  if (format === 'csv') {
+  if (format !== 'xlsx') {
     const targetText = convertDataToText(data, delimiter);
 
-    exportCSV(fileName, targetText);
+    exportText(format, fileName, targetText);
   } else {
     if (!XLSX?.writeFile) {
       // eslint-disable-next-line no-console
@@ -167,11 +170,11 @@ function exportCallback(
       return;
     }
 
-    exportExcel(fileName, data, complexHeaderData!);
+    exportExcel(fileName, data, complexHeaderData);
   }
 }
 
-export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptExport) {
+export function execExport(store: Store, format: 'txt' | 'csv' | 'xlsx', options?: OptExport) {
   const { data, columnHeaders, columnNames, exportOptions } = getExportDataAndColumnsAndOptions(
     store,
     options
@@ -179,69 +182,56 @@ export function execExport(store: Store, format: 'csv' | 'xlsx', options?: OptEx
   const { includeHeader, delimiter, fileName } = exportOptions;
   const { column } = store;
 
-  let targetData = data.slice(0);
+  if (format === 'xlsx' && !XLSX?.writeFile) {
+    // eslint-disable-next-line no-console
+    console.error(
+      '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
+    );
+    return;
+  }
 
-  if (format === 'csv') {
-    if (includeHeader && column.complexColumnHeaders.length === 0) {
+  let targetData = data.slice(0);
+  let complexHeaderData: string[][] | null = null;
+
+  if (includeHeader) {
+    if (column.complexColumnHeaders.length > 0) {
+      complexHeaderData = getHeaderDataFromComplexColumn(column, columnNames);
+    } else {
       targetData.unshift(columnHeaders);
     }
+  }
 
-    const exportFn = (exportingData: string[][]) =>
-      exportCallback(exportingData, 'csv', exportOptions);
+  if (complexHeaderData && format !== 'csv') {
+    targetData = complexHeaderData.concat(targetData);
+  }
 
-    const gridEvent = emitExportEvent(store, 'beforeExport', {
-      exportFormat: format,
-      exportOptions,
-      data: targetData,
-      exportFn,
-    });
+  const exportFn = (exportingData: string[][]) =>
+    exportCallback(exportingData, format, exportOptions, complexHeaderData);
 
-    if (gridEvent.isStopped()) {
-      return;
-    }
+  const gridEvent = emitExportEvent(store, 'beforeExport', {
+    exportFormat: format,
+    exportOptions,
+    data: targetData,
+    complexHeaderData,
+    exportFn,
+  });
 
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
+  if (format === 'xlsx') {
+    exportExcel(fileName, targetData, complexHeaderData);
+  } else {
     const targetText = convertDataToText(targetData, delimiter);
 
-    exportCSV(fileName, targetText);
-  } else {
-    if (!XLSX?.writeFile) {
-      // eslint-disable-next-line no-console
-      console.error(
-        '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
-      );
-      return;
-    }
-
-    let complexHeaderData: string[][] | null = null;
-
-    if (includeHeader) {
-      if (column.complexColumnHeaders.length > 0) {
-        complexHeaderData = getHeaderDataFromComplexColumn(column, columnNames);
-
-        targetData = complexHeaderData.concat(targetData);
-      } else {
-        targetData.unshift(columnHeaders);
-      }
-    }
-    const exportFn = (exportingData: string[][]) =>
-      exportCallback(exportingData, 'xlsx', exportOptions, complexHeaderData!);
-
-    const gridEvent = emitExportEvent(store, 'beforeExport', {
-      exportFormat: format,
-      exportOptions,
-      data: targetData,
-      exportFn,
-    });
-
-    if (gridEvent.isStopped()) {
-      return;
-    }
-    exportExcel(fileName, targetData, complexHeaderData);
+    exportText(format, fileName, targetText);
   }
 
   emitExportEvent(store, 'afterExport', {
     exportFormat: format,
     exportOptions,
     data: targetData,
+    complexHeaderData,
   });
 }
