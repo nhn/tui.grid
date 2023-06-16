@@ -1,6 +1,6 @@
 import { Store } from '@t/store';
 import { MenuPos } from '@t/store/contextMenu';
-import { Range, PagePosition } from '@t/store/selection';
+import { PagePosition, Range } from '@t/store/selection';
 import { ElementInfo } from '@t/dispatch';
 import { execCopy } from './clipboard';
 import { execExport } from './export';
@@ -67,4 +67,8 @@ export function csvExport(store: Store) {
 
 export function excelExport(store: Store) {
   execExport(store, 'xlsx');
+}
+
+export function txtExport(store: Store) {
+  execExport(store, 'txt');
 }

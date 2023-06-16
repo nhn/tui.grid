@@ -301,7 +301,7 @@ declare namespace tui {
 
     public getPaginationTotalCount(): number;
 
-    public export(format: 'csv' | 'xlsx', options?: OptExport): void;
+    public export(format: 'txt' | 'csv' | 'xlsx', options?: OptExport): void;
 
     public moveColumn(columnName: string, targetIndex: number): void;
   }

@@ -1,38 +1,38 @@
 import { h, render } from 'preact';
 import TuiGrid from '@t/index';
 import {
-  OptGrid,
-  OptPreset,
-  OptI18nData,
-  OptRow,
+  Dictionary,
+  GridEventListener,
+  GridEventName,
+  LifeCycleEventName,
   OptAppendRow,
-  OptPrependRow,
-  OptRemoveRow,
   OptAppendTreeRow,
   OptColumn,
-  OptHeader,
-  GridEventName,
-  GridEventListener,
-  Dictionary,
   OptFilter,
-  LifeCycleEventName,
-  ResetOptions,
+  OptGrid,
+  OptHeader,
+  OptI18nData,
   OptMoveRow,
+  OptPrependRow,
+  OptPreset,
+  OptRemoveRow,
+  OptRow,
+  ResetOptions,
 } from '@t/options';
 import { Store } from '@t/store';
-import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
+import { CellValue, InvalidRow, Row, RowKey } from '@t/store/data';
 import { ColumnInfo } from '@t/store/column';
 import { Range } from '@t/store/selection';
 import { FilterOptionType, FilterState } from '@t/store/filterLayerState';
 import { SummaryColumnContentMapOnlyFn } from '@t/store/summary';
 import {
-  RequestOptions,
-  RequestType,
   DataProvider,
+  ModificationTypeCode,
+  ModifiedDataManager,
   ModifiedRowsOptions,
   Params,
-  ModifiedDataManager,
-  ModificationTypeCode,
+  RequestOptions,
+  RequestType,
 } from '@t/dataSource';
 import { OptExport } from '@t/store/export';
 import { createStore } from './store/create';
@@ -44,41 +44,41 @@ import i18n from './i18n';
 import { getInvalidRows } from './query/validation';
 import { cls, dataAttr } from './helper/dom';
 import {
-  findPropIndex,
-  isUndefined,
-  mapProp,
-  hasOwnProp,
-  pick,
   deepCopy,
   find,
+  findPropIndex,
+  hasOwnProp,
   includes,
   isEmpty,
   isNil,
+  isUndefined,
+  mapProp,
+  pick,
 } from './helper/common';
-import { Observable, getOriginObject } from './helper/observable';
+import { getOriginObject, Observable } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
-  getConditionalRows,
-  getCellAddressByIndex,
-  getCheckedRowInfoList,
   findIndexByRowKey,
   findRowByRowKey,
-  getRowHeight,
+  getCellAddressByIndex,
+  getCheckedRowInfoList,
+  getConditionalRows,
   getFormattedValue,
   getOmittedInternalProp,
   getRemoveRowInfoList,
+  getRowHeight,
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/manager/modifiedDataManager';
 import { getConfirmMessage } from './i18n/message';
-import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
+import { createPaginationManager, PaginationManager } from './pagination/paginationManager';
 import {
-  getParentRow,
-  getChildRows,
   getAncestorRows,
-  getDescendantRows,
+  getChildRows,
   getDepth,
+  getDescendantRows,
+  getParentRow,
   isTreeColumnName,
 } from './query/tree';
 import { getRowSpanByRowKey } from './query/rowSpan';
@@ -1881,7 +1881,7 @@ export default class Grid implements TuiGrid {
    *    @param {','|';'|'\\t'|'|'} [options.delimiter=','] - Delimiter to export CSV
    *    @param {string} [options.fileName='grid-export'] - File name to export
    */
-  public export(format: 'csv' | 'xlsx', options?: OptExport) {
+  public export(format: 'txt' | 'csv' | 'xlsx', options?: OptExport) {
     this.dispatch('execExport', format, options);
   }
 

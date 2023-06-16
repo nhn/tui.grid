@@ -1,4 +1,4 @@
-import { OptI18nLanguage, OptI18nData } from '@t/options';
+import { OptI18nData, OptI18nLanguage } from '@t/options';
 
 interface MapType<T> {
   [propName: string]: T;
@@ -46,6 +46,7 @@ const messages: OptI18nLanguage = {
       copyColumns: 'Copy Columns',
       copyRows: 'Copy Rows',
       export: 'Export',
+      txtExport: 'Text Export',
       csvExport: 'CSV Export',
       excelExport: 'Excel Export',
     },
@@ -89,6 +90,7 @@ const messages: OptI18nLanguage = {
       copyColumns: 'Copiar colunas',
       copyRows: 'Copiar linhas',
       export: 'Exportar',
+      txtExport: 'Exportar Texto',
       csvExport: 'Exportar CSV',
       excelExport: 'Exportar Excel',
     },
@@ -131,6 +133,7 @@ const messages: OptI18nLanguage = {
       copyColumns: 'Copiar Columnas',
       copyRows: 'Copiar Filas',
       export: 'exportar',
+      txtExport: 'Texto exportar',
       csvExport: 'CSV exportar',
       excelExport: 'Excel exportar',
     },
@@ -173,6 +176,7 @@ const messages: OptI18nLanguage = {
       copyColumns: '열 복사',
       copyRows: '행 복사',
       export: '내보내기',
+      txtExport: 'Text로 내보내기',
       csvExport: 'CSV로 내보내기',
       excelExport: '엑셀로 내보내기',
     },
@@ -215,6 +219,7 @@ const messages: OptI18nLanguage = {
       copyColumns: 'Kopieer kolommen',
       copyRows: 'Kopieer rijen',
       export: 'Exporteer',
+      txtExport: 'Maak Tekst Export',
       csvExport: 'Maak CSV Export',
       excelExport: 'Maak Excel Export',
     },
@@ -257,6 +262,7 @@ const messages: OptI18nLanguage = {
       copyColumns: 'Copia colonne',
       copyRows: 'Copia righe',
       export: 'Esportare',
+      txtExport: 'Esportazione Testo',
       csvExport: 'Esportazione CSV',
       excelExport: 'Esportazione Excel',
     },

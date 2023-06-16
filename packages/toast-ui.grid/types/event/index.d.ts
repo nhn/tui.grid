@@ -1,7 +1,7 @@
 import TuiGrid from '../index';
 import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
-import { Filter, FilterState, FilterOptionType, OperatorType } from '../store/filterLayerState';
+import { Filter, FilterOptionType, FilterState, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
 import { OptExport } from '../store/export';
 
@@ -46,7 +46,7 @@ export interface GridEventProps {
   keyboardEvent?: KeyboardEvent | null;
   save?: boolean;
   triggeredByKey?: boolean;
-  exportFormat?: 'csv' | 'xlsx';
+  exportFormat?: 'txt' | 'csv' | 'xlsx';
   exportOptions?: OptExport;
   data?: string[][];
   complexHeaderData?: string[][] | null;

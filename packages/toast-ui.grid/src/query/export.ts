@@ -14,27 +14,28 @@ import { Dictionary } from '@t/options';
 export type EventType = 'beforeExport' | 'afterExport';
 
 export interface EventParams {
-  exportFormat: 'csv' | 'xlsx';
+  exportFormat: 'txt' | 'csv' | 'xlsx';
   exportOptions: OptExport;
   data: string[][];
   exportFn?: (data: string[][]) => void;
+  complexHeaderData: string[][] | null;
 }
 
 function getColumnInfoDictionary(store: Store, columnNames: string[]) {
-  const colmnInfos: Dictionary<ColumnInfo> = {};
+  const columnInfos: Dictionary<ColumnInfo> = {};
 
   store.column.allColumns.forEach((columnInfo) => {
     if (includes(columnNames, columnInfo.name)) {
-      colmnInfos[columnInfo.name] = columnInfo;
+      columnInfos[columnInfo.name] = columnInfo;
     }
   });
 
-  return colmnInfos;
+  return columnInfos;
 }
 
 function getValue(
   row: Row,
-  colmnInfos: Dictionary<ColumnInfo>,
+  columnInfos: Dictionary<ColumnInfo>,
   columName: string,
   useFormattedValue: boolean,
   index?: number
@@ -43,23 +44,23 @@ function getValue(
     return `No.${index! + 1}`;
   }
 
-  const origianlValue = row[columName];
-  const formattedValue = createFormattedValue(row, colmnInfos[columName]);
+  const originalValue = row[columName];
+  const formattedValue = createFormattedValue(row, columnInfos[columName]);
 
-  return useFormattedValue && String(origianlValue) !== formattedValue
+  return useFormattedValue && String(originalValue) !== formattedValue
     ? formattedValue
-    : (origianlValue as string);
+    : (originalValue as string);
 }
 
 export function createExportEvent(eventType: EventType, eventParams: EventParams) {
-  const { exportFormat, exportOptions, data, exportFn } = eventParams;
+  const { exportFormat, exportOptions, data, complexHeaderData, exportFn } = eventParams;
   let props: GridEventProps = {};
 
   switch (eventType) {
     /**
      * Occurs before export
      * @event Grid#beforeExport
-     * @property {'csv' | 'xlsx'} exportFormat - Export format
+     * @property {'txt' | 'csv' | 'xlsx'} exportFormat - Export format
      * @property {Object} exportOptions - Used export options
      *    @property {boolean} exportOptions.includeHeader - Whether to include headers
      *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
@@ -69,16 +70,17 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
      *    @property {string} exportOptions.fileName - File name to export
      * @property {string[][]} data - Data to be finally exported
+     * @property {string[][] | null} complexHeaderData - Complex header data. If you don't use complexHeader, it'll be null.
      * @property {function} exportFn - Callback function to export modified data
      * @property {Grid} instance - Current grid instance
      */
     case 'beforeExport':
-      props = { exportFormat, exportOptions, data, exportFn };
+      props = { exportFormat, exportOptions, data, complexHeaderData, exportFn };
       break;
     /**
      * Occurs after export
      * @event Grid#afterExport
-     * @property {'csv' | 'xlsx'} exportFormat - Export format
+     * @property {'txt' | 'csv' | 'xlsx'} exportFormat - Export format
      * @property {Object} exportOptions - Used export options
      *    @property {boolean} exportOptions.includeHeader - Whether to include headers
      *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
@@ -88,10 +90,11 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
      *    @property {','|';'|'\t'|'|'} exportOptions.delimiter - Delimiter to export CSV
      *    @property {string} exportOptions.fileName - File name to export
      * @property {string[][]} data - Data to be finally exported
+     * @property {string[][] | null} complexHeaderData - Complex header data. If you don't use complexHeader, it'll be null.
      * @property {Grid} instance - Current grid instance
      */
     case 'afterExport':
-      props = { exportFormat, exportOptions, data };
+      props = { exportFormat, exportOptions, data, complexHeaderData };
       break;
     default: // do nothing
   }
@@ -152,10 +155,10 @@ export function removeUnnecessaryColumns(
 }
 
 export function getHeaderDataFromComplexColumn(column: Column, columnNames: string[]) {
-  const hierachy = getComplexColumnsHierarchy(column.allColumns, column.complexColumnHeaders);
-  const filteredHierachy = removeUnnecessaryColumns(hierachy, columnNames);
+  const hierarchy = getComplexColumnsHierarchy(column.allColumns, column.complexColumnHeaders);
+  const filteredHierarchy = removeUnnecessaryColumns(hierarchy, columnNames);
 
-  return convertHierarchyToData(filteredHierachy);
+  return convertHierarchyToData(filteredHierarchy);
 }
 
 export function getTargetData(
@@ -165,7 +168,7 @@ export function getTargetData(
   onlySelected: boolean,
   useFormattedValue: boolean
 ) {
-  const colmnInfoDictionary = getColumnInfoDictionary(store, columnNames);
+  const columnInfoDictionary = getColumnInfoDictionary(store, columnNames);
   const {
     selection: { originalRange },
   } = store;
@@ -179,7 +182,7 @@ export function getTargetData(
 
   return targetRows.map((row, index) =>
     columnNames.map((colName) =>
-      getValue(row, colmnInfoDictionary, colName, useFormattedValue, index)
+      getValue(row, columnInfoDictionary, colName, useFormattedValue, index)
     )
   );
 }
