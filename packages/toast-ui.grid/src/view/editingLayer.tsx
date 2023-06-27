@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { Component, h } from 'preact';
 import { RowKey, ViewRow } from '@t/store/data';
 import { Dictionary } from '@t/options';
 import { ColumnInfo } from '@t/store/column';
@@ -8,11 +8,15 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls, getTextWidth } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { findProp, isNil, isNull, isUndefined, getLongestText } from '../helper/common';
+import { findProp, getLongestText, isNil, isNull, isUndefined } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 import { getListItems } from '../helper/editor';
-import { HORIZONTAL_PADDING_OF_CELL } from '../helper/constant';
+import {
+  HORIZONTAL_PADDING_OF_CELL,
+  TEXT_EDITOR_MAX_HEIGHT,
+  VERTICAL_PADDING_OF_CELL,
+} from '../helper/constant';
 
 interface InitBodyScroll {
   initBodyScrollTop: number;
@@ -122,12 +126,13 @@ export class EditingLayerComp extends Component<Props> {
     const { allColumnMap, filteredViewData, editingAddress, grid, cellPosRect } = this.props;
 
     const { rowKey, columnName } = editingAddress!;
-    const { right, left } = cellPosRect!;
+    const { right, left, top, bottom } = cellPosRect!;
     const columnInfo = allColumnMap[columnName];
     const { value, formattedValue } = findProp('rowKey', rowKey, filteredViewData)!.valueMap[
       columnName
     ]!;
     const EditorClass = columnInfo.editor!.type;
+    const height = Math.min(bottom - top - VERTICAL_PADDING_OF_CELL, TEXT_EDITOR_MAX_HEIGHT);
     const width = Math.max(
       right - left - HORIZONTAL_PADDING_OF_CELL,
       this.longestTextWidths[columnName] ?? 0
@@ -138,6 +143,7 @@ export class EditingLayerComp extends Component<Props> {
       columnInfo,
       value,
       formattedValue,
+      height,
       width,
       portalEditingKeydown: this.handleKeyDown,
       instantApplyCallback: this.saveAndFinishEditing,

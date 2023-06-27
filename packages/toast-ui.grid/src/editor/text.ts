@@ -1,6 +1,6 @@
 import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
-import { isNil } from '../helper/common';
+import { isNil, isUndefined } from '../helper/common';
 
 interface Options {
   type: 'text' | 'password';
@@ -16,6 +16,10 @@ export class TextEditor implements CellEditor {
     el.className = cls('content-text');
     el.type = options.type;
     el.value = String(isNil(props.value) ? '' : props.value);
+
+    if (!isUndefined(props.height)) {
+      el.style.height = `${props.height}px`;
+    }
 
     this.el = el;
   }
