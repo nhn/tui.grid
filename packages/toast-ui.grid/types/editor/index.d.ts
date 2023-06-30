@@ -1,5 +1,5 @@
 import TuiGrid from '../index';
-import { RowKey, CellValue, ListItem } from '../store/data';
+import { CellValue, ListItem, RowKey } from '../store/data';
 import { ColumnInfo } from '../store/column';
 import { Dictionary } from '../options';
 
@@ -17,6 +17,7 @@ export interface CellEditorProps {
   columnInfo: ColumnInfo;
   value: CellValue;
   formattedValue: string;
+  height?: number;
   width: number;
   portalEditingKeydown: PortalEditingKeydown;
   instantApplyCallback: InstantApplyCallback;
