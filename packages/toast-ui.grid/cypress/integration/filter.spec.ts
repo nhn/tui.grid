@@ -406,7 +406,7 @@ describe('apply filter (type: select)', () => {
     ]);
   });
 
-  it.only('should set filter properly when filter change after all rows for previous filter are disappear.', () => {
+  it('should set filter properly when filter change after all rows for previous filter are disappear.', () => {
     cy.gridInstance().invoke('resetData', data.slice(0, 3));
 
     invokeFilter('id', [{ code: 'eq', value: 'player1' }]);
