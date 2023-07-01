@@ -878,6 +878,16 @@ describe.only('setRows()', () => {
 
     assertHeaderCheckboxStatus(false);
   });
+
+  it('should replace rows properly when it is filtered', () => {
+    createGrid();
+    cy.gridInstance().invoke('setFilter', 'name', 'select');
+    invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
+
+    cy.gridInstance().invoke('setRows', [{ rowKey: 1, name: 'Han', age: 29 }]);
+
+    cy.gridInstance().invoke('getFilteredData').should('have.length', 0);
+  });
 });
 
 describe('moveRow()', () => {
