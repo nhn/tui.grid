@@ -1,7 +1,7 @@
 import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
 import { OptRow } from '@t/options';
-import { invokeFilter, clickFilterBtn, inputFilterValue } from '../helper/util';
+import { clickFilterBtn, inputFilterValue, invokeFilter } from '../helper/util';
 
 const GRID_WIDTH = 500;
 
@@ -403,6 +403,21 @@ describe('apply filter (type: select)', () => {
       ['player6', 'Lee'],
       ['player7', 'Yoo'],
       ['player8', 'Lim'],
+    ]);
+  });
+
+  it.only('should set filter properly when filter change after all rows for previous filter are disappear.', () => {
+    cy.gridInstance().invoke('resetData', data.slice(0, 3));
+
+    invokeFilter('id', [{ code: 'eq', value: 'player1' }]);
+
+    cy.gridInstance().invoke('setRow', 0, { ...data[0], id: data[1].id });
+
+    applyFilterBySelectUI(1);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['player2', 'Choi'],
+      ['player2', 'Kim'],
     ]);
   });
 });
