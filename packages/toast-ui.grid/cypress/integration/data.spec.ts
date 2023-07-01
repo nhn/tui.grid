@@ -2,7 +2,7 @@ import { OptGrid } from '@t/options';
 import { Row, RowKey } from '@t/store/data';
 import { cls } from '@/helper/dom';
 import { FormatterProps } from '@t/store/column';
-import { invokeFilter, applyAliasHeaderCheckbox, dragAndDropRow } from '../helper/util';
+import { applyAliasHeaderCheckbox, dragAndDropRow, invokeFilter } from '../helper/util';
 import { assertGridHasRightRowNumber, assertHeaderCheckboxStatus } from '../helper/assert';
 
 function assertHeaderCheckboxDisabled(disable: boolean) {
@@ -764,6 +764,119 @@ describe('setRow()', () => {
     cy.gridInstance()
       .invoke('getFocusedCell')
       .should('eql', { columnName: null, rowKey: null, value: null });
+  });
+});
+
+describe.only('setRows()', () => {
+  it('should replace rows', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('setRows', [
+      {
+        rowKey: 0,
+        name: 'Cha',
+        age: '30',
+      },
+      {
+        rowKey: 1,
+        name: 'Ryu',
+        age: '20',
+      },
+    ]);
+
+    cy.getCellByIdx(0, 0).should('have.text', 'Cha');
+    cy.getCellByIdx(0, 1).should('have.text', '30');
+    cy.getCellByIdx(1, 0).should('have.text', 'Ryu');
+    cy.getCellByIdx(1, 1).should('have.text', '20');
+  });
+
+  it('should sort state is maintained when calls setRows API', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('sort', 'name', true);
+    cy.gridInstance().invoke('sort', 'age', false, true);
+    cy.gridInstance().invoke('setRows', [
+      {
+        rowKey: 1,
+        name: 'Ryu',
+        age: '20',
+      },
+    ]);
+
+    cy.gridInstance()
+      .invoke('getSortState')
+      .should('have.subset', {
+        columns: [
+          { columnName: 'name', ascending: true },
+          { columnName: 'age', ascending: false },
+        ],
+      });
+  });
+
+  it('should replaced rows are ordered properly even if sorted the data', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('sort', 'name', false);
+    cy.gridInstance().invoke('setRows', [
+      {
+        rowKey: 1,
+        name: 'Ryu',
+        age: '20',
+      },
+    ]);
+
+    // check the position based on sorted data
+    cy.getCellByIdx(0, 0).should('have.text', 'Ryu');
+    cy.getCellByIdx(0, 1).should('have.text', '20');
+
+    cy.gridInstance().invoke('unsort');
+
+    // check the position based on origin data
+    cy.getCellByIdx(1, 0).should('have.text', 'Ryu');
+    cy.getCellByIdx(1, 1).should('have.text', '20');
+  });
+
+  it('header checkbox state changes after calling setRows()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+    cy.gridInstance().invoke('disableRowCheck', 0);
+
+    assertHeaderCheckboxDisabled(false);
+
+    cy.gridInstance().invoke('setRows', [
+      {
+        rowKey: 1,
+        name: 'han',
+        age: 29,
+        _attributes: { checkDisabled: true },
+      },
+    ]);
+
+    assertHeaderCheckboxDisabled(true);
+  });
+
+  it('should check the header checkbox of added data after calling setRows()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('setRows', [
+      {
+        rowKey: 1,
+        name: 'han',
+        age: 29,
+        _attributes: { checked: true },
+      },
+    ]);
+
+    assertCheckboxStatus(true);
+  });
+
+  it('should not check the header checkbox of non checked added data after calling setRows()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('setRows', [{ rowKey: 1, name: 'han', age: 29 }]);
+
+    assertHeaderCheckboxStatus(false);
   });
 });
 
