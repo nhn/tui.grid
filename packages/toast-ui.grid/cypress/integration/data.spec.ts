@@ -767,7 +767,7 @@ describe('setRow()', () => {
   });
 });
 
-describe.only('setRows()', () => {
+describe('setRows()', () => {
   it('should replace rows', () => {
     createGrid();
 
