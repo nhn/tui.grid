@@ -857,7 +857,7 @@ export function setRows(store: Store, rows: OptRow[]) {
 
   const sortedIndexedRows = rows
     .map((row) => {
-      const rowIndex = findIndexByRowKey(data, column, id, row.rowKey as RowKey);
+      const rowIndex = findIndexByRowKey(data, column, id, row.rowKey as RowKey, false);
       const orgRow = rawData[rowIndex];
 
       removeUniqueInfoMap(id, orgRow, column);
