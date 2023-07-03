@@ -858,6 +858,9 @@ describe('setRows()', () => {
     createGrid({ rowHeaders: ['checkbox'] });
 
     cy.gridInstance().invoke('checkAll');
+
+    assertCheckboxStatus(true);
+
     cy.gridInstance().invoke('setRows', [
       {
         rowKey: 1,
@@ -879,7 +882,7 @@ describe('setRows()', () => {
     assertHeaderCheckboxStatus(false);
   });
 
-  it('should replace rows properly when it is filtered', () => {
+  it('should replace filtered rows correctly when a filter is applied', () => {
     createGrid();
     cy.gridInstance().invoke('setFilter', 'name', 'select');
     invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
