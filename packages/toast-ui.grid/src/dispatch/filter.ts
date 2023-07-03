@@ -136,7 +136,11 @@ export function applyActiveFilterState(store: Store) {
 
   if (type === 'select') {
     const columnData = getUniqColumnData(data.rawData, column, columnName);
-    if (columnData.length === state.length) {
+    const updatedState = state.filter(({ value }) => columnData.includes(value));
+
+    filterLayerState.activeFilterState!.state = updatedState;
+
+    if (columnData.length === updatedState.length) {
       unfilter(store, columnName);
       return;
     }
