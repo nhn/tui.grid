@@ -1,35 +1,36 @@
-import { h, Component } from 'preact';
+import { Component, h } from 'preact';
 import { Side } from '@t/store/focus';
 import {
   createDraggableRowInfo,
   DraggableRowInfo,
+  FloatingRowSize,
   getMovedPosAndIndexOfRow,
+  getResolvedOffsets,
   MovedIndexAndPosInfoOfRow,
   PosInfo,
-  getResolvedOffsets,
-  FloatingRowSize,
 } from '../query/draggable';
 import { RowKey } from '@t/store/data';
-import { PagePosition, DragStartData } from '@t/store/selection';
+import { DragStartData, PagePosition } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import {
   cls,
-  getCoordinateWithOffset,
-  setCursorStyle,
-  hasClass,
-  isDatePickerElement,
   findParentByClassName,
   getCellAddress,
+  getCoordinateWithOffset,
+  hasClass,
+  isDatePickerElement,
+  isElementScrollable,
+  setCursorStyle,
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
-import { some, debounce, isNil } from '../helper/common';
+import { debounce, isNil, some } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 import GridEvent from '../event/gridEvent';
-import { getEventBus, EventBus } from '../event/eventBus';
+import { EventBus, getEventBus } from '../event/eventBus';
 import { RIGHT_MOUSE_BUTTON } from '../helper/constant';
 import { isFocusedCell } from '../query/focus';
 
@@ -115,8 +116,24 @@ class BodyAreaComp extends Component<Props> {
   }, 200);
 
   private handleWheel = (ev: WheelEvent) => {
+    const { scrollX, scrollY } = this.props;
     const currentTarget = ev.currentTarget as HTMLElement;
-    ev.preventDefault();
+    const { deltaX, deltaY } = ev;
+
+    if (scrollX || scrollY) {
+      const { canScrollUp, canScrollDown, canScrollRight, canScrollLeft } = isElementScrollable(
+        currentTarget
+      );
+
+      if (
+        (canScrollUp && deltaY < 0) ||
+        (canScrollDown && deltaY > 0) ||
+        (canScrollRight && deltaX > 0) ||
+        (canScrollLeft && deltaX < 0)
+      ) {
+        ev.preventDefault();
+      }
+    }
 
     currentTarget.scrollTop += ev.deltaY;
     currentTarget.scrollLeft += ev.deltaX;
