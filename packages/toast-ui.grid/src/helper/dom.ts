@@ -360,3 +360,14 @@ export function getComputedFontStyle(selector: ClassNameType) {
 
   return `${fontWeight} ${fontSize} ${fontFamily}`;
 }
+
+export const isElementScrollable = (element: HTMLElement) => {
+  const { offsetHeight, offsetWidth, scrollHeight, scrollWidth, scrollTop, scrollLeft } = element;
+
+  return {
+    canScrollUp: scrollTop > 0,
+    canScrollDown: scrollTop + offsetHeight < scrollHeight,
+    canScrollLeft: scrollLeft > 0,
+    canScrollRight: scrollLeft + offsetWidth < scrollWidth,
+  };
+};
