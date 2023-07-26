@@ -163,6 +163,7 @@ export function deepCopy<T extends Obj>(obj: T) {
 }
 
 export function assign(targetObj: Obj, obj: Obj) {
+  if (obj === null) return;
   Object.keys(obj).forEach((prop) => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
