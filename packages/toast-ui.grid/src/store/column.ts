@@ -1,44 +1,44 @@
 import {
-  OptColumn,
-  OptRowHeader,
-  OptTree,
+  Dictionary,
   OptCellEditor,
   OptCellRenderer,
+  OptColumn,
   OptColumnHeaderInfo,
   OptComplexColumnInfo,
-  Dictionary,
   OptFilter,
+  OptRowHeader,
   OptRowHeaderColumn,
+  OptTree,
 } from '@t/options';
 import {
-  ColumnOptions,
   AlignType,
-  VAlignType,
-  Relations,
-  ColumnInfo,
-  CellRendererOptions,
   CellEditorOptions,
+  CellRendererOptions,
   ClipboardCopyOptions,
-  ColumnFilterOption,
   Column,
+  ColumnFilterOption,
   ColumnHeaderInfo,
+  ColumnInfo,
+  ColumnOptions,
+  Relations,
+  VAlignType,
 } from '@t/store/column';
 import { FilterOptionType } from '@t/store/filterLayerState';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
 import {
   createMapFromArray,
-  includes,
-  omit,
-  isString,
-  isFunction,
-  isObject,
-  isUndefined,
-  isNumber,
-  findProp,
-  uniq,
-  isEmpty,
   findIndex,
+  findProp,
+  includes,
+  isEmpty,
+  isFunction,
+  isNumber,
+  isObject,
+  isString,
+  isUndefined,
+  omit,
+  uniq,
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -244,6 +244,7 @@ export function createColumn(
     filter,
     className,
     comparator,
+    customHeader,
   } = column;
 
   const editorOptions = createEditorOptions(editor);
@@ -262,7 +263,7 @@ export function createColumn(
   return observable({
     name,
     escapeHTML,
-    header: header || name,
+    header: header || customHeader?.textContent || name,
     hidden: Boolean(hidden),
     resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
     align: align || 'left',
@@ -295,6 +296,7 @@ export function createColumn(
     comparator,
     autoResizing: width === 'auto',
     rowSpan,
+    customHeader,
   });
 }
 

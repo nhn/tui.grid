@@ -1,7 +1,7 @@
 import { Side } from './focus';
 import { CellValue, Row } from './data';
-import { OptTree, Dictionary, OptColumnHeaderInfo, GridEventListener } from '../options';
-import { HeaderRendererClass, CellRendererClass, CellRendererProps } from '../renderer';
+import { Dictionary, GridEventListener, OptColumnHeaderInfo, OptTree } from '../options';
+import { CellRendererClass, CellRendererProps, HeaderRendererClass } from '../renderer';
 import { CellEditorClass } from '../editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
 
@@ -125,6 +125,7 @@ export interface InvalidColumn {
 
 export interface CommonColumnInfo {
   header: string;
+  customHeader?: HTMLElement;
   hidden: boolean;
   align: AlignType;
   valign: VAlignType;
