@@ -1,9 +1,11 @@
-import { h, Component } from 'preact';
+import { Component, h } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
+import { ColumnInfo } from '@t/store/column';
 
 interface StoreProps {
   header: string;
+  customHeader: ColumnInfo['customHeader'];
   checkedAllRows: boolean;
   disabled: boolean;
 }
@@ -63,8 +65,11 @@ export const HeaderCheckbox = connect<StoreProps>((store) => {
     column: { allColumnMap },
   } = store;
 
+  const { header, customHeader } = allColumnMap._checked;
+
   return {
-    header: allColumnMap._checked.header,
+    header,
+    customHeader,
     checkedAllRows,
     disabled: disabledAllCheckbox,
   };

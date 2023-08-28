@@ -483,3 +483,53 @@ describe('move column', () => {
     });
   });
 });
+
+describe('customHeader', () => {
+  let customHeader: HTMLElement;
+
+  const CUSTOM_HEADER_CLASS_NAME = 'custom-header';
+  const data = [
+    { name: 'Kim', age: 10, price: 100 },
+    { name: 'Lee', age: 20, price: 200 },
+    { name: 'Ryu', age: 30, price: 300 },
+    { name: 'Han', age: 40, price: 400 },
+  ];
+
+  beforeEach(() => {
+    customHeader = document.createElement('div');
+    customHeader.className = CUSTOM_HEADER_CLASS_NAME;
+    customHeader.textContent = 'Custom Header';
+  });
+
+  it('should render the given HTML element to the header.', () => {
+    const columns = [
+      { name: 'name', header: 'Name', customHeader },
+      { name: 'age', header: 'Age' },
+      { name: 'price', header: 'Price' },
+    ];
+
+    cy.createGrid({
+      data,
+      columns,
+    });
+
+    cy.getHeaderCell('name').click().should('contain.html', customHeader.outerHTML);
+  });
+
+  it('should sets the textContent of the customHeader to the value of the header property if no header property is passed.', () => {
+    const columns = [
+      { name: 'name', customHeader },
+      { name: 'age', header: 'Age' },
+      { name: 'price', header: 'Price' },
+    ];
+
+    cy.createGrid({
+      data,
+      columns,
+    });
+
+    cy.gridInstance()
+      .invoke('getColumn', 'name')
+      .should('contain', { header: customHeader.textContent });
+  });
+});

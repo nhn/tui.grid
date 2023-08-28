@@ -1,11 +1,11 @@
 import TuiGrid from '../index';
 import { CellRenderData, RowKey } from '../store/data';
 import {
-  ColumnInfo,
   AlignType,
-  VAlignType,
-  SortingType,
   ColumnFilterOption,
+  ColumnInfo,
+  SortingType,
+  VAlignType,
 } from '../store/column';
 
 export type CellRendererProps = CellRenderData & {
@@ -29,6 +29,7 @@ export interface CellRendererClass {
 export interface ColumnHeaderInfo {
   name: string;
   header: string;
+  customHeader?: ColumnInfo['customHeader'];
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   sortable?: boolean;

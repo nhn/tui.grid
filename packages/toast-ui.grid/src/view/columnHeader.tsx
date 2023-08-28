@@ -1,11 +1,11 @@
-import { h, Component } from 'preact';
+import { Component, h } from 'preact';
 import { cls } from '../helper/dom';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
 import { SortingOrder } from './sortingOrder';
 import { FilterButton } from './filterButton';
-import { isRowHeader, isCheckboxColumn } from '../helper/column';
-import { HeaderRenderer, ColumnHeaderInfo } from '@t/renderer';
+import { isCheckboxColumn, isRowHeader } from '../helper/column';
+import { ColumnHeaderInfo, HeaderRenderer } from '@t/renderer';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
 import { isDraggableColumn } from '../query/column';
@@ -28,15 +28,35 @@ export class ColumnHeader extends Component<Props> {
 
   private getElement(type: string) {
     const { columnInfo } = this.props;
-    const { name, sortable, sortingType, filter, headerRenderer, header } = columnInfo;
+    const {
+      name,
+      sortable,
+      sortingType,
+      filter,
+      headerRenderer,
+      header,
+      customHeader,
+    } = columnInfo;
 
     if (headerRenderer) {
       return null;
     }
 
     switch (type) {
-      case 'checkbox':
-        return isCheckboxColumn(name) ? <HeaderCheckbox /> : header;
+      case 'checkbox': {
+        if (isCheckboxColumn(name)) {
+          return <HeaderCheckbox />;
+        }
+
+        if (this.el && customHeader) {
+          this.el.appendChild(customHeader);
+
+          return null;
+        }
+
+        return header;
+      }
+
       case 'sortingBtn':
         return sortable && <SortingButton columnName={name} sortingType={sortingType} />;
       case 'sortingOrder':
