@@ -52,7 +52,7 @@ class HeaderCheckboxComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
-        dangerouslySetInnerHTML={{ __html: `${this.props.header}_123123` }}
+        dangerouslySetInnerHTML={{ __html: this.props.header }}
         onChange={this.handleChange}
       />
     );
