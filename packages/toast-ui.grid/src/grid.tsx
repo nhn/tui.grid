@@ -289,6 +289,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  *      @param {boolean} [options.draggable] - Whether to enable to drag the row for changing the order of rows.
  *      @param {Array} [options.contextMenu] - Option array for the context menu.
+ *      @param {boolean} [options.autoInsertRow=true] - Whether to automatically insert rows when there are not enough rows to paste.
  */
 export default class Grid implements TuiGrid {
   el: HTMLElement;

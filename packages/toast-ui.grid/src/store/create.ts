@@ -44,6 +44,7 @@ export function createStore(id: number, options: OptGrid): Store {
     header = {},
     disabled = false,
     draggable = false,
+    autoInsertRow = true,
     contextMenu: createMenuGroups,
   } = options;
   const { frozenBorderWidth } = columnOptions;
@@ -76,6 +77,7 @@ export function createStore(id: number, options: OptGrid): Store {
     useClientSort,
     id,
     disabled,
+    autoInsertRow,
   });
   const dimension = createDimension({
     column,
@@ -140,6 +142,7 @@ export function createStore(id: number, options: OptGrid): Store {
     renderState,
     filterLayerState,
     contextMenu,
+    autoInsertRow,
   });
   // manual observe to resolve circular references
   observe(() => {

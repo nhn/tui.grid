@@ -1,4 +1,4 @@
-import { Dictionary, RecursivePartial } from '../options';
+import { Dictionary } from '../options';
 import { Filter } from './filterLayerState';
 import { InvalidColumn, Comparator, ErrorInfo } from './column';
 import { Range } from './selection';
@@ -137,6 +137,7 @@ export interface Data {
   filters: Filter[] | null;
   loadingState: LoadingState;
   clickedCheckboxRowkey: RowKey | null;
+  autoInsertRow: boolean;
 }
 
 export type RemoveTargetRows = {
