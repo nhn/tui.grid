@@ -1,5 +1,6 @@
 import { clipboardType } from '../helper/util';
 import { assertFocusedCell, assertSelectedRange } from '../helper/assert';
+import { GridOptions } from '@t/index';
 
 // unable to test clipboard
 // https://github.com/cypress-io/cypress/issues/2386
@@ -13,7 +14,7 @@ function assertEditFinished() {
   cy.getByCls('content-text').should('not.exist');
 }
 
-function createGrid() {
+function createGrid(options?: Partial<GridOptions>) {
   const data = [
     { name: 'Han', value: 1 },
     { name: 'Kim', value: 2 },
@@ -26,7 +27,7 @@ function createGrid() {
     { name: 'value', editor: 'text' },
   ];
 
-  cy.createGrid({ data, columns });
+  cy.createGrid({ data, columns, ...options });
 }
 
 describe('editor', () => {
@@ -129,6 +130,69 @@ describe('Focus', () => {
     clipboardType('{ctrl}{end}');
 
     assertFocusedCell('value', 3);
+  });
+});
+
+describe('Move focus on enter', () => {
+  it('should not move the focus on enter(default)', () => {
+    createGrid();
+    cy.getCellByIdx(0, 0).click();
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 0);
+  });
+
+  it('should move the focus to next cell on enter(nextCell)', () => {
+    createGrid({ moveDirectionOnEnter: 'nextCell' });
+    cy.getCellByIdx(0, 0).click();
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('value', 0);
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 1);
+  });
+
+  it('should move the focus to next cell on enter(prevCell)', () => {
+    createGrid({ moveDirectionOnEnter: 'prevCell' });
+    cy.getCellByIdx(1, 1).click();
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 1);
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('value', 0);
+  });
+
+  it('should move the focus to next cell on enter(down)', () => {
+    createGrid({ moveDirectionOnEnter: 'down' });
+    cy.getCellByIdx(0, 0).click();
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 1);
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 2);
+  });
+
+  it('should move the focus to next cell on enter(up)', () => {
+    createGrid({ moveDirectionOnEnter: 'up' });
+    cy.getCellByIdx(2, 0).click();
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 1);
+
+    clipboardType('{enter}');
+
+    assertFocusedCell('name', 0);
   });
 });
 
