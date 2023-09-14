@@ -9,7 +9,12 @@ import {
   setClipboardSelection,
   WindowWithClipboard,
 } from '../helper/dom';
-import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
+import {
+  EnterCommandType,
+  KeyboardEventCommandType,
+  KeyboardEventType,
+  keyEventGenerate,
+} from '../helper/keyboard';
 import { isEdge, isMobile } from '../helper/browser';
 import { getText } from '../query/clipboard';
 import { convertTextToData } from '../helper/common';
@@ -24,6 +29,7 @@ interface StoreProps {
   columnName: string | null;
   filtering: boolean;
   eventBus: EventBus;
+  moveDirectionOnEnter?: EnterCommandType;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -162,7 +168,7 @@ class ClipboardComp extends Component<Props> {
       return;
     }
 
-    const { type, command } = keyEventGenerate(ev);
+    const { keyStroke, type, command } = keyEventGenerate(ev);
 
     if (!type) {
       return;
@@ -175,7 +181,7 @@ class ClipboardComp extends Component<Props> {
     }
 
     if (!(type === 'clipboard' && command === 'paste')) {
-      const { rowKey, columnName } = this.props;
+      const { rowKey, columnName, moveDirectionOnEnter } = this.props;
       const gridEvent = new GridEvent({ keyboardEvent: ev, rowKey, columnName });
       /**
        * Occurs when key down event is triggered.
@@ -188,7 +194,10 @@ class ClipboardComp extends Component<Props> {
       this.props.eventBus.trigger('keydown', gridEvent);
 
       if (!gridEvent.isStopped()) {
-        this.dispatchKeyboardEvent(type, command);
+        this.dispatchKeyboardEvent(
+          type,
+          keyStroke === 'enter' && moveDirectionOnEnter ? moveDirectionOnEnter : command
+        );
       }
     }
   };
@@ -264,4 +273,5 @@ export const Clipboard = connect<StoreProps>(({ focus, filterLayerState, id }) =
   editing: !!focus.editingAddress,
   filtering: !!filterLayerState.activeColumnAddress,
   eventBus: getEventBus(id),
+  moveDirectionOnEnter: focus.moveDirectionOnEnter,
 }))(ClipboardComp);

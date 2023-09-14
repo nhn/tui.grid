@@ -45,6 +45,7 @@ export function createStore(id: number, options: OptGrid): Store {
     disabled = false,
     draggable = false,
     contextMenu: createMenuGroups,
+    moveDirectionOnEnter,
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -112,6 +113,7 @@ export function createStore(id: number, options: OptGrid): Store {
     editingEvent,
     tabMode,
     id,
+    moveDirectionOnEnter,
   });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({

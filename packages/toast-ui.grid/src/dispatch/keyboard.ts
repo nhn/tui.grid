@@ -1,6 +1,6 @@
 import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
-import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
+import { EnterCommandType, KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange, getNextCellIndexWithRowSpan } from '../query/keyboard';
 import { changeFocus, startEditing } from './focus';
 import { changeSelectionRange } from './selection';
@@ -54,13 +54,18 @@ export function editFocus(store: Store, command: KeyboardEventCommandType) {
 
   if (command === 'currentCell') {
     startEditing(store, rowKey, columnName);
-  } else if (command === 'nextCell' || command === 'prevCell') {
+  } else if (
+    command === 'nextCell' ||
+    command === 'prevCell' ||
+    command === 'up' ||
+    command === 'down'
+  ) {
     // move prevCell or nextCell by tab keyMap
-    moveTabFocus(store, command);
+    moveTabAndEnterFocus(store, command);
   }
 }
 
-export function moveTabFocus(store: Store, command: TabCommandType) {
+export function moveTabAndEnterFocus(store: Store, command: TabCommandType | EnterCommandType) {
   const { focus, data, column, id } = store;
   const { visibleColumnsWithRowHeader } = column;
   const { rowKey, columnName, rowIndex, totalColumnIndex: columnIndex } = focus;
