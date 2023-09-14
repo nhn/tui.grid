@@ -21,6 +21,7 @@ export interface GridEventProps {
   nextValue?: CellValue;
   event?: MouseEvent;
   rowKey?: RowKey | null;
+  rowKeys?: RowKey[] | null;
   columnName?: string | null;
   prevRowKey?: RowKey | null;
   prevColumnName?: string | null;
