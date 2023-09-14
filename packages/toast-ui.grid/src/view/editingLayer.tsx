@@ -72,9 +72,11 @@ export class EditingLayerComp extends Component<Props> {
 
     switch (keyName) {
       case 'enter':
-        isUndefined(moveDirectionOnEnter)
-          ? this.saveAndFinishEditing(true)
-          : this.moveTabAndEnterFocus(ev, moveDirectionOnEnter);
+        if (isUndefined(moveDirectionOnEnter)) {
+          this.saveAndFinishEditing(true);
+        } else {
+          this.moveTabAndEnterFocus(ev, moveDirectionOnEnter);
+        }
         break;
       case 'esc':
         this.cancelEditing();
