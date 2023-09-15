@@ -418,8 +418,8 @@ export function setCheckboxBetween(
   startRowKey: RowKey,
   endRowKey?: RowKey
 ) {
-  const { data, id } = store;
-  const { clickedCheckboxRowkey } = data;
+  const { data, column, id } = store;
+  const { clickedCheckboxRowkey, filteredRawData } = data;
   const targetRowKey = endRowKey || clickedCheckboxRowkey;
   const eventBus = getEventBus(id);
 
@@ -434,11 +434,23 @@ export function setCheckboxBetween(
     return;
   }
 
-  const range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+  const prevCheckedCheckboxRowIndex = findIndexByRowKey(
+    data,
+    column,
+    id,
+    clickedCheckboxRowkey,
+    isFiltered(data)
+  );
+  let range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+
+  range =
+    range[0] === prevCheckedCheckboxRowIndex ? [range[0] + 1, range[1]] : [range[0], range[1] - 1];
 
   const rowKeys: RowKey[] = [];
   for (let i = range[0]; i < range[1]; i += 1) {
-    rowKeys.push(getRowKeyByIndexWithPageRange(data, i));
+    if (filteredRawData[i]._attributes.checked !== value) {
+      rowKeys.push(getRowKeyByIndexWithPageRange(data, i));
+    }
   }
 
   const gridEvent = new GridEvent({ rowKeys });
