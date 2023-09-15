@@ -8,6 +8,7 @@ import { observable } from '../helper/observable';
 import { someProp, findPropIndex, isNull } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
 import { findIndexByRowKey, isClientPagination } from '../query/data';
+import { EnterCommandType } from '../helper/keyboard';
 
 interface FocusOption {
   data: Data;
@@ -18,6 +19,7 @@ interface FocusOption {
   editingEvent: EditingEvent;
   tabMode: TabMode;
   id: number;
+  moveDirectionOnEnter?: EnterCommandType;
 }
 
 export function create({
@@ -29,6 +31,7 @@ export function create({
   editingEvent,
   tabMode,
   id,
+  moveDirectionOnEnter,
 }: FocusOption) {
   return observable({
     rowKey: null,
@@ -40,6 +43,7 @@ export function create({
     navigating: false,
     forcedDestroyEditing: false,
     tabMode,
+    moveDirectionOnEnter,
 
     get side() {
       if (this.columnName === null) {

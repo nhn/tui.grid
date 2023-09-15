@@ -289,6 +289,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  *      @param {boolean} [options.draggable] - Whether to enable to drag the row for changing the order of rows.
  *      @param {Array} [options.contextMenu] - Option array for the context menu.
+ *      @param {string} [options.moveDirectionOnEnter] - Define moving focus direction on Enter. If not set, the focus does not move.
  */
 export default class Grid implements TuiGrid {
   el: HTMLElement;

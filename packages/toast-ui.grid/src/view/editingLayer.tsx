@@ -7,7 +7,7 @@ import { CellEditor } from '@t/editor';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls, getTextWidth } from '../helper/dom';
-import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
+import { EnterCommandType, getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { findProp, getLongestText, isNil, isNull, isUndefined } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
@@ -40,6 +40,7 @@ interface StoreProps {
   bodyWidth: number;
   headerHeight: number;
   leftSideWidth: number;
+  moveDirectionOnEnter?: EnterCommandType;
 }
 
 interface OwnProps {
@@ -57,29 +58,34 @@ export class EditingLayerComp extends Component<Props> {
 
   private longestTextWidths: { [columnName: string]: number } = {};
 
-  private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
+  private moveTabAndEnterFocus(ev: KeyboardEvent, command: TabCommandType | EnterCommandType) {
     const { dispatch } = this.props;
 
     ev.preventDefault();
-    dispatch('moveTabFocus', command);
+    dispatch('moveTabAndEnterFocus', command);
     dispatch('setScrollToFocus');
   }
 
   private handleKeyDown = (ev: KeyboardEvent) => {
+    const { moveDirectionOnEnter } = this.props;
     const keyName = getKeyStrokeString(ev);
 
     switch (keyName) {
       case 'enter':
-        this.saveAndFinishEditing(true);
+        if (isUndefined(moveDirectionOnEnter)) {
+          this.saveAndFinishEditing(true);
+        } else {
+          this.moveTabAndEnterFocus(ev, moveDirectionOnEnter);
+        }
         break;
       case 'esc':
         this.cancelEditing();
         break;
       case 'tab':
-        this.moveTabFocus(ev, 'nextCell');
+        this.moveTabAndEnterFocus(ev, 'nextCell');
         break;
       case 'shift-tab':
-        this.moveTabFocus(ev, 'prevCell');
+        this.moveTabAndEnterFocus(ev, 'prevCell');
         break;
       default:
       // do nothing;
@@ -291,6 +297,7 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     columnName: focusedColumnName,
     forcedDestroyEditing,
     cellPosRect,
+    moveDirectionOnEnter,
   } = focus;
   const { scrollTop, scrollLeft } = viewport;
   const {
@@ -319,5 +326,6 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     bodyWidth: width - scrollYWidth,
     headerHeight,
     leftSideWidth: side === 'L' ? 0 : columnCoords.areaWidth.L,
+    moveDirectionOnEnter,
   };
 }, true)(EditingLayerComp);

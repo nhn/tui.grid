@@ -1,4 +1,5 @@
 import { RowKey } from './data';
+import { EnterCommandType } from '../../src/helper/keyboard';
 
 export type EditingEvent = 'click' | 'dblclick';
 export type TabMode = 'move' | 'moveAndEdit';
@@ -24,6 +25,7 @@ export interface Focus {
   prevRowKey: RowKey | null;
   prevColumnName: string | null;
   forcedDestroyEditing: boolean;
+  moveDirectionOnEnter?: EnterCommandType;
   readonly side: Side | null;
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;

@@ -19,6 +19,7 @@ import { SummaryColumnContentMapOnlyFn, SummaryPosition } from './store/summary'
 import { TuiGridEvent } from './event';
 import { CellRendererClass, CellRendererProps, HeaderRendererClass } from './renderer';
 import { CellEditorClass } from './editor';
+import { EnterCommandType } from '../src/helper/keyboard';
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -115,6 +116,7 @@ export interface OptGrid {
   onGridBeforeDestroy?: GridEventListener;
   draggable?: boolean;
   contextMenu?: CreateMenuGroups;
+  moveDirectionOnEnter?: EnterCommandType;
 }
 
 export type OptRowProp = CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];

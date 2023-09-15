@@ -99,6 +99,9 @@ export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof typeof keyboardEventTypeMap;
 export type KeyboardEventCommandType = keyof typeof keyboardEventCommandMap;
 export type TabCommandType = 'nextCell' | 'prevCell';
+export type EnterCommandType =
+  | TabCommandType
+  | keyof Pick<typeof keyboardEventCommandMap, 'up' | 'down'>;
 
 /**
  * Returns the keyStroke string
@@ -130,6 +133,7 @@ export function keyEventGenerate(ev: KeyboardEvent) {
 
   return commandInfo
     ? {
+        keyStroke,
         type: commandInfo[0],
         command: commandInfo[1],
       }
