@@ -335,6 +335,55 @@ describe('rowHeader: checkbox', () => {
 
       cy.wrap(uncheckCallback).should('be.calledOnce');
     });
+
+    it(`checkBetween / uncheckBetween by ${type}`, () => {
+      cy.createGrid({
+        data: [...data, ...data],
+        columns,
+        draggable: true,
+        bodyHeight: 150,
+        width: 500,
+        rowHeaders: ['rowNum', 'checkbox'],
+      });
+
+      const checkCallback = cy.stub();
+      const uncheckCallback = cy.stub();
+
+      cy.getByCls('cell-row-header').get('input').eq(1).as('firstCheckbox');
+      cy.getByCls('cell-row-header').get('input').eq(2).as('secondCheckbox');
+      cy.getByCls('cell-row-header').get('input').eq(-1).as('lastCheckbox');
+
+      cy.gridInstance().invoke('on', 'check', checkCallback);
+      cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
+
+      if (type === 'UI') {
+        // In Cypress 4.9.0, there is no way to test Shift-click
+        // cy.get('@secondCheckbox').click();
+        // cy.get('@firstCheckbox').click();
+        // cy.get('@lastCheckbox').click({
+        //   shiftKey: true, // not available in Cypress 4.9.0
+        // });
+      } else {
+        cy.gridInstance().invoke('check', 1);
+        cy.gridInstance().invoke('checkBetween', 0, 3);
+
+        cy.wrap(checkCallback).should('be.calledWithMatch', { rowKeys: [0, 2, 3] });
+      }
+
+      if (type === 'UI') {
+        // In Cypress 4.9.0, there is no way to test Shift-click
+        // cy.get('@secondCheckbox').click();
+        // cy.get('@firstCheckbox').click();
+        // cy.get('@lastCheckbox').click({
+        //   shiftKey: true, // not available in Cypress 4.9.0
+        // });
+      } else {
+        cy.gridInstance().invoke('uncheck', 1);
+        cy.gridInstance().invoke('uncheckBetween', 0, 3);
+
+        cy.wrap(uncheckCallback).should('be.calledWithMatch', { rowKeys: [0, 2, 3] });
+      }
+    });
   });
 });
 
