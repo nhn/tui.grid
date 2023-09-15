@@ -54,7 +54,7 @@ import {
   isScrollPagination,
   isFiltered,
   getCreatedRowInfos,
-  getRowKeyByIndexWithPageRange,
+  getCheckStateChangedRowkeysInRange,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -418,12 +418,10 @@ export function setCheckboxBetween(
   startRowKey: RowKey,
   endRowKey?: RowKey
 ) {
-  const { data, column, id } = store;
-  const { clickedCheckboxRowkey, filteredRawData } = data;
+  const { data, id } = store;
+  const { clickedCheckboxRowkey } = data;
   const targetRowKey = endRowKey || clickedCheckboxRowkey;
   const eventBus = getEventBus(id);
-
-  data.clickedCheckboxRowkey = startRowKey;
 
   if (isNil(targetRowKey)) {
     if (value) {
@@ -434,32 +432,15 @@ export function setCheckboxBetween(
     return;
   }
 
-  const prevCheckedCheckboxRowIndex = findIndexByRowKey(
-    data,
-    column,
-    id,
-    clickedCheckboxRowkey,
-    isFiltered(data)
-  );
-  let range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+  const range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+  const checkStateChangedRowkeys = getCheckStateChangedRowkeysInRange(store, value, range);
 
-  if (range[0] === prevCheckedCheckboxRowIndex) {
-    range = [range[0] + 1, range[1]];
-  } else if (range[1] === prevCheckedCheckboxRowIndex) {
-    range = [range[0], range[1] - 1];
-  }
-
-  const rowKeys: RowKey[] = [];
-  for (let i = range[0]; i < range[1]; i += 1) {
-    if (filteredRawData[i]._attributes.checked !== value) {
-      rowKeys.push(getRowKeyByIndexWithPageRange(data, i));
-    }
-  }
-
-  const gridEvent = new GridEvent({ rowKeys });
+  data.clickedCheckboxRowkey = startRowKey;
 
   setRowsAttributeInRange(store, 'checked', value, range);
   setCheckedAllRows(store);
+
+  const gridEvent = new GridEvent({ rowKeys: checkStateChangedRowkeys });
 
   eventBus.trigger(value ? 'check' : 'uncheck', gridEvent);
 }
