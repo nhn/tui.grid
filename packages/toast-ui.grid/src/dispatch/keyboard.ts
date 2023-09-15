@@ -60,7 +60,6 @@ export function editFocus(store: Store, command: KeyboardEventCommandType) {
     command === 'up' ||
     command === 'down'
   ) {
-    // move prevCell or nextCell by tab keyMap
     moveTabAndEnterFocus(store, command);
   }
 }
