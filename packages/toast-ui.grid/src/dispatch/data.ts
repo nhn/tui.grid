@@ -443,8 +443,11 @@ export function setCheckboxBetween(
   );
   let range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
 
-  range =
-    range[0] === prevCheckedCheckboxRowIndex ? [range[0] + 1, range[1]] : [range[0], range[1] - 1];
+  if (range[0] === prevCheckedCheckboxRowIndex) {
+    range = [range[0] + 1, range[1]];
+  } else if (range[1] === prevCheckedCheckboxRowIndex) {
+    range = [range[0], range[1] - 1];
+  }
 
   const rowKeys: RowKey[] = [];
   for (let i = range[0]; i < range[1]; i += 1) {
