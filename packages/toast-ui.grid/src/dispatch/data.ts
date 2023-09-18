@@ -54,6 +54,7 @@ import {
   isScrollPagination,
   isFiltered,
   getCreatedRowInfos,
+  getCheckStateChangedRowkeysInRange,
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -378,7 +379,8 @@ export function check(store: Store, rowKey: RowKey) {
   /**
    * Occurs when a checkbox in row header is checked
    * @event Grid#check
-   * @property {number | string} rowKey - rowKey of the checked row
+   * @property {number | string} [rowKey] - rowKey of the checked row(when single check via click)
+   * @property {Array<number | string>} [rowKeys] - rowKeys of the checked rows(when multiple check via shift-click)
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('check', gridEvent);
@@ -403,7 +405,8 @@ export function uncheck(store: Store, rowKey: RowKey) {
   /**
    * Occurs when a checkbox in row header is unchecked
    * @event Grid#uncheck
-   * @property {number | string} rowKey - rowKey of the unchecked row
+   * @property {number | string} [rowKey] - rowKey of the unchecked row(when single check via click)
+   * @property {Array<number | string>} [rowKeys] - rowKeys of the unchecked rows(when multiple unchecked via shift-click)
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('uncheck', gridEvent);
@@ -415,11 +418,10 @@ export function setCheckboxBetween(
   startRowKey: RowKey,
   endRowKey?: RowKey
 ) {
-  const { data } = store;
+  const { data, id } = store;
   const { clickedCheckboxRowkey } = data;
   const targetRowKey = endRowKey || clickedCheckboxRowkey;
-
-  data.clickedCheckboxRowkey = startRowKey;
+  const eventBus = getEventBus(id);
 
   if (isNil(targetRowKey)) {
     if (value) {
@@ -431,9 +433,16 @@ export function setCheckboxBetween(
   }
 
   const range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
+  const checkStateChangedRowkeys = getCheckStateChangedRowkeysInRange(store, value, range);
+
+  data.clickedCheckboxRowkey = startRowKey;
 
   setRowsAttributeInRange(store, 'checked', value, range);
   setCheckedAllRows(store);
+
+  const gridEvent = new GridEvent({ rowKeys: checkStateChangedRowkeys });
+
+  eventBus.trigger(value ? 'check' : 'uncheck', gridEvent);
 }
 
 export function checkAll(store: Store, allPage?: boolean) {

@@ -366,3 +366,21 @@ export function changeRawDataToOriginDataForTree(rawData: Row[]) {
     .filter((row) => isNil(row._attributes?.tree?.parentRowKey))
     .map((row) => changeRowToOriginRowForTree(row));
 }
+
+export function getCheckStateChangedRowkeysInRange(
+  store: Store,
+  checkState: boolean,
+  range: [number, number]
+) {
+  const { data } = store;
+  const { filteredRawData } = data;
+
+  const rowKeys: RowKey[] = [];
+  for (let i = range[0]; i < range[1]; i += 1) {
+    if (filteredRawData[i]._attributes.checked !== checkState) {
+      rowKeys.push(getRowKeyByIndexWithPageRange(data, i));
+    }
+  }
+
+  return rowKeys;
+}
