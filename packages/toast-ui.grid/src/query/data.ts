@@ -372,21 +372,8 @@ export function getCheckStateChangedRowkeysInRange(
   checkState: boolean,
   range: [number, number]
 ) {
-  const { data, column, id } = store;
-  const { clickedCheckboxRowkey, filteredRawData } = data;
-  const prevCheckedCheckboxRowIndex = findIndexByRowKey(
-    data,
-    column,
-    id,
-    clickedCheckboxRowkey,
-    isFiltered(data)
-  );
-
-  if (range[0] === prevCheckedCheckboxRowIndex) {
-    range = [range[0] + 1, range[1]];
-  } else if (range[1] === prevCheckedCheckboxRowIndex) {
-    range = [range[0], range[1] - 1];
-  }
+  const { data } = store;
+  const { filteredRawData } = data;
 
   const rowKeys: RowKey[] = [];
   for (let i = range[0]; i < range[1]; i += 1) {
