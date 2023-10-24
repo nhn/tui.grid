@@ -6,6 +6,10 @@ export function clipboardType(key: string) {
   cy.getByCls('clipboard').type(key, { force: true });
 }
 
+export function editingLayerType(key: string) {
+  cy.getByCls('layer-editing').type(key);
+}
+
 export function moveToNextPage() {
   cy.get('.tui-page-btn.tui-next').click({ force: true });
 }

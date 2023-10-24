@@ -1,4 +1,4 @@
-import { clipboardType } from '../helper/util';
+import { clipboardType, editingLayerType } from '../helper/util';
 import { assertFocusedCell, assertSelectedRange } from '../helper/assert';
 import { GridOptions } from '@t/index';
 
@@ -16,10 +16,10 @@ function assertEditFinished() {
 
 function createGrid(options?: Partial<GridOptions>) {
   const data = [
-    { name: 'Han', value: 1 },
-    { name: 'Kim', value: 2 },
-    { name: 'Ryu', value: 3 },
-    { name: 'Lee', value: 4 },
+    { name: 'Han', value: 1, age: 23 },
+    { name: 'Kim', value: 2, age: 28 },
+    { name: 'Ryu', value: 3, age: 27 },
+    { name: 'Lee', value: 4, age: 30 },
   ];
 
   const columns = [
@@ -135,7 +135,13 @@ describe('Focus', () => {
 
 describe('Move focus on enter', () => {
   it('should not move the focus on enter(default)', () => {
-    createGrid();
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age' },
+      ],
+    });
     cy.getCellByIdx(0, 0).click();
 
     clipboardType('{enter}');
@@ -144,53 +150,116 @@ describe('Move focus on enter', () => {
   });
 
   it('should move the focus to next cell on enter(nextCell)', () => {
-    createGrid({ moveDirectionOnEnter: 'nextCell' });
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age' },
+      ],
+      moveDirectionOnEnter: 'nextCell',
+    });
     cy.getCellByIdx(0, 0).click();
 
     clipboardType('{enter}');
 
+    assertFocusedCell('name', 0);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
+
     assertFocusedCell('value', 0);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
+
+    assertFocusedCell('age', 0);
+    cy.getByCls('layer-editing').should('be.not.visible');
 
     clipboardType('{enter}');
 
     assertFocusedCell('name', 1);
+    cy.getByCls('layer-editing').should('be.visible');
   });
 
   it('should move the focus to next cell on enter(prevCell)', () => {
-    createGrid({ moveDirectionOnEnter: 'prevCell' });
-    cy.getCellByIdx(1, 1).click();
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age' },
+      ],
+      moveDirectionOnEnter: 'prevCell',
+    });
+    cy.getCellByIdx(1, 0).click();
 
     clipboardType('{enter}');
 
     assertFocusedCell('name', 1);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
+
+    assertFocusedCell('age', 0);
+    cy.getByCls('layer-editing').should('be.not.visible');
 
     clipboardType('{enter}');
 
     assertFocusedCell('value', 0);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
+
+    assertFocusedCell('name', 0);
+    cy.getByCls('layer-editing').should('be.visible');
   });
 
   it('should move the focus to next cell on enter(down)', () => {
-    createGrid({ moveDirectionOnEnter: 'down' });
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age' },
+      ],
+      moveDirectionOnEnter: 'down',
+    });
     cy.getCellByIdx(0, 0).click();
 
     clipboardType('{enter}');
 
-    assertFocusedCell('name', 1);
+    assertFocusedCell('name', 0);
+    cy.getByCls('layer-editing').should('be.visible');
 
-    clipboardType('{enter}');
+    editingLayerType('{enter}');
+
+    assertFocusedCell('name', 1);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
 
     assertFocusedCell('name', 2);
+    cy.getByCls('layer-editing').should('be.visible');
   });
 
   it('should move the focus to next cell on enter(up)', () => {
-    createGrid({ moveDirectionOnEnter: 'up' });
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age' },
+      ],
+      moveDirectionOnEnter: 'up',
+    });
     cy.getCellByIdx(2, 0).click();
 
     clipboardType('{enter}');
 
+    assertFocusedCell('name', 2);
+
+    editingLayerType('{enter}');
+
     assertFocusedCell('name', 1);
 
-    clipboardType('{enter}');
+    editingLayerType('{enter}');
 
     assertFocusedCell('name', 0);
   });
