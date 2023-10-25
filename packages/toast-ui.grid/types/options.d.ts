@@ -51,6 +51,7 @@ export type GridEventName =
   | 'uncheck'
   | 'checkAll'
   | 'uncheckAll'
+  | 'beforeCheckBetween'
   | 'selection'
   | 'editingStart'
   | 'editingFinish'
