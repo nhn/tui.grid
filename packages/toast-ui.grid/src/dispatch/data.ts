@@ -459,7 +459,7 @@ export function setCheckboxBetween(
   setRowsAttributeInRange(store, 'checked', value, range);
   setCheckedAllRows(store);
 
-  const gridEvent = new GridEvent({ rowKeys: checkStateChangedRowkeys });
+  const gridEvent = new GridEvent(eventArgs);
 
   eventBus.trigger(value ? 'check' : 'uncheck', gridEvent);
 }
