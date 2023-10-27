@@ -194,9 +194,16 @@ class ClipboardComp extends Component<Props> {
       this.props.eventBus.trigger('keydown', gridEvent);
 
       if (!gridEvent.isStopped()) {
+        const isEditable =
+          keyStroke === 'enter' &&
+          this.context.store &&
+          this.context.store.column.allColumnMap[columnName ?? ''].editor;
+
         this.dispatchKeyboardEvent(
           type,
-          keyStroke === 'enter' && moveDirectionOnEnter ? moveDirectionOnEnter : command
+          keyStroke === 'enter' && moveDirectionOnEnter && !isEditable
+            ? moveDirectionOnEnter
+            : command
         );
       }
     }
