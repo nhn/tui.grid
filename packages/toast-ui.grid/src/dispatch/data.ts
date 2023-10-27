@@ -434,13 +434,32 @@ export function setCheckboxBetween(
 
   const range = getIndexRangeOfCheckbox(store, startRowKey, targetRowKey);
   const checkStateChangedRowkeys = getCheckStateChangedRowkeysInRange(store, value, range);
+  const eventArgs = { rowKey: startRowKey, rowKeys: checkStateChangedRowkeys };
+
+  const gridEventBefore = new GridEvent(eventArgs);
+  /**
+   * Occurs before the http request is sent
+   * @event Grid#beforeRequest
+   * @type {module:event/gridEvent}
+   * @property {XMLHttpRequest} xhr - Current XMLHttpRequest instance
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('beforeCheckBetween', gridEventBefore);
+  if (gridEventBefore.isStopped()) {
+    if (value) {
+      check(store, startRowKey);
+    } else {
+      uncheck(store, startRowKey);
+    }
+    return;
+  }
 
   data.clickedCheckboxRowkey = startRowKey;
 
   setRowsAttributeInRange(store, 'checked', value, range);
   setCheckedAllRows(store);
 
-  const gridEvent = new GridEvent({ rowKeys: checkStateChangedRowkeys });
+  const gridEvent = new GridEvent(eventArgs);
 
   eventBus.trigger(value ? 'check' : 'uncheck', gridEvent);
 }
