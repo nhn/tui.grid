@@ -72,3 +72,7 @@ export function excelExport(store: Store) {
 export function txtExport(store: Store) {
   execExport(store, 'txt');
 }
+
+export function xlsExport(store: Store) {
+  execExport(store, 'xls');
+}

@@ -8,3 +8,5 @@ export interface OptExport {
   fileName?: string;
   useFormattedValue?: boolean;
 }
+
+export type ExportFormat = 'txt' | 'csv' | 'xlsx' | 'xls';

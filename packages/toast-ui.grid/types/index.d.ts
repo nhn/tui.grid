@@ -32,7 +32,7 @@ import {
 } from './dataSource';
 import { Filter, FilterOptionType, FilterState } from './store/filterLayerState';
 import { MenuItem } from './store/contextMenu';
-import { OptExport } from './store/export';
+import { ExportFormat, OptExport } from './store/export';
 
 type InternalProp =
   | 'sortKey'
@@ -301,7 +301,7 @@ declare namespace tui {
 
     public getPaginationTotalCount(): number;
 
-    public export(format: 'txt' | 'csv' | 'xlsx', options?: OptExport): void;
+    public export(format: ExportFormat, options?: OptExport): void;
 
     public moveColumn(columnName: string, targetIndex: number): void;
   }

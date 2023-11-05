@@ -48,7 +48,8 @@ const messages: OptI18nLanguage = {
       export: 'Export',
       txtExport: 'Text Export',
       csvExport: 'CSV Export',
-      excelExport: 'Excel Export',
+      excelExport: 'Excel Export(xlsx)',
+      xlsExport: 'Excel Export(xls)',
     },
   },
   pt: {
@@ -92,7 +93,8 @@ const messages: OptI18nLanguage = {
       export: 'Exportar',
       txtExport: 'Exportar Texto',
       csvExport: 'Exportar CSV',
-      excelExport: 'Exportar Excel',
+      excelExport: 'Exportar Excel(xlsx)',
+      xlsExport: 'Exportar Excel(xls)',
     },
   },
   es: {
@@ -135,7 +137,8 @@ const messages: OptI18nLanguage = {
       export: 'exportar',
       txtExport: 'Texto exportar',
       csvExport: 'CSV exportar',
-      excelExport: 'Excel exportar',
+      excelExport: 'Excel exportar(xlsx)',
+      xlsExport: 'Excel exportar(xls)',
     },
   },
   ko: {
@@ -178,7 +181,8 @@ const messages: OptI18nLanguage = {
       export: '내보내기',
       txtExport: 'Text로 내보내기',
       csvExport: 'CSV로 내보내기',
-      excelExport: '엑셀로 내보내기',
+      excelExport: '엑셀로 내보내기(xlsx)',
+      xlsExport: '엑셀로 내보내기(xls)',
     },
   },
   nl: {
@@ -221,7 +225,8 @@ const messages: OptI18nLanguage = {
       export: 'Exporteer',
       txtExport: 'Maak Tekst Export',
       csvExport: 'Maak CSV Export',
-      excelExport: 'Maak Excel Export',
+      excelExport: 'Maak Excel Export(xlsx)',
+      xlsExport: 'Maak Excel Export(xls)',
     },
   },
   it: {
@@ -264,7 +269,8 @@ const messages: OptI18nLanguage = {
       export: 'Esportare',
       txtExport: 'Esportazione Testo',
       csvExport: 'Esportazione CSV',
-      excelExport: 'Esportazione Excel',
+      excelExport: 'Esportazione Excel(xlsx)',
+      xlsExport: 'Esportazione Excel(xls)',
     },
   },
 };
