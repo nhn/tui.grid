@@ -40,11 +40,6 @@ function createDefaultContextMenu(): MenuItem[][] {
             label: i18n.get('contextMenu.excelExport'),
             action: 'excelExport',
           },
-          {
-            name: 'xlsExport',
-            label: i18n.get('contextMenu.xlsExport'),
-            action: 'xlsExport',
-          },
         ],
       },
     ],
