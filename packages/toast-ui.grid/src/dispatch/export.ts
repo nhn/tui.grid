@@ -41,6 +41,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     data: { rawData, filteredRawData },
     column,
     selection: { originalRange },
+    exports: { excelCompatibilityMode },
   } = store;
 
   const {
@@ -72,7 +73,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     columnNames,
   };
 
-  return { data, columnHeaders, columnNames, exportOptions };
+  return { data, columnHeaders, columnNames, exportOptions, excelCompatibilityMode };
 }
 
 function emitExportEvent(store: Store, eventType: EventType, eventParams: EventParams) {
@@ -176,10 +177,13 @@ function exportCallback(
 }
 
 export function execExport(store: Store, format: ExportFormat, options?: OptExport) {
-  const { data, columnHeaders, columnNames, exportOptions } = getExportDataAndColumnsAndOptions(
-    store,
-    options
-  );
+  const {
+    data,
+    columnHeaders,
+    columnNames,
+    exportOptions,
+    excelCompatibilityMode,
+  } = getExportDataAndColumnsAndOptions(store, options);
   const { includeHeader, delimiter, fileName } = exportOptions;
   const { column } = store;
 
@@ -222,7 +226,7 @@ export function execExport(store: Store, format: ExportFormat, options?: OptExpo
   }
 
   if (format === 'xlsx' || format === 'xls') {
-    exportExcel(format, fileName, targetData, complexHeaderData);
+    exportExcel(excelCompatibilityMode ? 'xls' : format, fileName, targetData, complexHeaderData);
   } else {
     const targetText = convertDataToText(targetData, delimiter);
 
