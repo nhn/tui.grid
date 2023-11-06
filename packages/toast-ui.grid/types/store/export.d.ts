@@ -10,3 +10,7 @@ export interface OptExport {
 }
 
 export type ExportFormat = 'txt' | 'csv' | 'xlsx' | 'xls';
+
+export interface Exports {
+  excelCompatibilityMode?: boolean;
+}

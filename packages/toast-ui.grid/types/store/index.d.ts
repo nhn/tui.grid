@@ -10,6 +10,7 @@ import { Data } from './data';
 import { Dimension } from './dimension';
 import { Column } from './column';
 import { ContextMenu } from './contextMenu';
+import { Exports } from '@t/store/export';
 
 export type GridId = number;
 
@@ -27,4 +28,5 @@ export interface Store {
   readonly renderState: RenderState;
   readonly filterLayerState: FilterLayerState;
   readonly contextMenu: ContextMenu;
+  readonly exports: Exports;
 }
