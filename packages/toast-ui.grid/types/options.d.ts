@@ -482,7 +482,6 @@ export interface OptI18nData {
     txtExport?: string;
     csvExport?: string;
     excelExport?: string;
-    xlsExport?: string;
   };
 }
 

@@ -18,8 +18,7 @@ export interface MenuItem {
     | 'copyRows'
     | 'csvExport'
     | 'excelExport'
-    | 'txtExport'
-    | 'xlsExport';
+    | 'txtExport';
   classNames?: string[];
   subMenu?: MenuItem[];
 }
