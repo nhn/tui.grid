@@ -64,6 +64,22 @@ describe('should check the validation of cell - regExp', () => {
         },
       ]);
   });
+  it('get validation result of specific rows by validate API', () => {
+    cy.gridInstance()
+      .invoke('validate', [1])
+      .should('eql', [
+        {
+          errors: [
+            {
+              columnName: 'name',
+              errorCode: ['REGEXP'],
+              errorInfo: [{ code: 'REGEXP', regExp: /[0-9]+:[0-9]/ }],
+            },
+          ],
+          rowKey: 1,
+        },
+      ]);
+  });
 });
 
 describe('should check the validation of cell - dataType: string', () => {
