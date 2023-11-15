@@ -184,6 +184,19 @@ grid.on('afterExport', ev => {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 ```
 
+`xlsx` 포맷을 지원하지 않는 구 버전 Excel 등에서 열 수 있는 파일 내보내기를 위해 `xls` 포맷을 지원한다.
+또한 기본 엑셀 내보내기 포맷을 `xlsx`에서 `xls`로 변경하기 위해 `excelCompatibilityMode` 옵션을 사용할 수 있다.
+
+```js
+const grid = Grid({
+  // ...
+  exportOptions: {
+      excelCompatibilityMode: true,
+  },
+  // ...
+});
+```
+
 ### 브라우저 지원 범위
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---: | :---: | :---: | :---: | :---: |
