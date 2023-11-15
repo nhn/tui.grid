@@ -9,6 +9,28 @@ before(() => {
   cy.visit('/dist');
 });
 
+const DATA = [
+  { name: 'Sugar', artist: 'Maroon5', price: 1000, typeCode: '2' },
+  { name: 'Get Lucky', artist: 'Daft Punk', price: 2000, typeCode: '3' },
+  { name: '21', artist: 'Adele', price: 3000, typeCode: '1' },
+];
+const COLUMNS = [
+  {
+    header: 'Name',
+    name: 'name',
+    filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
+  },
+  {
+    header: 'Artist',
+    name: 'artist',
+  },
+  {
+    header: 'Price',
+    name: 'price',
+    hidden: true,
+  },
+];
+
 function showContextMenu(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).trigger('contextmenu');
 }
@@ -22,10 +44,7 @@ function clickExportMenuItemByFormat(format: ExportFormat) {
 
   switch (format) {
     case 'xlsx':
-      text = 'xlsx';
-      break;
-    case 'xls':
-      text = 'xls';
+      text = 'Excel';
       break;
     case 'csv':
       text = 'CSV';
@@ -40,32 +59,10 @@ function clickExportMenuItemByFormat(format: ExportFormat) {
 }
 
 describe('Export data', () => {
-  const data = [
-    { name: 'Sugar', artist: 'Maroon5', price: 1000, typeCode: '2' },
-    { name: 'Get Lucky', artist: 'Daft Punk', price: 2000, typeCode: '3' },
-    { name: '21', artist: 'Adele', price: 3000, typeCode: '1' },
-  ];
-  const columns = [
-    {
-      header: 'Name',
-      name: 'name',
-      filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
-    },
-    {
-      header: 'Artist',
-      name: 'artist',
-    },
-    {
-      header: 'Price',
-      name: 'price',
-      hidden: true,
-    },
-  ];
-
   let callback: SinonStub;
 
   beforeEach(() => {
-    cy.createGrid({ data, columns });
+    cy.createGrid({ data: DATA, columns: COLUMNS });
     callback = cy.stub().callsFake((ev: GridEvent) => ev.stop());
     cy.gridInstance().invoke('on', 'beforeExport', callback);
   });
@@ -75,7 +72,7 @@ describe('Export data', () => {
   });
 
   describe('Default options', () => {
-    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
+    ['txt', 'csv', 'xlsx'].forEach((format) => {
       it(`should export data according to default export options to '${format}'`, () => {
         clickExportMenuItemByFormat(format as ExportFormat);
 
@@ -150,6 +147,30 @@ describe('Export data', () => {
       });
 
       clickExportMenuItemByFormat('xlsx');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        data: [
+          ['Basic', 'Basic'],
+          ['Name', 'Artist'],
+          ['Sugar', 'Maroon5'],
+          ['Get Lucky', 'Daft Punk'],
+          ['21', 'Adele'],
+        ],
+      });
+    });
+
+    it(`should export data with complex column headers to 'xls'`, () => {
+      cy.gridInstance().invoke('setHeader', {
+        complexColumns: [
+          {
+            header: 'Basic',
+            name: 'complexColumn',
+            childNames: ['name', 'artist'],
+          },
+        ],
+      });
+
+      cy.gridInstance().invoke('export', 'xls');
 
       cy.wrap(callback).should('be.calledWithMatch', {
         data: [
