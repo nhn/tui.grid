@@ -1043,6 +1043,8 @@ export default class Grid implements TuiGrid {
   /**
    * Validate all data and returns the result.
    * Return value is an array which contains only rows which have invalid cell data.
+   * @param {Array<number|string>} [rowKeys] - Array of rowKeys to validate.
+   *        Validate only for the given rows, but validations that should be performed on all rows, such as unique, may not work correctly.
    * @returns {Array.<Object>} An array of error object
    * @example
    * // return value example
@@ -1074,8 +1076,8 @@ export default class Grid implements TuiGrid {
    *     }
    * ]
    */
-  public validate(): InvalidRow[] {
-    return getInvalidRows(this.store);
+  public validate(rowKeys?: RowKey[]): InvalidRow[] {
+    return getInvalidRows(this.store, rowKeys);
   }
 
   /**
