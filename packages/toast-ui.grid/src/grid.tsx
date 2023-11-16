@@ -34,7 +34,7 @@ import {
   RequestOptions,
   RequestType,
 } from '@t/dataSource';
-import { OptExport } from '@t/store/export';
+import { ExportFormat, OptExport } from '@t/store/export';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { createDispatcher, Dispatch } from './dispatch/create';
@@ -1884,7 +1884,7 @@ export default class Grid implements TuiGrid {
    *    @param {','|';'|'\\t'|'|'} [options.delimiter=','] - Delimiter to export CSV
    *    @param {string} [options.fileName='grid-export'] - File name to export
    */
-  public export(format: 'txt' | 'csv' | 'xlsx', options?: OptExport) {
+  public export(format: ExportFormat, options?: OptExport) {
     this.dispatch('execExport', format, options);
   }
 

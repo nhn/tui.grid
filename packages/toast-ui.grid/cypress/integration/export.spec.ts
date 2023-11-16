@@ -3,10 +3,33 @@ import { cls } from '@/helper/dom';
 import { RowKey } from '@t/store/data';
 import { SinonStub } from 'cypress/types/sinon';
 import { invokeFilter } from '../helper/util';
+import { ExportFormat } from '@t/store/export';
 
 before(() => {
   cy.visit('/dist');
 });
+
+const DATA = [
+  { name: 'Sugar', artist: 'Maroon5', price: 1000, typeCode: '2' },
+  { name: 'Get Lucky', artist: 'Daft Punk', price: 2000, typeCode: '3' },
+  { name: '21', artist: 'Adele', price: 3000, typeCode: '1' },
+];
+const COLUMNS = [
+  {
+    header: 'Name',
+    name: 'name',
+    filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
+  },
+  {
+    header: 'Artist',
+    name: 'artist',
+  },
+  {
+    header: 'Price',
+    name: 'price',
+    hidden: true,
+  },
+];
 
 function showContextMenu(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).trigger('contextmenu');
@@ -16,7 +39,7 @@ function getMenuItemByText(text: string) {
   return cy.contains(`.${cls('context-menu')} .menu-item`, text);
 }
 
-function clickExportMenuItemByFormat(format: 'txt' | 'csv' | 'xlsx') {
+function clickExportMenuItemByFormat(format: ExportFormat) {
   let text;
 
   switch (format) {
@@ -36,32 +59,10 @@ function clickExportMenuItemByFormat(format: 'txt' | 'csv' | 'xlsx') {
 }
 
 describe('Export data', () => {
-  const data = [
-    { name: 'Sugar', artist: 'Maroon5', price: 1000, typeCode: '2' },
-    { name: 'Get Lucky', artist: 'Daft Punk', price: 2000, typeCode: '3' },
-    { name: '21', artist: 'Adele', price: 3000, typeCode: '1' },
-  ];
-  const columns = [
-    {
-      header: 'Name',
-      name: 'name',
-      filter: { type: 'text', showApplyBtn: true, showClearBtn: true },
-    },
-    {
-      header: 'Artist',
-      name: 'artist',
-    },
-    {
-      header: 'Price',
-      name: 'price',
-      hidden: true,
-    },
-  ];
-
   let callback: SinonStub;
 
   beforeEach(() => {
-    cy.createGrid({ data, columns });
+    cy.createGrid({ data: DATA, columns: COLUMNS });
     callback = cy.stub().callsFake((ev: GridEvent) => ev.stop());
     cy.gridInstance().invoke('on', 'beforeExport', callback);
   });
@@ -73,7 +74,7 @@ describe('Export data', () => {
   describe('Default options', () => {
     ['txt', 'csv', 'xlsx'].forEach((format) => {
       it(`should export data according to default export options to '${format}'`, () => {
-        clickExportMenuItemByFormat(format as 'txt' | 'csv' | 'xlsx');
+        clickExportMenuItemByFormat(format as ExportFormat);
 
         cy.wrap(callback).should('be.calledWithMatch', {
           data: [
@@ -157,10 +158,34 @@ describe('Export data', () => {
         ],
       });
     });
+
+    it(`should export data with complex column headers to 'xls'`, () => {
+      cy.gridInstance().invoke('setHeader', {
+        complexColumns: [
+          {
+            header: 'Basic',
+            name: 'complexColumn',
+            childNames: ['name', 'artist'],
+          },
+        ],
+      });
+
+      cy.gridInstance().invoke('export', 'xls');
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        data: [
+          ['Basic', 'Basic'],
+          ['Name', 'Artist'],
+          ['Sugar', 'Maroon5'],
+          ['Get Lucky', 'Daft Punk'],
+          ['21', 'Adele'],
+        ],
+      });
+    });
   });
 
   describe('Without column headers (includeHeader = false)', () => {
-    ['txt', 'csv', 'xlsx'].forEach((format) => {
+    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
       it(`should export data without column headers to '${format}'`, () => {
         cy.gridInstance().invoke('export', format, { includeHeader: false });
 
@@ -176,7 +201,7 @@ describe('Export data', () => {
   });
 
   describe('With hidden columns (includeHiddenColumns = true)', () => {
-    ['txt', 'csv', 'xlsx'].forEach((format) => {
+    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
       it(`should export data with hidden column to '${format}'`, () => {
         cy.gridInstance().invoke('export', format, { includeHiddenColumns: true });
 
@@ -193,7 +218,7 @@ describe('Export data', () => {
   });
 
   describe('With column names (columnNames = [...selectedColumnNames])', () => {
-    ['txt', 'csv', 'xlsx'].forEach((format) => {
+    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
       it(`should export data with selected columns to '${format}'`, () => {
         cy.gridInstance().invoke('export', format, { columnNames: ['name', 'price'] });
 
@@ -210,7 +235,7 @@ describe('Export data', () => {
   });
 
   describe('With only filtered (onlyFiltered = true)', () => {
-    ['txt', 'csv', 'xlsx'].forEach((format) => {
+    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
       it(`should export only filtered data to '${format}'`, () => {
         invokeFilter('name', [{ code: 'eq', value: '21' }]);
         cy.gridInstance().invoke('export', format, { onlyFiltered: true });
@@ -227,7 +252,7 @@ describe('Export data', () => {
 
   describe('With only selected (onlySelected = true)', () => {
     describe('With selected range', () => {
-      ['txt', 'csv', 'xlsx'].forEach((format) => {
+      ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
         it(`should export data of selected range to '${format}'`, () => {
           const range = { start: [0, 0], end: [1, 1] };
           cy.gridInstance().invoke('setSelectionRange', range);
@@ -279,7 +304,7 @@ describe('Export data', () => {
     });
 
     describe('Without selected range', () => {
-      ['txt', 'csv', 'xlsx'].forEach((format) => {
+      ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
         it(`should export all visible data to '${format}' when no selected range`, () => {
           cy.gridInstance().invoke('export', format, { onlySelected: true });
 
@@ -366,7 +391,7 @@ describe('Export data', () => {
       cy.gridInstance().invoke('setColumns', formatColumn);
     });
 
-    ['txt', 'csv', 'xlsx'].forEach((format) => {
+    ['txt', 'csv', 'xlsx', 'xls'].forEach((format) => {
       it(`should export formatted data to '${format}' (useFormattedValue = true)`, () => {
         cy.gridInstance().invoke('export', format, { useFormattedValue: true });
 

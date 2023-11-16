@@ -3,7 +3,7 @@ import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/selection';
 import { Filter, FilterOptionType, FilterState, OperatorType } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
-import { OptExport } from '../store/export';
+import { ExportFormat, OptExport } from '../store/export';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 export interface CellChange {
@@ -47,7 +47,7 @@ export interface GridEventProps {
   keyboardEvent?: KeyboardEvent | null;
   save?: boolean;
   triggeredByKey?: boolean;
-  exportFormat?: 'txt' | 'csv' | 'xlsx';
+  exportFormat?: ExportFormat;
   exportOptions?: OptExport;
   data?: string[][];
   complexHeaderData?: string[][] | null;

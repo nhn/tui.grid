@@ -20,6 +20,7 @@ import { TuiGridEvent } from './event';
 import { CellRendererClass, CellRendererProps, HeaderRendererClass } from './renderer';
 import { CellEditorClass } from './editor';
 import { EnterCommandType } from '../src/helper/keyboard';
+import { Exports } from '@t/store/export';
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -118,6 +119,7 @@ export interface OptGrid {
   draggable?: boolean;
   contextMenu?: CreateMenuGroups;
   moveDirectionOnEnter?: EnterCommandType;
+  exportOptions?: Exports;
 }
 
 export type OptRowProp = CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];

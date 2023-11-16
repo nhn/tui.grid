@@ -13,6 +13,7 @@ import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
 import { create as createContextMenu } from './contextMenu';
+import { create as createExport } from './exports';
 import { setAutoBodyHeight } from '../dispatch/dimension';
 import { createObservableData } from '../dispatch/lazyObservable';
 import { createNewValidationMap } from './helper/validation';
@@ -46,6 +47,7 @@ export function createStore(id: number, options: OptGrid): Store {
     draggable = false,
     contextMenu: createMenuGroups,
     moveDirectionOnEnter,
+    exportOptions = {},
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -127,6 +129,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const filterLayerState = createFilterLayerState();
   const renderState = createRenderState();
   const contextMenu = createContextMenu({ createMenuGroups });
+  const exports = createExport(exportOptions);
 
   const store = observable({
     id,
@@ -142,6 +145,7 @@ export function createStore(id: number, options: OptGrid): Store {
     renderState,
     filterLayerState,
     contextMenu,
+    exports,
   });
   // manual observe to resolve circular references
   observe(() => {

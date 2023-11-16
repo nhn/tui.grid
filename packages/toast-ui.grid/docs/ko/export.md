@@ -1,6 +1,6 @@
 # 내보내기 💾
 
-TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기 기능을 제공한다. `export` API 또는 컨텍스트 메뉴의 `내보내기` 하위 메뉴를 통해 내보내기를 진행할 수 있다.
+TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`, `xls`(`v4.21.19` 이후))로 내보내기 기능을 제공한다. `export` API 또는 컨텍스트 메뉴의 `내보내기` 하위 메뉴를 통해 내보내기를 진행할 수 있다.
 
 ## 옵션
 
@@ -23,7 +23,7 @@ TOAST UI Grid는 `v4.19.0` 버전 부터 `csv`와 엑셀(`xlsx`)로 내보내기
 
 인자로 주어진 포맷과 내보내기 옵션에 따라 파일을 내보낸다.(`ExportOpt`은 위에서 설명한 옵션과 같은 객체이다)
 
-`export(format: 'txt' | 'csv' | 'xlsx', exportOpt?: ExportOpt)`
+`export(format: 'txt' | 'csv' | 'xlsx' | 'xls', exportOpt?: ExportOpt)`
 
 ```js
 const options = {
@@ -125,7 +125,7 @@ const grid = Grid({
 ```js
 grid.on('beforeExport', ev => {
   console.log(ev);
-  // ev.exportFormat - Export format (csv or xlsx)
+  // ev.exportFormat - Export format ('txt' | 'csv' | 'xlsx' | 'xls')
   // ev.exportOptions - Used export options
   // ev.data - Data to be finally exported (string[][])
 });
@@ -160,7 +160,7 @@ grid.on('beforeExport', ev => {
 ```js
 grid.on('afterExport', ev => {
   console.log(ev);
-  // ev.exportFormat - Export format (csv or xlsx)
+  // ev.exportFormat - Export format ('txt' | 'csv' | 'xlsx' | 'xls')
   // ev.exportOptions - Used export options
   // ev.data - Data to be finally exported (string[][])
 });
@@ -182,6 +182,19 @@ grid.on('afterExport', ev => {
 그리드의 엑셀 내보내기 기능은 [SheetJS](https://sheetjs.com/)(v0.17.1)를 사용하므로 엑셀 내보내기 기능을 사용하려면 SheetJS를 추가한다.
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+```
+
+`xlsx` 포맷을 지원하지 않는 구 버전 Excel 등에서 열 수 있는 파일 내보내기를 위해 `xls` 포맷을 지원한다.
+또한 기본 엑셀 내보내기 포맷을 `xlsx`에서 `xls`로 변경하기 위해 `excelCompatibilityMode` 옵션을 사용할 수 있다.
+
+```js
+const grid = Grid({
+  // ...
+  exportOptions: {
+      excelCompatibilityMode: true,
+  },
+  // ...
+});
 ```
 
 ### 브라우저 지원 범위

@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { Store } from '@t/store';
-import { OptExport } from '@t/store/export';
+import { ExportFormat, OptExport } from '@t/store/export';
 import { convertDataToText } from '../helper/common';
 import {
   createExportEvent,
@@ -41,6 +41,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     data: { rawData, filteredRawData },
     column,
     selection: { originalRange },
+    exports: { excelCompatibilityMode },
   } = store;
 
   const {
@@ -72,7 +73,7 @@ function getExportDataAndColumnsAndOptions(store: Store, options?: OptExport) {
     columnNames,
   };
 
-  return { data, columnHeaders, columnNames, exportOptions };
+  return { data, columnHeaders, columnNames, exportOptions, excelCompatibilityMode };
 }
 
 function emitExportEvent(store: Store, eventType: EventType, eventParams: EventParams) {
@@ -134,6 +135,7 @@ function exportText(format: 'txt' | 'csv', fileName: string, targetText: string)
 }
 
 function exportExcel(
+  format: 'xlsx' | 'xls',
   fileName: string,
   targetArray: string[][],
   complexColumnHeaderData: string[][] | null
@@ -146,18 +148,18 @@ function exportExcel(
   }
 
   XLSX.utils.book_append_sheet(wb, ws);
-  XLSX.writeFile(wb, `${fileName}.xlsx`);
+  XLSX.writeFile(wb, `${fileName}.${format}`);
 }
 
 function exportCallback(
   data: string[][],
-  format: 'txt' | 'csv' | 'xlsx',
+  format: ExportFormat,
   options: OptExport,
   complexHeaderData: string[][] | null
 ) {
   const { delimiter = ',', fileName = 'grid-export' } = options || {};
 
-  if (format !== 'xlsx') {
+  if (format !== 'xlsx' && format !== 'xls') {
     const targetText = convertDataToText(data, delimiter);
 
     exportText(format, fileName, targetText);
@@ -170,19 +172,22 @@ function exportCallback(
       return;
     }
 
-    exportExcel(fileName, data, complexHeaderData);
+    exportExcel(format, fileName, data, complexHeaderData);
   }
 }
 
-export function execExport(store: Store, format: 'txt' | 'csv' | 'xlsx', options?: OptExport) {
-  const { data, columnHeaders, columnNames, exportOptions } = getExportDataAndColumnsAndOptions(
-    store,
-    options
-  );
+export function execExport(store: Store, format: ExportFormat, options?: OptExport) {
+  const {
+    data,
+    columnHeaders,
+    columnNames,
+    exportOptions,
+    excelCompatibilityMode,
+  } = getExportDataAndColumnsAndOptions(store, options);
   const { includeHeader, delimiter, fileName } = exportOptions;
   const { column } = store;
 
-  if (format === 'xlsx' && !XLSX?.writeFile) {
+  if ((format === 'xlsx' || format === 'xls') && !XLSX?.writeFile) {
     // eslint-disable-next-line no-console
     console.error(
       '[tui/grid] - Not found the dependency "xlsx". You should install the "xlsx" to export the data as Excel format'
@@ -220,8 +225,8 @@ export function execExport(store: Store, format: 'txt' | 'csv' | 'xlsx', options
     return;
   }
 
-  if (format === 'xlsx') {
-    exportExcel(fileName, targetData, complexHeaderData);
+  if (format === 'xlsx' || format === 'xls') {
+    exportExcel(excelCompatibilityMode ? 'xls' : format, fileName, targetData, complexHeaderData);
   } else {
     const targetText = convertDataToText(targetData, delimiter);
 

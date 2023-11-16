@@ -1,6 +1,6 @@
 import { GridEventProps } from '@t/event';
 import { Column, ColumnInfo, ComplexColumnInfo } from '@t/store/column';
-import { OptExport } from '@t/store/export';
+import { ExportFormat, OptExport } from '@t/store/export';
 import { SelectionRange } from '@t/store/selection';
 import { Store } from '@t/store';
 import { Row } from '@t/store/data';
@@ -14,7 +14,7 @@ import { Dictionary } from '@t/options';
 export type EventType = 'beforeExport' | 'afterExport';
 
 export interface EventParams {
-  exportFormat: 'txt' | 'csv' | 'xlsx';
+  exportFormat: ExportFormat;
   exportOptions: OptExport;
   data: string[][];
   exportFn?: (data: string[][]) => void;
@@ -60,7 +60,7 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
     /**
      * Occurs before export
      * @event Grid#beforeExport
-     * @property {'txt' | 'csv' | 'xlsx'} exportFormat - Export format
+     * @property {'txt' | 'csv' | 'xlsx' | 'xls'} exportFormat - Export format
      * @property {Object} exportOptions - Used export options
      *    @property {boolean} exportOptions.includeHeader - Whether to include headers
      *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
@@ -80,7 +80,7 @@ export function createExportEvent(eventType: EventType, eventParams: EventParams
     /**
      * Occurs after export
      * @event Grid#afterExport
-     * @property {'txt' | 'csv' | 'xlsx'} exportFormat - Export format
+     * @property {'txt' | 'csv' | 'xlsx' | 'xls'} exportFormat - Export format
      * @property {Object} exportOptions - Used export options
      *    @property {boolean} exportOptions.includeHeader - Whether to include headers
      *    @property {boolean} exportOptions.includeHiddenColumns - Whether to include hidden columns
