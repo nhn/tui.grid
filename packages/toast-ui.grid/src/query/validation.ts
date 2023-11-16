@@ -8,30 +8,36 @@ export function getInvalidRows(store: Store, rowKeys?: RowKey[]) {
   const invalidRows: InvalidRow[] = [];
 
   data.rawData.forEach((row, rowIndex) => {
-    if (!isObservable(row) && (!rowKeys || rowKeys.includes(row.rowKey))) {
+    const needToValidateRow = !rowKeys || rowKeys.includes(row.rowKey);
+
+    if (!isObservable(row) && needToValidateRow) {
       makeObservable(store, rowIndex, true);
     }
   });
 
   data.viewData.forEach(({ rowKey, valueMap }) => {
-    if (!rowKeys || rowKeys?.includes(rowKey)) {
-      const invalidColumns = column.validationColumns.filter(
-        ({ name }) => !!valueMap[name].invalidStates.length
-      );
+    const needToValidateRow = !rowKeys || rowKeys.includes(rowKey);
 
-      if (invalidColumns.length) {
-        const errors = invalidColumns.map(({ name }) => {
-          const { invalidStates } = valueMap[name];
+    if (!needToValidateRow) {
+      return;
+    }
 
-          return {
-            columnName: name,
-            errorInfo: invalidStates,
-            errorCode: invalidStates.map(({ code }) => code),
-          };
-        });
+    const invalidColumns = column.validationColumns.filter(
+      ({ name }) => !!valueMap[name].invalidStates.length
+    );
 
-        invalidRows.push({ rowKey, errors });
-      }
+    if (invalidColumns.length) {
+      const errors = invalidColumns.map(({ name }) => {
+        const { invalidStates } = valueMap[name];
+
+        return {
+          columnName: name,
+          errorInfo: invalidStates,
+          errorCode: invalidStates.map(({ code }) => code),
+        };
+      });
+
+      invalidRows.push({ rowKey, errors });
     }
   });
 
