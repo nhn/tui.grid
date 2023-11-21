@@ -24,7 +24,7 @@
 - [📖 페이지네이션](./pagination.md)
 - [🔍 필터](./filter.md)
 - [🔧 커스텀 컬럼 헤더](./custom-column-header.md)
-- [📜 무한 스크롤](./infinite-scrolling.md)
+- [📜 무한 스크롤](./infinite-scroll.md)
 - [📒 컨텍스트 메뉴](./contextMenu.md)
 - [💾 내보내기](./export.md)
 - [✊ 드래그 앤 드롭](./drag-and-drop.md)
