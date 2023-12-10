@@ -529,3 +529,14 @@ describe('should check the validation of cell - unique', () => {
     cy.getCell(1, 'name').should('not.have.class', cls('cell-invalid'));
   });
 });
+
+it('should validate properly after sort', () => {
+  cy.createGrid({
+    data,
+    columns: [{ name: 'name', validation: { required: true }, sortable: true }],
+  });
+
+  cy.gridInstance().invoke('sort', 'name', true);
+
+  cy.gridInstance().invoke('validate').should('be', []);
+});
