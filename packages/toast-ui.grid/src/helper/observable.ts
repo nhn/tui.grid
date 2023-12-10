@@ -193,6 +193,8 @@ export function unobservable<T extends Dictionary<any>>(obj: T, keys: Array<keyo
 
       obj[key] = originObject[key];
     });
+
+    delete obj.__storage__;
   }
 }
 
