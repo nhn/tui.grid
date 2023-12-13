@@ -3,7 +3,7 @@ import { Data, ViewRow, Row } from '@t/store/data';
 import { SortingType } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
-import { notify } from '../helper/observable';
+import { notify, unobservable } from '../helper/observable';
 import { sortRawData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import { updateRowNumber, setCheckedAllRows } from './data';
@@ -41,6 +41,10 @@ function sortData(store: Store) {
     rawData.sort(sortRawData(sortedColumns));
     data.viewData = createSoretedViewData(rawData);
   }
+
+  data.rawData.forEach((rawRow) => {
+    unobservable(rawRow);
+  });
 }
 
 function setInitialSortState(data: Data) {
