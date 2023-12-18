@@ -139,14 +139,15 @@ export function makeObservable(
   store: Store,
   rowIndex: number,
   silent = false,
-  lazyObservable = false
+  lazyObservable = false,
+  forced = false
 ) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { treeColumnName } = column;
   const rawRow = rawData[rowIndex];
 
-  if (isObservable(rawRow)) {
+  if (!forced && isObservable(rawRow)) {
     return;
   }
 
