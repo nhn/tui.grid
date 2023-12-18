@@ -12,7 +12,7 @@ import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
 import { updateRowSpan } from './rowSpan';
 
-function createSoretedViewData(rawData: Row[]) {
+function createSortedViewData(rawData: Row[]) {
   return rawData.map(
     ({ rowKey, sortKey, uniqueKey }) => ({ rowKey, sortKey, uniqueKey } as ViewRow)
   );
@@ -33,13 +33,13 @@ function sortData(store: Store) {
 
     targetRawData.sort(sortRawData(sortedColumns));
 
-    const targetViewData = createSoretedViewData(targetRawData);
+    const targetViewData = createSortedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
     rawData.sort(sortRawData(sortedColumns));
-    data.viewData = createSoretedViewData(rawData);
+    data.viewData = createSortedViewData(rawData);
   }
 
   const rowKeysInViewport = viewport.rows.map(({ rowKey }) => rowKey);
