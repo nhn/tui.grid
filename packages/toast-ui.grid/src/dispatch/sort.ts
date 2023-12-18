@@ -48,7 +48,13 @@ function sortData(store: Store) {
     const { rowKey } = rawRow;
 
     if (isObservable(rawRow) || rowKeysInViewport.includes(rowKey)) {
-      makeObservable(store, index, false, false, true);
+      makeObservable({
+        store,
+        rowIndex: index,
+        silent: false,
+        lazyObservable: false,
+        forced: true,
+      });
     }
   });
 }

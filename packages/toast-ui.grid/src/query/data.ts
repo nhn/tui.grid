@@ -45,7 +45,7 @@ export function isEditableCell(store: Store, rowIndex: number, columnName: strin
 
   // get index based on whole data(not filtered data)
   const index = filteredIndex ? filteredIndex[rowIndex] : rowIndex;
-  makeObservable(store, index, true);
+  makeObservable({ store, rowIndex: index, silent: true });
 
   const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
 
@@ -303,7 +303,7 @@ export function getFormattedValue(store: Store, rowKey: RowKey, columnName: stri
   const { viewData } = data;
 
   if (rowIndex !== -1) {
-    makeObservable(store, rowIndex);
+    makeObservable({ store, rowIndex });
     const viewCell = viewData[rowIndex].valueMap[columnName];
     return viewCell ? viewCell.formattedValue : null;
   }

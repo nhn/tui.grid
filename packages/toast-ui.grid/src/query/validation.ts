@@ -11,7 +11,7 @@ export function getInvalidRows(store: Store, rowKeys?: RowKey[]) {
     const needToValidateRow = !rowKeys || rowKeys.includes(row.rowKey);
 
     if (!isObservable(row) && needToValidateRow) {
-      makeObservable(store, rowIndex, true);
+      makeObservable({ store, rowIndex, silent: true });
     }
   });
 

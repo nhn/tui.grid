@@ -24,7 +24,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   }
 
   // makes the data observable to judge editable, disable of the cell
-  makeObservable(store, findIndexByRowKey(data, column, id, rowKey, false));
+  makeObservable({ store, rowIndex: findIndexByRowKey(data, column, id, rowKey, false) });
 
   if (!isEditableCell(store, foundIndex, columnName)) {
     return;
@@ -158,7 +158,7 @@ export function saveAndFinishEditing(store: Store, value?: string) {
   const { rowKey, columnName } = editingAddress;
 
   // makes the data observable to judge editable, disable of the cell.
-  makeObservable(store, findIndexByRowKey(data, column, id, rowKey, false));
+  makeObservable({ store, rowIndex: findIndexByRowKey(data, column, id, rowKey, false) });
 
   // if value is 'undefined', editing result is saved and finished.
   if (isUndefined(value)) {

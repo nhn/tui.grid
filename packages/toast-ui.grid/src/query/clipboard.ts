@@ -63,7 +63,7 @@ function getObservableList(store: Store, filteredViewData: ViewRow[], start: num
 
   for (let i = start; i <= end; i += 1) {
     if (!isObservable(filteredViewData[i].valueMap)) {
-      makeObservable(store, i, true);
+      makeObservable({ store, rowIndex: i, silent: true });
 
       if (i === end) {
         notify(store.data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
