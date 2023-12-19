@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>27. Export</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <script>var errorLogs=[];window.onerror=function(o,r,e,n){errorLogs.push({message:o,source:r,lineno:e,colno:n})};</script>
+  </head>
+  <body>
+    <div class="description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+        },
+        {
+          header: 'Type',
+          name: 'type',
+        },
+        {
+          header: 'Release',
+          name: 'release',
+        },
+        {
+          header: 'Genre',
+          name: 'genre',
+        },
+      ],
+      contextMenu: ({ rowKey, columnName }) => [
+        [
+          {
+            name: 'export',
+            label: 'Export',
+            subMenu: [
+              {
+                name: 'default',
+                label: 'Default',
+                subMenu: [
+                  {
+                    name: 'csvExport',
+                    label: 'CSV export',
+                    action: () => {
+                      grid.export('csv');
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xlsx)',
+                    action: () => {
+                      grid.export('xlsx');
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xls)',
+                    action: () => {
+                      grid.export('xls');
+                    },
+                  },
+                ],
+              },
+              {
+                name: 'includeHeader',
+                label: 'includeHeader: false',
+                subMenu: [
+                  {
+                    name: 'csvExport',
+                    label: 'CSV export',
+                    action: () => {
+                      grid.export('csv', { includeHeader: false });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xlsx)',
+                    action: () => {
+                      grid.export('xlsx', { includeHeader: false });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xls)',
+                    action: () => {
+                      grid.export('xls', { includeHeader: false });
+                    },
+                  },
+                ],
+              },
+              {
+                name: 'columnNames',
+                label: `['name', 'artist']`,
+                subMenu: [
+                  {
+                    name: 'csvExport',
+                    label: 'CSV export',
+                    action: () => {
+                      grid.export('csv', { columnNames: ['name', 'artist'] });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xlsx)',
+                    action: () => {
+                      grid.export('xlsx', { columnNames: ['name', 'artist'] });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xls)',
+                    action: () => {
+                      grid.export('xls', { columnNames: ['name', 'artist'] });
+                    },
+                  },
+                ],
+              },
+              {
+                name: 'onlySelected',
+                label: 'onlySelected: true',
+                subMenu: [
+                  {
+                    name: 'csvExport',
+                    label: 'CSV export',
+                    action: () => {
+                      grid.export('csv', { onlySelected: true });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xlsx)',
+                    action: () => {
+                      grid.export('xlsx', { onlySelected: true });
+                    },
+                  },
+                  {
+                    name: 'excelExport',
+                    label: 'Excel export(xls)',
+                    action: () => {
+                      grid.export('xls', { onlySelected: true });
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      ],
+    });
+  </script>
+</html>
