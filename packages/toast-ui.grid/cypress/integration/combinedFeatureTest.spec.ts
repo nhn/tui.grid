@@ -12,7 +12,7 @@ const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
 
 const columns = [
-  { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
+  { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text', editor: 'text' },
   { name: 'orderName', sortable: true },
 ];
 
@@ -466,5 +466,23 @@ describe('pagination(infinite scroll) + filter + sort', () => {
 
     assertSortedData(2, 'orderName', true);
     assertColumnData('deliveryType', 'Visit');
+  });
+});
+
+describe('editor + sort', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+
+  it('can editing cell after sort', () => {
+    cy.gridInstance().invoke('sort', 'orderName', true);
+
+    cy.getCellByIdx(0, 0).should('not.have.text', 'Visit');
+
+    cy.gridInstance().invoke('startEditingAt', 0, 0);
+    cy.getByCls('content-text').type('Visit');
+    cy.gridInstance().invoke('finishEditing');
+
+    cy.getCellByIdx(0, 0).should('have.text', 'Visit');
   });
 });

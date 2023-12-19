@@ -3,23 +3,23 @@ import { Data, ViewRow, Row } from '@t/store/data';
 import { SortingType } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
-import { notify, unobservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
 import { sortRawData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
-import { updateRowNumber, setCheckedAllRows } from './data';
+import { updateRowNumber, setCheckedAllRows, makeObservable } from './data';
 import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
 import { updateRowSpan } from './rowSpan';
 
-function createSoretedViewData(rawData: Row[]) {
+function createSortedViewData(rawData: Row[]) {
   return rawData.map(
     ({ rowKey, sortKey, uniqueKey }) => ({ rowKey, sortKey, uniqueKey } as ViewRow)
   );
 }
 
 function sortData(store: Store) {
-  const { data, column } = store;
+  const { data, column, viewport } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const sortedColumns = columns.map((sortedColumn) => ({
@@ -33,17 +33,29 @@ function sortData(store: Store) {
 
     targetRawData.sort(sortRawData(sortedColumns));
 
-    const targetViewData = createSoretedViewData(targetRawData);
+    const targetViewData = createSortedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
     rawData.sort(sortRawData(sortedColumns));
-    data.viewData = createSoretedViewData(rawData);
+    data.viewData = createSortedViewData(rawData);
   }
 
-  data.rawData.forEach((rawRow) => {
-    unobservable(rawRow);
+  const rowKeysInViewport = viewport.rows.map(({ rowKey }) => rowKey);
+
+  data.rawData.forEach((rawRow, index) => {
+    const { rowKey } = rawRow;
+
+    if (isObservable(rawRow) || rowKeysInViewport.includes(rowKey)) {
+      makeObservable({
+        store,
+        rowIndex: index,
+        silent: false,
+        lazyObservable: false,
+        forced: true,
+      });
+    }
   });
 }
 

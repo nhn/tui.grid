@@ -135,24 +135,33 @@ export function updateHeights(store: Store) {
     : filteredRawData.map((row) => getRowHeight(row, rowHeight));
 }
 
-export function makeObservable(
-  store: Store,
-  rowIndex: number,
+export function makeObservable({
+  store,
+  rowIndex,
   silent = false,
-  lazyObservable = false
-) {
+  lazyObservable = false,
+  forced = false,
+}: {
+  store: Store;
+  rowIndex: number;
+  silent?: boolean;
+  lazyObservable?: boolean;
+  forced?: boolean;
+}) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { treeColumnName } = column;
   const rawRow = rawData[rowIndex];
 
-  if (isObservable(rawRow)) {
+  if (!forced && isObservable(rawRow)) {
     return;
   }
 
   if (treeColumnName) {
     const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[rowIndex] = createTreeRawRow(id, rawRow, parentRow || null, column, { lazyObservable });
+    rawData[rowIndex] = createTreeRawRow(id, rawRow, parentRow || null, column, {
+      lazyObservable,
+    });
   } else {
     rawData[rowIndex] = createRawRow(id, rawRow, rowIndex, column, { lazyObservable });
   }
@@ -182,7 +191,7 @@ export function setValue(
     return;
   }
   if (checkCellState) {
-    makeObservable(store, rowIndex);
+    makeObservable({ store, rowIndex });
     const { disabled, editable } = viewData[rowIndex].valueMap[columnName];
 
     if (disabled || !editable) {
@@ -607,7 +616,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   silentSplice(rawData, at, 0, rawRow);
   silentSplice(viewData, at, 0, viewRow);
-  makeObservable(store, at);
+  makeObservable({ store, rowIndex: at });
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
 
@@ -851,7 +860,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   silentSplice(rawData, rowIndex, 1, rawRow);
   silentSplice(viewData, rowIndex, 1, viewRow);
-  makeObservable(store, rowIndex);
+  makeObservable({ store, rowIndex });
 
   sortByCurrentState(store);
 
@@ -926,7 +935,9 @@ export function setRows(store: Store, rows: OptRow[]) {
 
   createdRowInfos
     .filter(({ rowIndex }) => isBetween(rowIndex, rowRange[0], rowRange[1]))
-    .forEach(({ rowIndex }) => makeObservable(store, rowIndex, false, true));
+    .forEach(({ rowIndex }) =>
+      makeObservable({ store, rowIndex, silent: false, lazyObservable: true })
+    );
 
   if (isRowSpanEnabled(sortState, column)) {
     createdRowInfos
