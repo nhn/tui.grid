@@ -16,7 +16,7 @@ import { SelectionUnit } from './store/selection';
 import { FilterOptionType, FilterState } from './store/filterLayerState';
 import { CreateMenuGroups } from './store/contextMenu';
 import { SummaryColumnContentMapOnlyFn, SummaryPosition } from './store/summary';
-import { TuiGridEvent } from './event';
+import { GridEventProps, TuiGridEvent } from './event';
 import { CellRendererClass, CellRendererProps, HeaderRendererClass } from './renderer';
 import { CellEditorClass } from './editor';
 import { EnterCommandType } from '../src/helper/keyboard';
@@ -40,51 +40,56 @@ export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
 export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
 // @TODO: 'sort', 'filter' event will be deprecated
-export type GridEventName =
-  | 'click'
-  | 'dblclick'
-  | 'mousedown'
-  | 'mouseover'
-  | 'mouseout'
-  | 'focusChange'
-  | 'columnResize'
-  | 'check'
-  | 'uncheck'
-  | 'checkAll'
-  | 'uncheckAll'
-  | 'beforeCheckBetween'
-  | 'selection'
-  | 'editingStart'
-  | 'editingFinish'
-  | 'sort'
-  | 'filter'
-  | 'scrollEnd'
-  | 'beforeRequest'
-  | 'response'
-  | 'successResponse'
-  | 'failResponse'
-  | 'errorResponse'
-  | 'expand'
-  | 'collapse'
-  | 'beforeSort'
-  | 'afterSort'
-  | 'beforeUnsort'
-  | 'afterUnsort'
-  | 'beforeFilter'
-  | 'afterFilter'
-  | 'beforeUnfilter'
-  | 'afterUnfilter'
-  | 'beforePageMove'
-  | 'afterPageMove'
-  | 'beforeChange'
-  | 'afterChange'
-  | 'dragStart'
-  | 'drag'
-  | 'drop'
-  | 'keydown'
-  | 'beforeExport'
-  | 'afterExport';
-export type GridEventListener = (gridEvent: TuiGridEvent) => void;
+
+export enum GridEventType {
+  CLICK = 'click',
+  DBL_CLICK = 'dblclick',
+  MOUSEDOWN = 'mousedown',
+  MOUSEOVER = 'mouseover',
+  MOUSEOUT = 'mouseout',
+  FOCUS_CHANGE = 'focusChange',
+  COLUMN_RESIZE = 'columnResize',
+  CHECK = 'check',
+  UNCHECK = 'uncheck',
+  CHECK_ALL = 'checkAll',
+  UNCHECK_ALL = 'uncheckAll',
+  BEFORE_CHECK_BETWEEN = 'beforeCheckBetween',
+  SELECTION = 'selection',
+  EDITING_START = 'editingStart',
+  EDITING_FINISH = 'editingFinish',
+  SORT = 'sort',
+  FILTER = 'filter',
+  SCROLL_END = 'scrollEnd',
+  BEFORE_REQUEST = 'beforeRequest',
+  RESPONSE = 'response',
+  SUCCESS_RESPONSE = 'successResponse',
+  FAIL_RESPONSE = 'failResponse',
+  ERROR_RESPONSE = 'errorResponse',
+  EXPAND = 'expand',
+  COLLAPSE = 'collapse',
+  BEFORE_SORT = 'beforeSort',
+  AFTER_SORT = 'afterSort',
+  BEFORE_UNSORT = 'beforeUnsort',
+  AFTER_UNSORT = 'afterUnsort',
+  BEFORE_FILTER = 'beforeFilter',
+  AFTER_FILTER = 'afterFilter',
+  BEFORE_UNFILTER = 'beforeUnfilter',
+  AFTER_UNFILTER = 'afterUnfilter',
+  BEFORE_PAGE_MOVE = 'beforePageMove',
+  AFTER_PAGE_MOVE = 'afterPageMove',
+  BEFORE_CHANGE = 'beforeChange',
+  AFTER_CHANGE = 'afterChange',
+  DRAG_START = 'dragStart',
+  DRAG = 'drag',
+  DROP = 'drop',
+  KEYDOWN = 'keydown',
+  BEFORE_EXPORT = 'beforeExport',
+  AFTER_EXPORT = 'afterExport',
+}
+
+export type GridEventName = `${GridEventType}`;
+
+export type GridEventListener<T extends Partial<GridEventProps> = {}> = (gridEvent: TuiGridEvent & T) => void;
 
 export interface OptGrid {
   el: HTMLElement;
@@ -120,6 +125,79 @@ export interface OptGrid {
   contextMenu?: CreateMenuGroups;
   moveDirectionOnEnter?: EnterCommandType;
   exportOptions?: Exports;
+}
+
+export interface GridEventTypeMap {
+  [index: string]: Partial<GridEventProps>;
+  [GridEventType.AFTER_CHANGE]: Pick<GridEventProps, 'changes' | 'origin'>;
+  [GridEventType.AFTER_EXPORT]: Pick<
+    GridEventProps,
+    'exportFormat' | 'exportOptions' | 'data' | 'complexHeaderData'
+  >;
+  [GridEventType.AFTER_FILTER]: Pick<GridEventProps, 'filterState' | 'columnName'>;
+  [GridEventType.AFTER_PAGE_MOVE]: Pick<GridEventProps, 'page'>;
+  [GridEventType.AFTER_SORT]: Pick<GridEventProps, 'columnName' | 'sortState'>;
+  [GridEventType.AFTER_UNFILTER]: Pick<GridEventProps, 'filterState' | 'columnName'>;
+  [GridEventType.AFTER_UNSORT]: Pick<GridEventProps, 'sortState' | 'columnName'>;
+  [GridEventType.BEFORE_CHANGE]: Pick<GridEventProps, 'changes' | 'origin'>;
+  [GridEventType.BEFORE_CHECK_BETWEEN]: Pick<GridEventProps, 'rowKey' | 'rowKeys'>;
+  [GridEventType.BEFORE_EXPORT]: Pick<
+    GridEventProps,
+    'exportFormat' | 'exportOptions' | 'data' | 'complexHeaderData' | 'exportFn'
+  >;
+  [GridEventType.BEFORE_FILTER]: Pick<
+    GridEventProps,
+    'filterState' | 'columnFilterState' | 'conditionFn' | 'type' | 'columnName' | 'operator'
+  >;
+  [GridEventType.BEFORE_PAGE_MOVE]: Pick<GridEventProps, 'page'>;
+  [GridEventType.BEFORE_REQUEST]: Pick<GridEventProps, 'xhr'>;
+  [GridEventType.BEFORE_SORT]: Pick<
+    GridEventProps,
+    'columnName' | 'ascending' | 'multiple' | 'sortState'
+  >;
+  [GridEventType.BEFORE_UNFILTER]: Pick<GridEventProps, 'filterState' | 'columnName'>;
+  [GridEventType.BEFORE_UNSORT]: Pick<GridEventProps, 'columnName' | 'multiple' | 'sortState'>;
+  [GridEventType.CHECK]: Pick<GridEventProps, 'rowKey' | 'rowKeys'>;
+  [GridEventType.CHECK_ALL]: {};
+  [GridEventType.CLICK]: Pick<GridEventProps, 'event'>;
+  [GridEventType.COLLAPSE]: Pick<GridEventProps, 'rowKey'>;
+  [GridEventType.COLUMN_RESIZE]: Pick<GridEventProps, 'resizedColumns'>;
+  [GridEventType.DBL_CLICK]: Pick<GridEventProps, 'event'>;
+  [GridEventType.DRAG]: Pick<
+    GridEventProps,
+    'rowKey' | 'targetRowKey' | 'appended' | 'targetColumnName'
+  >;
+  [GridEventType.DRAG_START]: Pick<
+    GridEventProps,
+    'rowKey' | 'floatingRow' | 'columnName' | 'floatingColumn'
+  >;
+  [GridEventType.DROP]: Pick<
+    GridEventProps,
+    'rowKey' | 'targetRowKey' | 'appended' | 'columnName' | 'targetColumnName'
+  >;
+  [GridEventType.EDITING_FINISH]: Pick<
+    GridEventProps,
+    'rowKey' | 'columnName' | 'value' | 'save' | 'triggeredByKey'
+  >;
+  [GridEventType.EDITING_START]: Pick<GridEventProps, 'rowKey' | 'columnName' | 'value'>;
+  [GridEventType.ERROR_RESPONSE]: Pick<GridEventProps, 'xhr'>;
+  [GridEventType.EXPAND]: Pick<GridEventProps, 'rowKey'>;
+  [GridEventType.FAIL_RESPONSE]: Pick<GridEventProps, 'xhr'>;
+  [GridEventType.FILTER]: Pick<GridEventProps, 'filterState' | 'columnName'>;
+  [GridEventType.FOCUS_CHANGE]: Pick<
+    GridEventProps,
+    'rowKey' | 'columnName' | 'prevColumnName' | 'prevRowKey'
+  >;
+  [GridEventType.KEYDOWN]: Pick<GridEventProps, 'keyboardEvent' | 'rowKey'>;
+  [GridEventType.MOUSEDOWN]: Pick<GridEventProps, 'event'>;
+  [GridEventType.MOUSEOUT]: Pick<GridEventProps, 'event'>;
+  [GridEventType.MOUSEOVER]: Pick<GridEventProps, 'event'>;
+  [GridEventType.RESPONSE]: Pick<GridEventProps, 'xhr'>;
+  [GridEventType.SCROLL_END]: {};
+  [GridEventType.SORT]: Pick<GridEventProps, 'sortState' | 'columnName'>;
+  [GridEventType.SUCCESS_RESPONSE]: Pick<GridEventProps, 'xhr'>;
+  [GridEventType.UNCHECK]: Pick<GridEventProps, 'rowKey' | 'rowKeys'>;
+  [GridEventType.UNCHECK_ALL]: {};
 }
 
 export type OptRowProp = CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
