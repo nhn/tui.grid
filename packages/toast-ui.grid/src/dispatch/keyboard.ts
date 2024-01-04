@@ -2,7 +2,7 @@ import { Store } from '@t/store';
 import { SelectionRange } from '@t/store/selection';
 import { EnterCommandType, KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange, getNextCellIndexWithRowSpan } from '../query/keyboard';
-import { changeFocus, startEditing } from './focus';
+import { changeFocus, saveAndFinishEditing, startEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../query/rowSpan';
@@ -64,7 +64,11 @@ export function editFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function moveTabAndEnterFocus(store: Store, command: TabCommandType | EnterCommandType) {
+export function moveTabAndEnterFocus(
+  store: Store,
+  command: TabCommandType | EnterCommandType,
+  moveFocusByEnter = false
+) {
   const { focus, data, column, id } = store;
   const { visibleColumnsWithRowHeader } = column;
   const { rowKey, columnName, rowIndex, totalColumnIndex: columnIndex } = focus;
@@ -76,19 +80,21 @@ export function moveTabAndEnterFocus(store: Store, command: TabCommandType | Ent
   const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
   const nextRowKey = getRowKeyByIndexWithPageRange(data, nextRowIndex);
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
+  const moveAndEditFromLastCellByEnter =
+    rowIndex === nextRowIndex && columnIndex === nextColumnIndex && moveFocusByEnter;
 
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
     changeFocus(store, nextRowKey, nextColumnName, id);
 
-    if (
-      focus.tabMode === 'moveAndEdit' &&
-      focus.rowKey === nextRowKey &&
-      focus.columnName === nextColumnName
-    ) {
-      setTimeout(() => {
-        startEditing(store, nextRowKey, nextColumnName);
-      });
+    if (focus.tabMode === 'moveAndEdit') {
+      if (moveAndEditFromLastCellByEnter) {
+        saveAndFinishEditing(store);
+      } else if (focus.rowKey === nextRowKey && focus.columnName === nextColumnName) {
+        setTimeout(() => {
+          startEditing(store, nextRowKey, nextColumnName);
+        });
+      }
     }
   }
 }
