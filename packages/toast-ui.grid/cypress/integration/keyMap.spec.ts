@@ -263,6 +263,29 @@ describe('Move focus on enter', () => {
 
     assertFocusedCell('name', 0);
   });
+
+  it('should finish editing on last cell', () => {
+    createGrid({
+      columns: [
+        { name: 'name', editor: 'text' },
+        { name: 'value', editor: 'text' },
+        { name: 'age', editor: 'text' },
+      ],
+      moveDirectionOnEnter: 'nextCell',
+    });
+    cy.getCellByIdx(3, 1).click();
+
+    clipboardType('{enter}');
+    editingLayerType('{enter}');
+
+    assertFocusedCell('age', 3);
+    cy.getByCls('layer-editing').should('be.visible');
+
+    editingLayerType('{enter}');
+
+    assertFocusedCell('age', 3);
+    cy.getByCls('layer-editing').should('not.be.visible');
+  });
 });
 
 describe('Selection', () => {
