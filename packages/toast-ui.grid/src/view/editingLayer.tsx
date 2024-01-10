@@ -58,11 +58,15 @@ export class EditingLayerComp extends Component<Props> {
 
   private longestTextWidths: { [columnName: string]: number } = {};
 
-  private moveTabAndEnterFocus(ev: KeyboardEvent, command: TabCommandType | EnterCommandType) {
+  private moveTabAndEnterFocus(
+    ev: KeyboardEvent,
+    command: TabCommandType | EnterCommandType,
+    moveFocusByEnter = false
+  ) {
     const { dispatch } = this.props;
 
     ev.preventDefault();
-    dispatch('moveTabAndEnterFocus', command);
+    dispatch('moveTabAndEnterFocus', command, moveFocusByEnter);
     dispatch('setScrollToFocus');
   }
 
@@ -75,7 +79,7 @@ export class EditingLayerComp extends Component<Props> {
         if (isUndefined(moveDirectionOnEnter)) {
           this.saveAndFinishEditing(true);
         } else {
-          this.moveTabAndEnterFocus(ev, moveDirectionOnEnter);
+          this.moveTabAndEnterFocus(ev, moveDirectionOnEnter, true);
         }
         break;
       case 'esc':
