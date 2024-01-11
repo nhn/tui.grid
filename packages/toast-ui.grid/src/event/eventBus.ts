@@ -3,13 +3,20 @@ import { GridId } from '@t/store';
 import GridEvent from './gridEvent';
 import { removeArrayItem } from '../helper/common';
 import { getInstance } from '../instance';
+import { GridEventProps } from '@t/event';
 
 type TargetEventName = GridEventName | 'onGridMounted' | 'onGridBeforeDestroy' | 'onGridUpdated';
 const eventBusMap: { [id: number]: EventBus } = {};
 
 export interface EventBus {
-  on: (eventName: TargetEventName, fn: GridEventListener) => void;
-  off: (eventName: TargetEventName, fn?: GridEventListener) => void;
+  on: <T extends Partial<GridEventProps>>(
+    eventName: TargetEventName,
+    fn: GridEventListener<T>
+  ) => void;
+  off: <T extends Partial<GridEventProps>>(
+    eventName: TargetEventName,
+    fn?: GridEventListener<T>
+  ) => void;
   trigger: (eventName: TargetEventName, gridEvent: GridEvent) => void;
 }
 

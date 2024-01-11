@@ -3,7 +3,6 @@ import TuiGrid from '@t/index';
 import {
   Dictionary,
   GridEventListener,
-  GridEventName,
   LifeCycleEventName,
   OptAppendRow,
   OptAppendTreeRow,
@@ -18,6 +17,8 @@ import {
   OptRemoveRow,
   OptRow,
   ResetOptions,
+  GridEventType,
+  GridEventTypeMap,
 } from '@t/options';
 import { Store } from '@t/store';
 import { CellValue, InvalidRow, Row, RowKey } from '@t/store/data';
@@ -1386,7 +1387,7 @@ export default class Grid implements TuiGrid {
    * @param {string} eventName - custom event name
    * @param {function} fn - event handler
    */
-  public on(eventName: GridEventName, fn: GridEventListener) {
+  public on<T extends GridEventType, P extends GridEventTypeMap[T]>(eventName: `${T}`, fn: GridEventListener<P>) {
     this.eventBus.on(eventName, fn);
   }
 
@@ -1395,7 +1396,7 @@ export default class Grid implements TuiGrid {
    * @param {string} eventName - custom event name
    * @param {function} fn - event handler
    */
-  public off(eventName: GridEventName, fn?: GridEventListener) {
+  public off<T extends GridEventType, P extends GridEventTypeMap[T]>(eventName: `${T}`, fn?: GridEventListener<P>) {
     this.eventBus.off(eventName, fn);
   }
 
