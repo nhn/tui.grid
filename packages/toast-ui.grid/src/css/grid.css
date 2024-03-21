@@ -402,8 +402,8 @@
   left: 1px;
 }
 .tui-grid-rside-area {
+  position: relative;
   display: none;
-  overflow: hidden;
 }
 .tui-grid-rside-area .tui-grid-header-area,
 .tui-grid-rside-area .tui-grid-summary-area {
