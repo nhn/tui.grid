@@ -9,6 +9,11 @@ import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
 import { silentSplice } from '../helper/common';
 
+interface ObservableDataOptions {
+  allRowRange?: boolean;
+  rowRange?: Range;
+}
+
 function getDataToBeObservable(
   acc: OriginData,
   row: Row,
@@ -117,8 +122,12 @@ export function fillMissingColumnData(column: Column, rawData: Row[]) {
   }
 }
 
-export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
-  const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
+export function createObservableData(
+  { column, data, viewport, id }: Store,
+  { allRowRange = false, rowRange: targetRowRange }: ObservableDataOptions = {}
+) {
+  const rowRange: Range =
+    targetRowRange ?? (allRowRange ? [0, data.rawData.length] : viewport.rowRange);
   const { treeColumnName } = column;
   const originData =
     data.filters && !allRowRange

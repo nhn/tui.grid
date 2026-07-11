@@ -341,7 +341,7 @@ export function setColumnValues(
 ) {
   if (checkCellState) {
     // @TODO: find more practical way to make observable
-    createObservableData(store, true);
+    createObservableData(store, { allRowRange: true });
   }
   const { id, data, column } = store;
   data.rawData.forEach((targetRow, index) => {
