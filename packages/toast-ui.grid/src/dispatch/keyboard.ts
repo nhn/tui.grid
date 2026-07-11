@@ -16,6 +16,7 @@ import { mapProp } from '../helper/common';
 import { CellChange, Origin } from '@t/event';
 import { updateAllSummaryValues } from './summary';
 import { appendRows, updateHeights } from './data';
+import { createObservableData } from './lazyObservable';
 
 type ChangeValueFn = () => number;
 interface ChangeInfo {
@@ -261,6 +262,8 @@ export function paste(store: Store, copiedData: string[][]) {
     );
   }
 
+  // Materialize the entire target range before filtered data snapshots are captured.
+  createObservableData(store, { rowRange: [rangeToPaste.row[0], endRowIndex + 1] });
   applyCopiedData(store, copiedData, rangeToPaste);
   changeSelectionRange(selection, rangeToPaste, id);
 }

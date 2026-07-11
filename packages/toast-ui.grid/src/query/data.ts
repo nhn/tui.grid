@@ -37,7 +37,7 @@ export function getCellAddressByIndex(
 
 export function isEditableCell(store: Store, rowIndex: number, columnName: string) {
   const { data, column } = store;
-  const { filteredIndex, filteredViewData } = data;
+  const { filteredIndex } = data;
 
   if (filteredIndex && isNil(filteredIndex[rowIndex])) {
     return false;
@@ -47,7 +47,7 @@ export function isEditableCell(store: Store, rowIndex: number, columnName: strin
   const index = filteredIndex ? filteredIndex[rowIndex] : rowIndex;
   makeObservable({ store, rowIndex: index, silent: true });
 
-  const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+  const { disabled, editable } = data.viewData[index].valueMap[columnName];
 
   return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
