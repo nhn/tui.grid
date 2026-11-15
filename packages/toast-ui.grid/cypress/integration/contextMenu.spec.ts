@@ -1,5 +1,6 @@
 import { RowKey } from '@t/store/data';
 import { CreateMenuGroups } from '@t/store/contextMenu';
+import { FormatterProps } from '@t/store/column';
 import i18n from '@/i18n';
 import { cls } from '@/helper/dom';
 
@@ -204,6 +205,51 @@ describe('context menu', () => {
 
     // bypassing the clipboard test using our own clipboard element.
     cy.getByCls('clipboard').should('have.text', 'Lee\t20');
+  });
+
+  it('should copy the visible text without executing the HTML in the cell value', () => {
+    const value = '<img src="x" onerror="window.copyXssExecuted = true">Lee&amp;';
+
+    i18n.setLanguage('en');
+    cy.createGrid({
+      data: [{ name: value }],
+      columns: [{ name: 'name' }],
+      bodyHeight: GRID_BODY_HEIGHT,
+    });
+
+    cy.gridInstance().invoke('focus', 0, 'name');
+    showContextMenu(0, 'name');
+
+    getMenuItemByText(i18n.get('contextMenu.copy')).click();
+
+    cy.getByCls('clipboard').should('have.text', 'Lee&');
+    cy.getByCls('clipboard').find('img').should('not.exist');
+    cy.wait(100);
+    cy.window().then((win) => {
+      expect((win as Window & { copyXssExecuted?: boolean }).copyXssExecuted).to.be.undefined;
+    });
+  });
+
+  it('should copy the visible text of the formatted value that contains HTML', () => {
+    i18n.setLanguage('en');
+    cy.createGrid({
+      data: [{ price: 1200 }],
+      columns: [
+        {
+          name: 'price',
+          formatter: ({ value }: FormatterProps) => `<b style="color:red">${value}</b>`,
+          copyOptions: { useFormattedValue: true },
+        },
+      ],
+      bodyHeight: GRID_BODY_HEIGHT,
+    });
+
+    cy.gridInstance().invoke('focus', 0, 'price');
+    showContextMenu(0, 'price');
+
+    getMenuItemByText(i18n.get('contextMenu.copy')).click();
+
+    cy.getByCls('clipboard').should('have.text', '1200');
   });
 
   it('should not display the context menu on dummy rows', () => {
