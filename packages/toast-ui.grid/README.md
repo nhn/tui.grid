@@ -1,5 +1,9 @@
 # ![TOAST UI Grid](https://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Grid is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid)
 
 ## 🚩 Table of Contents

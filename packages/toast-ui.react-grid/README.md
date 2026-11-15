@@ -1,5 +1,9 @@
 # TOAST UI Grid for React
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Grid is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > This is a React component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-grid.svg)](https://www.npmjs.com/package/@toast-ui/react-grid)

@@ -1,5 +1,9 @@
 # ![TOAST UI Grid](https://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Grid is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN Cloud](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN_CLOUD-ff1414.svg)](https://github.com/nhn)

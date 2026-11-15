@@ -1,5 +1,9 @@
 # TOAST UI Grid for Vue
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Grid is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > This is Vue component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)

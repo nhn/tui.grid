@@ -1,5 +1,9 @@
 # Documents 📄
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Grid is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 ## Tutorials
 
 - [🚀 Getting Started](./en/getting-started.md)
