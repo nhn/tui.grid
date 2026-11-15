@@ -1,138 +1,139 @@
+# tui-grid를 npm 승인 대기열에 올린다 (npm staged publishing).
+# 이 워크플로는 공개까지 하지 않는다. maintainer가 2FA로 승인해야 공개된다.
+# 승인 뒤 git 태그(v<버전>)를 달고 publish-wrapper.yml을 실행한다.
+#
+# npmjs.com 설정: tui-grid → Settings → Trusted Publisher
+#   GitHub Actions / nhn / tui.grid / publish.yml / Environment 비움
+#   Allowed actions 체크 없음 (stage publish만 허용)
 name: Publish
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+
+# 같은 배포가 동시에 두 번 돌지 않게 한다
+concurrency:
+  group: publish-grid
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 env:
-  WORKING_DIRECTORY: ./packages/toast-ui.grid
-  CACHED_DEPENDENCY_PATHS: ./packages/toast-ui.grid/node_modules
-  ROOT_DEPENDENCY_PATHS: ./node_modules
-  CACHED_BUILD_PATHS: ./packages/toast-ui.grid/dist
-  BUILD_CACHE_KEY: ${{ github.sha }}
+  PACKAGE_DIRECTORY: packages/toast-ui.grid
 
 jobs:
-  check-version:
-    name: Check package version
+  check-package:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-          registry-url: https://registry.npmjs.org/
-      - name: Check package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ${{ env.WORKING_DIRECTORY }}/
-      - name: Log when unchanged
-        if: steps.check.outputs.is-new-version == 'false'
-        run: 'echo "No version change"'
-      - name: Cancel Workflow
-        if: steps.check.outputs.is-new-version == 'false'
-        uses: andymckay/cancel-action@0.2
-
-  install_dependencies:
-    name: Install dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: install_dependencies
-        id: cache-keys
-        uses: ./.github/actions/install-dependencies
     outputs:
-      root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
-      grid_cache_key: ${{ steps.cache-keys.outputs.grid_cache_key }}
-
-  build:
-    name: Build
-    needs: [install_dependencies]
-    runs-on: ubuntu-latest
+      name: ${{ steps.package.outputs.name }}
+      version: ${{ steps.package.outputs.version }}
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: build
-        uses: ./.github/actions/build-cache
-        with:
-          ROOT_CACHE_KEY: ${{ needs.install_dependencies.outputs.root_cache_key }}
-          GRID_CACHE_KEY: ${{ needs.install_dependencies.outputs.grid_cache_key }}
-          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
-    outputs:
-      root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
-      grid_cache_key: ${{ needs.install_dependencies.outputs.grid_cache_key }}
+      - name: checkout branch
+        uses: actions/checkout@v4
+      - name: check package
+        id: package
+        run: |
+          NAME=$(node -p "require('./${PACKAGE_DIRECTORY}/package.json').name")
+          VERSION=$(node -p "require('./${PACKAGE_DIRECTORY}/package.json').version")
 
-  push-tag:
-    needs: [check-version, build]
-    name: Push tag
+          # Trusted Publishing은 repository.url이 이 저장소와 정확히 같아야 한다
+          node -e '
+            const pkg = require(`./${process.env.PACKAGE_DIRECTORY}/package.json`);
+            const url = typeof pkg.repository === "string" ? pkg.repository : (pkg.repository || {}).url || "";
+            const normalized = url.replace(/^git\+/, "").replace(/\.git$/, "");
+            const expected = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
+            if (normalized !== expected) {
+              console.log(`::error::repository.url(${url})이 ${expected}와 다르다. provenance 검증에서 배포가 실패한다.`);
+              process.exit(1);
+            }
+          '
+
+          # npm은 같은 버전 번호를 다시 쓸 수 없다
+          if [ -n "$(npm view "${NAME}@${VERSION}" version 2>/dev/null)" ]; then
+            echo "::error::${NAME}@${VERSION}은 이미 배포된 버전이다."
+            exit 1
+          fi
+
+          # stage publish는 latest 태그로 올린다. 프리릴리스 버전은 막는다.
+          case "$VERSION" in
+            *-*)
+              echo "::error::프리릴리스 버전(${VERSION})은 latest로 배포하지 않는다."
+              exit 1
+              ;;
+          esac
+
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+  test:
     runs-on: ubuntu-latest
+    needs: [check-package]
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+      - name: checkout branch
+        uses: actions/checkout@v4
+      # webpack 4는 Node 17 이상(OpenSSL 3)에서 ERR_OSSL_EVP_UNSUPPORTED로 실패한다
+      - name: use Node.js 16 (build toolchain)
+        uses: actions/setup-node@v4
         with:
-          node-version: '15.x'
-          registry-url: https://registry.npmjs.org/
-      - name: Get package version
-        id: version
-        uses: PostHog/check-package-version@v2
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+      - name: npm ci
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
+        run: npm ci
+      - name: e2e test
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
+        run: npm run e2e-test:ci
+
+  stage:
+    runs-on: ubuntu-latest
+    needs: [check-package, test]
+    permissions:
+      contents: read
+      id-token: write # npm Trusted Publishing(OIDC)
+    env:
+      NAME: ${{ needs.check-package.outputs.name }}
+      VERSION: ${{ needs.check-package.outputs.version }}
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+      # 빌드는 Node 16에서 한다. webpack 4는 Node 17 이상에서 ERR_OSSL_EVP_UNSUPPORTED로 실패한다.
+      - name: use Node.js 16 (build)
+        uses: actions/setup-node@v4
         with:
-          path: ${{ env.WORKING_DIRECTORY }}/
-      - name: Create Tag
-        run: |
-          git config --local user.email "daeyeon.kim@nhn.com"
-          git config --local user.name "jajugoguma"
-          git tag v${{ steps.version.outputs.committed-version }}
-      - name: Push changes
-        run: |
-          git push origin v${{ steps.version.outputs.committed-version }}
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+      # 빌드에는 Cypress 실행 파일이 필요 없다
+      - name: npm ci
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-package:
-    needs: [check-version, build]
-    name: Publish package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Publish package
-        uses: ./.github/actions/publish-package
+          CYPRESS_INSTALL_BINARY: 0
+        run: npm ci
+      # build는 check-types:all과 lint:all을 먼저 실행한다
+      - name: build
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
+        run: npm run build
+      # staged publishing은 Node 22.14+와 npm 11.15.0+가 필요하다
+      - name: use Node.js 24 (stage)
+        uses: actions/setup-node@v4
         with:
-          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
-          GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
-          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  publish-cdn:
-    needs: [check-version, build]
-    name: Publish to CDN
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Publish to CDN
-        uses: ./.github/actions/publish-to-cdn
-        with:
-          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
-          GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
-          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
-          TOAST_CLOUD_TENENTID: ${{ secrets.TOAST_CLOUD_TENENTID }}
-          TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
-          TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
-          TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}
-
-  publish-docs:
-    needs: [check-version, build]
-    name: Publish documents
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Publish documents
-        uses: ./.github/actions/publish-docs
-        with:
-          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
-          GRID_CACHE_KEY: ${{ needs.build.outputs.grid_cache_key }}
-          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - name: update npm
+        run: npm install -g npm@^11.15.0
+      - name: npm stage publish
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
+        run: npm stage publish
+      - name: write summary
+        run: |
+          {
+            echo "## ${NAME}@${VERSION} 승인 대기"
+            echo ""
+            echo "아직 공개되지 않았다. maintainer가 아래 순서로 처리한다."
+            echo ""
+            echo "1. \`npm stage list ${NAME}\`로 stage-id를 확인한다."
+            echo "2. \`npm stage download <stage-id>\`로 tarball을 받아 검증한다."
+            echo "3. npmjs.com의 Staged Packages 탭 또는 \`npm stage approve <stage-id>\`로 승인한다. 2FA가 필요하다."
+            echo "4. 승인 뒤 git 태그를 단다: \`git tag v${VERSION} && git push origin v${VERSION}\`"
+            echo "5. wrapper lock이 ${NAME}@${VERSION}을 가리키게 한 뒤 publish-wrapper 워크플로를 실행한다."
+          } >> "$GITHUB_STEP_SUMMARY"
