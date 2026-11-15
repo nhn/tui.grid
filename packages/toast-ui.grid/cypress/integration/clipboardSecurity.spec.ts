@@ -1,3 +1,4 @@
+import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
 
 before(() => {
@@ -110,5 +111,46 @@ describe('paste HTML table', () => {
           expect(insertedHTML).to.eql([]);
         });
     });
+  });
+});
+
+describe('default renderer sanitizing', () => {
+  it('should keep the common HTML of the formatted value', () => {
+    cy.createGrid({
+      data: [{ price: 1200 }],
+      columns: [
+        {
+          name: 'price',
+          formatter: ({ value }: FormatterProps) =>
+            `<b style="color:red">${value}</b>` +
+            '<a href="https://example.com">link</a>' +
+            '<span class="badge" title="ok" data-id="7">OK</span>' +
+            '<input type="checkbox" checked>',
+        },
+      ],
+    });
+
+    cy.getByCls('cell-content').within(() => {
+      cy.get('b').should('have.attr', 'style', 'color:red').and('have.text', '1200');
+      cy.get('a').should('have.attr', 'href', 'https://example.com');
+      cy.get('span.badge').should('have.attr', 'title', 'ok').and('have.attr', 'data-id', '7');
+      cy.get('input[type="checkbox"]').should('be.checked');
+    });
+  });
+
+  it('should remove the attribute that contains the closing comment pattern', () => {
+    cy.createGrid({
+      data: [{ step: 'step' }],
+      columns: [
+        {
+          name: 'step',
+          formatter: ({ value }: FormatterProps) =>
+            `<span title="${value} --> done">${value}</span>`,
+        },
+      ],
+    });
+
+    cy.getByCls('cell-content').find('span').should('not.have.attr', 'title');
+    cy.getByCls('cell-content').should('have.text', 'step');
   });
 });
