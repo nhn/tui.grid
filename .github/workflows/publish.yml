@@ -76,7 +76,11 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-          cache-dependency-path: ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+      - name: npm ci (root)
+        run: npm ci
       - name: npm ci
         working-directory: ${{ env.PACKAGE_DIRECTORY }}
         run: npm ci
@@ -102,7 +106,12 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-          cache-dependency-path: ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            ${{ env.PACKAGE_DIRECTORY }}/package-lock.json
+      # lint의 prettier 플러그인은 루트 devDependencies의 prettier를 쓴다
+      - name: npm ci (root)
+        run: npm ci
       # 빌드에는 Cypress 실행 파일이 필요 없다
       - name: npm ci
         working-directory: ${{ env.PACKAGE_DIRECTORY }}
